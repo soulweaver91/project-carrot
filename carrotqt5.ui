@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CarrotQt5Class</class>
+ <widget class="QMainWindow" name="CarrotQt5Class">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>621</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>320</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>2560</width>
+    <height>1920</height>
+   </size>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>800</width>
+    <height>621</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Project Carrot</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>Data/Assets/carrot.gif</normaloff>Data/Assets/carrot.gif</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="minimumSize">
+    <size>
+     <width>320</width>
+     <height>200</height>
+    </size>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="mainFrame">
+      <property name="minimumSize">
+       <size>
+        <width>320</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>2560</width>
+        <height>1920</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuGame">
+    <property name="title">
+     <string>&amp;Game</string>
+    </property>
+    <addaction name="action_Pause"/>
+    <addaction name="action_Return_to_Main_Menu"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <addaction name="action_pending"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_Home_Page"/>
+    <addaction name="action_Online_Help"/>
+    <addaction name="separator"/>
+    <addaction name="action_About_Qt_5"/>
+    <addaction name="action_About_Project_Carrot"/>
+   </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="debug_music"/>
+    <addaction name="debug_ammo"/>
+    <addaction name="debug_health"/>
+    <addaction name="debug_masks"/>
+    <addaction name="debug_gravity"/>
+    <addaction name="debug_lighting"/>
+   </widget>
+   <addaction name="menuGame"/>
+   <addaction name="menu_Settings"/>
+   <addaction name="menuDebug"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <action name="action_Home_Page">
+   <property name="text">
+    <string>&amp;Home Page</string>
+   </property>
+  </action>
+  <action name="action_Online_Help">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Online Help</string>
+   </property>
+  </action>
+  <action name="action_About_Qt_5">
+   <property name="text">
+    <string>About &amp;Qt 5...</string>
+   </property>
+  </action>
+  <action name="action_About_Project_Carrot">
+   <property name="text">
+    <string>&amp;About Project Carrot...</string>
+   </property>
+  </action>
+  <action name="action_Pause">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Pause</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="action_pending">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>(pending)</string>
+   </property>
+  </action>
+  <action name="action_Return_to_Main_Menu">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Return to Main Menu</string>
+   </property>
+  </action>
+  <action name="debug_music">
+   <property name="text">
+    <string>Load Music...</string>
+   </property>
+  </action>
+  <action name="debug_ammo">
+   <property name="text">
+    <string>Fill Player 1 Ammo</string>
+   </property>
+  </action>
+  <action name="debug_health">
+   <property name="text">
+    <string>Fill Player 1 Hearts</string>
+   </property>
+  </action>
+  <action name="debug_masks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Draw Collision Data</string>
+   </property>
+  </action>
+  <action name="debug_gravity">
+   <property name="text">
+    <string>Set Gravity...</string>
+   </property>
+  </action>
+  <action name="debug_lighting">
+   <property name="text">
+    <string>Set Lighting...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="carrotqt5.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_Exit</sender>
+   <signal>triggered()</signal>
+   <receiver>CarrotQt5Class</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
