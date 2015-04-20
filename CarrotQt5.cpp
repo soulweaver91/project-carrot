@@ -120,8 +120,8 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     sf::CircleShape ocirc(96);
     ocirc.setFillColor(sf::Color(0,0,0,0));
     ocirc.setOrigin(96,96);
-    ocirc.setPosition(800,600);
-    lightTex->draw(ocirc,sf::RenderStates(sf::BlendMode::BlendNone));
+    ocirc.setPosition(800, 600);
+    lightTex->draw(ocirc, sf::RenderStates(sf::BlendNone));
 
     // TODO: create a feather effect
     // check the shader stuff and apply them to the texture here
