@@ -17,7 +17,7 @@ MenuScreen::MenuScreen(CarrotQt5* root, MenuEntryPoint entry) : root(root), sele
         glow_b[i].setRotation(i * 90);
     }
     
-    logo_tex.loadFromFile("Data/Assets/logo-300px.png");
+    logo_tex.loadFromFile("Data/logo-300px.png");
     logo.setTexture(logo_tex);
     logo.setPosition(400,10);
     logo.setOrigin(150,0);
