@@ -1,5 +1,4 @@
-#ifndef H_CP_AMMO_BOUNCER
-#define H_CP_AMMO_BOUNCER
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -15,5 +14,3 @@ public:
 private:
     void Ammo_Bouncer::onHitFloorHook();
 };
-
-#endif

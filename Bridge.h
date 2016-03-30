@@ -1,5 +1,4 @@
-#ifndef H_CP_BRIDGE
-#define H_CP_BRIDGE
+#pragma once
 
 #include "CommonActor.h"
 #include "SolidObject.h"
@@ -38,5 +37,3 @@ class DynamicBridge : public CommonActor {
         unsigned int bridge_width;
         QList< DynamicBridgePiece* > bridge_objs;
 };
-
-#endif

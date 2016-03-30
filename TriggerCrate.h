@@ -1,5 +1,4 @@
-#ifndef H_CP_TRIGCRATE
-#define H_CP_TRIGCRATE
+#pragma once
 
 #include "CommonActor.h"
 #include "SolidObject.h"
@@ -14,5 +13,3 @@ class TriggerCrate : public SolidObject {
     private:
         int trigger_id;
 };
-
-#endif

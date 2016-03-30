@@ -1,5 +1,4 @@
-#ifndef H_CP_SAVEPOINT
-#define H_CP_SAVEPOINT
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -17,5 +16,3 @@ public:
 private:
     bool activated;
 };
-
-#endif

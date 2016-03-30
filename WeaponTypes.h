@@ -1,5 +1,5 @@
-#ifndef H_CP_ENUM_WEAPON
-#define H_CP_ENUM_WEAPON
+#pragma once
+
 enum WeaponType {
     WEAPON_BLASTER = 0,
     WEAPON_BOUNCER = 1,
@@ -11,4 +11,3 @@ enum WeaponType {
     WEAPON_PEPPER  = 7,
     WEAPON_ELECTRO = 8
 };
-#endif

@@ -1,5 +1,4 @@
-#ifndef H_CP_ENEMY
-#define H_CP_ENEMY
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -18,4 +17,3 @@ class Enemy : public CommonActor {
         bool canMoveToPosition(double x, double y);
 };
 
-#endif

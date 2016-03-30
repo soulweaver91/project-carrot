@@ -1,5 +1,4 @@
-#ifndef H_CP_COLLECTIBLE
-#define H_CP_COLLECTIBLE
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -35,5 +34,3 @@ private:
     bool intact;
     double phase;
 };
-
-#endif

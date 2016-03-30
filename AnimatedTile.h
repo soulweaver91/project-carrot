@@ -1,5 +1,4 @@
-#ifndef H_CP_ANIMATED_TILE
-#define H_CP_ANIMATED_TILE
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "TileMap.h"
@@ -34,5 +33,3 @@ class AnimatedTile {
         // initial state
         double frames_original;
 };
-
-#endif

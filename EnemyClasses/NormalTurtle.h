@@ -1,5 +1,4 @@
-#ifndef H_CP_ENEMY_NORMTURTLE
-#define H_CP_ENEMY_NORMTURTLE
+#pragma once
 
 #include "../Enemy.h"
 #include "../CommonActor.h"
@@ -17,5 +16,3 @@ class Enemy_NormalTurtle : public Enemy {
         bool isTurning;
         bool isWithdrawn;
 };
-
-#endif

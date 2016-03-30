@@ -1,5 +1,4 @@
-#ifndef H_CP_AMMO
-#define H_CP_AMMO
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -23,5 +22,3 @@ private:
     double start_y;
     int ttl;
 };
-
-#endif

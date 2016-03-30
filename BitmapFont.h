@@ -1,5 +1,4 @@
-#ifndef H_CP_BITMAPFONT
-#define H_CP_BITMAPFONT
+#pragma once
 
 #include <QString>
 #include <QList>
@@ -52,5 +51,3 @@ class BitmapString {
         sf::Color Colour[7];
         static unsigned getStaticWidth(QString text, BitmapFont* font);
 };
-
-#endif

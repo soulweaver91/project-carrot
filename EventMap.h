@@ -1,5 +1,4 @@
-#ifndef H_CP_EVENTMAP
-#define H_CP_EVENTMAP
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "CarrotQt5.h"
@@ -41,5 +40,3 @@ class EventMap {
         QList< QList< EventTile > > event_layout;
         QMultiMap< unsigned, CoordinatePair > warpTargets;
 };
-
-#endif

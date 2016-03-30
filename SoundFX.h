@@ -1,5 +1,4 @@
-#ifndef H_CP_SOUNDFX
-#define H_CP_SOUNDFX
+#pragma once
 
 #include <bass.h>
 #include <QString>
@@ -43,5 +42,3 @@ class SFXSystem {
     private:
         QMultiMap< SFXType, HSAMPLE > effect_bank;
 };
-
-#endif

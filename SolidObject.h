@@ -1,5 +1,4 @@
-#ifndef H_CP_SOLIDOBJECT
-#define H_CP_SOLIDOBJECT
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -16,5 +15,3 @@ class SolidObject : public CommonActor {
         bool movable;
         bool one_way;
 };
-
-#endif

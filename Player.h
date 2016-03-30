@@ -1,5 +1,4 @@
-#ifndef H_CP_PLAYER
-#define H_CP_PLAYER
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -127,5 +126,3 @@ private slots:
     void endDamagingMove();
     void returnControl();
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef H_CP_COMMON_ACTOR
-#define H_CP_COMMON_ACTOR
+#pragma once
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -191,5 +190,3 @@ protected:
     unsigned long next_timer;
     unsigned long animation_timer;
 };
-
-#endif

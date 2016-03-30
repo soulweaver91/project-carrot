@@ -1,5 +1,4 @@
-#ifndef H_CP_AMMO_BLASTER
-#define H_CP_AMMO_BLASTER
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -13,5 +12,3 @@ public:
     ~Ammo_Blaster();
     void tickEvent();
 };
-
-#endif

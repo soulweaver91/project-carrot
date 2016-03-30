@@ -1,5 +1,4 @@
-#ifndef CARROTCANVAS_H
-#define CARROTCANVAS_H
+#pragma once
 
 #include "QSFMLCanvas.h"
 
@@ -19,5 +18,3 @@ class CarrotCanvas : public QSFMLCanvas
         void OnInit();
         void OnUpdate();
 };
-
-#endif

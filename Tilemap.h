@@ -1,5 +1,4 @@
-#ifndef H_CP_TILEMAP
-#define H_CP_TILEMAP
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "CarrotQt5.h"
@@ -145,5 +144,3 @@ class TileMap {
         unsigned level_width;
         unsigned level_height;
 };
-
-#endif

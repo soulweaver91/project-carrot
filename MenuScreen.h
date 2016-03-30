@@ -1,5 +1,4 @@
-#ifndef H_CP_MENUSCREEN
-#define H_CP_MENUSCREEN
+#pragma once
 
 #include "CarrotQt5.h"
 
@@ -62,5 +61,3 @@ private:
     MenuLayout current_type;
 
 };
-
-#endif

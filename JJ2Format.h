@@ -1,5 +1,4 @@
-#ifndef H_CP_FORMATS
-#define H_CP_FORMATS
+#pragma once
 
 #include <QString>
 #include <QFile>
@@ -20,5 +19,3 @@ class JJ2Format {
 
         static QByteArray fromLittleEndian(QByteArray le_int);
 };
-
-#endif

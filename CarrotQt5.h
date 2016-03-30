@@ -1,13 +1,8 @@
 /*****************************************************************************
  ** PROJECT CARROT - MAIN CLASS                                             **
- *****************************************************************************
- ** major overhauls to do:
- ** - implement render textures for players (required for split-screen multiplayer)
- ** - move sprite properties to external files from the source code
  *****************************************************************************/
 
-#ifndef CARROTQT5_H
-#define CARROTQT5_H
+#pragma once
 
 #include "Version.h"
 
@@ -218,5 +213,3 @@ private slots:
     void setLightingStep();
     void delayedLevelChange();
 };
-
-#endif // CARROTQT5_H

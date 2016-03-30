@@ -1,5 +1,4 @@
-#ifndef H_CP_ENEMY_LIZARD
-#define H_CP_ENEMY_LIZARD
+#pragma once
 
 #include "../Enemy.h"
 #include "../CommonActor.h"
@@ -13,5 +12,3 @@ class Enemy_Lizard : public Enemy {
         void tickEvent() override;
         Hitbox getHitbox();
 };
-
-#endif

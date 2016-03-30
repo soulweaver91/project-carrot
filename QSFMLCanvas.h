@@ -1,5 +1,4 @@
-#ifndef QSFMLCANVAS_H
-#define QSFMLCANVAS_H
+#pragma once
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -23,5 +22,3 @@ class QSFMLCanvas : public QWidget, public sf::RenderWindow {
         QTimer myTimer;
         bool   myInitialized;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef H_CP_PUSHBOX
-#define H_CP_PUSHBOX
+#pragma once
 
 #include "CommonActor.h"
 #include "SolidObject.h"
@@ -11,5 +10,3 @@ class PushBox : public SolidObject {
         PushBox(CarrotQt5* root, double x = 0.0, double y = 0.0, int type = PC_PUSHABLE_ROCK);
         ~PushBox();
 };
-
-#endif

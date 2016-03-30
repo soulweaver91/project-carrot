@@ -1,5 +1,4 @@
-#ifndef H_CP_AMMO_TOASTER
-#define H_CP_AMMO_TOASTER
+#pragma once
 
 #include "CommonActor.h"
 #include "CarrotQt5.h"
@@ -16,5 +15,3 @@ class Ammo_Toaster : public Ammo {
     private:
         void Ammo_Toaster::ricochet();
 };
-
-#endif
