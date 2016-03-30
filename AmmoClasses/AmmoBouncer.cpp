@@ -1,9 +1,11 @@
+#include <memory>
 #include "CommonActor.h"
 #include "CarrotQt5.h"
 #include "AmmoBouncer.h"
 #include "Ammo.h"
 
-Ammo_Bouncer::Ammo_Bouncer(CarrotQt5* root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp) : Ammo(root, firedBy, x, y, firedLeft, firedUp, 140) {
+Ammo_Bouncer::Ammo_Bouncer(std::shared_ptr<CarrotQt5> root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp)
+    : Ammo(root, firedBy, x, y, firedLeft, firedUp, 140) {
     elasticity = 0.9;
     addAnimation(AnimState::IDLE,        "weapon/bullet_bouncer.png",    8,1,10,7,10,5,4);
     if (firedUp) {

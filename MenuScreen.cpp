@@ -1,9 +1,10 @@
+#include <memory>
 #include "MenuScreen.h"
 #include <QDir>
 #include <QSettings>
 
-MenuScreen::MenuScreen(CarrotQt5* root, MenuEntryPoint entry) : root(root), selected_item(0), current_type(MENU_PLAIN_LIST),
-    attraction_text(root->mainFont, "", FONT_ALIGN_RIGHT) {
+MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : root(root), selected_item(0),
+    current_type(MENU_PLAIN_LIST), attraction_text(root->mainFont, "", FONT_ALIGN_RIGHT) {
     glow_a_tex.loadFromFile("Data/Textures/radialglow.png");
     glow_a.setTexture(glow_a_tex);
     glow_a.setPosition(400,100);

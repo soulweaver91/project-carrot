@@ -6,6 +6,7 @@
 
 #include "Version.h"
 
+#include <memory>
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QFocusEvent>
@@ -111,7 +112,7 @@ struct SavedState {
 
 typedef void (CarrotQt5::*InvokableRootFunction)(QVariant);
 
-class CarrotQt5 : public QMainWindow
+class CarrotQt5 : public QMainWindow, public std::enable_shared_from_this<CarrotQt5>
 {
     Q_OBJECT
 

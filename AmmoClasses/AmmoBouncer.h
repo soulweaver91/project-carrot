@@ -8,7 +8,8 @@
 
 class Ammo_Bouncer : public Ammo {
 public:
-    Ammo_Bouncer(CarrotQt5* root, Player* firedBy = nullptr, double x = 0.0, double y = 0.0, bool firedLeft = false, bool firedUp = false);
+    Ammo_Bouncer(std::shared_ptr<CarrotQt5> root, Player* firedBy = nullptr, double x = 0.0, double y = 0.0, 
+        bool firedLeft = false, bool firedUp = false);
     ~Ammo_Bouncer();
     void tickEvent();
 private:

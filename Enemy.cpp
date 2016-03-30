@@ -1,9 +1,10 @@
+#include <memory>
 #include "Enemy.h"
 #include "EventMap.h"
 #include "CommonActor.h"
 #include "CarrotQt5.h"
 
-Enemy::Enemy(CarrotQt5* root, double x, double y) : CommonActor(root, x, y), hurtPlayer(true) {
+Enemy::Enemy(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y), hurtPlayer(true) {
 
 }
 

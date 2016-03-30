@@ -1,6 +1,7 @@
 #include "EventMap.h"
 
 #include "CarrotQt5.h"
+#include <memory>
 #include "TileMap.h"
 #include "SolidObject.h"
 #include "Collectible.h"
@@ -20,7 +21,7 @@
 #include <QMultiMap>
 #include <QString>
 
-EventMap::EventMap(CarrotQt5* game_root, TileMap* game_tiles, unsigned int width, unsigned int height)
+EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, TileMap* game_tiles, unsigned int width, unsigned int height)
     : root(game_root), tiles(game_tiles) {
     for (unsigned int y = 0; y <= height; ++y) {
         QList< EventTile > n;

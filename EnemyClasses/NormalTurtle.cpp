@@ -1,9 +1,11 @@
+#include <memory>
 #include "NormalTurtle.h"
 #include "../Enemy.h"
 #include "../CommonActor.h"
 #include "../CarrotQt5.h"
 
-Enemy_NormalTurtle::Enemy_NormalTurtle(CarrotQt5* root, double x, double y) : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
+Enemy_NormalTurtle::Enemy_NormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
+    : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
     unsigned a = addAnimation(AnimState::WALK,"turtle/walk.png",12,1,70,57,10,35,52);
     assignAnimation(AnimState::IDLE, a);
     assignAnimation(AnimState::RUN, a);

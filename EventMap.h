@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "CarrotQt5.h"
 #include "TileMap.h"
@@ -18,7 +19,7 @@ struct EventTile {
 
 class EventMap {
     public:
-        EventMap(CarrotQt5* game_root, TileMap* game_tiles, unsigned int width, unsigned int height);
+        EventMap(std::shared_ptr<CarrotQt5> game_root, TileMap* game_tiles, unsigned int width, unsigned int height);
         ~EventMap();
         void storeTileEvent(int x, int y, PCEvent e = PC_EMPTY, int flags = 0, const QList< quint16 >& params = QList< quint16 >());
         void activateEvents(const sf::View& center, int dist_tiles = 32);
@@ -35,7 +36,7 @@ class EventMap {
 
     private:
         void addWarpTarget(unsigned id, unsigned x, unsigned y);
-        CarrotQt5* root;
+        std::shared_ptr<CarrotQt5> root;
         TileMap* tiles;
         QList< QList< EventTile > > event_layout;
         QMultiMap< unsigned, CoordinatePair > warpTargets;

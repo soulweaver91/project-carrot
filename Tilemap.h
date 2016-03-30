@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "CarrotQt5.h"
 #include "WeaponTypes.h"
@@ -97,7 +98,7 @@ class DestructibleDebris {
 
 class TileMap {
     public:
-        TileMap(CarrotQt5* game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file);
+        TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file);
         ~TileMap();
         
         // level related
@@ -127,7 +128,7 @@ class TileMap {
         bool isTileEmpty(unsigned x, unsigned y);
         bool isTileEmpty(const Hitbox& hbox, bool downwards = false);
     private:
-        CarrotQt5* root;
+        std::shared_ptr<CarrotQt5> root;
         void drawLayer(TileMapLayer* layer);
         double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& is_y) const;
         void updateSprLayerIdx();

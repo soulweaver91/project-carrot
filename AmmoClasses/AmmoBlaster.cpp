@@ -1,10 +1,12 @@
+#include <memory>
 #include "CommonActor.h"
 #include "CarrotQt5.h"
 #include "AmmoBlaster.h"
 #include "Ammo.h"
 #include "TriggerCrate.h"
 
-Ammo_Blaster::Ammo_Blaster(CarrotQt5* root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp) : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
+Ammo_Blaster::Ammo_Blaster(std::shared_ptr<CarrotQt5> root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp)
+    : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
     if (firedUp) {
         speed_v = -8;
         addAnimation(AnimState::IDLE,        "weapon/bullet_blaster_ver.png",    3,1,4,13,10,2,7);

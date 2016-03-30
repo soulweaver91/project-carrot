@@ -1,11 +1,11 @@
+#include <memory>
 #include "Bridge.h"
-
 #include "CommonActor.h"
 #include "CarrotQt5.h"
 #include "SolidObject.h"
 #include "Player.h"
 
-DynamicBridgePiece::DynamicBridgePiece(CarrotQt5* root, double x, double y, DynamicBridgeType type) : SolidObject(root, x, y, false) {
+DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x, double y, DynamicBridgeType type) : SolidObject(root, x, y, false) {
     // temp
     addAnimation(AnimState::IDLE,        "bridge/gem.png",    1,1,14,13,1,0,0);
     setAnimation(AnimState::IDLE);
@@ -30,7 +30,7 @@ Hitbox DynamicBridgePiece::getCollHitbox() {
     return h;
 }
 
-DynamicBridge::DynamicBridge(CarrotQt5* root, double x, double y, unsigned int width, DynamicBridgeType type, unsigned int toughness)
+DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y, unsigned int width, DynamicBridgeType type, unsigned int toughness)
     : CommonActor(root, x - 16.0, y - 16.0), toughness(toughness), bridge_width(width), bridge_type(type), original_y(y) {
     for (int i = 0; i < width; ++i) {
         DynamicBridgePiece* piece_n = new DynamicBridgePiece(root,x + 16 * i - 16,y - 16,type);

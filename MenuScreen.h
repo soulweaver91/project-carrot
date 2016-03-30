@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "CarrotQt5.h"
 
 class MenuScreen;
@@ -31,7 +32,7 @@ struct MenuItem {
 
 class MenuScreen {
 public:
-    MenuScreen(CarrotQt5* root, MenuEntryPoint entry = MENU_MAIN_MENU);
+    MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry = MENU_MAIN_MENU);
     ~MenuScreen();
     void tickEvent();
     void keyPressEvent(QKeyEvent* event);
@@ -47,7 +48,7 @@ private:
     void loadMainMenu(QVariant param);
     void placeholderOption(QVariant param);
 
-    CarrotQt5* root;
+    std::shared_ptr<CarrotQt5> root;
     sf::Texture glow_a_tex;
     sf::Sprite glow_a;
     sf::Texture glow_b_tex;

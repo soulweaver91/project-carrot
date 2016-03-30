@@ -37,7 +37,7 @@ class Player : public CommonActor {
     Q_OBJECT
 
 public:
-    Player(CarrotQt5* root, double x = 0.0, double y = 0.0);
+    Player(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0);
     ~Player();
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;

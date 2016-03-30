@@ -1,14 +1,13 @@
+#include <memory>
 #include "CommonActor.h"
-
 #include "CarrotQt5.h"
 #include "TileMap.h"
 #include "EventMap.h"
-
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <QTimer>
 
-CommonActor::CommonActor(CarrotQt5* game_root, double x, double y, bool fromEventMap) : root(game_root),
+CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap) : root(game_root),
     speed_h(0), speed_v(0), thrust(0), push(0), canJump(false), facingLeft(false),
     inTransition(false), cancellableTransition(false), max_health(1), health(1), isGravityAffected(true),
     isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity/3),

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "CommonActor.h"
 #include "CarrotQt5.h"
 
@@ -23,7 +24,7 @@ class Collectible : public CommonActor {
     Q_OBJECT
 
 public:
-    Collectible(CarrotQt5* root, enum CollectibleType type, double x = 0.0, double y = 0.0, bool fromEventMap = true);
+    Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType type, double x = 0.0, double y = 0.0, bool fromEventMap = true);
     ~Collectible();
     void tickEvent();
     enum CollectibleType type;

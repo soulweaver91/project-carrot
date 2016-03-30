@@ -2,6 +2,7 @@
  ** PROJECT CARROT                                                      **
  *************************************************************************/
 
+#include <memory>
 #include "CarrotQt5.h"
 #include "QSFMLCanvas.h"
 
@@ -13,8 +14,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    CarrotQt5 w;
-    w.show();
-    w.parseCommandLine();
+    std::shared_ptr<CarrotQt5> w = std::make_shared<CarrotQt5>();
+    w->show();
+    w->parseCommandLine();
     return a.exec();
 }

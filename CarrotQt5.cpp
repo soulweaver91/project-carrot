@@ -210,7 +210,7 @@ void CarrotQt5::startMainMenu() {
     setWindowTitle("Project Carrot");
     setMusic("Music/Menu.it");
 
-    menu_object = new MenuScreen(this);
+    menu_object = new MenuScreen(shared_from_this());
 }
 
 void CarrotQt5::openAboutCarrot() {
@@ -510,9 +510,10 @@ bool CarrotQt5::loadLevel(const QString& name) {
             QDir tileset_dir(QDir::currentPath() + QString::fromStdString("/Tilesets/") + tileset);
             if (tileset_dir.exists()) {
                 // Read the tileset and the sprite layer
-                game_tiles = new TileMap(this,tileset_dir.absoluteFilePath("tiles.png"),
-                                              tileset_dir.absoluteFilePath("mask.png"),
-                                              level_dir.absoluteFilePath("spr.layer"));
+                game_tiles = new TileMap(shared_from_this(),
+                                         tileset_dir.absoluteFilePath("tiles.png"),
+                                         tileset_dir.absoluteFilePath("mask.png"),
+                                         level_dir.absoluteFilePath("spr.layer"));
             
                 // Read the sky layer if it exists
                 if (level_files.contains("sky.layer")) {
@@ -535,7 +536,7 @@ bool CarrotQt5::loadLevel(const QString& name) {
                     game_tiles->readAnimatedTiles(level_dir.absoluteFilePath("animtiles.dat"));
                 }
                 
-                game_events = new EventMap(this,game_tiles,getLevelWidth(),getLevelHeight());
+                game_events = new EventMap(shared_from_this(), game_tiles, getLevelWidth(), getLevelHeight());
                 if (level_files.contains("event.layer")) {
                     game_events->readEvents(level_dir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat",1).toUInt());
                 }
@@ -543,7 +544,7 @@ bool CarrotQt5::loadLevel(const QString& name) {
                 game_tiles->saveInitialSpriteLayer();
                 
                 if (players[0] == nullptr) {
-                    Player* defaultplayer = new Player(this,320.0,32.0);
+                    Player* defaultplayer = new Player(shared_from_this(), 320.0, 32.0);
                     addPlayer(defaultplayer,0);
                 }
                 

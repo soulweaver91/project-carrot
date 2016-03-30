@@ -1,10 +1,11 @@
+#include <memory>
 #include "TileMap.h"
 #include "EventMap.h"
 #include "CarrotQt5.h"
 #include "AnimatedTile.h"
 #include "CommonActor.h"
 
-TileMap::TileMap(CarrotQt5* game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file) :
+TileMap::TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file) :
     level_width(1), level_height(1), root(game_root), spr_layer(0) {
     // Reserve textures for tileset and its mask counterpart
     level_tileset.tiles = new sf::Texture();

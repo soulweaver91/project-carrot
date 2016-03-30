@@ -1,5 +1,5 @@
+#include <memory>
 #include "Ammo.h"
-
 #include "CarrotQt5.h"
 #include "CommonActor.h"
 #include "TileMap.h"
@@ -8,7 +8,7 @@
 #include "Collectible.h"
 #include "PushBox.h"
 
-Ammo::Ammo(CarrotQt5* root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp, int alive, bool powered)
+Ammo::Ammo(std::shared_ptr<CarrotQt5> root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp, int alive, bool powered)
     : CommonActor(root, x, y, false), owner(firedBy), start_x(x), start_y(y), ttl(alive), powered_up(powered) {
     facingLeft = firedLeft;
 }

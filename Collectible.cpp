@@ -1,10 +1,12 @@
+#include <memory>
 #include "CommonActor.h"
 #include "CarrotQt5.h"
 #include "Collectible.h"
 
 #define PI 3.1415926535
 
-Collectible::Collectible(CarrotQt5* root, enum CollectibleType type, double x, double y, bool fromEventMap) : CommonActor(root, x, y, fromEventMap), type(type), intact(true) {
+Collectible::Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType type, double x, double y, bool fromEventMap)
+    : CommonActor(root, x, y, fromEventMap), type(type), intact(true) {
     phase = ((x / 100.0) + (y / 100.0));
     elasticity = 0.6;
 

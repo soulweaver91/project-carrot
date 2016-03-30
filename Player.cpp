@@ -19,7 +19,7 @@
 #include <SFML/Graphics.hpp>
 #include <QTimer>
 
-Player::Player(CarrotQt5* root, double x, double y) : CommonActor(root, x, y, false), weapon_cooldown(0), character(CHAR_JAZZ),
+Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), weapon_cooldown(0), character(CHAR_JAZZ),
     controllable(true), damaging_move(false), gem_sfx_idx(0), gem_sfx_idx_ctr(0), camera_shift(0), copter_time(0), fastfires(0),
     transition_end_function(nullptr), pole_spins(0), pole_positive(false), toaster_ammo_ticks(10), score(0), osd_timer(-1l),
     osd_type(OSD_NONE) {

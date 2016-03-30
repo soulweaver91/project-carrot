@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <QTimer>
@@ -121,7 +122,7 @@ class CommonActor : public QObject {
     Q_OBJECT
 
 public:
-    CommonActor(CarrotQt5* root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
+    CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();
     size_t addAnimation(ActorState state, const QString& filename, 
         int frame_cols = 1, int frame_rows = 1, int frame_width = -1,
@@ -151,7 +152,7 @@ protected:
     virtual void onHitCeilingHook();
     virtual void onHitWallHook();
     virtual void onTransitionEndHook();
-    CarrotQt5* root;
+    std::shared_ptr<CarrotQt5> root;
     sf::RenderWindow* destWindow;
     unsigned max_health;
     unsigned health;

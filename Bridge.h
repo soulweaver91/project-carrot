@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "CommonActor.h"
 #include "SolidObject.h"
 #include "CarrotQt5.h"
@@ -17,7 +18,7 @@ enum DynamicBridgeType {
 
 class DynamicBridgePiece : public SolidObject {
     public:
-        DynamicBridgePiece(CarrotQt5* root, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
+        DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
         ~DynamicBridgePiece();
         bool deactivate(int x, int y, int dist) override;
         Hitbox getCollHitbox();
@@ -25,7 +26,8 @@ class DynamicBridgePiece : public SolidObject {
 
 class DynamicBridge : public CommonActor {
     public:
-        DynamicBridge(CarrotQt5* root, double x = 0.0, double y = 0.0, unsigned int width = 1, DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
+        DynamicBridge(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, unsigned int width = 1, 
+            DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
         ~DynamicBridge();
         Hitbox getHitbox() override;
         void tickEvent() override;
