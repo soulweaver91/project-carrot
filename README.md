@@ -1,27 +1,25 @@
-project-carrot
-==============
-Project Carrot is a Jazz Jackrabbit 2 engine clone.
+# project-carrot
+Project Carrot is a slowly progressing Jazz Jackrabbit 2 engine clone. You can discuss it
+[here](http://www.jazz2online.com/jcf/showthread.php?t=19535), though at the moment both
+the project and the thread have been inactive for months.
 
-Building
---------
-What's done so far has been written to be compatible with the following setup:
-* [Microsoft Visual Studio 2013](http://www.visualstudio.com/)
-* [Qt](http://qt-project.org/downloads) 5.3.0
-* [SFML](http://www.sfml-dev.org/download.php) 2.1
+##Building
+The suggested development environment and required libraries are as follows:
+
+* [Microsoft Visual Studio 2015](http://www.visualstudio.com/)
+* [Qt](http://qt-project.org/downloads) 5.6
+* [SFML](http://www.sfml-dev.org/download.php) 2.3
 * [BASS](http://www.un4seen.com/bass.html) 2.4
 
-The above also lists the three libraries required to build the project.
+If using Visual Studio, configure the Qt paths with the MSVS plugin and set the appropriate
+values for the `SFML_DIR` and `BASS_DIR` user macros. For other environments, I'm afraid to
+say you're on your own, though.
 
-If you have problems getting your configuration to work, sorry, I'm not the guy to look for help.
-I've never shared a project of this scale to someone else before. A good place to start from is
-to make the library/include/etc. paths in the project configuration to point to where you saved
-each library, though.
-
-Running the game
-----------------
-You ***will*** need to contact me on the [Jazz2Online forums](http://www.jazz2online.com/jcf/)
-if you actually want to run the game. To prevent getting into too much potential legal trouble
-this early, all resources extracted from the original game are excluded from the repository and
-the game will simply fail to run without them. Send the user Soulweaver at J2F a private message
-with a sufficient proof of ownership (such as an image with a boxed copy and a paper with your
-user name).
+##Running the game
+To be able to run Project Carrot, you are required to extract the Jazz Jackrabbit 2 assets from
+the `Anims2.j2a` file in its installation folder. A tool expressly targeting Project Carrot,
+[PCAE](https://github.com/soulweaver91/project-carrot-pcae), will automate this task for you,
+not only dumping the graphics and sounds but also assigning them an uniform name independent of
+their location inside the file itself. Those files should be moved to `Data\Assets` relative
+to the project root or the compiled executable. (It is safe to merge the folder to the one
+in the repository.)
