@@ -66,7 +66,7 @@ unsigned BitmapFont::getCharacterWidth(QChar code) {
 
 BitmapString::BitmapString(BitmapFont* font, const QString& init_str, FontAlign init_align) :
     align(init_align), animate(false), xvariance(0.0), yvariance(0.0), phase(0.0), anim_speed(0.0),
-    angle_offset(0.0), str_text(init_str), coloured(false) {
+    angle_offset(0.0), str_text(init_str), coloured(false), spacing(-1) {
     inner_font = font;
     updateWidth();
 
@@ -108,7 +108,7 @@ void BitmapString::drawString(sf::RenderWindow *destWindow, int x, int y) {
             }
             spr->setPosition(curr_x + diff_x, y + diff_y);
             destWindow->draw(*(spr));
-            curr_x += spr->getTextureRect().width + 1;
+            curr_x += spr->getTextureRect().width + spacing;
         }
     }
     if (animate) {

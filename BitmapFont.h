@@ -47,6 +47,7 @@ class BitmapString {
         double phase;
         double anim_speed;
         double angle_offset;
+        char spacing;
         unsigned width;
         sf::Color Colour[7];
         static unsigned getStaticWidth(QString text, BitmapFont* font);

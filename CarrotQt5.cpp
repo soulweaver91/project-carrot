@@ -51,7 +51,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     std::fill_n(players, 32, nullptr);
 
     // Read the main font
-    mainFont = new BitmapFont("Data/Assets/jj2_font.png",29,31,14,16,32,256);
+    mainFont = new BitmapFont("Data/Assets/ui/font_medium.png",29,31,1,224,32,256);
     
     // Define the game view which we'll use for following the player
     game_view = new sf::View(sf::FloatRect(0.0,0.0,800.0,600.0));
