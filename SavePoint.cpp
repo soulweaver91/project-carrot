@@ -1,9 +1,9 @@
 #include "SavePoint.h"
 
 SavePoint::SavePoint(CarrotQt5* root, double x, double y) : CommonActor(root, x, y, true), activated(false) {
-    addAnimation(AnimState::IDLE,        "Data/Assets/savepoint.png",           1,1,42,70,1,19,69);
-    addAnimation(AnimState::ACTIVATED,   "Data/Assets/savepoint_activated.png", 1,1,42,70,1,19,69);
-    addAnimation(AnimState::TRANSITION_ACTIVATE, "Data/Assets/savepoint_activation.png", 15,1,42,70,10,19,69);
+    addAnimation(AnimState::IDLE,        "object/savepoint.png",           1,1,42,70,1,19,69);
+    addAnimation(AnimState::ACTIVATED,   "object/savepoint.png", 1,1,42,70,1,19,69);
+    addAnimation(AnimState::TRANSITION_ACTIVATE, "object/savepoint.png", 15,1,42,70,10,19,69);
 
     setAnimation(AnimState::IDLE);
 }

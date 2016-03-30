@@ -64,34 +64,29 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     }
     BASS_SetVolume(1.0);
     sfxsys = new SFXSystem();
-    sfxsys->addSFX(SFX_BLASTER_SHOOT_JAZZ,"Data/SFX/jazz_shoot.wav");
-    sfxsys->addSFX(SFX_COLLECT_AMMO,"Data/SFX/collect_ammo.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"Data/SFX/collect_gem_1.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"Data/SFX/collect_gem_2.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"Data/SFX/collect_gem_3.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"Data/SFX/collect_gem_4.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"Data/SFX/collect_gem_5.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"Data/SFX/collect_gem_6.wav");
-    sfxsys->addSFX(SFX_COLLECT_COIN,"Data/SFX/collect_coin.wav");
-    sfxsys->addSFX(SFX_JUMP,"Data/SFX/jump.wav");
-    sfxsys->addSFX(SFX_LAND,"Data/SFX/land.wav");
-    sfxsys->addSFX(SFX_SWITCH_AMMO,"Data/SFX/noammo.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_1.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_2.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_3.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_4.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_5.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_6.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_7.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"Data/SFX/jazz_hurt_8.wav");
-    sfxsys->addSFX(SFX_AMMO_HIT_WALL,"Data/SFX/ammo_poof.wav");
-    sfxsys->addSFX(SFX_SAVE_POINT,"Data/SFX/savepoint.wav");
-    sfxsys->addSFX(SFX_JAZZ_EOL,"Data/SFX/jazz_level_complete.wav");
-    sfxsys->addSFX(SFX_TOASTER_SHOOT,"Data/SFX/toaster.wav");
-    sfxsys->addSFX(SFX_WARP_IN,"Data/SFX/warp_a.wav");
-    sfxsys->addSFX(SFX_WARP_OUT,"Data/SFX/warp_b.wav");
-    sfxsys->addSFX(SFX_LIZARD_SPONTANEOUS,"Data/SFX/lizard_full.wav");
-    sfxsys->addSFX(SFX_BLOCK_DESTRUCT,"Data/SFX/destruct.wav");
+    sfxsys->addSFX(SFX_BLASTER_SHOOT_JAZZ,"weapon/bullet_blaster_jazz_4.wav");
+    sfxsys->addSFX(SFX_COLLECT_AMMO,"pickup/ammo.wav");
+    sfxsys->addSFX(SFX_COLLECT_GEM,"pickup/gem.wav"); // TODO: direct pitch modification
+    sfxsys->addSFX(SFX_COLLECT_COIN,"pickup/coin.wav");
+    sfxsys->addSFX(SFX_JUMP,"common/char_jump.wav");
+    sfxsys->addSFX(SFX_LAND,"common/char_land.wav");
+    sfxsys->addSFX(SFX_SWITCH_AMMO,"weapon_change.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_1.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_2.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_3.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_4.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_5.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_6.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_7.wav");
+    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_8.wav");
+    sfxsys->addSFX(SFX_AMMO_HIT_WALL,"common/wall_poof.wav");
+    sfxsys->addSFX(SFX_SAVE_POINT,"object/savepoint_open.wav");
+    sfxsys->addSFX(SFX_JAZZ_EOL,"jazz/level_complete.wav");
+    sfxsys->addSFX(SFX_TOASTER_SHOOT,"weapon/toaster.wav");
+    sfxsys->addSFX(SFX_WARP_IN,"common/warp_in.wav");
+    sfxsys->addSFX(SFX_WARP_OUT,"common/warp_out.wav");
+    sfxsys->addSFX(SFX_LIZARD_SPONTANEOUS,"lizard/noise_4.wav");
+    sfxsys->addSFX(SFX_BLOCK_DESTRUCT,"common/scenery_destruct.wav");
 
     installEventFilter(this);
 

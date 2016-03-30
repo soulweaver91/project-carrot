@@ -7,7 +7,7 @@
 
 DynamicBridgePiece::DynamicBridgePiece(CarrotQt5* root, double x, double y, DynamicBridgeType type) : SolidObject(root, x, y, false) {
     // temp
-    addAnimation(AnimState::IDLE,        "Data/Assets/anim0074.png",    1,1,14,13,1,0,0);
+    addAnimation(AnimState::IDLE,        "bridge/gem.png",    1,1,14,13,1,0,0);
     setAnimation(AnimState::IDLE);
     
     isGravityAffected = false;

@@ -7,10 +7,10 @@
 Ammo_Blaster::Ammo_Blaster(CarrotQt5* root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp) : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
     if (firedUp) {
         speed_v = -8;
-        addAnimation(AnimState::IDLE,        "Data/Assets/blaster_shot_ver.png",    3,1,4,13,10,2,7);
+        addAnimation(AnimState::IDLE,        "weapon/bullet_blaster_ver.png",    3,1,4,13,10,2,7);
     } else {
         speed_h = (firedLeft ? -12 : 12);
-        addAnimation(AnimState::IDLE,        "Data/Assets/blaster_shot_hor.png",    1,3,13,4,10,7,2);
+        addAnimation(AnimState::IDLE,        "weapon/bullet_blaster_hor.png",    3,1,13,4,10,7,2);
     }
     setAnimation(AnimState::IDLE);
 }

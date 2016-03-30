@@ -27,7 +27,7 @@ void SFXSystem::playSFX(SFXType type, int idx) {
 }
 
 bool SFXSystem::addSFX(SFXType type, const QString& path) {
-    HSAMPLE nsample = BASS_SampleLoad(false,path.toUtf8().data(), false, 0, 5, 0);
+    HSAMPLE nsample = BASS_SampleLoad(false, ("Data/Assets/" + path).toUtf8().data(), false, 0, 5, 0);
     if (nsample != 0) {
         effect_bank.insert(type,nsample);
         return true;

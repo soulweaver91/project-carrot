@@ -4,7 +4,7 @@
 #include "../CarrotQt5.h"
 
 Enemy_Lizard::Enemy_Lizard(CarrotQt5* root, double x, double y) : Enemy(root, x, y) {
-    unsigned a = addAnimation(AnimState::WALK,"Data/Assets/lizard_walk.png",4,3,72,56,10,36,53);
+    unsigned a = addAnimation(AnimState::WALK,"lizard/walk.png", 12,1,72,56,10,36,53);
     assignAnimation(AnimState::IDLE, a);
     assignAnimation(AnimState::RUN, a);
     assignAnimation(AnimState::FALL, a);
