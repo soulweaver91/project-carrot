@@ -33,34 +33,34 @@ Player::Player(CarrotQt5* root, double x, double y) : CommonActor(root, x, y, fa
     std::fill_n(collected_coins,2,0);
     std::fill_n(collected_gems,4,0);
 
-    addAnimation(AnimState::IDLE,                       "Data/Assets/jazz_stand.png",        1,1,34,48,1 ,16,47);
-    addAnimation(AnimState::RUN,                        "Data/Assets/jazz_run.png",          8,1,56,43,15,24,42);
-    addAnimation(AnimState::JUMP,                       "Data/Assets/jazz_jump.png",         3,1,40,49,15,23,47);
-    addAnimation(AnimState::RUN | AnimState::JUMP,      "Data/Assets/jazz_jump_diag.png",    9,1,49,55,15,21,42);
-    addAnimation(AnimState::FALL,                       "Data/Assets/jazz_fall.png",         3,1,57,47,15,25,43);
-    addAnimation(AnimState::RUN | AnimState::FALL,      "Data/Assets/jazz_fall_diag.png",    3,1,34,47,30,15,44);
-    addAnimation(AnimState::DASH,                       "Data/Assets/jazz_dash.png",         4,1,67,40,15,30,33);
-    addAnimation(AnimState::DASH | AnimState::JUMP,     "Data/Assets/jazz_jump_dash.png",    8,1,35,28,15,19,29);
-    addAnimation(AnimState::DASH | AnimState::FALL,     "Data/Assets/jazz_fall_diag.png",    3,1,34,47,15,15,38);
-    addAnimation(AnimState::LOOKUP,                     "Data/Assets/jazz_lookup.png",       1,1,48,38,1 ,22,37);
-    addAnimation(AnimState::CROUCH,                     "Data/Assets/jazz_crouch.png",       1,1,56,20,1 ,17,19);
-    addAnimation(AnimState::SHOOT,                      "Data/Assets/jazz_shoot.png",        2,1,44,43,8,17,42);
-    addAnimation(AnimState::CROUCH | AnimState::SHOOT,  "Data/Assets/jazz_crouch_shoot.png", 1,2,63,21,8,16,20);
-    addAnimation(AnimState::LOOKUP | AnimState::SHOOT,  "Data/Assets/jazz_shoot_up.png",     2,1,37,66,8,19,64);
-    addAnimation(AnimState::HURT,                       "Data/Assets/jazz_hurt.png",         9,1,72,64,15,33,52);
-    addAnimation(AnimState::UPPERCUT,                   "Data/Assets/jazz_uppercut.png",     3,1,23,55,11,11,36);
-    addAnimation(AnimState::BUTTSTOMP,                  "Data/Assets/jazz_buttstomp.png",    8,1,47,58,15,23,56);
-    addAnimation(AnimState::HOOK,                       "Data/Assets/jazz_vine.png",         1,1,30,50,1 , 9,34);
-    addAnimation(AnimState::HOOK | AnimState::RUN,      "Data/Assets/jazz_vine_move.png",    8,1,55,65,15,27,44);
+    addAnimation(AnimState::IDLE,                       "jazz/idle.png",         1,1,34,48,1 ,16,47);
+    addAnimation(AnimState::RUN,                        "jazz/run.png",          8,1,56,43,15,24,42);
+    addAnimation(AnimState::JUMP,                       "jazz/jump.png",         3,1,40,49,15,23,47);
+    addAnimation(AnimState::RUN | AnimState::JUMP,      "jazz/jump_diag.png",    9,1,49,55,15,21,42);
+    addAnimation(AnimState::FALL,                       "jazz/fall.png",         3,1,57,47,15,25,43);
+    addAnimation(AnimState::RUN | AnimState::FALL,      "jazz/fall_diag.png",    3,1,34,47,30,15,44);
+    addAnimation(AnimState::DASH,                       "jazz/dash.png",         4,1,67,40,15,30,33);
+    addAnimation(AnimState::DASH | AnimState::JUMP,     "jazz/ball.png",         8,1,35,28,15,19,29);
+    addAnimation(AnimState::DASH | AnimState::FALL,     "jazz/fall_diag.png",    3,1,34,47,15,15,38);
+    addAnimation(AnimState::LOOKUP,                     "jazz/lookup_start.png", 1,1,48,38,1 ,22,37);
+    addAnimation(AnimState::CROUCH,                     "jazz/crouch.png",       1,1,56,20,1 ,17,19);
+    addAnimation(AnimState::SHOOT,                      "jazz/shoot.png",        2,1,44,43,8,17,42);
+    addAnimation(AnimState::CROUCH | AnimState::SHOOT,  "jazz/crouch_shoot.png", 2,1,63,21,8,16,20);
+    addAnimation(AnimState::LOOKUP | AnimState::SHOOT,  "jazz/shoot_ver.png",    2,1,37,66,8,19,64);
+    addAnimation(AnimState::HURT,                       "jazz/hurt.png",         9,1,72,64,15,33,52);
+    addAnimation(AnimState::UPPERCUT,                   "jazz/uppercut.png",     3,1,23,55,11,11,36);
+    addAnimation(AnimState::BUTTSTOMP,                  "jazz/buttstomp.png",    8,1,47,58,15,23,56);
+    addAnimation(AnimState::HOOK,                       "jazz/vine_idle.png",    1,1,30,50,1 , 9,34);
+    addAnimation(AnimState::HOOK | AnimState::RUN,      "jazz/vine_walk.png",    8,1,55,65,15,27,44);
 
     // temp
-    anim_idx = addAnimation(AnimState::COPTER,                     "Data/Assets/jazz_copter.png",        8,1,36,52,10,18,47);
+    anim_idx = addAnimation(AnimState::COPTER,                     "jazz/copter.png",        8,1,36,52,10,18,47);
     assignAnimation(AnimState::COPTER | AnimState::FALL, anim_idx);
     assignAnimation(AnimState::COPTER | AnimState::FALL | AnimState::WALK, anim_idx);
     assignAnimation(AnimState::COPTER | AnimState::FALL | AnimState::RUN, anim_idx);
     assignAnimation(AnimState::COPTER | AnimState::FALL | AnimState::DASH, anim_idx);
 
-    anim_idx = addAnimation(AnimState::SHOOT | AnimState::FALL, "Data/Assets/jazz_fall_shoot.png",2,1,43,56,20,11,50);
+    anim_idx = addAnimation(AnimState::SHOOT | AnimState::FALL, "jazz/fall_shoot.png",2,1,43,56,20,11,50);
     assignAnimation(AnimState::JUMP | AnimState::SHOOT, anim_idx);
     assignAnimation(AnimState::WALK | AnimState::FALL | AnimState::SHOOT, anim_idx);
     assignAnimation(AnimState::WALK | AnimState::JUMP | AnimState::SHOOT, anim_idx);
@@ -69,23 +69,23 @@ Player::Player(CarrotQt5* root, double x, double y) : CommonActor(root, x, y, fa
     assignAnimation(AnimState::DASH | AnimState::FALL | AnimState::SHOOT, anim_idx);
     assignAnimation(AnimState::DASH | AnimState::JUMP | AnimState::SHOOT, anim_idx);
     
-    addAnimation(AnimState::TRANSITION_RUN_TO_IDLE,       "Data/Assets/jazz_run_to_stand.png",      8,1,73,56,15,32,54);
-    addAnimation(AnimState::TRANSITION_RUN_TO_DASH,       "Data/Assets/jazz_run_to_dash.png",       8,1,67,35,20,30,34);
-    addAnimation(AnimState::TRANSITION_IDLE_FALL_TO_IDLE, "Data/Assets/jazz_fall_to_stand.png",     5,1,62,46,15,20,45);
-    addAnimation(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE,"Data/Assets/jazz_shoot_to_stand.png",    4,1,49,56,15,20,54);
-    addAnimation(AnimState::TRANSITION_UPPERCUT_A,        "Data/Assets/jazz_crouch_to_uppercut.png",4,1,55,52,15,17,46);
-    addAnimation(AnimState::TRANSITION_UPPERCUT_B,        "Data/Assets/jazz_uppercut_start.png"    ,3,1,55,52,15,17,46);
-    addAnimation(AnimState::TRANSITION_END_UPPERCUT,      "Data/Assets/jazz_uppercut_to_jump.png"  ,2,1,50,51,15,31,44);
-    addAnimation(AnimState::TRANSITION_BUTTSTOMP_START,   "Data/Assets/jazz_buttstomp_start.png"   ,8,1,47,52,15,24,44);
-    addAnimation(AnimState::TRANSITION_POLE_H,            "Data/Assets/jazz_hpole.png"             ,1,6,100,31,24,49,30);
-    addAnimation(AnimState::TRANSITION_POLE_H_SLOW,       "Data/Assets/jazz_hpole.png"             ,1,6,100,31,12,49,30);
-    addAnimation(AnimState::TRANSITION_POLE_V,            "Data/Assets/jazz_vpole.png"             ,6,1,32,101,24,16,52);
-    addAnimation(AnimState::TRANSITION_POLE_V_SLOW,       "Data/Assets/jazz_vpole.png"             ,6,1,32,101,12,16,52);
-    addAnimation(AnimState::TRANSITION_DEATH,             "Data/Assets/jazz_die.png"               ,5,4,98,76,15,55,64);
-    addAnimation(AnimState::TRANSITION_WARP,              "Data/Assets/jazz_warp_in.png"           ,7,1,29,73,15,16,57);
-    addAnimation(AnimState::TRANSITION_WARP_END,          "Data/Assets/jazz_warp_out.png"          ,4,2,58,73,15,16,57);
+    addAnimation(AnimState::TRANSITION_RUN_TO_IDLE,       "jazz/run_stop.png",          8,1,73,56,15,32,54);
+    addAnimation(AnimState::TRANSITION_RUN_TO_DASH,       "jazz/dash_start.png",        8,1,67,35,20,30,34);
+    addAnimation(AnimState::TRANSITION_IDLE_FALL_TO_IDLE, "jazz/fall_end.png",          5,1,62,46,15,20,45);
+    addAnimation(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE,"jazz/shoot_end.png",         4,1,49,56,15,20,54);
+    addAnimation(AnimState::TRANSITION_UPPERCUT_A,        "jazz/uppercut_start.png",    4,1,55,52,15,17,46);
+    addAnimation(AnimState::TRANSITION_UPPERCUT_B,        "jazz/uppercut_start.png"    ,3,1,55,52,15,17,46);
+    addAnimation(AnimState::TRANSITION_END_UPPERCUT,      "jazz/uppercut_end.png"      ,2,1,50,51,15,31,44);
+    addAnimation(AnimState::TRANSITION_BUTTSTOMP_START,   "jazz/spring.png"            ,8,1,47,52,15,24,44);
+    addAnimation(AnimState::TRANSITION_POLE_H,            "jazz/pole_h.png"            ,6,1,100,31,24,49,30);
+    addAnimation(AnimState::TRANSITION_POLE_H_SLOW,       "jazz/pole_h.png"            ,6,1,100,31,12,49,30);
+    addAnimation(AnimState::TRANSITION_POLE_V,            "jazz/pole_v.png"            ,6,1,32,101,24,16,52);
+    addAnimation(AnimState::TRANSITION_POLE_V_SLOW,       "jazz/pole_v.png"            ,6,1,32,101,12,16,52);
+    addAnimation(AnimState::TRANSITION_DEATH,             "jazz/die.png"               ,20,1,98,76,15,55,64);
+    addAnimation(AnimState::TRANSITION_WARP,              "jazz/warp_in.png"           ,7,1,29,73,15,16,57);
+    addAnimation(AnimState::TRANSITION_WARP_END,          "jazz/warp_out.png"          ,8,1,58,73,15,16,57);
 
-    anim_idx = addAnimation(AnimState::UI_PLAYER_FACE, "Data/Assets/ui_player_jazz.png",  37,1,36,38,10,0,0);
+    anim_idx = addAnimation(AnimState::UI_PLAYER_FACE, "ui/icon_jazz.png",  37,1,39,39,10,0,0);
     ui_icon_sprite = new sf::Sprite();
     ui_icon_sprite->setTexture(*(animation_bank.at(anim_idx)->animation_frames));
     ui_icon_sprite->setTextureRect(sf::IntRect(0,0,animation_bank.at(anim_idx)->frame_width,animation_bank.at(anim_idx)->frame_height));
@@ -94,27 +94,27 @@ Player::Player(CarrotQt5* root, double x, double y) : CommonActor(root, x, y, fa
     addTimer(7u,true,static_cast< ActorFunc >(&Player::advanceCharIconFrame));
 
     heart_tex = sf::Texture();
-    heart_tex.loadFromFile("Data/Assets/heart.png");
+    heart_tex.loadFromFile("Data/Assets/ui/heart.png");
     
     std::fill_n(weapon_ui_animations, 9, -1);
-    weapon_ui_animations[0] = addAnimation(AnimState::UI_WEAPON_BLASTER, "Data/Assets/ui_weapon_blaster.png",  10,1,17,22,10,5,12);
-    weapon_ui_animations[1] = addAnimation(AnimState::UI_WEAPON_BOUNCER, "Data/Assets/ui_weapon_bouncer.png",  10,1,16,13,10,5,7);
-    weapon_ui_animations[2] = addAnimation(AnimState::UI_WEAPON_FREEZER, "Data/Assets/ui_weapon_freezer.png",  10,1,13,15,10,4,8);
-    weapon_ui_animations[3] = addAnimation(AnimState::UI_WEAPON_SEEKER,  "Data/Assets/ui_weapon_seeker.png",   10,1,19,20,10,7,10);
-    weapon_ui_animations[4] = addAnimation(AnimState::UI_WEAPON_RF,      "Data/Assets/ui_weapon_rf.png",       10,1,13,20,10,4,10);
-    weapon_ui_animations[5] = addAnimation(AnimState::UI_WEAPON_TOASTER, "Data/Assets/ui_weapon_toaster.png",  10,1,16,14,10,5,7);
-    weapon_ui_animations[6] = addAnimation(AnimState::UI_WEAPON_TNT,     "Data/Assets/ui_weapon_tnt.png",      10,1,20,27,10,7,13);
-    weapon_ui_animations[7] = addAnimation(AnimState::UI_WEAPON_PEPPER,  "Data/Assets/ui_weapon_pepper.png",   9 ,1,15,13,10,5,7);
-    weapon_ui_animations[8] = addAnimation(AnimState::UI_WEAPON_ELECTRO, "Data/Assets/ui_weapon_electro.png",  10,1,30,21,10,14,10);
+    weapon_ui_animations[0] = addAnimation(AnimState::UI_WEAPON_BLASTER, "pickup/fast_fire_jazz.png",  10,1,17,22,10,5,12);
+    weapon_ui_animations[1] = addAnimation(AnimState::UI_WEAPON_BOUNCER, "pickup/ammo_bouncer.png",  10,1,16,13,10,5,7);
+    weapon_ui_animations[2] = addAnimation(AnimState::UI_WEAPON_FREEZER, "pickup/ammo_freezer.png",  10,1,13,15,10,4,8);
+    weapon_ui_animations[3] = addAnimation(AnimState::UI_WEAPON_SEEKER,  "pickup/ammo_seeker.png",   10,1,19,20,10,7,10);
+    weapon_ui_animations[4] = addAnimation(AnimState::UI_WEAPON_RF,      "pickup/ammo_rf.png",       10,1,13,20,10,4,10);
+    weapon_ui_animations[5] = addAnimation(AnimState::UI_WEAPON_TOASTER, "pickup/ammo_toaster.png",  10,1,16,14,10,5,7);
+    weapon_ui_animations[6] = addAnimation(AnimState::UI_WEAPON_TNT,     "pickup/ammo_tnt.png",      10,1,20,27,10,7,13);
+    weapon_ui_animations[7] = addAnimation(AnimState::UI_WEAPON_PEPPER,  "pickup/ammo_pepper.png",   9 ,1,15,13,10,5,7);
+    weapon_ui_animations[8] = addAnimation(AnimState::UI_WEAPON_ELECTRO, "pickup/ammo_electro.png",  10,1,30,21,10,14,10);
     ui_weapon_sprite = new sf::Sprite();
     ui_weapon_sprite->setTexture(*(animation_bank.at(weapon_ui_animations[0])->animation_frames));
     ui_weapon_sprite->setTextureRect(sf::IntRect(0,0,animation_bank.at(weapon_ui_animations[0])->frame_width,animation_bank.at(weapon_ui_animations[0])->frame_height));
     ui_weapon_sprite->setPosition(root->getViewWidth()  - 85 - animation_bank.at(weapon_ui_animations[0])->offset_x,
                                   root->getViewHeight() - 15 - animation_bank.at(weapon_ui_animations[0])->offset_y);
     
-    addAnimation(AnimState::UI_OSD_GEM_RED, "Data/Assets/gem_red.png",  8,1,25,26,10,10,13);
-    addAnimation(AnimState::UI_OSD_GEM_GREEN, "Data/Assets/gem_green.png",  8,1,25,26,10,10,13);
-    addAnimation(AnimState::UI_OSD_GEM_BLUE, "Data/Assets/gem_blue.png",  8,1,25,26,10,10,13);
+    addAnimation(AnimState::UI_OSD_GEM_RED, "pickup/gem.png",  8,1,25,26,10,10,13);
+    addAnimation(AnimState::UI_OSD_GEM_GREEN, "pickup/gem.png",  8,1,25,26,10,10,13);
+    addAnimation(AnimState::UI_OSD_GEM_BLUE, "pickup/gem.png",  8,1,25,26,10,10,13);
 
     setAnimation(AnimState::FALL);
     
@@ -624,9 +624,10 @@ void Player::tickEvent() {
     }
 }
 
+// TODO: Get rid of this, this is a ridiculous hack.
 void Player::advanceCharIconFrame() {
     ui_icon_frame = (ui_icon_frame + 1) % 37;
-    ui_icon_sprite->setTextureRect(sf::IntRect(ui_icon_frame*36,0,36,38));
+    ui_icon_sprite->setTextureRect(sf::IntRect(ui_icon_frame*39,0,39,39));
 
     if (weapon_ui_animations[currentWeapon] != -1) {
         ui_weapon_frame = (ui_weapon_frame + 1) % animation_bank.at(weapon_ui_animations[currentWeapon])->frame_cols;
@@ -776,7 +777,7 @@ void Player::deathRecovery() {
 }
 
 Hitbox Player::getHitbox() {
-    Hitbox nbox = {pos_x - 10, pos_y - 30, pos_x + 10, pos_y};
+    Hitbox nbox = {pos_x - 12, pos_y - 24, pos_x + 12, pos_y};
     return nbox;
 }
 

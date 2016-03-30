@@ -45,6 +45,9 @@
     <Filter Include="Source Files\Ammo Classes">
       <UniqueIdentifier>{c7ec9bdd-266f-4860-bb78-e69801f1750d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documents">
+      <UniqueIdentifier>{054157e3-7ab6-4826-a05c-7ee094a58a4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -271,5 +274,10 @@
     <ResourceCompile Include="CarrotQt5.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Filter>Documents</Filter>
+    </None>
   </ItemGroup>
 </Project>

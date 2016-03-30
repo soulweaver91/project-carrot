@@ -4,14 +4,14 @@
 #include "../CarrotQt5.h"
 
 Enemy_NormalTurtle::Enemy_NormalTurtle(CarrotQt5* root, double x, double y) : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
-    unsigned a = addAnimation(AnimState::WALK,"Data/Assets/nt_walk.png",4,3,70,57,10,35,52);
+    unsigned a = addAnimation(AnimState::WALK,"turtle/walk.png",12,1,70,57,10,35,52);
     assignAnimation(AnimState::IDLE, a);
     assignAnimation(AnimState::RUN, a);
     assignAnimation(AnimState::FALL, a);
     assignAnimation(AnimState::WALK | AnimState::FALL, a);
     
-    addAnimation(AnimState::TRANSITION_WITHDRAW,"Data/Assets/nt_shell_in.png",1,7,73,44,10,26,38);
-    addAnimation(AnimState::TRANSITION_WITHDRAW_END,"Data/Assets/nt_shell_out.png",1,6,73,44,10,26,38);
+    addAnimation(AnimState::TRANSITION_WITHDRAW,    "turtle/turn_start.png" ,7,1,73,44,10,26,38);
+    addAnimation(AnimState::TRANSITION_WITHDRAW_END,"turtle/turn_end.png"   ,6,1,73,44,10,26,38);
 
     setAnimation(AnimState::WALK);
     speed_h = 1;

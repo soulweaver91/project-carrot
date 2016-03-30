@@ -273,7 +273,7 @@ void CommonActor::tickEvent() {
 size_t CommonActor::addAnimation(ActorState state, const QString& filename, int frame_cols, int frame_rows,
                                int frame_width, int frame_height, int fps, int offset_x, int offset_y) {
     StateAnimationPair* new_ani = new StateAnimationPair();
-    sf::Texture* loaded_frames = root->getCachedTexture(filename);
+    sf::Texture* loaded_frames = root->getCachedTexture("Data/Assets/" + filename);
 
     if (loaded_frames != nullptr) {
         new_ani->animation_frames = loaded_frames;

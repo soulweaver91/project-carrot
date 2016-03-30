@@ -59,6 +59,10 @@ ipch/
 *.vsp
 *.vspx
 
+# Other VS
+.vs/
+*.VC.opendb
+
 # Guidance Automation Toolkit
 *.gpState
 
@@ -159,9 +163,7 @@ Levels/*
 Episodes/*
 Music/*
 RunTimeConverted/*
-
-# Unused, unnamed effects
-sfx_*.wav
+*.sln
 
 # Photoshop files
 *.psd

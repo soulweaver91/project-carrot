@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <SFML_DIR>K:\SFML\msvc2015_32</SFML_DIR>
+    <BASS_DIR>K:\Project Carrot\Bass</BASS_DIR>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="SFML_DIR">
+      <Value>$(SFML_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BASS_DIR">
+      <Value>$(BASS_DIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
