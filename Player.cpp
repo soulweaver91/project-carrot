@@ -777,7 +777,7 @@ void Player::deathRecovery() {
 }
 
 Hitbox Player::getHitbox() {
-    Hitbox nbox = {pos_x - 10, pos_y - 30, pos_x + 10, pos_y};
+    Hitbox nbox = {pos_x - 12, pos_y - 24, pos_x + 12, pos_y};
     return nbox;
 }
 
