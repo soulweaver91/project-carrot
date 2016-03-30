@@ -184,11 +184,11 @@ private:
     QList< DestructibleDebris* > debris;
     Player* players[32];
     bool paused;
-    sf::View* ui_view;
-    sf::Texture* winTex;
-    sf::RenderTexture* lightTex;
-    sf::Sprite* pauseCap;
-    BitmapString* pausedText;
+    std::unique_ptr<sf::View> uiView;
+    std::unique_ptr<sf::Texture> windowTexture;
+    std::unique_ptr<sf::RenderTexture> lightTexture;
+    std::unique_ptr<sf::Sprite> pauseCap;
+    std::unique_ptr<BitmapString> pausedText;
     QString levelName;
     QString nextLevel;
     unsigned long frame;
@@ -196,8 +196,8 @@ private:
     int lightingLevel;
     int targetLightingLevel;
     ExitType last_exit;
-    QMap< QString, sf::Texture* > tex_cache;
-    MenuScreen* menu_object;
+    QMap<QString, std::shared_ptr<sf::Texture>> textureCache;
+    std::shared_ptr<MenuScreen> menuObject;
     bool isMenu;
     QTime last_timestamp;
     float fps;

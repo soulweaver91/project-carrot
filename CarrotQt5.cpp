@@ -25,7 +25,7 @@
 #include <bass.h>
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), levelName(""), frame(0),
-    gravity(0.3), dbgShowMasked(false), lightingLevel(80), isMenu(false), mod_current(0), menu_object(nullptr), fps(0) {
+    gravity(0.3), dbgShowMasked(false), lightingLevel(80), isMenu(false), mod_current(0), menuObject(nullptr), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -55,7 +55,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     
     // Define the game view which we'll use for following the player
     game_view = new sf::View(sf::FloatRect(0.0,0.0,800.0,600.0));
-    ui_view = new sf::View(sf::FloatRect(0.0,0.0,800.0,600.0));
+    uiView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
 
     // Attempt to start up the sound system, using the default audio
     // device
@@ -91,32 +91,32 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     installEventFilter(this);
 
     // Define pause screen resources
-    winTex = new sf::Texture();
-    winTex->create(800,600);
-    winTex->update(*window);
+    windowTexture = std::make_unique<sf::Texture>();
+    windowTexture->create(800,600);
+    windowTexture->update(*window);
 
-    pauseCap = new sf::Sprite();
-    pauseCap->setTexture(*winTex);
+    pauseCap = std::make_unique<sf::Sprite>();
+    pauseCap->setTexture(*windowTexture);
 
     // Define the pause text and add vertical bounce animation to it
-    pausedText = new BitmapString(mainFont,"Pause",FONT_ALIGN_CENTER);
+    pausedText = std::make_unique<BitmapString>(mainFont,"Pause",FONT_ALIGN_CENTER);
     pausedText->setAnimation(true,0.0,6.0,0.015,1.25);
 
     // Create the light overlay texture
-    lightTex = new sf::RenderTexture();
-    lightTex->create(1600,1200);
+    lightTexture = std::make_unique<sf::RenderTexture>();
+    lightTexture->create(1600,1200);
 
     // Fill the light overlay texture with black
     sf::RectangleShape orect(sf::Vector2f(1600,1200));
     orect.setFillColor(sf::Color::Black);
-    lightTex->draw(orect);
+    lightTexture->draw(orect);
 
     // Create a hole in the middle
     sf::CircleShape ocirc(96);
     ocirc.setFillColor(sf::Color(0,0,0,0));
     ocirc.setOrigin(96,96);
     ocirc.setPosition(800, 600);
-    lightTex->draw(ocirc, sf::RenderStates(sf::BlendNone));
+    lightTexture->draw(ocirc, sf::RenderStates(sf::BlendNone));
 
     // TODO: create a feather effect
     // check the shader stuff and apply them to the texture here
@@ -142,7 +142,6 @@ CarrotQt5::~CarrotQt5() {
     delete sfxsys;
     delete window;
     delete game_view;
-    delete ui_view;
 }
 
 void CarrotQt5::parseCommandLine() {
@@ -176,7 +175,7 @@ void CarrotQt5::cleanUpLevel() {
     }
     clearTextureCache();
     
-    window->setView(*ui_view);
+    window->setView(*uiView);
 }
 
 void CarrotQt5::startGame(QVariant filename) {
@@ -186,11 +185,7 @@ void CarrotQt5::startGame(QVariant filename) {
             myTimer.setInterval(1000 / 70);
             myTimer.disconnect(this,SLOT(mainMenuTick()));
             connect(&myTimer, SIGNAL(timeout()), this, SLOT(gameTick()));
-
-            if (menu_object != nullptr) {
-                delete menu_object;
-            }
-            menu_object = nullptr;
+            menuObject = nullptr;
 
             myTimer.start();
             isMenu = false;
@@ -210,7 +205,7 @@ void CarrotQt5::startMainMenu() {
     setWindowTitle("Project Carrot");
     setMusic("Music/Menu.it");
 
-    menu_object = new MenuScreen(shared_from_this());
+    menuObject = std::make_unique<MenuScreen>(shared_from_this());
 }
 
 void CarrotQt5::openAboutCarrot() {
@@ -250,19 +245,19 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
     } else if (e->type() == QEvent::WindowDeactivate) {
         BASS_ChannelSlideAttribute(currentMusic,BASS_ATTRIB_MUSIC_VOL_GLOBAL,0,1000);
         paused = true;
-        window->setView(*ui_view);
-        winTex->update(*window);
+        window->setView(*uiView);
+        windowTexture->update(*window);
     } else if (e->type() == QEvent::Resize) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
 
         game_view->setSize(w,h);
-        ui_view->setSize(w,h);
-        ui_view->setCenter(w/2.0,h/2.0);
+        uiView->setSize(w,h);
+        uiView->setCenter(w/2.0,h/2.0);
         ui.mainFrame->resize(ui.centralWidget->size());
         window->setSize(sf::Vector2u(w,h));
-        window->setView(*ui_view);
-        winTex->create(w,h);
+        window->setView(*uiView);
+        windowTexture->create(w,h);
     }
     return FALSE;  // dispatch normally
 }
@@ -293,8 +288,8 @@ void CarrotQt5::keyPressEvent(QKeyEvent* event) {
             mod_current = (mod_current + 31) % 32;
         }
     } else {
-        if (menu_object != nullptr) {
-            menu_object->keyPressEvent(event);
+        if (menuObject != nullptr) {
+            menuObject->keyPressEvent(event);
         }
     }
 }
@@ -316,8 +311,8 @@ void CarrotQt5::mainMenuTick() {
     // Clear the drawing surface
     window->clear();
     
-    if (menu_object != nullptr) {
-        menu_object->tickEvent();
+    if (menuObject != nullptr) {
+        menuObject->tickEvent();
     }
     
     // Update the drawn surface to the screen
@@ -401,14 +396,14 @@ void CarrotQt5::gameTick() {
     game_tiles->drawHigherLevels();
 
     // Draw the lighting overlay
-    sf::Sprite s(lightTex->getTexture());
+    sf::Sprite s(lightTexture->getTexture());
     s.setColor(sf::Color(255,255,255,(255 * (100 - lightingLevel) / 100)));
     s.setOrigin(800,600);
     s.setPosition(players[0]->getPosition().x,players[0]->getPosition().y - 15); // middle of the sprite vertically
     window->draw(s);
 
     // Draw the UI
-    window->setView(*ui_view);
+    window->setView(*uiView);
     
     // Draw the character icon; managed by the player object
     players[0]->drawUIOverlay();
@@ -792,27 +787,21 @@ int CarrotQt5::getLightingLevel() {
 }
 
 sf::Texture* CarrotQt5::getCachedTexture(const QString& filename) {
-    if (!tex_cache.contains(filename)) {
+    if (!textureCache.contains(filename)) {
         // try to add the texture to the cache
-        sf::Texture* t = new sf::Texture();
+        auto t = std::make_shared<sf::Texture>();
         if (t->loadFromFile(filename.toStdString())) {
-            tex_cache.insert(filename,t);
-            return t;
+            textureCache.insert(filename, t);
+            return t.get();
         } else {
-            delete t;
             return nullptr;
         }
     }
-    return tex_cache.value(filename);
+    return textureCache.value(filename).get();
 }
 
 void CarrotQt5::clearTextureCache() {
-    QMapIterator<QString, sf::Texture*> iter(tex_cache);
-    while (iter.hasNext()) {
-        iter.next();
-        delete tex_cache.value(iter.key());
-    }
-    tex_cache.clear();
+    textureCache.clear();
 }
 
 void CarrotQt5::invokeFunction(InvokableRootFunction func, QVariant param) {
