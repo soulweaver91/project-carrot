@@ -62,6 +62,7 @@ ipch/
 # Other VS
 .vs/
 *.VC.opendb
+*.VC.db
 
 # Guidance Automation Toolkit
 *.gpState

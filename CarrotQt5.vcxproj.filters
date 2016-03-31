@@ -48,6 +48,9 @@
     <Filter Include="Documents">
       <UniqueIdentifier>{054157e3-7ab6-4826-a05c-7ee094a58a4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documents\Data/Assets">
+      <UniqueIdentifier>{542d696a-c6ee-4e82-b646-aaf4af6503e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -266,6 +269,12 @@
   <ItemGroup>
     <None Include="README.md">
       <Filter>Documents</Filter>
+    </None>
+    <None Include=".gitignore">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="Data\Assets\.gitignore">
+      <Filter>Documents\Data/Assets</Filter>
     </None>
   </ItemGroup>
 </Project>
