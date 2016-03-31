@@ -1,4 +1,4 @@
-# project-carrot
+# Project Carrot
 Project Carrot is a slowly progressing Jazz Jackrabbit 2 engine clone. You can discuss it
 [here](http://www.jazz2online.com/jcf/showthread.php?t=19535), though at the moment both
 the project and the thread have been inactive for months.
