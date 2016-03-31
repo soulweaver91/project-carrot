@@ -77,12 +77,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_Player.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_CommonActor.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_CommonActor.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_CarrotQt5.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -127,12 +121,6 @@
     </ClCompile>
     <ClCompile Include="SavePoint.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_SavePoint.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_SavePoint.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="AmmoClasses\AmmoToaster.cpp">
       <Filter>Source Files\Ammo Classes</Filter>

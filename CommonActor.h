@@ -118,9 +118,6 @@ struct ActorTimer {
 };
 
 class CommonActor : public QObject {
-
-    Q_OBJECT
-
 public:
     CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();
