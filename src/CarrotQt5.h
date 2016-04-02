@@ -151,13 +151,13 @@ public:
     void initLevelChange(ExitType e = NEXT_NORMAL);
     bool isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collided);
     bool isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me);
+    std::weak_ptr<CarrotCanvas> getCanvas();
     std::weak_ptr<Player> getPlayer(unsigned no);
     int getLightingLevel();
     sf::Texture* getCachedTexture(const QString& filename);
     TileMap* game_tiles;
     EventMap* game_events;
     BitmapFont* mainFont;
-    CarrotCanvas* window;
     SFXSystem* sfxsys;
     double gravity;
     bool dbgShowMasked;
@@ -195,6 +195,7 @@ private:
     std::unique_ptr<sf::RenderTexture> lightTexture;
     std::unique_ptr<sf::Sprite> pauseCap;
     std::unique_ptr<BitmapString> pausedText;
+    std::shared_ptr<CarrotCanvas> windowCanvas;
     QString levelName;
     QString nextLevel;
     unsigned long frame;

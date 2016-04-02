@@ -94,18 +94,28 @@ void TileMap::readTileset(const QString& file_tiles, const QString& file_mask) {
 }
 
 void TileMap::drawLowerLevels() {
+    auto canvas = root->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     // lower levels is everything below the sprite layer and the sprite layer itself
     for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
         if (level_layout.at(layer).type == LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(level_layout[layer]);
+        drawLayer(level_layout[layer], canvas);
     }
 }
 
 void TileMap::drawHigherLevels() {
+    auto canvas = root->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     // higher levels is only the foreground layers
     for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
         if (level_layout.at(layer).type != LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(level_layout[layer]);
+        drawLayer(level_layout[layer], canvas);
     }
 }
 
@@ -132,7 +142,7 @@ void TileMap::initializeBackgroundTexture(TileMapLayer& background) {
     }
 }
 
-void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y) {
+void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target) {
     // update animated tiles on the cache texture
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
@@ -195,8 +205,8 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     states.transform = transform;
 
     // draw background and the fade effect
-    root->window->draw(prim,states);
-    root->window->draw(*tex_fade.get(), transform);
+    target->draw(prim,states);
+    target->draw(*tex_fade.get(), transform);
 }
 
 double TileMap::translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& is_y) const {
@@ -211,7 +221,7 @@ double TileMap::translateCoordinate(const double& coordinate, const double& spee
     return ((coordinate * speed + offset + (70 + (is_y ? (root->getViewHeight() - 200) : (root->getViewWidth() - 320)) / 2) * (speed - 1)));
 }
 
-void TileMap::drawLayer(TileMapLayer& layer) {
+void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target) {
     if (root->dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
         // only draw sprite layer in collision debug mode
         return;
@@ -303,7 +313,7 @@ void TileMap::drawLayer(TileMapLayer& layer) {
     if (layer.textured && (lh == 8) && (lw == 8)) {
         drawTexturedBackground(layer,
                 fmod((x1 + rem_x) * (root->mod_temp[3] / 10.0) + lox, 256.0),
-                fmod((y1 + rem_y) * (root->mod_temp[3] / 10.0) + loy, 256.0));
+                fmod((y1 + rem_y) * (root->mod_temp[3] / 10.0) + loy, 256.0), target);
     } else {
         int tile_xo = -1;
         for (double x2 = x1; x2 < x3; x2 += 32) {
@@ -342,18 +352,18 @@ void TileMap::drawLayer(TileMapLayer& layer) {
                     }
                     if (level_tileset.mask_full.at(idx)) {
                         b.setFillColor(sf::Color::White);
-                        root->window->draw(b);
+                        target->draw(b);
                     } else {
                         if (!level_tileset.mask_empty.at(idx)) {
                             b.setFillColor(sf::Color(255,255,255,128));
-                            root->window->draw(b);
+                            target->draw(b);
                         }
                     }
                     if (ani || layer.tile_layout.at(tile_y).at(tile_x).dtype != TileDestructType::DESTRUCT_NONE) {
                         b.setFillColor(sf::Color::Transparent);
                         b.setOutlineThickness(-3);
                         b.setOutlineColor(sf::Color(255,0,128,255));
-                        root->window->draw(b);
+                        target->draw(b);
                     }
                     continue;
                 }
@@ -371,7 +381,7 @@ void TileMap::drawLayer(TileMapLayer& layer) {
                 // rounding to nearest integer is necessary because otherwise there will be tearing
                 if (spr != nullptr) {
                     spr->setPosition((float)qRound(x2), (float)qRound(y2));
-                    root->window->draw(*spr);
+                    target->draw(*spr);
                 }
             }
         }
@@ -546,16 +556,19 @@ bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
         int hy1 = floor(hbox.top);
         int hy2 = ceil(hbox.bottom);
         if (root->dbgShowMasked) {
-            // debug code
-            sf::RectangleShape b(sf::Vector2f((hx2 / 32 - hx1 / 32) * 32 + 32,(hy2 / 32 - hy1 / 32) * 32 + 32));
-            b.setPosition(hx1 / 32 * 32,hy1 / 32 * 32);
-            b.setFillColor(sf::Color::Green);
-            root->window->draw(b);
+            auto target = root->getCanvas().lock();
+            if (target != nullptr) {
+                // debug code
+                sf::RectangleShape b(sf::Vector2f((hx2 / 32 - hx1 / 32) * 32 + 32,(hy2 / 32 - hy1 / 32) * 32 + 32));
+                b.setPosition(hx1 / 32 * 32,hy1 / 32 * 32);
+                b.setFillColor(sf::Color::Green);
+                target->draw(b);
             
-            sf::RectangleShape a(sf::Vector2f(hbox.right-hbox.left, hbox.bottom-hbox.top));
-            a.setPosition(hbox.left,hbox.top);
-            a.setFillColor(sf::Color::Blue);
-            root->window->draw(a);
+                sf::RectangleShape a(sf::Vector2f(hbox.right-hbox.left, hbox.bottom-hbox.top));
+                a.setPosition(hbox.left,hbox.top);
+                a.setFillColor(sf::Color::Blue);
+                target->draw(a);
+            }
         }
         for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
             for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
@@ -572,7 +585,10 @@ bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
                         sf::RectangleShape a(sf::Vector2f(32,32));
                         a.setPosition(x*32,y*32);
                         a.setFillColor(sf::Color::Red);
-                        root->window->draw(a);
+                        auto target = root->getCanvas().lock();
+                        if (target != nullptr) {
+                            target->draw(a);
+                        }
                     }
                     break;
                 }
@@ -896,7 +912,7 @@ void TileMap::advanceAnimatedTileTimers() {
     }
 }
 
-DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> tex, sf::RenderTarget* win, 
+DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> tex, std::weak_ptr<sf::RenderTarget> win,
     int x, int y, unsigned tx, unsigned ty, unsigned short quarter)
     : pos_x(x * 32 + (quarter % 2) * 16), pos_y(y * 32 + (quarter / 2) * 16), h_speed(0), v_speed(0), wint(win) {
     // different quarters of the debris fly out with different x speeds
@@ -918,7 +934,11 @@ void DestructibleDebris::TickUpdate() {
     v_speed = std::min(5.0,v_speed);
 
     spr->setPosition(pos_x,pos_y);
-    wint->draw(*spr);
+
+    auto canvas = wint.lock();
+    if (canvas != nullptr) {
+        canvas->draw(*spr);
+    }
 }
 
 double DestructibleDebris::GetY() {

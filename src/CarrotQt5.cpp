@@ -45,8 +45,8 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     connect(ui.debug_masks,SIGNAL(triggered(bool)),this,SLOT(debugShowMasks(bool)));
 
     // Initialize the paint surface
-    window = new CarrotCanvas(ui.mainFrame, QPoint(0, 0), QSize(800, 600));
-    window->show();
+    windowCanvas = std::make_shared<CarrotCanvas>(ui.mainFrame, QPoint(0, 0), QSize(800, 600));
+    windowCanvas->show();
     
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
@@ -94,7 +94,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     // Define pause screen resources
     windowTexture = std::make_unique<sf::Texture>();
     windowTexture->create(800,600);
-    windowTexture->update(*window);
+    windowTexture->update(*windowCanvas);
 
     pauseCap = std::make_unique<sf::Sprite>();
     pauseCap->setTexture(*windowTexture);
@@ -141,7 +141,6 @@ CarrotQt5::~CarrotQt5() {
         clearTextureCache();
     }
     delete sfxsys;
-    delete window;
     delete game_view;
 }
 
@@ -169,7 +168,7 @@ void CarrotQt5::cleanUpLevel() {
     std::fill_n(players, 32, nullptr);
     clearTextureCache();
     
-    window->setView(*uiView);
+    windowCanvas->setView(*uiView);
 }
 
 void CarrotQt5::startGame(QVariant filename) {
@@ -239,8 +238,8 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
     } else if (e->type() == QEvent::WindowDeactivate) {
         BASS_ChannelSlideAttribute(currentMusic,BASS_ATTRIB_MUSIC_VOL_GLOBAL,0,1000);
         paused = true;
-        window->setView(*uiView);
-        windowTexture->update(*window);
+        windowCanvas->setView(*uiView);
+        windowTexture->update(*windowCanvas);
     } else if (e->type() == QEvent::Resize) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
@@ -249,8 +248,8 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
         uiView->setSize(w,h);
         uiView->setCenter(w/2.0,h/2.0);
         ui.mainFrame->resize(ui.centralWidget->size());
-        window->setSize(sf::Vector2u(w,h));
-        window->setView(*uiView);
+        windowCanvas->setSize(sf::Vector2u(w,h));
+        windowCanvas->setView(*uiView);
         windowTexture->create(w,h);
     }
     return FALSE;  // dispatch normally
@@ -303,14 +302,14 @@ void CarrotQt5::mainMenuTick() {
     frame++;
     
     // Clear the drawing surface
-    window->clear();
+    windowCanvas->clear();
     
     if (menuObject != nullptr) {
         menuObject->tickEvent();
     }
     
     // Update the drawn surface to the screen
-    window->updateContents();
+    windowCanvas->updateContents();
 }
 
 void CarrotQt5::gameTick() {
@@ -326,34 +325,33 @@ void CarrotQt5::gameTick() {
         sf::RectangleShape overlay(sf::Vector2f(800.0,600.0));
         overlay.setFillColor(sf::Color(0,0,0,120));
         
-        window->draw(*pauseCap);
-        window->draw(overlay);
+        windowCanvas->draw(*pauseCap);
+        windowCanvas->draw(overlay);
 
         // Draw the pause string
-        pausedText->drawString(window,400,280);
+        pausedText->drawString(getCanvas(), 400, 280);
 
         // Update the display
-        //window->display();
-        window->updateContents();
+        windowCanvas->updateContents();
         return;
     }
 
     // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
-    window->clear();
+    windowCanvas->clear();
 
     // Set player to the center of the view
     players[0]->setToViewCenter(game_view);
-    window->setView(*game_view);
+    windowCanvas->setView(*game_view);
 
     // Deactivate far away instances, create near instances
-    int view_x = static_cast<unsigned>(window->getView().getCenter().x) / 32;
-    int view_y = static_cast<unsigned>(window->getView().getCenter().y) / 32;
+    int view_x = static_cast<unsigned>(windowCanvas->getView().getCenter().x) / 32;
+    int view_y = static_cast<unsigned>(windowCanvas->getView().getCenter().y) / 32;
     for(unsigned i = 0; i < actors.size(); i++) {
         if (actors.at(i)->deactivate(view_x,view_y,32)) {
             --i;
         }
     }
-    game_events->activateEvents(window->getView());
+    game_events->activateEvents(windowCanvas->getView());
 
     // Run animated tiles' timers
     game_tiles->advanceAnimatedTileTimers();
@@ -380,7 +378,7 @@ void CarrotQt5::gameTick() {
     // ...then all the debris elements...
     for (unsigned i = 0; i < debris.size(); i++) {
         debris.at(i)->TickUpdate();
-        if (debris.at(i)->GetY() - window->getView().getCenter().y > 400) {
+        if (debris.at(i)->GetY() - windowCanvas->getView().getCenter().y > 400) {
             debris.erase(debris.begin() + i);
             --i;
         }
@@ -393,23 +391,23 @@ void CarrotQt5::gameTick() {
     s.setColor(sf::Color(255,255,255,(255 * (100 - lightingLevel) / 100)));
     s.setOrigin(800,600);
     s.setPosition(players[0]->getPosition().x,players[0]->getPosition().y - 15); // middle of the sprite vertically
-    window->draw(s);
+    windowCanvas->draw(s);
 
     // Draw the UI
-    window->setView(*uiView);
+    windowCanvas->setView(*uiView);
     
     // Draw the character icon; managed by the player object
     players[0]->drawUIOverlay();
     
     //BitmapString::drawString(window,mainFont,"Frame: " + QString::number(frame),6,56);
-    BitmapString::drawString(window,mainFont,"Actors: " + QString::number(actors.size()),6,176);
-    BitmapString::drawString(window,mainFont,"FPS: " + QString::number(fps,'f',2) + " at " + QString::number(1000 / fps) + "ms/f",6,56);
-    BitmapString::drawString(window,mainFont,"Mod-" + QString::number(mod_current) + " " + mod_name[mod_current] + ": " + QString::number(mod_temp[mod_current]),6,540);
+    BitmapString::drawString(getCanvas(),mainFont,"Actors: " + QString::number(actors.size()),6,176);
+    BitmapString::drawString(getCanvas(),mainFont,"FPS: " + QString::number(fps,'f',2) + " at " + QString::number(1000 / fps) + "ms/f",6,56);
+    BitmapString::drawString(getCanvas(),mainFont,"Mod-" + QString::number(mod_current) + " " + mod_name[mod_current] + ": " + QString::number(mod_temp[mod_current]),6,540);
 
     // Update the drawn surface to the screen and set the view back to the player
-    //window->display();
-    window->updateContents();
-    window->setView(*game_view);
+    //windowCanvas->display();
+    windowCanvas->updateContents();
+    windowCanvas->setView(*game_view);
 
 }
 
@@ -479,16 +477,16 @@ bool CarrotQt5::loadLevel(const QString& name) {
             setLevelName(level_config.value("Level/FormalName","Unnamed level").toString());
 
             // Clear the window contents
-            window->clear();
+            windowCanvas->clear();
 
             // Show loading screen
             sf::Texture t;
             t.loadFromFile("Data/Assets/screen_loading.png");
             sf::Sprite s(t);
             s.setPosition(80,60);
-            window->draw(s);
-            BitmapString::drawString(window,mainFont,levelName,400,360,FONT_ALIGN_CENTER);
-            window->updateContents();
+            windowCanvas->draw(s);
+            BitmapString::drawString(getCanvas(),mainFont,levelName,400,360,FONT_ALIGN_CENTER);
+            windowCanvas->updateContents();
             
             QString tileset = level_config.value("Level/Tileset","").toString();
             
@@ -685,7 +683,7 @@ unsigned long CarrotQt5::getFrame() {
 
 void CarrotQt5::createDebris(unsigned tile_id, int x, int y) {
     for (int i = 0; i < 4; ++i) {
-        auto d = std::make_shared<DestructibleDebris>(game_tiles->getTilesetTexture(), window, x, y, tile_id % 10, tile_id / 10,i);
+        auto d = std::make_shared<DestructibleDebris>(game_tiles->getTilesetTexture(), getCanvas(), x, y, tile_id % 10, tile_id / 10,i);
         debris.push_back(d);
     }
 }
@@ -805,6 +803,10 @@ void CarrotQt5::quitFromMainMenu(QVariant param) {
     this->close();
 }
 
+std::weak_ptr<CarrotCanvas> CarrotQt5::getCanvas() {
+    return this->windowCanvas;
+}
+
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     std::shared_ptr<CarrotQt5> w = std::make_shared<CarrotQt5>();
@@ -812,3 +814,4 @@ int main(int argc, char *argv[]) {
     w->parseCommandLine();
     return a.exec();
 }
+

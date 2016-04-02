@@ -6,7 +6,7 @@ CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double 
     speed_h(0), speed_v(0), thrust(0), push(0), canJump(false), facingLeft(false),
     inTransition(false), cancellableTransition(false), max_health(1), health(1), isGravityAffected(true),
     isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity/3),
-    isBlinking(false), isSuspended(false), pos_x(x), pos_y(y), destWindow(root->window),
+    isBlinking(false), isSuspended(false), pos_x(x), pos_y(y),
     current_animation(nullptr), transition(nullptr), createdFromEventMap(fromEventMap), animation_timer(-1l), next_timer(0) {
     origin_x = static_cast<int>(x) / 32;
     origin_y = static_cast<int>(y) / 32;
@@ -19,8 +19,13 @@ CommonActor::~CommonActor() {
 }
 
 void CommonActor::DrawUpdate() {
+    auto canvas = root->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     // Don't draw anything if we aren't in the vicinity of the view
-    sf::Vector2f view = root->window->getView().getCenter();
+    sf::Vector2f view = canvas->getView().getCenter();
     if ((std::abs(view.x - pos_x) > (root->getViewWidth() / 2) + 50)
      || (std::abs(view.y - pos_y) > (root->getViewHeight() / 2) + 50)) {
         return;
@@ -35,7 +40,7 @@ void CommonActor::DrawUpdate() {
             double ang = atan2(speed_v,speed_h);
             line.setRotation(180 + ang * 180 / 3.1415926535);
             line.setFillColor(sf::Color(255,255,0));
-            root->window->draw(line);
+            canvas->draw(line);
         }
     }
     
@@ -45,7 +50,7 @@ void CommonActor::DrawUpdate() {
     
         sprite.setScale((facingLeft ? -1 : 1),1);
         sprite.setPosition(pos_x,pos_y);
-        destWindow->draw(sprite);
+        canvas->draw(sprite);
     }
 }
 

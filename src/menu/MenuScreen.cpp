@@ -120,39 +120,44 @@ void MenuScreen::keyPressEvent(QKeyEvent* event) {
 }
 
 void MenuScreen::tickEvent() {
+    auto canvas = root->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     unsigned int view_w = root->getViewWidth();
     unsigned int view_h = root->getViewHeight();
 
     for (int i = 0; i < 4; ++i) {
         glow_b[i].rotate(0.4);
         glow_b[i].setPosition(sf::Vector2f(view_w/2,100));
-        root->window->draw(glow_b[i]);
+        canvas->draw(glow_b[i]);
     }
     glow_a.setPosition(sf::Vector2f(view_w/2,100));
     logo.setPosition(sf::Vector2f(view_w/2,10));
-    root->window->draw(glow_a);
-    root->window->draw(logo);
+    canvas->draw(glow_a);
+    canvas->draw(logo);
     
 
-    BitmapString::drawString(root->window,root->mainFont,CP_VERSION + " v" + QString::number(CP_VERSION_NUM),10,view_h-30);
-    attraction_text.drawString(root->window,view_w-10,view_h-30);
+    BitmapString::drawString(canvas,root->mainFont,CP_VERSION + " v" + QString::number(CP_VERSION_NUM),10,view_h-30);
+    attraction_text.drawString(canvas,view_w-10,view_h-30);
 
     switch (current_type) {
         case MENU_PLAIN_LIST:
             if (menu_options.size() < 10) {
                 for (int i = 0; i < menu_options.size(); ++i) {
-                    menu_options[i]->text->drawString(root->window,view_w / 2,200 + ((view_h - 280) / menu_options.size())*i);
+                    menu_options[i]->text->drawString(canvas,view_w / 2,200 + ((view_h - 280) / menu_options.size())*i);
                 }
             } else {
                 int j = 0 - std::min(0, selected_item - 5);
                 for (int i = std::max(0, selected_item - 5); i < std::min(menu_options.size(), selected_item + 6); ++i, ++j) {
-                    menu_options[i]->text->drawString(root->window,view_w / 2,226 + 26*j);
+                    menu_options[i]->text->drawString(canvas,view_w / 2,226 + 26*j);
                 }
                 if (selected_item > 5) {
-                    BitmapString::drawString(root->window,root->mainFont,"-=...=-",view_w / 2 - 40,200);
+                    BitmapString::drawString(canvas,root->mainFont,"-=...=-",view_w / 2 - 40,200);
                 }
                 if ((menu_options.size() - selected_item - 1) > 5) {
-                    BitmapString::drawString(root->window,root->mainFont,"-=...=-",view_w / 2 - 40,512);
+                    BitmapString::drawString(canvas,root->mainFont,"-=...=-",view_w / 2 - 40,512);
                 }
             }
             break;

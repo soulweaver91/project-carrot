@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <QString>
 #include <QList>
 #include <SFML/Graphics.hpp>
@@ -25,14 +26,15 @@ class BitmapFont {
 class BitmapString {
     public:
         BitmapString(BitmapFont* font, const QString& init_str = "", FontAlign init_align = FONT_ALIGN_LEFT);
-        void drawString(sf::RenderWindow* destWindow, int x, int y);
+        void drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x, int y);
         void setAnimation(bool set_anim = false, double x_var = 0.0, double y_var = 0.0,
                           double a_speed = 0.0, double a_angle = 0.0);
         void removeAnimation();
         void setText(QString text);
         void setColoured(bool state);
         unsigned getWidth();
-        static void drawString(sf::RenderWindow* destWindow, BitmapFont* font, QString text, int x, int y, FontAlign align = FONT_ALIGN_LEFT);
+        static void drawString(std::weak_ptr<sf::RenderWindow> destWindow, BitmapFont* font, QString text, 
+            int x, int y, FontAlign align = FONT_ALIGN_LEFT);
 
     private:
         unsigned updateWidth();

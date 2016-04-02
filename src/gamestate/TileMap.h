@@ -87,14 +87,14 @@ struct TileMapLayer {
 
 class DestructibleDebris {
     public:
-        DestructibleDebris(std::shared_ptr<sf::Texture> tex, sf::RenderTarget* win, 
+        DestructibleDebris(std::shared_ptr<sf::Texture> tex, std::weak_ptr<sf::RenderTarget> win, 
             int x, int y, unsigned tx, unsigned ty, unsigned short quarter);
         ~DestructibleDebris();
         void TickUpdate();
         double GetY();
     private:
         std::unique_ptr<sf::Sprite> spr;
-        sf::RenderTarget* wint;
+        std::weak_ptr<sf::RenderTarget> wint;
         double pos_x;
         double pos_y;
         double h_speed;
@@ -132,11 +132,11 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         bool isTileEmpty(const Hitbox& hbox, bool downwards = false);
     private:
         std::shared_ptr<CarrotQt5> root;
-        void drawLayer(TileMapLayer& layer);
+        void drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target);
         double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& is_y) const;
         void updateSprLayerIdx();
         void initializeBackgroundTexture(TileMapLayer& background);
-        void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y);
+        void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target);
         Tileset level_tileset;
         QList< TileMapLayer > level_layout;
         unsigned spr_layer;

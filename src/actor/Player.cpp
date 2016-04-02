@@ -634,17 +634,22 @@ unsigned Player::getHealth() {
 }
 
 void Player::drawUIOverlay() {
+    auto canvas = root->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     unsigned vw = root->getViewWidth();
     unsigned vh = root->getViewHeight();
-    root->window->draw(*ui_icon_sprite);
-    root->window->draw(*ui_weapon_sprite);
-    livesString->drawString(root->window,40,vh - 25);
+    canvas->draw(*ui_icon_sprite);
+    canvas->draw(*ui_weapon_sprite);
+    livesString->drawString(root->getCanvas(),40,vh - 25);
 
     sf::Sprite heartspr(heart_tex);
     for (unsigned i = 0; i < health; ++i) {
         heartspr.setPosition((vw - 100.0) + i * 18.0, 5.0);
         if (!((health == 1) && ((root->getFrame() % 6) > 2))) {
-            root->window->draw(heartspr);
+            canvas->draw(heartspr);
         }
     }
 
@@ -654,15 +659,15 @@ void Player::drawUIOverlay() {
     } else {
         ammo_str.setText(QString("x") + QString::number(ammo[currentWeapon]));
     }
-    ammo_str.drawString(root->window,vw - 70,vh - 25);
+    ammo_str.drawString(canvas,vw - 70,vh - 25);
     
-    BitmapString::drawString(root->window,root->mainFont,"P1: " + QString::number(pos_x) + "," + QString::number(pos_y),6,86);
-    BitmapString::drawString(root->window,root->mainFont,"  Hsp " + QString::number(speed_h),6,116);
-    BitmapString::drawString(root->window,root->mainFont,"  Vsp " + QString::number(speed_v),6,146);
+    BitmapString::drawString(canvas, root->mainFont, "P1: " + QString::number(pos_x) + "," + QString::number(pos_y), 6, 86);
+    BitmapString::drawString(canvas, root->mainFont, "  Hsp " + QString::number(speed_h), 6, 116);
+    BitmapString::drawString(canvas, root->mainFont, "  Vsp " + QString::number(speed_v), 6, 146);
     
     // Draw the current score
     scoreString->setText(QString::number(score).rightJustified(8,'0',false));
-    scoreString->drawString(root->window,6,6);
+    scoreString->drawString(canvas, 6, 6);
 
     if (osd_type != OSD_NONE) {
         osd_offset = std::min(60u,osd_offset + 1);
@@ -672,7 +677,7 @@ void Player::drawUIOverlay() {
         }
     }
     if (osd_offset > 0) {
-        osd_string->drawString(root->window,vw / 2 + 30 - osd_offset / 2,vh - osd_offset / 2);
+        osd_string->drawString(canvas, vw / 2 + 30 - osd_offset / 2, vh - osd_offset / 2);
         switch (osd_type) {
             case OSD_GEM_RED:
 

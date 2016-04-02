@@ -150,7 +150,6 @@ protected:
     virtual void onHitWallHook();
     virtual void onTransitionEndHook();
     std::shared_ptr<CarrotQt5> root;
-    sf::RenderWindow* destWindow;
     unsigned max_health;
     unsigned health;
     double pos_x;

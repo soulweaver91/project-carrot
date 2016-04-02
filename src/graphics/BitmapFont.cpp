@@ -84,7 +84,12 @@ BitmapString::BitmapString(BitmapFont* font, const QString& init_str, FontAlign 
     }
 }
 
-void BitmapString::drawString(sf::RenderWindow *destWindow, int x, int y) {
+void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x, int y) {
+    auto canvas = destWindow.lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     int curr_x = x;
     if (align == FONT_ALIGN_CENTER) {
         curr_x -= getWidth() / 2;
@@ -106,7 +111,7 @@ void BitmapString::drawString(sf::RenderWindow *destWindow, int x, int y) {
                 spr->setColor(sf::Color::White);
             }
             spr->setPosition(curr_x + diff_x, y + diff_y);
-            destWindow->draw(*(spr));
+            canvas->draw(*(spr));
             curr_x += spr->getTextureRect().width + spacing;
         }
     }
@@ -145,7 +150,12 @@ unsigned BitmapString::getWidth() {
     return width;
 }
 
-void BitmapString::drawString(sf::RenderWindow *destWindow, BitmapFont* font, QString text, int x, int y, FontAlign align) {
+void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, BitmapFont* font, QString text, int x, int y, FontAlign align) {
+    auto canvas = destWindow.lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
     int curr_x = x;
     if (align == FONT_ALIGN_CENTER) {
         curr_x -= getStaticWidth(text,font) / 2;
@@ -159,7 +169,7 @@ void BitmapString::drawString(sf::RenderWindow *destWindow, BitmapFont* font, QS
         if (spr != nullptr) {
             spr->setPosition(curr_x + diff_x, y + diff_y);
             spr->setColor(sf::Color::White);
-            destWindow->draw(*(spr));
+            canvas->draw(*(spr));
             curr_x += spr->getTextureRect().width + 1;
         }
     }
