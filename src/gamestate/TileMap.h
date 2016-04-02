@@ -29,7 +29,10 @@ enum TileDestructType {
 
 struct LayerTile {
     unsigned long tile_id;
-    sf::Sprite sprite;
+    // Held by the layer tile; conceptually related to the sprite,
+    // but the sprite only takes its texture by reference
+    std::shared_ptr<sf::Texture> texture;
+    std::shared_ptr<sf::Sprite> sprite;
     bool flipped_x;
     bool flipped_y;
     bool animated;
@@ -48,7 +51,7 @@ struct Tileset {
     QString name;
     unsigned long tile_amount;
     unsigned tiles_col; // number of tiles next to each other
-    sf::Texture* tiles;
+    std::shared_ptr<sf::Texture> tiles;
     QList< QBitArray > masks;
     QList< bool > mask_empty; // to speed up collision checking so that not every tile needs to be pixel perfect checked
     QList< bool > mask_full;  // same with this one
@@ -84,12 +87,13 @@ struct TileMapLayer {
 
 class DestructibleDebris {
     public:
-        DestructibleDebris(const sf::Texture* tex, sf::RenderTarget* win, int x, int y, unsigned tx, unsigned ty, unsigned short quarter);
+        DestructibleDebris(std::shared_ptr<sf::Texture> tex, sf::RenderTarget* win, 
+            int x, int y, unsigned tx, unsigned ty, unsigned short quarter);
         ~DestructibleDebris();
         void TickUpdate();
         double GetY();
     private:
-        sf::Sprite* spr;
+        std::unique_ptr<sf::Sprite> spr;
         sf::RenderTarget* wint;
         double pos_x;
         double pos_y;
@@ -97,19 +101,17 @@ class DestructibleDebris {
         double v_speed;
 };
 
-class TileMap {
+class TileMap : public std::enable_shared_from_this<TileMap> {
     public:
         TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file);
         ~TileMap();
         
         // level related
         void readLevelConfiguration(const QString& filename);
-        void readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layer_idx = 0, QSettings* config = nullptr);
+        void readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layer_idx = 0, QSettings& config = QSettings());
         void readAnimatedTiles(const QString& filename);
         void drawLowerLevels();
         void drawHigherLevels();
-        unsigned getLayerWidth(TileMapLayer* layer);
-        unsigned getLayerHeight(TileMapLayer* layer);
         unsigned getLevelWidth();
         unsigned getLevelHeight();
         void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
@@ -124,25 +126,25 @@ class TileMap {
         void advanceAnimatedTileTimers();
 
         // assigned tileset related
-        const sf::Texture* getTilesetTexture();
+        const std::shared_ptr<sf::Texture> getTilesetTexture();
         void readTileset(const QString& file_tiles, const QString& file_mask);
         bool isTileEmpty(unsigned x, unsigned y);
         bool isTileEmpty(const Hitbox& hbox, bool downwards = false);
     private:
         std::shared_ptr<CarrotQt5> root;
-        void drawLayer(TileMapLayer* layer);
+        void drawLayer(TileMapLayer& layer);
         double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& is_y) const;
         void updateSprLayerIdx();
-        void initializeBackgroundTexture(TileMapLayer* background);
-        void drawTexturedBackground(TileMapLayer* layer, const double& x, const double& y);
+        void initializeBackgroundTexture(TileMapLayer& background);
+        void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y);
         Tileset level_tileset;
         QList< TileMapLayer > level_layout;
         unsigned spr_layer;
-        QList< QList< LayerTile > > initial_spr_layer_copy;
-        QList< AnimatedTile* > animated_tiles;
+        QList<QList<LayerTile>> initial_spr_layer_copy;
+        QList<std::shared_ptr<AnimatedTile>> animated_tiles;
         bool trigger_state[256];
-        sf::RenderTexture* tex_back;
-        sf::VertexArray tex_fade;
+        std::unique_ptr<sf::RenderTexture> tex_back;
+        std::unique_ptr<sf::VertexArray> tex_fade;
         unsigned level_width;
         unsigned level_height;
 };

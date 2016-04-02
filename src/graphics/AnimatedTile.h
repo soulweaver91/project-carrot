@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <QObject>
 #include <QList>
 #include <SFML/Graphics.hpp>
@@ -8,10 +9,11 @@
 
 class AnimatedTile {
     public:
-        AnimatedTile(TileMap* ptr, const QList< unsigned short >& tile_refs, int fps = 10, int delay = 0, 
-            int delay_jitter = 0, bool ping_pong = false, int ping_pong_delay = 0);
+        AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QList< unsigned short >& tile_refs, 
+            int fps = 10, int delay = 0, int delay_jitter = 0, bool ping_pong = false, 
+            int ping_pong_delay = 0);
         ~AnimatedTile();
-        LayerTile* getCurrentTile();
+        std::shared_ptr<LayerTile> getCurrentTile();
         unsigned getFrameCanonicalIndex(unsigned idx);
         unsigned getAnimationLength();
         void advanceTimer();
@@ -20,7 +22,7 @@ class AnimatedTile {
         void scheduleUpdate(double frames_to_next);
         void updateTile();
 
-        QList< LayerTile* > animation_tiles;
+        QList<std::shared_ptr<LayerTile>> animation_tiles;
         int fps;
         int delay;
         int delay_jitter;

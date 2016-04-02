@@ -1,28 +1,25 @@
 #include "AnimatedTile.h"
 
-AnimatedTile::AnimatedTile(TileMap* ptr, const QList< unsigned short >& tile_ids, int fps, int delay, int delay_jitter, bool ping_pong, int ping_pong_delay)
-    : delay(delay), delay_jitter(delay_jitter), ping_pong(ping_pong), ping_pong_delay(ping_pong_delay), curr_idx(0), forwards(true), frames_left(0),
-      frames_original(0.0), frames_remainder(0.0), fps(fps) {
-    const sf::Texture* tiles_tex = ptr->getTilesetTexture();
+AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QList< unsigned short >& tile_ids, int fps, int delay,
+    int delay_jitter, bool ping_pong, int ping_pong_delay)
+    : delay(delay), delay_jitter(delay_jitter), ping_pong(ping_pong), ping_pong_delay(ping_pong_delay), curr_idx(0),
+    forwards(true), frames_left(0), frames_original(0.0), frames_remainder(0.0), fps(fps) {
     for (unsigned tidx : tile_ids) {
-        LayerTile* pseudotile = new LayerTile;
+        auto pseudotile = std::make_shared<LayerTile>();
         pseudotile->animated = false;
         pseudotile->flipped_x = false;
         pseudotile->flipped_y = false;
         pseudotile->oneway = false;
-        sf::Sprite* spr = new sf::Sprite(*tiles_tex);
+        pseudotile->texture = tiles_tex;
+
+        auto spr = std::make_shared<sf::Sprite>(*tiles_tex);
         spr->setTextureRect(sf::IntRect((tidx % 10) * 32, (tidx / 10) * 32, 32, 32));
-        pseudotile->sprite = *spr;
+        pseudotile->sprite.swap(spr);
         pseudotile->vine = false;
         pseudotile->tile_id = tidx;
         animation_tiles.push_back(pseudotile);
     }
     if (fps > 0) {
-        //ani_timer = new QTimer();
-        //ani_timer->setSingleShot(true);
-        //connect(ani_timer,SIGNAL(timeout()),this,SLOT(updateTile()));
-        //ani_timer->start(1000 / fps);
-
         frames_original = 70.0 / fps;
         scheduleUpdate(frames_original);
     }
@@ -32,7 +29,7 @@ AnimatedTile::~AnimatedTile() {
 
 }
 
-LayerTile* AnimatedTile::getCurrentTile() {
+std::shared_ptr<LayerTile> AnimatedTile::getCurrentTile() {
     return animation_tiles.at(curr_idx);
 }
 
@@ -41,28 +38,22 @@ void AnimatedTile::updateTile() {
         if (curr_idx == (animation_tiles.size() - 1)) {
             if (ping_pong) {
                 forwards = false;
-                
-                //ani_timer->start(1000 / fps * (1 + ping_pong_delay));
                 scheduleUpdate(frames_original * (1 + ping_pong_delay));
             } else {
                 curr_idx = 0;
-                //ani_timer->start(1000 / fps * (1 + delay));
                 scheduleUpdate(frames_original * (1 + delay));
             }
         } else {
             curr_idx += 1;
-            //ani_timer->start(1000 / fps);
             scheduleUpdate(frames_original);
         }
     } else {
         if (curr_idx == 0) {
             // reverse only occurs on ping pong mode so no need to check for that here
             forwards = true;
-            //ani_timer->start(1000 / fps * (1 + delay));
             scheduleUpdate(frames_original * (1 + delay));
         } else {
             curr_idx -= 1;
-            //ani_timer->start(1000 / fps);
             scheduleUpdate(frames_original);
         }
     }
