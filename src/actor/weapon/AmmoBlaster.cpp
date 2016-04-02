@@ -1,7 +1,7 @@
 #include "AmmoBlaster.h"
 #include "../TriggerCrate.h"
 
-Ammo_Blaster::Ammo_Blaster(std::shared_ptr<CarrotQt5> root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp)
+Ammo_Blaster::Ammo_Blaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
     if (firedUp) {
         speed_v = -8;

@@ -68,6 +68,7 @@ private:
     void addAmmo(enum WeaponType type, unsigned amount);
     void setupOSD(OSDType type, int param = 0);
     void clearOSD();
+    template<typename T> std::shared_ptr<T> fireWeapon();
 
     PlayerCharacter character;
 

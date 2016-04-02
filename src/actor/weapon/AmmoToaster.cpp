@@ -1,6 +1,6 @@
 #include "AmmoToaster.h"
 
-Ammo_Toaster::Ammo_Toaster(std::shared_ptr<CarrotQt5> root, Player* firedBy, double x, double y, bool firedLeft, bool firedUp) 
+Ammo_Toaster::Ammo_Toaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 70) {
     isGravityAffected = false;
     addAnimation(AnimState::IDLE,        "weapon/bullet_toaster.png",    9,1,18,26,9,10,24);

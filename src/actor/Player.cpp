@@ -443,31 +443,24 @@ void Player::tickEvent() {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             setAnimation(current_animation->state | AnimState::SHOOT);
-            bool crouch = ((current_animation->state & AnimState::CROUCH) > 0);
-            bool lookup = ((current_animation->state & AnimState::LOOKUP) > 0);
-            int fire_x = (lookup ? -4 : 23) * (facingLeft ? -1 : 1);
-            int fire_y = (lookup ? 0 : -5) + (crouch ? 18 : 31);
             if (weapon_cooldown == 0) {
                 switch (currentWeapon) {
                     case WEAPON_BLASTER:
                         {
-                            auto newAmmo = std::make_shared<Ammo_Blaster>(root, this, pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
-                            root->addActor(newAmmo);
-                            weapon_cooldown = std::max(0,40 - 3 * fastfires);
+                            auto newAmmo = fireWeapon<Ammo_Blaster>();
+                            weapon_cooldown = std::max(0, 40 - 3 * fastfires);
                             root->sfxsys->playSFX(SFX_BLASTER_SHOOT_JAZZ);
                             break;
                         }
                     case WEAPON_BOUNCER:
                         {
-                            auto newAmmo = std::make_shared<Ammo_Bouncer>(root, this, pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
-                            root->addActor(newAmmo);
+                            auto newAmmo = fireWeapon<Ammo_Bouncer>();
                             weapon_cooldown = 25;
                             break;
                         }
                     case WEAPON_TOASTER:
                         {
-                            auto newAmmo = std::make_shared<Ammo_Toaster>(root, this, pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
-                            root->addActor(newAmmo);
+                            auto newAmmo = fireWeapon<Ammo_Toaster>();
                             weapon_cooldown = 3;
                             break;
                         }
@@ -984,4 +977,16 @@ void Player::setupOSD(OSDType type, int param) {
 
 void Player::clearOSD() {
     osd_type = OSD_NONE;
+}
+
+template<typename T> std::shared_ptr<T> Player::fireWeapon() {
+    auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
+    bool crouch = ((current_animation->state & AnimState::CROUCH) > 0);
+    bool lookup = ((current_animation->state & AnimState::LOOKUP) > 0);
+    int fire_x = (lookup ? -4 : 23) * (facingLeft ? -1 : 1);
+    int fire_y = (lookup ? 0 : -5) + (crouch ? 18 : 31);
+
+    auto newAmmo = std::make_shared<T>(root, weakPtr, pos_x + fire_x, pos_y - fire_y, facingLeft, lookup);
+    root->addActor(newAmmo);
+    return newAmmo;
 }
