@@ -9,7 +9,7 @@ SolidObject::~SolidObject() {
 
 void SolidObject::push(bool left) {
     if (movable) {
-        if (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),(left ? -1 : 1),0),false,this)) {
+        if (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), (left ? -1 : 1), 0), false, shared_from_this())) {
             pos_x += 0.6 * (left ? -1 : 1);
         }
     }

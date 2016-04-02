@@ -255,10 +255,12 @@ void Player::keyReleaseEvent(QKeyEvent* event) {
 void Player::tickEvent() {
     // Check for pushing
     if (canJump && controllable) {
-        SolidObject* object;
-        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h,0),false,this,object))) {
-            if (object != nullptr) {
-                object->push(speed_h < 0);
+        std::weak_ptr<SolidObject> object;
+        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, 0), false, shared_from_this(), object))) {
+            auto objectPtr = object.lock();
+
+            if (objectPtr != nullptr) {
+                objectPtr->push(speed_h < 0);
                 setAnimation(current_animation->state | AnimState::PUSH);
             } else {
                 setAnimation(current_animation->state & ~AnimState::PUSH);
@@ -299,10 +301,10 @@ void Player::tickEvent() {
         root->game_tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y - 30 + speed_v);
         root->game_tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y + speed_v);
         root->game_tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y + speed_v);
-        
-        SolidObject* obj;
-        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h,speed_v),false,this,obj))) {
-            TriggerCrate* trcrate = dynamic_cast< TriggerCrate* >(obj);
+
+        std::weak_ptr<SolidObject> object;
+        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, speed_v), false, shared_from_this(), object))) {
+            auto trcrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
             if (trcrate != nullptr) {
                 trcrate->decreaseHealth(1);
             }
@@ -449,7 +451,7 @@ void Player::tickEvent() {
                 switch (currentWeapon) {
                     case WEAPON_BLASTER:
                         {
-                            Ammo_Blaster* newAmmo = new Ammo_Blaster(root,this,pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
+                            auto newAmmo = std::make_shared<Ammo_Blaster>(root, this, pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
                             root->addActor(newAmmo);
                             weapon_cooldown = std::max(0,40 - 3 * fastfires);
                             root->sfxsys->playSFX(SFX_BLASTER_SHOOT_JAZZ);
@@ -457,14 +459,14 @@ void Player::tickEvent() {
                         }
                     case WEAPON_BOUNCER:
                         {
-                            Ammo_Bouncer* newAmmo = new Ammo_Bouncer(root,this,pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
+                            auto newAmmo = std::make_shared<Ammo_Bouncer>(root, this, pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
                             root->addActor(newAmmo);
                             weapon_cooldown = 25;
                             break;
                         }
                     case WEAPON_TOASTER:
                         {
-                            Ammo_Toaster* newAmmo = new Ammo_Toaster(root,this,pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
+                            auto newAmmo = std::make_shared<Ammo_Toaster>(root, this, pos_x + fire_x,pos_y - fire_y,facingLeft,lookup);
                             root->addActor(newAmmo);
                             weapon_cooldown = 3;
                             break;
@@ -522,11 +524,13 @@ void Player::tickEvent() {
         }
     }
 
-    QList< CommonActor* > collisions = root->findCollisionActors(getHitbox(), this);
-    for (unsigned i = 0; i < collisions.size(); ++i) {
+    auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
+    foreach (auto collision, collisions) {
+        auto collisionPtr = collision.lock();
+
         // Different things happen with different actor types
 
-        Enemy* enemy = dynamic_cast< Enemy* >(collisions.at(i));
+        auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
         if (enemy != nullptr) {
             if (damaging_move) {
                 enemy->decreaseHealth(1);
@@ -544,12 +548,13 @@ void Player::tickEvent() {
             continue;
         }
         
-        SavePoint* sp = dynamic_cast< SavePoint* >(collisions.at(i));
+        auto sp = std::dynamic_pointer_cast<SavePoint>(collisionPtr);
         if (sp != nullptr) {
             sp->activateSavePoint();
+            continue;
         }
 
-        Collectible* coll = dynamic_cast< Collectible* >(collisions.at(i));
+        auto coll = std::dynamic_pointer_cast<Collectible>(collisionPtr);
         if (coll != nullptr) {
             switch(coll->type) {
                 case COLLTYPE_FAST_FIRE:
@@ -609,8 +614,8 @@ void Player::tickEvent() {
                     setupOSD(OSD_COIN_SILVER);
                     break;
             }
-            collisions.at(i)->deleteFromEventMap();
-            delete collisions.at(i);
+            collisionPtr->deleteFromEventMap();
+            root->removeActor(collisionPtr);
         }
     }
 }

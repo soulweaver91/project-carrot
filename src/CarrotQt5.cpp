@@ -165,15 +165,8 @@ void CarrotQt5::parseCommandLine() {
 void CarrotQt5::cleanUpLevel() {
     delete game_tiles;
     delete game_events;
-    for (int i = actors.size() - 1; i >= 0; --i) {
-        if (i >= actors.size()) {
-            continue;
-        }
-        delete actors.at(i);
-    }
-    for (int i = 0; i < 32; i++) {
-        players[i] = nullptr;
-    }
+    actors.clear();
+    std::fill_n(players, 32, nullptr);
     clearTextureCache();
     
     window->setView(*uiView);
@@ -388,7 +381,6 @@ void CarrotQt5::gameTick() {
     for (unsigned i = 0; i < debris.size(); i++) {
         debris.at(i)->TickUpdate();
         if (debris.at(i)->GetY() - window->getView().getCenter().y > 400) {
-            delete debris.at(i);
             debris.erase(debris.begin() + i);
             --i;
         }
@@ -444,12 +436,12 @@ unsigned CarrotQt5::getLevelHeight() {
     return game_tiles->getLevelHeight();
 }
 
-bool CarrotQt5::addActor(CommonActor* actor) {
+bool CarrotQt5::addActor(std::shared_ptr<CommonActor> actor) {
     actors.push_back(actor);
     return true;
 }
 
-bool CarrotQt5::addPlayer(Player* actor, short player_id) {
+bool CarrotQt5::addPlayer(std::shared_ptr<Player> actor, short player_id) {
     // If player ID is defined and is between 0 and 31 (inclusive),
     // try to add the player to the player array
     if ((player_id > -1) && (player_id < 32)) {
@@ -540,15 +532,15 @@ bool CarrotQt5::loadLevel(const QString& name) {
                 game_tiles->saveInitialSpriteLayer();
                 
                 if (players[0] == nullptr) {
-                    Player* defaultplayer = new Player(shared_from_this(), 320.0, 32.0);
+                    auto defaultplayer = std::make_shared<Player>(shared_from_this(), 320.0, 32.0);
                     addPlayer(defaultplayer,0);
                 }
                 
                 setMusic(("Music/" + level_config.value("Level/MusicDefault","").toString().toUtf8()).data());
                 setLighting(level_config.value("Level/LightInit",100).toInt(),true);
                 
-                connect(ui.debug_health,SIGNAL(triggered()),players[0],SLOT(debugHealth()));
-                connect(ui.debug_ammo,SIGNAL(triggered()),players[0],SLOT(debugAmmo()));
+                connect(ui.debug_health,SIGNAL(triggered()),players[0].get(),SLOT(debugHealth()));
+                connect(ui.debug_ammo,SIGNAL(triggered()),players[0].get(),SLOT(debugAmmo()));
 
                 setSavePoint();
             } else {
@@ -603,7 +595,7 @@ void CarrotQt5::setLevelName(const QString& name) {
     setWindowTitle("Project Carrot - " + levelName);
 }
 
-void CarrotQt5::removeActor(CommonActor* actor) {
+void CarrotQt5::removeActor(std::shared_ptr<CommonActor> actor) {
     for (int i = 0; i < actors.size(); ++i) {
         if (actors.at(i) == actor) {
             actors.erase(actors.begin() + i);
@@ -612,8 +604,8 @@ void CarrotQt5::removeActor(CommonActor* actor) {
     }
 }
 
-QList< CommonActor* > CarrotQt5::findCollisionActors(CoordinatePair pos, CommonActor* me) {
-    QList< CommonActor* > res;
+QList<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me) {
+    QList<std::weak_ptr<CommonActor>> res;
     for (int i = 0; i < actors.size(); ++i) {
         CoordinatePair pos2 = actors.at(i)->getPosition();
         if ((std::abs(pos.x - pos2.x) < 10) && (std::abs(pos.y - pos2.y) < 10)) {
@@ -623,8 +615,8 @@ QList< CommonActor* > CarrotQt5::findCollisionActors(CoordinatePair pos, CommonA
     return res;
 }
 
-QList< CommonActor* > CarrotQt5::findCollisionActors(Hitbox hbox, CommonActor* me) {
-    QList< CommonActor* > res;
+QList<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me) {
+    QList<std::weak_ptr<CommonActor>> res;
     for (int i = 0; i < actors.size(); ++i) {
         if (me == actors.at(i)) {
             continue;
@@ -679,14 +671,10 @@ void CarrotQt5::loadSavePoint() {
 }
 
 void CarrotQt5::clearActors() {
-    for (int i = actors.size() - 1; i >= 0; --i) {
-        if (i >= actors.size()) {
-            // one actor likely destroyed another in its destructor,
-            // causing the vector to suddenly drop in length.
-            continue;
-        }
-        if (dynamic_cast< Player* >(actors.at(i)) == nullptr) {
-            delete actors.at(i);
+    actors.clear();
+    for (uint i = 0; i < 32; ++i) {
+        if (players[i] != nullptr) {
+            actors << players[i];
         }
     }
 }
@@ -697,7 +685,7 @@ unsigned long CarrotQt5::getFrame() {
 
 void CarrotQt5::createDebris(unsigned tile_id, int x, int y) {
     for (int i = 0; i < 4; ++i) {
-        DestructibleDebris* d = new DestructibleDebris(game_tiles->getTilesetTexture(), window, x, y, tile_id % 10, tile_id / 10,i);
+        auto d = std::make_shared<DestructibleDebris>(game_tiles->getTilesetTexture(), window, x, y, tile_id % 10, tile_id / 10,i);
         debris.push_back(d);
     }
 }
@@ -738,17 +726,21 @@ void CarrotQt5::delayedLevelChange() {
     }
 }
 
-bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, CommonActor* me, SolidObject*& collided) {
-    collided = nullptr;
+bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collided) {
+    collided = std::weak_ptr<SolidObject>();
     if (!game_tiles->isTileEmpty(hbox,downwards)) {
         return false;
     }
 
     // check for solid objects
-    QList< CommonActor* > collision = findCollisionActors(hbox,me);
+    QList<std::weak_ptr<CommonActor>> collision = findCollisionActors(hbox, me);
     for (int i = 0; i < collision.size(); ++i) {
-        
-        SolidObject* object = dynamic_cast<SolidObject*>(collision.at(i));
+        auto collisionPtr = collision.at(i).lock();
+        if (collisionPtr == nullptr) {
+            continue;
+        }
+
+        auto object = std::dynamic_pointer_cast<SolidObject>(collisionPtr);
         if (object == nullptr) {
             continue;
         }
@@ -762,9 +754,9 @@ bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, CommonActor*
 }
 
 // alternate version to be used if we don't care what solid object we collided with
-bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, CommonActor* me) {
-    SolidObject* placeholder;
-    return isPositionEmpty(hbox,downwards,me,placeholder);
+bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me) {
+    std::weak_ptr<SolidObject> placeholder;
+    return isPositionEmpty(hbox, downwards, me, placeholder);
 }
 
 unsigned CarrotQt5::getViewHeight() {
@@ -775,9 +767,9 @@ unsigned CarrotQt5::getViewWidth() {
     return game_view->getSize().x;
 }
 
-Player* CarrotQt5::getPlayer(unsigned no) {
+std::weak_ptr<Player> CarrotQt5::getPlayer(unsigned no) {
     if (no > 32) {
-        return nullptr;
+        return std::weak_ptr<Player>();
     } else {
         return players[no];
     }

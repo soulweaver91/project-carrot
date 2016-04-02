@@ -12,7 +12,7 @@ TriggerCrate::~TriggerCrate() {
 bool TriggerCrate::perish() {
     // crate can be destroyed
     if (health == 0) {
-        root->game_tiles->setTrigger(trigger_id,true);
+        root->game_tiles->setTrigger(trigger_id, true);
     }
     return CommonActor::perish();
 }

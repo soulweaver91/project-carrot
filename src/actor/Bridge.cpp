@@ -29,7 +29,7 @@ Hitbox DynamicBridgePiece::getCollHitbox() {
 DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y, unsigned int width, DynamicBridgeType type, unsigned int toughness)
     : CommonActor(root, x - 16.0, y - 16.0), toughness(toughness), bridge_width(width), bridge_type(type), original_y(y) {
     for (int i = 0; i < width; ++i) {
-        DynamicBridgePiece* piece_n = new DynamicBridgePiece(root,x + 16 * i - 16,y - 16,type);
+        auto piece_n = std::make_shared<DynamicBridgePiece>(root,x + 16 * i - 16,y - 16,type);
         root->addActor(piece_n);
         bridge_objs << piece_n;
     }
@@ -49,14 +49,19 @@ Hitbox DynamicBridge::getHitbox() {
 
 void DynamicBridge::tickEvent() {
     // get collision for all bridge elements
-    QList< CommonActor* > collision = root->findCollisionActors(getHitbox(),this);
+    auto collision = root->findCollisionActors(getHitbox(), shared_from_this());
     for (int j = 0; j < bridge_objs.size(); ++j) {
-        collision.append(root->findCollisionActors(bridge_objs.at(j)->getCollHitbox(),this));
+        collision.append(root->findCollisionActors(bridge_objs.at(j)->getCollHitbox(), shared_from_this()));
     }
 
     bool found = false;
     for (int i = 0; i < collision.size(); ++i) {
-        Player* p = dynamic_cast< Player* >(collision.at(i));
+        auto collisionPtr = collision.at(i).lock();
+        if (collisionPtr == nullptr) {
+            continue;
+        }
+
+        auto p = std::dynamic_pointer_cast<Player>(collisionPtr);
         if (p != nullptr) {
             found = true;
             CoordinatePair coords = p->getPosition();

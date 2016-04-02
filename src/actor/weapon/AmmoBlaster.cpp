@@ -22,10 +22,9 @@ void Ammo_Blaster::tickEvent() {
     pos_x += speed_h;
     pos_y += speed_v;
 
-    SolidObject* obj;
-    if (!root->isPositionEmpty(getHitbox(),false,this,obj)) {
-        TriggerCrate* crate = dynamic_cast< TriggerCrate* >(obj);
-        if (crate != nullptr && obj != nullptr) {
+    std::weak_ptr<SolidObject> obj;
+    if (!root->isPositionEmpty(getHitbox(), false, shared_from_this(), obj)) {
+        if (obj.lock() != nullptr && std::dynamic_pointer_cast<TriggerCrate>(obj.lock()) != nullptr) {
             ricochet();
         } else {
             health = 0;

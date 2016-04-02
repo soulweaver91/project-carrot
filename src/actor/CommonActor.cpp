@@ -13,7 +13,6 @@ CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double 
 }
 
 CommonActor::~CommonActor() {
-    root->removeActor(this);
     for (int i = animation_bank.size() - 1; i >= 0; --i) {
         delete animation_bank.at(i);
     }
@@ -102,14 +101,16 @@ void CommonActor::tickEvent() {
     short sign = ((speed_h + push) > 1e-6) ? 1 : (((speed_h + push) < -1e-6) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
    
-    speed_h = std::min(std::max(speed_h, -16.0),16.0);
-    speed_v = std::min(std::max(speed_v + gravity - thrust, -16.0),16.0);
+    speed_h = std::min(std::max(speed_h, -16.0), 16.0);
+    speed_v = std::min(std::max(speed_v + gravity - thrust, -16.0), 16.0);
+
+    auto thisPtr = shared_from_this();
 
     Hitbox here = getHitbox();
-    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + push,speed_v), speed_v > 0,this)) {
+    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + push,speed_v), speed_v > 0, thisPtr)) {
         if (abs(speed_h + push) > 1e-6) {
             // We are walking, thus having both vertical and horizontal speed
-            if (root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + push,0), speed_v > 0,this)) {
+            if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + push,0), speed_v > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
                 // Chances are we're just casually strolling and gravity tries to pull us through,
                 // or we are falling diagonally and hit a floor
@@ -128,7 +129,7 @@ void CommonActor::tickEvent() {
             } else {
                 // Nope, there's also some obstacle horizontally
                 // Let's figure out if we are going against an upward slope
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + push,-abs(speed_h + push)-5), false, this)) {
+                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + push, -abs(speed_h + push) - 5), false, thisPtr)) {
                     // Yes, we indeed are
                     speed_v = -(elasticity * speed_v);
                     canJump = true;
@@ -144,7 +145,7 @@ void CommonActor::tickEvent() {
                     // Nope. Cannot move horizontally at all. Can we just go vertically then?
                     speed_h = -(elasticity * speed_h);
                     push *= -1;
-                    if (root->isPositionEmpty(CarrotQt5::calcHitbox(here,0,speed_v), speed_v > 0, this)) {
+                    if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, 0, speed_v), speed_v > 0, thisPtr)) {
                         // Yeah
                         canJump = false;
                         onHitWallHook();
@@ -166,10 +167,10 @@ void CommonActor::tickEvent() {
             // We are going directly vertically
             if (speed_v > 0) {
                 // We are falling, or we are on solid ground and gravity tries to push us through the floor
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here,0,0), true, this)) {
+                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here,0,0), true, shared_from_this())) {
                     // Let's just nullify that effect
                     speed_v = -(elasticity * speed_v);
-                    while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h,speed_v),true,this)) {
+                    while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, speed_v), true, thisPtr)) {
                         pos_y += 0.5;
                     }
                     pos_y -= 0.5;
@@ -183,7 +184,7 @@ void CommonActor::tickEvent() {
                 }
             } else {
                 // We are jumping
-                if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,0,speed_v), false, this)) {
+                if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, 0, speed_v), false, thisPtr)) {
                     speed_v = -(elasticity * speed_v);
                     thrust = 0;
                     onHitCeilingHook();
@@ -196,8 +197,8 @@ void CommonActor::tickEvent() {
     } else {
         if (canJump) {
             // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
-            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + push,speed_v+abs(speed_h + push)+5), false, this)) {
-                while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h + push,speed_v+abs(speed_h + push)), false, this)) {
+            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + push,speed_v+abs(speed_h + push)+5), false, thisPtr)) {
+                while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h + push,speed_v+abs(speed_h + push)), false, thisPtr)) {
                     pos_y += 0.1;
                 }
                 pos_y -= 0.1;
@@ -451,7 +452,7 @@ bool CommonActor::perish() {
     if (health == 0) {
         root->game_events->deactivate(origin_x, origin_y);
         root->game_events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
-        delete this;
+        root->removeActor(shared_from_this());
         return true;
     }
     return false;
@@ -481,7 +482,7 @@ void CommonActor::onTransitionEndHook() {
 bool CommonActor::deactivate(int x, int y, int dist) {
     if ((std::abs(x - origin_x) > dist) || (std::abs(y - origin_y) > dist)) {
         root->game_events->deactivate(origin_x,origin_y);
-        delete this;
+        root->removeActor(shared_from_this());
         return true;
     }
     return false;

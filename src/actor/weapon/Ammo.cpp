@@ -24,22 +24,27 @@ void Ammo::tickEvent() {
 }
 
 void Ammo::checkCollisions() {
-    QList< CommonActor* > collisions = root->findCollisionActors(getHitbox(), this);
-    for (unsigned i = 0; i < collisions.size(); ++i) {
+    auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
+    foreach (auto actor, collisions) {
+        auto actorPtr = actor.lock();
+        if (actorPtr == nullptr) {
+            continue;
+        }
+
         // Different things happen with different actor types
-        Enemy* enemy = dynamic_cast< Enemy* >(collisions.at(i));
+        auto enemy = std::dynamic_pointer_cast<Enemy>(actorPtr);
         if (enemy != nullptr) {
             enemy->decreaseHealth(1);
             decreaseHealth(1);
             return;
         }
 
-        Collectible* coll = dynamic_cast< Collectible* >(collisions.at(i));
+        auto coll = std::dynamic_pointer_cast<Collectible>(actorPtr);
         if (coll != nullptr) {
             coll->impact(speed_h / 5.0,-speed_v / 10.0);
         }
 
-        PushBox* box = dynamic_cast< PushBox* >(collisions.at(i));
+        auto box = std::dynamic_pointer_cast<PushBox>(actorPtr);
         if (box != nullptr) {
             decreaseHealth(1);
         }

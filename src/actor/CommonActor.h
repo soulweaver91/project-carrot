@@ -117,7 +117,7 @@ struct ActorTimer {
     ActorFunc func;
 };
 
-class CommonActor : public QObject {
+class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor> {
 public:
     CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();

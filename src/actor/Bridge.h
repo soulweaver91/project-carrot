@@ -37,5 +37,5 @@ class DynamicBridge : public CommonActor {
         unsigned short toughness;
         DynamicBridgeType bridge_type;
         unsigned int bridge_width;
-        QList< DynamicBridgePiece* > bridge_objs;
+        QList<std::shared_ptr<DynamicBridgePiece>> bridge_objs;
 };

@@ -79,44 +79,44 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                     case PC_COIN_SILVER:
                     case PC_COIN_GOLD:
                         {
-                            Collectible* c = new Collectible(root,static_cast< CollectibleType >(tile.stored_event), 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto c = std::make_shared<Collectible>(root,static_cast< CollectibleType >(tile.stored_event), 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(c);
                         }
                         break;
                     case PC_ENEMY_TURTLE_NORMAL:
                         {
-                            Enemy_NormalTurtle* e = new Enemy_NormalTurtle(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<Enemy_NormalTurtle>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(e);
                         }
                         break;
                     case PC_ENEMY_LIZARD:
                         {
-                            Enemy_Lizard* e = new Enemy_Lizard(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<Enemy_Lizard>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(e);
                         }
                         break;
                     case PC_SAVE_POINT:
                         {
-                            SavePoint* e = new SavePoint(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<SavePoint>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(e);
                         }
                         break;
                     case PC_PUSHABLE_ROCK:
                         {
-                            PushBox* e = new PushBox(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<PushBox>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(e);
                         }
                         break;
                     case PC_TRIGGER_CRATE:
                         {
-                            TriggerCrate* e = new TriggerCrate(root, 32.0 * x + 16.0, 32.0 * y + 16.0,tile.event_params[0]);
+                            auto e = std::make_shared<TriggerCrate>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile.event_params[0]);
                             root->addActor(e);
                         }
                         break;
                     case PC_BRIDGE:
                         {
-                            DynamicBridge* e = new DynamicBridge(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
-                                tile.event_params[0],static_cast< DynamicBridgeType >(tile.event_params[1]),tile.event_params[2]);
+                            auto e = std::make_shared<DynamicBridge>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
+                                tile.event_params[0], static_cast< DynamicBridgeType >(tile.event_params[1]), tile.event_params[2]);
                             root->addActor(e);
                         }
                         break;
@@ -203,9 +203,9 @@ void EventMap::readEvents(const QString& filename, unsigned layout_version) {
                         case PC_EMPTY:
                             break;
                         case PC_JAZZ_LEVEL_START:
-                            if (root->getPlayer(0) == nullptr) {
-                                Player* defaultplayer = new Player(root,32.0 * x + 16.0, 32.0 * y + 16.0);
-                                root->addPlayer(defaultplayer,0);
+                            if (root->getPlayer(0).lock() == nullptr) {
+                                auto defaultplayer = std::make_shared<Player>(root,32.0 * x + 16.0, 32.0 * y + 16.0);
+                                root->addPlayer(defaultplayer, 0);
                             }
                             break;
                         case PC_MODIFIER_ONE_WAY:
