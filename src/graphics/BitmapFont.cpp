@@ -170,7 +170,7 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, Bitmap
             spr->setPosition(curr_x + diff_x, y + diff_y);
             spr->setColor(sf::Color::White);
             canvas->draw(*(spr));
-            curr_x += spr->getTextureRect().width + 1;
+            curr_x += spr->getTextureRect().width - 1;
         }
     }
 }
