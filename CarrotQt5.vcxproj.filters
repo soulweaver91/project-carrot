@@ -33,46 +33,64 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
-    <Filter Include="Header Files\Enemy Class Headers">
-      <UniqueIdentifier>{9b339ff6-f7e0-4985-b8df-97fa71f62673}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Enemy Classes">
-      <UniqueIdentifier>{e88b3062-9677-4b8c-959a-e3e1c13cf4cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Ammo Headers">
-      <UniqueIdentifier>{d9e904ff-cbdd-417c-aa3a-d71892e606a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Ammo Classes">
-      <UniqueIdentifier>{c7ec9bdd-266f-4860-bb78-e69801f1750d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Documents">
       <UniqueIdentifier>{054157e3-7ab6-4826-a05c-7ee094a58a4f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Documents\Data/Assets">
       <UniqueIdentifier>{542d696a-c6ee-4e82-b646-aaf4af6503e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Actor headers">
+      <UniqueIdentifier>{609bffdd-ca14-4d16-8979-4e9a9eabd80f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Actor headers\Weapon headers">
+      <UniqueIdentifier>{10e25399-55dd-43da-a812-fae1e09222e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Actor headers\Enemy headers">
+      <UniqueIdentifier>{e6b20fb9-5883-493b-8282-9d64b5751d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics system headers">
+      <UniqueIdentifier>{13dc5d88-056d-4cc7-81cd-b5afc280abfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Menu system headers">
+      <UniqueIdentifier>{68041ca8-86dc-4690-8c6e-ad676f30dd22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sound system headers">
+      <UniqueIdentifier>{e0f16e56-b337-4ca6-9d3d-c130d6bcd00d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics system">
+      <UniqueIdentifier>{55a236c2-35cb-44ff-8e41-01c69401b644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actor">
+      <UniqueIdentifier>{38426098-d134-44fe-a4d4-6562c749ec50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actor\Enemy">
+      <UniqueIdentifier>{04646ff7-4a05-4245-a4bc-e52aeab148c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actor\Weapon">
+      <UniqueIdentifier>{3e6e7f83-ea31-4ce1-94c9-c29e3e5df79c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Menu system">
+      <UniqueIdentifier>{9e72857e-2842-4eda-9be6-a0d824b83f85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound system">
+      <UniqueIdentifier>{50bb52be-4dae-4b26-aa60-c7f2b463272f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game manager">
+      <UniqueIdentifier>{44c1a1c9-fa90-4cc4-acf6-9cc041e4a98a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game manager headers">
+      <UniqueIdentifier>{dc95138d-b352-4495-be23-d042c71f3929}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_carrotqt5.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="QSFMLCanvas.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Collectible.cpp">
+      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="CarrotCanvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BitmapFont.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonActor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\Release\moc_Collectible.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -86,71 +104,83 @@
     <ClCompile Include="GeneratedFiles\Release\moc_CarrotQt5.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="CarrotQt5.cpp">
+    <ClCompile Include="src\CarrotQt5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="src\JJ2Format.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyClasses\NormalTurtle.cpp">
-      <Filter>Source Files\Enemy Classes</Filter>
+    <ClCompile Include="src\actor\enemy\Enemy.cpp">
+      <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Ammo.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\enemy\Lizard.cpp">
+      <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="AmmoClasses\AmmoBlaster.cpp">
-      <Filter>Source Files\Ammo Classes</Filter>
+    <ClCompile Include="src\actor\enemy\NormalTurtle.cpp">
+      <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Collectible.cpp">
-      <Filter>Generated Files\Debug</Filter>
+    <ClCompile Include="src\actor\weapon\Ammo.cpp">
+      <Filter>Source Files\Actor\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Collectible.cpp">
-      <Filter>Generated Files\Release</Filter>
+    <ClCompile Include="src\actor\weapon\AmmoBlaster.cpp">
+      <Filter>Source Files\Actor\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="Collectible.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\weapon\AmmoBouncer.cpp">
+      <Filter>Source Files\Actor\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="AmmoClasses\AmmoBouncer.cpp">
-      <Filter>Source Files\Ammo Classes</Filter>
+    <ClCompile Include="src\actor\weapon\AmmoToaster.cpp">
+      <Filter>Source Files\Actor\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="JJ2Format.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\Bridge.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="SoundFX.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\Collectible.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedTile.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\CommonActor.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="SavePoint.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\Player.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="AmmoClasses\AmmoToaster.cpp">
-      <Filter>Source Files\Ammo Classes</Filter>
+    <ClCompile Include="src\actor\PushBox.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyClasses\Lizard.cpp">
-      <Filter>Source Files\Enemy Classes</Filter>
+    <ClCompile Include="src\actor\SavePoint.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="SolidObject.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\SolidObject.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="PushBox.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\actor\TriggerCrate.cpp">
+      <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerCrate.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\gamestate\EventMap.cpp">
+      <Filter>Source Files\Game manager</Filter>
     </ClCompile>
-    <ClCompile Include="Bridge.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\gamestate\FrameTimer.cpp">
+      <Filter>Source Files\Game manager</Filter>
     </ClCompile>
-    <ClCompile Include="TileMap.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\graphics\AnimatedTile.cpp">
+      <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
-    <ClCompile Include="EventMap.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\graphics\BitmapFont.cpp">
+      <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
-    <ClCompile Include="MenuScreen.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\graphics\CarrotCanvas.cpp">
+      <Filter>Source Files\Graphics system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\QSFMLCanvas.cpp">
+      <Filter>Source Files\Graphics system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu\MenuScreen.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sound\SoundFX.cpp">
+      <Filter>Source Files\Sound system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamestate\TileMap.cpp">
+      <Filter>Source Files\Game manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,97 +193,100 @@
     <CustomBuild Include="AboutCarrotDialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Player.h">
+    <CustomBuild Include="src\actor\Collectible.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\actor\Player.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\CarrotQt5.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CommonActor.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CarrotQt5.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Ammo.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AmmoClasses\AmmoBlaster.h">
-      <Filter>Header Files\Ammo Headers</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Collectible.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AmmoClasses\AmmoBouncer.h">
-      <Filter>Header Files\Ammo Headers</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AnimatedTile.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="SavePoint.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AmmoClasses\AmmoToaster.h">
-      <Filter>Header Files\Ammo Headers</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="QSFMLCanvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CarrotCanvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BitmapFont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="WeaponTypes.h">
+    <ClInclude Include="src\actor\enemy\Enemy.h">
+      <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\enemy\Lizard.h">
+      <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\enemy\NormalTurtle.h">
+      <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\weapon\Ammo.h">
+      <Filter>Header Files\Actor headers\Weapon headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\weapon\AmmoBlaster.h">
+      <Filter>Header Files\Actor headers\Weapon headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\weapon\AmmoBouncer.h">
+      <Filter>Header Files\Actor headers\Weapon headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\weapon\AmmoToaster.h">
+      <Filter>Header Files\Actor headers\Weapon headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\Bridge.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\CommonActor.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\PushBox.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\SavePoint.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\SolidObject.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\TriggerCrate.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\WeaponTypes.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\AnimatedTile.h">
+      <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\BitmapFont.h">
+      <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\CarrotCanvas.h">
+      <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\QSFMLCanvas.h">
+      <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\MenuScreen.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sound\SoundFX.h">
+      <Filter>Header Files\Sound system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\EventMap.h">
+      <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\FrameTimer.h">
+      <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JJ2Format.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="src\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyClasses\NormalTurtle.h">
-      <Filter>Header Files\Enemy Class Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="JJ2Format.h">
+    <ClInclude Include="src\Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundFX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyClasses\Lizard.h">
-      <Filter>Header Files\Enemy Class Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PushBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TriggerCrate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bridge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EventMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TileMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuScreen.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\gamestate\TileMap.h">
+      <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
