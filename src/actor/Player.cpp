@@ -82,7 +82,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     ui_icon_sprite->setTextureRect(sf::IntRect(0,0,animation_bank.at(anim_idx)->frame_width,animation_bank.at(anim_idx)->frame_height));
     ui_icon_sprite->setPosition(5,root->getViewHeight() - 40);
 
-    addTimer(7u,true,static_cast< ActorFunc >(&Player::advanceCharIconFrame));
+    addTimer(7u,true,static_cast<TimerCallbackFunc>(&Player::advanceCharIconFrame));
 
     heart_tex = sf::Texture();
     heart_tex.loadFromFile("Data/Assets/ui/heart.png");
@@ -118,7 +118,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     // Get a brief invincibility at the start of the level
     isInvulnerable = true;
     isBlinking = true;
-    addTimer(210u,false,static_cast< ActorFunc >(&Player::removeInvulnerability));
+    addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
 }
 
 Player::~Player() {
@@ -844,7 +844,7 @@ void Player::takeDamage(double npush) {
         setTransition(AnimState::HURT, false, true, false, &Player::endHurtTransition);
         isInvulnerable = true;
         isBlinking = true;
-        addTimer(210u,false,static_cast< ActorFunc >(&Player::removeInvulnerability));
+        addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
         root->sfxsys->playSFX(SFX_JAZZ_HURT);
     }
 }
@@ -957,7 +957,7 @@ void Player::setupOSD(OSDType type, int param) {
     cancelTimer(osd_timer);
     osd_offset = 0;
     osd_type = type;
-    osd_timer = addTimer(350u,false,static_cast< ActorFunc >(&Player::clearOSD));
+    osd_timer = addTimer(350u,false,static_cast<TimerCallbackFunc>(&Player::clearOSD));
     switch (type) {
         case OSD_GEM_RED: 
             osd_string->setText("  x" + QString::number(collected_gems[0] + 5 * collected_gems[1] + 10 * collected_gems[2]));

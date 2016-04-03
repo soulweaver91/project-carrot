@@ -201,9 +201,11 @@
     <ClCompile Include="src\actor\weapon\AmmoBouncer.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoToaster.cpp" />
     <ClCompile Include="src\CarrotQt5.cpp" />
+    <ClCompile Include="src\gamestate\AnimationUser.cpp" />
     <ClCompile Include="src\gamestate\EventMap.cpp" />
     <ClCompile Include="src\gamestate\FrameTimer.cpp" />
     <ClCompile Include="src\gamestate\TileMap.cpp" />
+    <ClCompile Include="src\gamestate\TimerUser.cpp" />
     <ClCompile Include="src\graphics\AnimatedTile.cpp" />
     <ClCompile Include="src\graphics\BitmapFont.cpp" />
     <ClCompile Include="src\graphics\CarrotCanvas.cpp" />
@@ -236,7 +238,9 @@
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h" />
     <ClInclude Include="src\actor\Bridge.h" />
+    <ClInclude Include="src\gamestate\AnimationUser.h" />
     <ClInclude Include="src\gamestate\TileMap.h" />
+    <ClInclude Include="src\gamestate\TimerUser.h" />
     <ClInclude Include="src\Version.h" />
     <CustomBuild Include="src\CarrotQt5.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

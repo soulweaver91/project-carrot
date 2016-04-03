@@ -2,20 +2,17 @@
 
 #include "../gamestate/EventMap.h"
 
-CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap) : root(game_root),
-    speed_h(0), speed_v(0), thrust(0), push(0), canJump(false), facingLeft(false),
-    inTransition(false), cancellableTransition(false), max_health(1), health(1), isGravityAffected(true),
+CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap)
+    : AnimationUser(game_root), root(game_root), speed_h(0), speed_v(0), thrust(0), push(0), 
+    canJump(false), facingLeft(false), max_health(1), health(1), isGravityAffected(true),
     isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity/3),
-    isBlinking(false), isSuspended(false), pos_x(x), pos_y(y),
-    current_animation(nullptr), transition(nullptr), createdFromEventMap(fromEventMap), animation_timer(-1l), next_timer(0) {
+    isBlinking(false), isSuspended(false), pos_x(x), pos_y(y), createdFromEventMap(fromEventMap) {
     origin_x = static_cast<int>(x) / 32;
     origin_y = static_cast<int>(y) / 32;
 }
 
 CommonActor::~CommonActor() {
-    for (int i = animation_bank.size() - 1; i >= 0; --i) {
-        delete animation_bank.at(i);
-    }
+
 }
 
 void CommonActor::DrawUpdate() {
@@ -52,43 +49,6 @@ void CommonActor::DrawUpdate() {
         sprite.setPosition(pos_x,pos_y);
         canvas->draw(sprite);
     }
-}
-
-void CommonActor::animationAdvance() {
-    StateAnimationPair* source = (inTransition ? transition : current_animation);
-
-    int anim_length = source->frame_cols * source->frame_rows;
-
-    if (anim_length == 0) {
-        setAnimation(AnimState::IDLE);
-        return; // shouldn't happen
-    }
-    frame = (frame + 1) % (anim_length);
-    if (frame == 0 && inTransition) {
-        inTransition = false;
-
-        // Call the end hook; used e.g. for special move features for the player
-        onTransitionEndHook();
-
-        // Figure out the new sprite to use
-        if (!inTransition) {
-            source = current_animation;
-        } else {
-            source = transition;
-        }
-        sprite.setTexture(*(source->animation_frames));
-        sprite.setOrigin(source->offset_x,source->offset_y);
-    }
-
-    int frameleft = 0;
-    if (source->frame_rows > 1) {
-        frameleft = (frame % source->frame_cols)*source->frame_width;
-    } else {
-        frameleft = frame*source->frame_width;
-    }
-    int frametop = (frame / source->frame_cols)*source->frame_height;
-
-    sprite.setTextureRect(sf::IntRect(frameleft,frametop,source->frame_width,source->frame_height));
 }
 
 void CommonActor::keyPressEvent(QKeyEvent* event) {
@@ -270,147 +230,6 @@ void CommonActor::tickEvent() {
     pos_y = std::min(std::max(pos_y,0.0),root->getLevelHeight()*32.0);
 } 
 
-size_t CommonActor::addAnimation(ActorState state, const QString& filename, int frame_cols, int frame_rows,
-                               int frame_width, int frame_height, int fps, int offset_x, int offset_y) {
-    StateAnimationPair* new_ani = new StateAnimationPair();
-    sf::Texture* loaded_frames = root->getCachedTexture("Data/Assets/" + filename);
-
-    if (loaded_frames != nullptr) {
-        new_ani->animation_frames = loaded_frames;
-    } else {
-        return -1;
-    }
-    new_ani->frametime = static_cast<int>(1000/fps);
-    new_ani->state = state;
-    new_ani->frame_cols = frame_cols;
-    new_ani->frame_rows = frame_rows;
-    new_ani->frame_width = frame_width;
-    new_ani->frame_height = frame_height;
-    new_ani->offset_x = offset_x;
-    new_ani->offset_y = offset_y;
-
-    animation_bank.push_back(new_ani);
-    return animation_bank.size()-1;
-}
-
-size_t CommonActor::assignAnimation(ActorState state, size_t original_idx) {
-    if (animation_bank.size() < original_idx) {
-        // Invalid request
-        return -1;
-    }
-
-    if (animation_bank.at(original_idx)->state == state) {
-        // No point in adding a second copy of a certain state-animation pair,
-        // do nothing (but report the original index back for possible handling)
-        return original_idx;
-    }
-
-    // Copy the requested state-animation pair and set a new state to it
-    StateAnimationPair* new_ani = new StateAnimationPair(*(animation_bank.at(original_idx)));
-    new_ani->state = state;
-
-    // Add the new pair to the animation bank and return its index
-    animation_bank.push_back(new_ani);
-    return animation_bank.size()-1;
-}
-
-bool CommonActor::setAnimation(ActorState state) {
-    ActorState oldstate = AnimState::IDLE;
-    if (current_animation != nullptr) {
-        if ((current_animation->state == state) || ((inTransition) && (!cancellableTransition))) {
-            return true;
-        }
-        oldstate = current_animation->state;
-    }
-
-    QList< int > candidates;
-    for (unsigned i = 0; i < animation_bank.size(); ++i) {
-        if (animation_bank.at(i)->state == state) {
-            candidates << i;
-        }
-    }
-    if (candidates.size() == 0) {
-        return false;
-    } else {
-        // get a random item later; uses first found for now
-        frame = 0;
-        current_animation = animation_bank.at(candidates.at(0));
-        sprite.setTexture(*(current_animation->animation_frames));
-        sprite.setTextureRect(
-            sf::IntRect(0,0,current_animation->frame_width,current_animation->frame_height));
-        sprite.setOrigin(current_animation->offset_x,current_animation->offset_y);
-        inTransition = false;
-        transition = nullptr;
-    }
-    cancelTimer(animation_timer);
-    animation_timer = addTimer(static_cast< unsigned >(current_animation->frametime / 1000.0 * 70.0),true,&CommonActor::animationAdvance);
-    
-    ActorState newstate = state;
-
-    switch(oldstate) {
-        case AnimState::RUN:
-            if ((newstate == AnimState::IDLE) || (newstate == AnimState::WALK)) {
-                setTransition(AnimState::TRANSITION_RUN_TO_IDLE,true);
-            }
-            if (newstate == AnimState::DASH) {
-                setTransition(AnimState::TRANSITION_RUN_TO_DASH,true);
-            }
-            break;
-        case AnimState::FALL:
-            if (newstate == AnimState::IDLE) {
-                setTransition(AnimState::TRANSITION_IDLE_FALL_TO_IDLE,true);
-            }
-            break;
-        case AnimState::IDLE:
-            if (newstate == AnimState::JUMP) {
-                setTransition(AnimState::TRANSITION_IDLE_TO_IDLE_JUMP,true);
-            }
-            break;
-        case AnimState::SHOOT:
-            if (newstate == AnimState::IDLE) {
-                setTransition(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE,true);
-            }
-            break;
-    }
-    return true;
-}
-
-bool CommonActor::setAnimation(StateAnimationPair* animation) {
-    frame = 0;
-    current_animation = animation;
-    sprite.setTexture(*(current_animation->animation_frames));
-    sprite.setTextureRect(sf::IntRect(0,0,current_animation->frame_width,current_animation->frame_height));
-    sprite.setOrigin(current_animation->offset_x,current_animation->offset_y);
-        
-    cancelTimer(animation_timer);
-    animation_timer = addTimer(static_cast< unsigned >(current_animation->frametime / 1000.0 * 70.0),true,&CommonActor::animationAdvance);
-    return true;
-}
-
-bool CommonActor::setTransition(ActorState state, bool cancellable) {
-    QList< int > candidates;
-    for (unsigned i = 0; i < animation_bank.size(); ++i) {
-        if (animation_bank.at(i)->state == state) {
-            candidates << i;
-        }
-    }
-    if (candidates.size() == 0) {
-        return false;
-    } else {
-        inTransition = true;
-        cancellableTransition = cancellable;
-        frame = 0;
-        transition = animation_bank.at(candidates.at(0));
-        sprite.setTexture(*(transition->animation_frames));
-        sprite.setTextureRect(
-            sf::IntRect(0,0,transition->frame_width,transition->frame_height));
-        sprite.setOrigin(transition->offset_x,transition->offset_y);
-    }
-    cancelTimer(animation_timer);
-    animation_timer = addTimer(static_cast< unsigned >(transition->frametime / 1000.0 * 70.0),true,&CommonActor::animationAdvance);
-    return true;
-}
-
 void CommonActor::setToViewCenter(sf::View* view) {
     view->setCenter(
         std::max(400.0,std::min(32.0 * (root->getLevelWidth()+1)  - 400.0, (double)qRound(pos_x))),
@@ -434,6 +253,51 @@ Hitbox CommonActor::getHitbox() {
     }
     Hitbox box = {0,0,0,0};
     return box;
+}
+
+bool CommonActor::setAnimation(ActorState state) {
+    ActorState oldstate = AnimState::IDLE;
+    if (current_animation != nullptr) {
+        if ((current_animation->state == state) || ((inTransition) && (!cancellableTransition))) {
+            return true;
+        }
+        oldstate = current_animation->state;
+    }
+
+    bool changed = AnimationUser::setAnimation(state);
+    if (!changed) {
+        return false;
+    }
+
+    ActorState newstate = state;
+
+    switch (oldstate) {
+        case AnimState::RUN:
+            if ((newstate == AnimState::IDLE) || (newstate == AnimState::WALK)) {
+                setTransition(AnimState::TRANSITION_RUN_TO_IDLE, true);
+            }
+            if (newstate == AnimState::DASH) {
+                setTransition(AnimState::TRANSITION_RUN_TO_DASH, true);
+            }
+            break;
+        case AnimState::FALL:
+            if (newstate == AnimState::IDLE) {
+                setTransition(AnimState::TRANSITION_IDLE_FALL_TO_IDLE, true);
+            }
+            break;
+        case AnimState::IDLE:
+            if (newstate == AnimState::JUMP) {
+                setTransition(AnimState::TRANSITION_IDLE_TO_IDLE_JUMP, true);
+            }
+            break;
+        case AnimState::SHOOT:
+            if (newstate == AnimState::IDLE) {
+                setTransition(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE, true);
+            }
+            break;
+    }
+
+    return true;
 }
 
 void CommonActor::removeInvulnerability() {
@@ -479,11 +343,6 @@ void CommonActor::onHitWallHook() {
     // Objects should override this if they need to.
 }
 
-void CommonActor::onTransitionEndHook() {
-    // Called when a transition ends.
-    // Objects should override this if they need to.
-}
-
 bool CommonActor::deactivate(int x, int y, int dist) {
     if ((std::abs(x - origin_x) > dist) || (std::abs(y - origin_y) > dist)) {
         root->game_events->deactivate(origin_x,origin_y);
@@ -500,52 +359,5 @@ void CommonActor::moveInstantly(CoordinatePair location) {
 
 void CommonActor::deleteFromEventMap() {
     root->game_events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
-}
-
-void CommonActor::advanceTimers() {
-    for (int i = 0; i < timers.size(); ++i) {
-        timers[i].second.frames_left--;
-        if (timers[i].second.frames_left == 0) {
-            invokeTimer(i);
-            if (timers[i].second.recurring) {
-                timers[i].second.frames_remainder += timers[i].second.frames_original_remainder;
-                while (timers[i].second.frames_remainder > 1) {
-                    timers[i].second.frames_remainder -= 1.0;
-                    timers[i].second.frames_left++;
-                }
-                timers[i].second.frames_left += timers[i].second.frames_original;
-            } else {
-                timers.removeAt(i);
-                --i;
-            }
-        }
-    }
-}
-
-void CommonActor::invokeTimer(int idx) {
-    (this->*(timers[idx].second.func))();
-}
-
-
-unsigned long CommonActor::addTimer(unsigned frames, bool recurring, ActorFunc func) {
-    ActorTimer t = {frames, 0.0, frames, 0.0, recurring, func};
-    timers.append(qMakePair(next_timer,t));
-    return next_timer++;
-}
-unsigned long CommonActor::addTimer(double frames, bool recurring, ActorFunc func) {
-    unsigned long floored = qRound(floor(frames));
-    
-    ActorTimer t = {floored, frames - floored, floored, frames - floored, recurring, func};
-    timers.append(qMakePair(next_timer,t));
-    return next_timer++;
-}
-
-void CommonActor::cancelTimer(unsigned long idx) {
-    for (int i = 0; i < timers.size(); ++i) {
-        if (timers[i].first == idx) {
-            timers.removeAt(i);
-            return;
-        }
-    }
 }
 
