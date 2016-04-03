@@ -343,6 +343,16 @@ void CommonActor::onHitWallHook() {
     // Objects should override this if they need to.
 }
 
+bool CommonActor::playSound(SFXType sound) {
+    auto soundSystem = root->getSoundSystem().lock();
+    if (soundSystem == nullptr) {
+        return false;
+    }
+
+    soundSystem->playSFX(sound);
+    return true;
+}
+
 bool CommonActor::deactivate(int x, int y, int dist) {
     if ((std::abs(x - origin_x) > dist) || (std::abs(y - origin_y) > dist)) {
         root->game_events->deactivate(origin_x,origin_y);

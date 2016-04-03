@@ -736,7 +736,10 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
                             32,32));
             if (!((animated_tiles.at(tile.d_animation)->getAnimationLength() - 2) > tile.scenery_frame_idx)) {
                 // the tile was destroyed, create debris
-                root->sfxsys->playSFX(SFX_BLOCK_DESTRUCT);
+                auto soundSystem = root->getSoundSystem().lock();
+                if (soundSystem != nullptr) {
+                    soundSystem->playSFX(SFX_BLOCK_DESTRUCT);
+                }
                 root->createDebris(animated_tiles.at(tile.d_animation)->getFrameCanonicalIndex(animated_tiles.at(tile.d_animation)->getAnimationLength() - 1),tx,ty);
             }
             return true;
@@ -764,7 +767,10 @@ bool TileMap::checkSpecialDestructible(double x, double y) {
                             32,32));
             if (!((animated_tiles.at(tile.d_animation)->getAnimationLength() - 2) > tile.scenery_frame_idx)) {
                 // the tile was destroyed, create debris
-                root->sfxsys->playSFX(SFX_BLOCK_DESTRUCT);
+                auto soundSystem = root->getSoundSystem().lock();
+                if (soundSystem != nullptr) {
+                    soundSystem->playSFX(SFX_BLOCK_DESTRUCT);
+                }
                 root->createDebris(animated_tiles.at(tile.d_animation)->getFrameCanonicalIndex(animated_tiles.at(tile.d_animation)->getAnimationLength() - 1),tx,ty);
             }
             return true;

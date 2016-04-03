@@ -176,9 +176,6 @@
     <ClCompile Include="src\menu\MenuScreen.cpp">
       <Filter>Source Files\Menu system</Filter>
     </ClCompile>
-    <ClCompile Include="src\sound\SoundFX.cpp">
-      <Filter>Source Files\Sound system</Filter>
-    </ClCompile>
     <ClCompile Include="src\gamestate\TileMap.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
@@ -190,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="src\gamestate\TimerUser.cpp">
       <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sound\SoundSystem.cpp">
+      <Filter>Source Files\Sound system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,9 +276,6 @@
     <ClInclude Include="src\menu\MenuScreen.h">
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\sound\SoundFX.h">
-      <Filter>Header Files\Sound system headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\gamestate\EventMap.h">
       <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
@@ -305,6 +302,9 @@
     </ClInclude>
     <ClInclude Include="src\gamestate\TimerUser.h">
       <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sound\SoundSystem.h">
+      <Filter>Header Files\Sound system headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

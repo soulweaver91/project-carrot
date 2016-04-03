@@ -8,6 +8,7 @@
 #include "../gamestate/TileMap.h"
 #include "../gamestate/AnimationUser.h"
 #include "../gamestate/TimerUser.h"
+#include "../sound/SoundSystem.h"
 
 class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
@@ -32,6 +33,7 @@ protected:
     virtual void onHitFloorHook();
     virtual void onHitCeilingHook();
     virtual void onHitWallHook();
+    bool playSound(SFXType sound);
     std::shared_ptr<CarrotQt5> root;
     unsigned max_health;
     unsigned health;

@@ -21,7 +21,7 @@ void SavePoint::activateSavePoint() {
         setAnimation(AnimState::ACTIVATED);
         setTransition(AnimState::TRANSITION_ACTIVATE, false);
         root->setSavePoint();
-        root->sfxsys->playSFX(SFX_SAVE_POINT);
+        playSound(SFX_SAVE_POINT);
         activated = true;
     }
 }

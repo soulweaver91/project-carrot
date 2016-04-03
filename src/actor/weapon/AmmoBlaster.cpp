@@ -28,7 +28,7 @@ void Ammo_Blaster::tickEvent() {
             ricochet();
         } else {
             health = 0;
-            root->sfxsys->playSFX(SFX_AMMO_HIT_WALL);
+            playSound(SFX_AMMO_HIT_WALL);
 
             double coll_x = pos_x + (speed_v < -1e-6 ? 0 : speed_h + (facingLeft ? -1 : 1) * current_animation->offset_x);
             double coll_y = pos_y + (speed_v < -1e-6 ? speed_v - current_animation->offset_y : 0);

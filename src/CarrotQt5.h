@@ -25,7 +25,7 @@
 #include "ui_carrotqt5.h"
 #include "graphics/BitmapFont.h"
 #include "graphics/CarrotCanvas.h"
-#include "sound/SoundFX.h"
+#include "sound/SoundSystem.h"
 
 class CommonActor;
 class Player;
@@ -127,7 +127,6 @@ public:
     ~CarrotQt5();
     void parseCommandLine();
     void startMainMenu();
-    bool setMusic(const QString& filename);
     sf::View* game_view;
     unsigned getLevelWidth();
     unsigned getLevelHeight();
@@ -153,12 +152,12 @@ public:
     bool isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me);
     std::weak_ptr<CarrotCanvas> getCanvas();
     std::shared_ptr<BitmapFont> getFont();
+    std::weak_ptr<SoundSystem> getSoundSystem();
     std::weak_ptr<Player> getPlayer(unsigned no);
     int getLightingLevel();
     sf::Texture* getCachedTexture(const QString& filename);
     TileMap* game_tiles;
     EventMap* game_events;
-    SFXSystem* sfxsys;
     double gravity;
     bool dbgShowMasked;
     int mod_temp[32]; // temporary variables for testing new features
@@ -185,7 +184,6 @@ private:
     void clearTextureCache();
     Ui::CarrotQt5Class ui;
     QTimer myTimer;
-    HMUSIC currentMusic;
     QList<std::shared_ptr<CommonActor>> actors;
     QList<std::shared_ptr<DestructibleDebris>> debris;
     std::shared_ptr<Player> players[32];
@@ -197,6 +195,7 @@ private:
     std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> mainFont;
+    std::shared_ptr<SoundSystem> soundSystem;
     QString levelName;
     QString nextLevel;
     unsigned long frame;

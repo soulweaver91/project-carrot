@@ -142,7 +142,7 @@ void Player::keyPressEvent(QKeyEvent* event) {
         case Qt::Key_7:
         case Qt::Key_8:
         case Qt::Key_9:
-            root->sfxsys->playSFX(SFX_SWITCH_AMMO);
+            playSound(SFX_SWITCH_AMMO);
             // Key_2 is 50 and the rest come sequentially so no need for a separate
             // case branch for each key this way
             // Change this if the key enum codes change in Qt for any reason
@@ -324,7 +324,7 @@ void Player::tickEvent() {
                         speed_v = 0;
                         push = 0;
                         thrust = 0;
-                        root->sfxsys->playSFX(SFX_WARP_IN);
+                        playSound(SFX_WARP_IN);
                     }
                 }
             }
@@ -361,8 +361,7 @@ void Player::tickEvent() {
             break;
         case PC_AREA_EOL:
             if (controllable) {
-                root->setMusic("");
-                root->sfxsys->playSFX(SFX_JAZZ_EOL);
+                playSound(SFX_JAZZ_EOL);
                 root->initLevelChange(NEXT_NORMAL);
             }
             controllable = false;
@@ -419,7 +418,7 @@ void Player::tickEvent() {
                         {
                             auto newAmmo = fireWeapon<Ammo_Blaster>();
                             weapon_cooldown = std::max(0, 40 - 3 * fastfires);
-                            root->sfxsys->playSFX(SFX_BLASTER_SHOOT_JAZZ);
+                            playSound(SFX_BLASTER_SHOOT_JAZZ);
                             break;
                         }
                     case WEAPON_BOUNCER:
@@ -451,7 +450,7 @@ void Player::tickEvent() {
                         if (toaster_ammo_ticks == 0) {
                             ammo[currentWeapon] -= 1;
                             toaster_ammo_ticks = 10;
-                            root->sfxsys->playSFX(SFX_TOASTER_SHOOT);
+                            playSound(SFX_TOASTER_SHOOT);
                         }
                     } else {
                         ammo[currentWeapon] -= 1;
@@ -478,7 +477,7 @@ void Player::tickEvent() {
                 speed_v = -3 - std::max(0.0, (std::abs(speed_h) - 4.0) * 0.3);
                 canJump = false;
                 setAnimation(current_animation->state & (~AnimState::LOOKUP & ~AnimState::CROUCH));
-                root->sfxsys->playSFX(SFX_JUMP);
+                playSound(SFX_JUMP);
             }
         } else {
             if (thrust > 0) {
@@ -522,27 +521,27 @@ void Player::tickEvent() {
             switch(coll->type) {
                 case COLLTYPE_FAST_FIRE:
                     fastfires = std::min(fastfires + 1, 10);
-                    root->sfxsys->playSFX(SFX_COLLECT_AMMO);
+                    playSound(SFX_COLLECT_AMMO);
                     addScore(100);
                     break;
                 case COLLTYPE_AMMO_TOASTER:
                     addAmmo(WEAPON_TOASTER, 3);
-                    root->sfxsys->playSFX(SFX_COLLECT_AMMO);
+                    playSound(SFX_COLLECT_AMMO);
                     addScore(100);
                     break;
                 case COLLTYPE_AMMO_SEEKER:
                     addAmmo(WEAPON_SEEKER, 3);
-                    root->sfxsys->playSFX(SFX_COLLECT_AMMO);
+                    playSound(SFX_COLLECT_AMMO);
                     addScore(100);
                     break;
                 case COLLTYPE_AMMO_BOUNCER:
                     addAmmo(WEAPON_BOUNCER, 3);
-                    root->sfxsys->playSFX(SFX_COLLECT_AMMO);
+                    playSound(SFX_COLLECT_AMMO);
                     addScore(100);
                     break;
                 case COLLTYPE_GEM_RED:
                     addScore(100);
-                    root->sfxsys->playSFX(SFX_COLLECT_GEM,gem_sfx_idx);
+                    playSound(SFX_COLLECT_GEM);
                     gem_sfx_idx = (gem_sfx_idx + 1) % 6;
                     gem_sfx_idx_ctr = 180;
                     collected_gems[0]++;
@@ -550,7 +549,7 @@ void Player::tickEvent() {
                     break;
                 case COLLTYPE_GEM_GREEN:
                     addScore(500);
-                    root->sfxsys->playSFX(SFX_COLLECT_GEM,gem_sfx_idx);
+                    playSound(SFX_COLLECT_GEM);
                     gem_sfx_idx = (gem_sfx_idx + 1) % 6;
                     gem_sfx_idx_ctr = 180;
                     collected_gems[1]++;
@@ -558,7 +557,7 @@ void Player::tickEvent() {
                     break;
                 case COLLTYPE_GEM_BLUE:
                     addScore(1000);
-                    root->sfxsys->playSFX(SFX_COLLECT_GEM,gem_sfx_idx);
+                    playSound(SFX_COLLECT_GEM);
                     gem_sfx_idx = (gem_sfx_idx + 1) % 6;
                     gem_sfx_idx_ctr = 180;
                     collected_gems[2]++;
@@ -566,13 +565,13 @@ void Player::tickEvent() {
                     break;
                 case COLLTYPE_COIN_GOLD:
                     addScore(1000);
-                    root->sfxsys->playSFX(SFX_COLLECT_COIN);
+                    playSound(SFX_COLLECT_COIN);
                     collected_coins[1]++;
                     setupOSD(OSD_COIN_GOLD);
                     break;
                 case COLLTYPE_COIN_SILVER:
                     addScore(500);
-                    root->sfxsys->playSFX(SFX_COLLECT_COIN);
+                    playSound(SFX_COLLECT_COIN);
                     collected_coins[0]++;
                     setupOSD(OSD_COIN_SILVER);
                     break;
@@ -725,7 +724,7 @@ void Player::onHitFloorHook() {
         takeDamage(speed_h / 4);
     } else {
         if (!canJump) {
-            root->sfxsys->playSFX(SFX_LAND);
+            playSound(SFX_LAND);
         }
     }
 }
@@ -754,7 +753,7 @@ void Player::takeDamage(double npush) {
         isInvulnerable = true;
         isBlinking = true;
         addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
-        root->sfxsys->playSFX(SFX_JAZZ_HURT);
+        playSound(SFX_JAZZ_HURT);
         osd->setHealth(health);
     }
 }
@@ -830,7 +829,7 @@ void Player::endWarpTransition() {
         CoordinatePair c = root->game_events->getWarpTarget(p[0]);
         moveInstantly(c); // validity checked when warping started
         setTransition(AnimState::TRANSITION_WARP_END,false,true,false,&Player::endWarpTransition);
-        root->sfxsys->playSFX(SFX_WARP_OUT);
+        playSound(SFX_WARP_OUT);
     } else {
         isInvulnerable = false;
         isGravityAffected = true;

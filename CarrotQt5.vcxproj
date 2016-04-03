@@ -213,7 +213,7 @@
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
-    <ClCompile Include="src\sound\SoundFX.cpp" />
+    <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -271,7 +271,7 @@
     <ClInclude Include="src\JJ2Format.h" />
     <ClInclude Include="src\menu\MenuScreen.h" />
     <ClInclude Include="src\Resources.h" />
-    <ClInclude Include="src\sound\SoundFX.h" />
+    <ClInclude Include="src\sound\SoundSystem.h" />
     <CustomBuild Include="src\actor\Collectible.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Collectible.h...</Message>

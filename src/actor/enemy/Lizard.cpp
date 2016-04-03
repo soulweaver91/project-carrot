@@ -23,8 +23,8 @@ void Enemy_Lizard::tickEvent() {
         speed_h = (facingLeft ? -1 : 1) * 1;
     }
 
-    if (qrand() % 1000 < 2) {
-        root->sfxsys->playSFX(SFX_LIZARD_SPONTANEOUS);
+    if (qrand() % 10000 < 4) {
+        playSound(SFX_LIZARD_SPONTANEOUS);
     }
 }
 

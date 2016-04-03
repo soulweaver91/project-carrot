@@ -33,12 +33,17 @@ struct SFXBinding {
     HSAMPLE effect;
 };
 
-class SFXSystem {
+class SoundSystem {
     public:
-        SFXSystem();
-        ~SFXSystem();
+        SoundSystem();
+        ~SoundSystem();
         void playSFX(SFXType type, int idx = -1);
         bool addSFX(SFXType type, const QString& path);
+        bool setMusic(const QString& filename);
+        void fadeMusicOut(uint ms);
+        void fadeMusicIn(uint ms);
     private:
         QMultiMap< SFXType, HSAMPLE > effect_bank;
+        bool initialized;
+        HMUSIC currentMusic;
 };

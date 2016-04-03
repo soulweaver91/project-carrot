@@ -58,36 +58,30 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     game_view = new sf::View(sf::FloatRect(0.0,0.0,800.0,600.0));
     uiView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
 
-    // Attempt to start up the sound system, using the default audio
-    // device
-	if (!BASS_Init(-1,44100,0,0,NULL)) {
-        //std::cout << "Failed to initialize the BASS sound system!\r\n";
-    }
-    BASS_SetVolume(1.0);
-    sfxsys = new SFXSystem();
-    sfxsys->addSFX(SFX_BLASTER_SHOOT_JAZZ,"weapon/bullet_blaster_jazz_4.wav");
-    sfxsys->addSFX(SFX_COLLECT_AMMO,"pickup/ammo.wav");
-    sfxsys->addSFX(SFX_COLLECT_GEM,"pickup/gem.wav"); // TODO: direct pitch modification
-    sfxsys->addSFX(SFX_COLLECT_COIN,"pickup/coin.wav");
-    sfxsys->addSFX(SFX_JUMP,"common/char_jump.wav");
-    sfxsys->addSFX(SFX_LAND,"common/char_land.wav");
-    sfxsys->addSFX(SFX_SWITCH_AMMO,"weapon_change.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_1.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_2.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_3.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_4.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_5.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_6.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_7.wav");
-    sfxsys->addSFX(SFX_JAZZ_HURT,"jazz/hurt_8.wav");
-    sfxsys->addSFX(SFX_AMMO_HIT_WALL,"common/wall_poof.wav");
-    sfxsys->addSFX(SFX_SAVE_POINT,"object/savepoint_open.wav");
-    sfxsys->addSFX(SFX_JAZZ_EOL,"jazz/level_complete.wav");
-    sfxsys->addSFX(SFX_TOASTER_SHOOT,"weapon/toaster.wav");
-    sfxsys->addSFX(SFX_WARP_IN,"common/warp_in.wav");
-    sfxsys->addSFX(SFX_WARP_OUT,"common/warp_out.wav");
-    sfxsys->addSFX(SFX_LIZARD_SPONTANEOUS,"lizard/noise_4.wav");
-    sfxsys->addSFX(SFX_BLOCK_DESTRUCT,"common/scenery_destruct.wav");
+    soundSystem = std::make_shared<SoundSystem>();
+    soundSystem->addSFX(SFX_BLASTER_SHOOT_JAZZ,"weapon/bullet_blaster_jazz_4.wav");
+    soundSystem->addSFX(SFX_COLLECT_AMMO,"pickup/ammo.wav");
+    soundSystem->addSFX(SFX_COLLECT_GEM,"pickup/gem.wav"); // TODO: direct pitch modification
+    soundSystem->addSFX(SFX_COLLECT_COIN,"pickup/coin.wav");
+    soundSystem->addSFX(SFX_JUMP,"common/char_jump.wav");
+    soundSystem->addSFX(SFX_LAND,"common/char_land.wav");
+    soundSystem->addSFX(SFX_SWITCH_AMMO,"weapon_change.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_1.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_2.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_3.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_4.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_5.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_6.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_7.wav");
+    soundSystem->addSFX(SFX_JAZZ_HURT,"jazz/hurt_8.wav");
+    soundSystem->addSFX(SFX_AMMO_HIT_WALL,"common/wall_poof.wav");
+    soundSystem->addSFX(SFX_SAVE_POINT,"object/savepoint_open.wav");
+    soundSystem->addSFX(SFX_JAZZ_EOL,"jazz/level_complete.wav");
+    soundSystem->addSFX(SFX_TOASTER_SHOOT,"weapon/toaster.wav");
+    soundSystem->addSFX(SFX_WARP_IN,"common/warp_in.wav");
+    soundSystem->addSFX(SFX_WARP_OUT,"common/warp_out.wav");
+    soundSystem->addSFX(SFX_LIZARD_SPONTANEOUS,"lizard/noise_4.wav");
+    soundSystem->addSFX(SFX_BLOCK_DESTRUCT,"common/scenery_destruct.wav");
 
     installEventFilter(this);
 
@@ -140,7 +134,6 @@ CarrotQt5::~CarrotQt5() {
         cleanUpLevel();
         clearTextureCache();
     }
-    delete sfxsys;
     delete game_view;
 }
 
@@ -196,7 +189,7 @@ void CarrotQt5::startMainMenu() {
     isMenu = true;
 
     setWindowTitle("Project Carrot");
-    setMusic("Music/Menu.it");
+    soundSystem->setMusic("Music/Menu.it");
 
     menuObject = std::make_unique<MenuScreen>(shared_from_this());
 }
@@ -233,10 +226,10 @@ void CarrotQt5::closeEvent(QCloseEvent *event) {
 bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
-        BASS_ChannelSlideAttribute(currentMusic,BASS_ATTRIB_MUSIC_VOL_GLOBAL,128,1000);
+        soundSystem->fadeMusicIn(1000);
         paused = false;
     } else if (e->type() == QEvent::WindowDeactivate) {
-        BASS_ChannelSlideAttribute(currentMusic,BASS_ATTRIB_MUSIC_VOL_GLOBAL,0,1000);
+        soundSystem->fadeMusicOut(1000);
         paused = true;
         windowCanvas->setView(*uiView);
         pausedScreenshot->update(*windowCanvas);
@@ -411,20 +404,6 @@ void CarrotQt5::gameTick() {
 
 }
 
-bool CarrotQt5::setMusic(const QString& filename) {
-    // Stop the current music track and free its resources
-    if (BASS_ChannelIsActive(currentMusic)) {
-        BASS_ChannelStop(currentMusic);
-        BASS_MusicFree(currentMusic);
-    }
-
-    // Load the new track and start playing it
-    currentMusic = BASS_MusicLoad(false,filename.toUtf8().data(),0,0,BASS_SAMPLE_LOOP,1);
-    BASS_ChannelPlay(currentMusic,true);
-
-    return true;
-}
-
 unsigned CarrotQt5::getLevelWidth() {
     // todo: phase out
     return game_tiles->getLevelWidth();
@@ -534,7 +513,7 @@ bool CarrotQt5::loadLevel(const QString& name) {
                     addPlayer(defaultplayer,0);
                 }
                 
-                setMusic(("Music/" + level_config.value("Level/MusicDefault","").toString().toUtf8()).data());
+                soundSystem->setMusic(("Music/" + level_config.value("Level/MusicDefault","").toString().toUtf8()).data());
                 setLighting(level_config.value("Level/LightInit",100).toInt(),true);
                 
                 connect(ui.debug_health,SIGNAL(triggered()),players[0].get(),SLOT(debugHealth()));
@@ -580,7 +559,7 @@ void CarrotQt5::debugLoadMusic() {
         filename = JJ2Format::convertJ2B(filename);
     }
     if (filename != "") {
-        setMusic(filename);
+        soundSystem->setMusic(filename);
     }
 }
 
@@ -711,6 +690,7 @@ void CarrotQt5::setLightingStep() {
 
 void CarrotQt5::initLevelChange(ExitType e) {
     last_exit = e;
+    soundSystem->setMusic("");
     QTimer::singleShot(6000,this,SLOT(delayedLevelChange()));
 }
 
@@ -818,6 +798,10 @@ std::weak_ptr<CarrotCanvas> CarrotQt5::getCanvas() {
 
 std::shared_ptr<BitmapFont> CarrotQt5::getFont() {
     return mainFont;
+}
+
+std::weak_ptr<SoundSystem> CarrotQt5::getSoundSystem() {
+    return soundSystem;
 }
 
 int main(int argc, char *argv[]) {
