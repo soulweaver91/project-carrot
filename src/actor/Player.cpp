@@ -12,13 +12,11 @@
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), weapon_cooldown(0), character(CHAR_JAZZ),
     controllable(true), damaging_move(false), gem_sfx_idx(0), gem_sfx_idx_ctr(0), camera_shift(0), copter_time(0), fastfires(0),
-    transition_end_function(nullptr), pole_spins(0), pole_positive(false), toaster_ammo_ticks(10), score(0), osd_timer(-1l),
-    osd_type(OSD_NONE) {
+    transition_end_function(nullptr), pole_spins(0), pole_positive(false), toaster_ammo_ticks(10), score(0) {
     unsigned anim_idx;
     max_health = 5;
     health = 5;
     lives = 3;
-    livesString = new BitmapString(root->mainFont,"x3");
     currentWeapon = WEAPON_BLASTER;
     std::fill_n(ammo,9,0);
     std::fill_n(collected_coins,2,0);
@@ -76,44 +74,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     addAnimation(AnimState::TRANSITION_WARP,              "jazz/warp_in.png"           ,7,1,29,73,15,16,57);
     addAnimation(AnimState::TRANSITION_WARP_END,          "jazz/warp_out.png"          ,8,1,58,73,15,16,57);
 
-    anim_idx = addAnimation(AnimState::UI_PLAYER_FACE, "ui/icon_jazz.png",  37,1,39,39,10,0,0);
-    ui_icon_sprite = new sf::Sprite();
-    ui_icon_sprite->setTexture(*(animation_bank.at(anim_idx)->animation_frames));
-    ui_icon_sprite->setTextureRect(sf::IntRect(0,0,animation_bank.at(anim_idx)->frame_width,animation_bank.at(anim_idx)->frame_height));
-    ui_icon_sprite->setPosition(5,root->getViewHeight() - 40);
-
-    addTimer(7u,true,static_cast<TimerCallbackFunc>(&Player::advanceCharIconFrame));
-
-    heart_tex = sf::Texture();
-    heart_tex.loadFromFile("Data/Assets/ui/heart.png");
-    
-    std::fill_n(weapon_ui_animations, 9, -1);
-    weapon_ui_animations[0] = addAnimation(AnimState::UI_WEAPON_BLASTER, "pickup/fast_fire_jazz.png",  10,1,17,22,10,5,12);
-    weapon_ui_animations[1] = addAnimation(AnimState::UI_WEAPON_BOUNCER, "pickup/ammo_bouncer.png",  10,1,16,13,10,5,7);
-    weapon_ui_animations[2] = addAnimation(AnimState::UI_WEAPON_FREEZER, "pickup/ammo_freezer.png",  10,1,13,15,10,4,8);
-    weapon_ui_animations[3] = addAnimation(AnimState::UI_WEAPON_SEEKER,  "pickup/ammo_seeker.png",   10,1,19,20,10,7,10);
-    weapon_ui_animations[4] = addAnimation(AnimState::UI_WEAPON_RF,      "pickup/ammo_rf.png",       10,1,13,20,10,4,10);
-    weapon_ui_animations[5] = addAnimation(AnimState::UI_WEAPON_TOASTER, "pickup/ammo_toaster.png",  10,1,16,14,10,5,7);
-    weapon_ui_animations[6] = addAnimation(AnimState::UI_WEAPON_TNT,     "pickup/ammo_tnt.png",      10,1,20,27,10,7,13);
-    weapon_ui_animations[7] = addAnimation(AnimState::UI_WEAPON_PEPPER,  "pickup/ammo_pepper.png",   9 ,1,15,13,10,5,7);
-    weapon_ui_animations[8] = addAnimation(AnimState::UI_WEAPON_ELECTRO, "pickup/ammo_electro.png",  10,1,30,21,10,14,10);
-    ui_weapon_sprite = new sf::Sprite();
-    ui_weapon_sprite->setTexture(*(animation_bank.at(weapon_ui_animations[0])->animation_frames));
-    ui_weapon_sprite->setTextureRect(sf::IntRect(0,0,animation_bank.at(weapon_ui_animations[0])->frame_width,animation_bank.at(weapon_ui_animations[0])->frame_height));
-    ui_weapon_sprite->setPosition(root->getViewWidth()  - 85 - animation_bank.at(weapon_ui_animations[0])->offset_x,
-                                  root->getViewHeight() - 15 - animation_bank.at(weapon_ui_animations[0])->offset_y);
-    
-    addAnimation(AnimState::UI_OSD_GEM_RED, "pickup/gem.png",  8,1,25,26,10,10,13);
-    addAnimation(AnimState::UI_OSD_GEM_GREEN, "pickup/gem.png",  8,1,25,26,10,10,13);
-    addAnimation(AnimState::UI_OSD_GEM_BLUE, "pickup/gem.png",  8,1,25,26,10,10,13);
-
     setAnimation(AnimState::FALL);
-    
-    // Define the score string resource
-    scoreString = new BitmapString(root->mainFont,"00000000",FONT_ALIGN_LEFT);
-    
-    
-    osd_string = new BitmapString(root->mainFont,"",FONT_ALIGN_CENTER);
 
     // Get a brief invincibility at the start of the level
     isInvulnerable = true;
@@ -122,8 +83,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
 }
 
 Player::~Player() {
-    delete livesString;
-    delete scoreString;
+
 }
 
 void Player::keyPressEvent(QKeyEvent* event) {
@@ -253,6 +213,16 @@ void Player::keyReleaseEvent(QKeyEvent* event) {
 }
 
 void Player::tickEvent() {
+    // Initialize these ASAP
+    if (osd == nullptr) {
+        osd = std::make_unique<PlayerOSD>(root, std::dynamic_pointer_cast<Player>(shared_from_this()), root->getCanvas());
+        osd->setWeaponType(currentWeapon, ammo_powered[currentWeapon]);
+        osd->setAmmo(ammo[currentWeapon]);
+        osd->setLives(lives);
+        osd->setScore(score);
+        osd->setHealth(health);
+    }
+
     // Check for pushing
     if (canJump && controllable) {
         std::weak_ptr<SolidObject> object;
@@ -613,79 +583,21 @@ void Player::tickEvent() {
     }
 }
 
-// TODO: Get rid of this, this is a ridiculous hack.
-void Player::advanceCharIconFrame() {
-    ui_icon_frame = (ui_icon_frame + 1) % 37;
-    ui_icon_sprite->setTextureRect(sf::IntRect(ui_icon_frame*39,0,39,39));
-
-    if (weapon_ui_animations[currentWeapon] != -1) {
-        ui_weapon_frame = (ui_weapon_frame + 1) % animation_bank.at(weapon_ui_animations[currentWeapon])->frame_cols;
-    
-        ui_weapon_sprite->setTextureRect(sf::IntRect(
-            ui_weapon_frame*animation_bank.at(weapon_ui_animations[currentWeapon])->frame_width,0,
-            animation_bank.at(weapon_ui_animations[currentWeapon])->frame_width,
-            animation_bank.at(weapon_ui_animations[currentWeapon])->frame_height));
-    }
-
-}
-
 unsigned Player::getHealth() {
     return health;
 }
 
 void Player::drawUIOverlay() {
+    osd->drawOSD();
+
     auto canvas = root->getCanvas().lock();
     if (canvas == nullptr) {
         return;
     }
 
-    unsigned vw = root->getViewWidth();
-    unsigned vh = root->getViewHeight();
-    canvas->draw(*ui_icon_sprite);
-    canvas->draw(*ui_weapon_sprite);
-    livesString->drawString(root->getCanvas(),40,vh - 25);
-
-    sf::Sprite heartspr(heart_tex);
-    for (unsigned i = 0; i < health; ++i) {
-        heartspr.setPosition((vw - 100.0) + i * 18.0, 5.0);
-        if (!((health == 1) && ((root->getFrame() % 6) > 2))) {
-            canvas->draw(heartspr);
-        }
-    }
-
-    BitmapString ammo_str(root->mainFont,"x?");
-    if (currentWeapon == WEAPON_BLASTER) {
-        ammo_str.setText("x^");
-    } else {
-        ammo_str.setText(QString("x") + QString::number(ammo[currentWeapon]));
-    }
-    ammo_str.drawString(canvas,vw - 70,vh - 25);
-    
     BitmapString::drawString(canvas, root->mainFont, "P1: " + QString::number(pos_x) + "," + QString::number(pos_y), 6, 86);
     BitmapString::drawString(canvas, root->mainFont, "  Hsp " + QString::number(speed_h), 6, 116);
     BitmapString::drawString(canvas, root->mainFont, "  Vsp " + QString::number(speed_v), 6, 146);
-    
-    // Draw the current score
-    scoreString->setText(QString::number(score).rightJustified(8,'0',false));
-    scoreString->drawString(canvas, 6, 6);
-
-    if (osd_type != OSD_NONE) {
-        osd_offset = std::min(60u,osd_offset + 1);
-    } else {
-        if (osd_offset > 0) {
-            osd_offset--;
-        }
-    }
-    if (osd_offset > 0) {
-        osd_string->drawString(canvas, vw / 2 + 30 - osd_offset / 2, vh - osd_offset / 2);
-        switch (osd_type) {
-            case OSD_GEM_RED:
-
-            case OSD_NONE:
-            default:
-                break;
-        }
-    }
 }
 
 bool Player::selectWeapon(enum WeaponType new_type) {
@@ -699,18 +611,10 @@ bool Player::selectWeapon(enum WeaponType new_type) {
         return false;
     }
 
-    // Otherwise all OK; let's check to be sure that the weapon icon is loaded
-    // If it is, set that to be the animated one; otherwise just let it show the
-    // earlier weapon
-    if (weapon_ui_animations[new_type] != -1) {
-        StateAnimationPair* wp = animation_bank.at(weapon_ui_animations[new_type]);
-        ui_weapon_sprite->setTexture(*(wp->animation_frames));
-        ui_weapon_sprite->setTextureRect(sf::IntRect(0,0,wp->frame_width,wp->frame_height));
-        ui_weapon_sprite->setPosition(root->getViewWidth() - 85 - wp->offset_x, root->getViewHeight() - 15 - wp->offset_y);
-        ui_weapon_frame = 0;
-    }
-
     currentWeapon = new_type;
+    osd->setWeaponType(new_type, ammo_powered[new_type]);
+    osd->setAmmo(ammo[currentWeapon]);
+
     return true;
 }
 
@@ -732,6 +636,10 @@ void Player::addAmmo(enum WeaponType type, unsigned amount) {
     } else {
         ammo[type] += amount;
     }
+
+    if (type == currentWeapon) {
+        osd->setAmmo(ammo[type]);
+    }
 }
 
 bool Player::perish() {
@@ -751,8 +659,9 @@ void Player::deathRecovery() {
         root->loadSavePoint();
 
         // Reset health and remove one life
-        health = 5;
-        livesString->setText("x" + QString::number(lives));
+        health = max_health;
+        osd->setLives(lives);
+        osd->setHealth(max_health);
 
         // Negate all possible movement effects etc.
         onTransitionEndHook();
@@ -846,6 +755,7 @@ void Player::takeDamage(double npush) {
         isBlinking = true;
         addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
         root->sfxsys->playSFX(SFX_JAZZ_HURT);
+        osd->setHealth(health);
     }
 }
 
@@ -946,42 +856,34 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     }
 
     // Update the lives string as it doesn't do so automatically
-    livesString->setText("x" + QString::number(lives));
+    osd->setLives(lives);
 }
 
 void Player::addScore(unsigned points) {
     score = std::min(99999999ul,score + points);
 }
 
-void Player::setupOSD(OSDType type, int param) {
-    cancelTimer(osd_timer);
-    osd_offset = 0;
-    osd_type = type;
-    osd_timer = addTimer(350u,false,static_cast<TimerCallbackFunc>(&Player::clearOSD));
+void Player::setupOSD(OSDMessageType type, int param) {
     switch (type) {
         case OSD_GEM_RED: 
-            osd_string->setText("  x" + QString::number(collected_gems[0] + 5 * collected_gems[1] + 10 * collected_gems[2]));
+            osd->setMessage(OSD_GEM_RED, collected_gems[0] + 5 * collected_gems[1] + 10 * collected_gems[2]);
             break;
-        case OSD_GEM_GREEN: 
-            osd_string->setText("  x" + QString::number(collected_gems[1]));
+        case OSD_GEM_GREEN:
+            osd->setMessage(OSD_GEM_GREEN, collected_gems[1]);
             break;
-        case OSD_GEM_BLUE: 
-            osd_string->setText("  x" + QString::number(collected_gems[2]));
+        case OSD_GEM_BLUE:
+            osd->setMessage(OSD_GEM_BLUE, collected_gems[2]);
             break;
         case OSD_COIN_SILVER: 
-            osd_string->setText("  x" + QString::number(collected_coins[0] + 5 * collected_coins[1]));
+            osd->setMessage(OSD_COIN_SILVER, collected_coins[0] + 5 * collected_coins[1]);
             break;
         case OSD_COIN_GOLD: 
-            osd_string->setText("  x" + QString::number(collected_coins[1]));
+            osd->setMessage(OSD_COIN_GOLD, collected_coins[1]);
             break;
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS: 
-            osd_string->setText("need   x" + QString::number(param) + " more");
+            osd->setMessage(OSD_BONUS_WARP_NOT_ENOUGH_COINS, param);
             break;
     }
-}
-
-void Player::clearOSD() {
-    osd_type = OSD_NONE;
 }
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {
@@ -993,5 +895,6 @@ template<typename T> std::shared_ptr<T> Player::fireWeapon() {
 
     auto newAmmo = std::make_shared<T>(root, weakPtr, pos_x + fire_x, pos_y - fire_y, facingLeft, lookup);
     root->addActor(newAmmo);
+    osd->setAmmo(ammo[currentWeapon]);
     return newAmmo;
 }

@@ -182,6 +182,9 @@
     <ClCompile Include="src\gamestate\TileMap.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\PlayerOSD.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
     <ClCompile Include="src\gamestate\AnimationUser.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
@@ -292,6 +295,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gamestate\TileMap.h">
+      <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\PlayerOSD.h">
       <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
     <ClInclude Include="src\gamestate\AnimationUser.h">

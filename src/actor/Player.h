@@ -7,6 +7,7 @@
 #include "CommonActor.h"
 #include "../graphics/BitmapFont.h"
 #include "WeaponTypes.h"
+#include "../gamestate/PlayerOSD.h"
 
 enum PlayerCharacter {
     CHAR_JAZZ       = 0x00,
@@ -14,17 +15,6 @@ enum PlayerCharacter {
     CHAR_LORI       = 0x02,
     CHAR_FROG       = 0x80,
     CHAR_BIRD       = 0x81
-};
-
-enum OSDType {
-    OSD_NONE,
-    OSD_GEM_RED,
-    OSD_GEM_GREEN,
-    OSD_GEM_BLUE,
-    OSD_GEM_PURPLE,
-    OSD_COIN_GOLD,
-    OSD_COIN_SILVER,
-    OSD_BONUS_WARP_NOT_ENOUGH_COINS
 };
 
 struct LevelCarryOver {
@@ -66,26 +56,11 @@ private:
     void onHitWallHook();
     bool selectWeapon(enum WeaponType new_type);
     void addAmmo(enum WeaponType type, unsigned amount);
-    void setupOSD(OSDType type, int param = 0);
-    void clearOSD();
+    void setupOSD(OSDMessageType type, int param = 0);
     template<typename T> std::shared_ptr<T> fireWeapon();
 
     PlayerCharacter character;
-
-    sf::Sprite* ui_icon_sprite;
-    unsigned ui_icon_frame;
-    sf::Sprite* ui_weapon_sprite;
-    unsigned ui_weapon_frame;
-    unsigned weapon_ui_animations[9];
-    sf::Texture heart_tex;
-    BitmapString* livesString;
-    BitmapString* scoreString;
-    
-    OSDType osd_type;
-    unsigned long osd_timer;
-    unsigned osd_offset;
-    BitmapString* osd_string;
-    sf::Sprite* osd_sprite;
+    std::unique_ptr<PlayerOSD> osd;
 
     unsigned lives;
     unsigned ammo[9];
@@ -122,7 +97,6 @@ private:
     void deathRecovery();
 
 private slots:
-    void advanceCharIconFrame();
     void delayedUppercutStart();
     void delayedButtstompStart();
     void endDamagingMove();

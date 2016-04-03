@@ -204,6 +204,7 @@
     <ClCompile Include="src\gamestate\AnimationUser.cpp" />
     <ClCompile Include="src\gamestate\EventMap.cpp" />
     <ClCompile Include="src\gamestate\FrameTimer.cpp" />
+    <ClCompile Include="src\gamestate\PlayerOSD.cpp" />
     <ClCompile Include="src\gamestate\TileMap.cpp" />
     <ClCompile Include="src\gamestate\TimerUser.cpp" />
     <ClCompile Include="src\graphics\AnimatedTile.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h" />
     <ClInclude Include="src\actor\Bridge.h" />
     <ClInclude Include="src\gamestate\AnimationUser.h" />
+    <ClInclude Include="src\gamestate\PlayerOSD.h" />
     <ClInclude Include="src\gamestate\TileMap.h" />
     <ClInclude Include="src\gamestate\TimerUser.h" />
     <ClInclude Include="src\Version.h" />
