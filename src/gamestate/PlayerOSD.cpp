@@ -135,7 +135,7 @@ void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
     currentWeapon = type;
 
     if (weaponIconIdx[type] != -1) {
-        StateAnimationPair* wp = animation_bank.at(weaponIconIdx[type]);
+        auto wp = animation_bank.at(weaponIconIdx[type]);
         weaponIconSprite->setTexture(*(wp->animation_frames));
         weaponIconSprite->setTextureRect(sf::IntRect(0, 0, wp->frame_width, wp->frame_height));
         weaponIconSprite->setPosition(root->getViewWidth() - 85 - wp->offset_x, root->getViewHeight() - 15 - wp->offset_y);

@@ -117,12 +117,12 @@ protected:
     void animationAdvance();
     virtual void onTransitionEndHook();
     size_t assignAnimation(ActorState state, size_t original_idx);
-    bool setAnimation(StateAnimationPair* animation);
-    StateAnimationPair* current_animation;
-    QList< StateAnimationPair* > animation_bank;
+    bool setAnimation(std::shared_ptr<StateAnimationPair> animation);
+    std::shared_ptr<StateAnimationPair> current_animation;
+    QList<std::shared_ptr<StateAnimationPair>> animation_bank;
     bool inTransition;
     bool cancellableTransition;
-    StateAnimationPair* transition;
+    std::shared_ptr<StateAnimationPair> transition;
     unsigned frame;
     sf::Sprite sprite;
     std::shared_ptr<CarrotQt5> root;

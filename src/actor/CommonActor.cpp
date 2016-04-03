@@ -43,7 +43,7 @@ void CommonActor::DrawUpdate() {
     
     if (!((isBlinking) && ((root->getFrame() % 6) > 2))) {
         // Pick the appropriate animation depending on if we are in the midst of a transition
-        StateAnimationPair* source = (inTransition ? transition : current_animation);
+        auto source = (inTransition ? transition : current_animation);
     
         sprite.setScale((facingLeft ? -1 : 1),1);
         sprite.setPosition(pos_x,pos_y);

@@ -7,13 +7,11 @@ AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root)
 }
 
 AnimationUser::~AnimationUser() {
-    for (int i = animation_bank.size() - 1; i >= 0; --i) {
-        delete animation_bank.at(i);
-    }
+
 }
 
 void AnimationUser::animationAdvance() {
-    StateAnimationPair* source = (inTransition ? transition : current_animation);
+    std::shared_ptr<StateAnimationPair> source = (inTransition ? transition : current_animation);
 
     int anim_length = source->frame_cols * source->frame_rows;
 
@@ -52,7 +50,7 @@ void AnimationUser::animationAdvance() {
 
 size_t AnimationUser::addAnimation(ActorState state, const QString& filename, int frame_cols, int frame_rows,
     int frame_width, int frame_height, int fps, int offset_x, int offset_y) {
-    StateAnimationPair* new_ani = new StateAnimationPair();
+    auto new_ani = std::make_shared<StateAnimationPair>();
     sf::Texture* loaded_frames = root->getCachedTexture("Data/Assets/" + filename);
 
     if (loaded_frames != nullptr) {
@@ -86,7 +84,7 @@ size_t AnimationUser::assignAnimation(ActorState state, size_t original_idx) {
     }
 
     // Copy the requested state-animation pair and set a new state to it
-    StateAnimationPair* new_ani = new StateAnimationPair(*(animation_bank.at(original_idx)));
+    auto new_ani = std::make_shared<StateAnimationPair>(*animation_bank.at(original_idx).get());
     new_ani->state = state;
 
     // Add the new pair to the animation bank and return its index
@@ -127,7 +125,7 @@ bool AnimationUser::setAnimation(ActorState state) {
     return true;
 }
 
-bool AnimationUser::setAnimation(StateAnimationPair* animation) {
+bool AnimationUser::setAnimation(std::shared_ptr<StateAnimationPair> animation) {
     frame = 0;
     current_animation = animation;
     sprite.setTexture(*(current_animation->animation_frames));
