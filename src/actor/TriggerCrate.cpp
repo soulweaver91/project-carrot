@@ -10,9 +10,14 @@ TriggerCrate::~TriggerCrate() {
 }
 
 bool TriggerCrate::perish() {
+
     // crate can be destroyed
     if (health == 0) {
-        root->game_tiles->setTrigger(trigger_id, true);
+        auto tiles = root->getGameTiles().lock();
+
+        if (tiles != nullptr) {
+            tiles->setTrigger(trigger_id, true);
+        }
     }
     return CommonActor::perish();
 }

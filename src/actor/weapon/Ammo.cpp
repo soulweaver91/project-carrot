@@ -52,13 +52,18 @@ void Ammo::checkCollisions() {
 
     }
     
-    PCEvent e = root->game_events->getPositionEvent(pos_x,pos_y);
-    switch(e) {
-        case PC_MODIFIER_RICOCHET:
-            ricochet();
+
+    auto events = root->getGameEvents().lock();
+    auto tiles = root->getGameTiles().lock();
+    if (events != nullptr) {
+        PCEvent e = events->getPositionEvent(pos_x,pos_y);
+        switch(e) {
+            case PC_MODIFIER_RICOCHET:
+                ricochet();
+        }
     }
 
-    if (root->game_tiles->checkWeaponDestructible(pos_x, pos_y)) {
+    if (tiles != nullptr && tiles->checkWeaponDestructible(pos_x, pos_y)) {
         health = 0;
     }
 }

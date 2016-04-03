@@ -155,8 +155,6 @@ void CarrotQt5::parseCommandLine() {
 }
 
 void CarrotQt5::cleanUpLevel() {
-    delete game_tiles;
-    delete game_events;
     actors.clear();
     std::fill_n(players, 32, nullptr);
     clearTextureCache();
@@ -344,10 +342,10 @@ void CarrotQt5::gameTick() {
             --i;
         }
     }
-    game_events->activateEvents(windowCanvas->getView());
+    gameEvents->activateEvents(windowCanvas->getView());
 
     // Run animated tiles' timers
-    game_tiles->advanceAnimatedTileTimers();
+    gameTiles->advanceAnimatedTileTimers();
     // Run all actors' timers
     for(unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->advanceTimers();
@@ -363,7 +361,7 @@ void CarrotQt5::gameTick() {
 
 
     // Draw the layers: first lower (background and sprite) levels...
-    game_tiles->drawLowerLevels();
+    gameTiles->drawLowerLevels();
     // ...then draw all the actors...
     for(unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->DrawUpdate();
@@ -377,7 +375,7 @@ void CarrotQt5::gameTick() {
         }
     }
     // ...and finally the higher (foreground) levels
-    game_tiles->drawHigherLevels();
+    gameTiles->drawHigherLevels();
 
     // Draw the lighting overlay
     sf::Sprite s(lightTexture->getTexture());
@@ -406,11 +404,11 @@ void CarrotQt5::gameTick() {
 
 unsigned CarrotQt5::getLevelWidth() {
     // todo: phase out
-    return game_tiles->getLevelWidth();
+    return gameTiles->getLevelWidth();
 }
 unsigned CarrotQt5::getLevelHeight() {
     // todo: phase out
-    return game_tiles->getLevelHeight();
+    return gameTiles->getLevelHeight();
 }
 
 bool CarrotQt5::addActor(std::shared_ptr<CommonActor> actor) {
@@ -475,38 +473,38 @@ bool CarrotQt5::loadLevel(const QString& name) {
             QDir tileset_dir(QDir::currentPath() + QString::fromStdString("/Tilesets/") + tileset);
             if (tileset_dir.exists()) {
                 // Read the tileset and the sprite layer
-                game_tiles = new TileMap(shared_from_this(),
+                gameTiles = std::make_shared<TileMap>(shared_from_this(),
                                          tileset_dir.absoluteFilePath("tiles.png"),
                                          tileset_dir.absoluteFilePath("mask.png"),
                                          level_dir.absoluteFilePath("spr.layer"));
             
                 // Read the sky layer if it exists
                 if (level_files.contains("sky.layer")) {
-                    game_tiles->readLayerConfiguration(LAYER_SKY_LAYER, level_dir.absoluteFilePath("sky.layer"), 0, level_config);
+                    gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, level_dir.absoluteFilePath("sky.layer"), 0, level_config);
                 }
             
                 // Read the background layers
                 QStringList bglayers = level_files.filter(".bg.layer");
                 for (unsigned i = 0; i < bglayers.size(); ++i) {
-                    game_tiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, level_dir.absoluteFilePath(bglayers.at(i)), i, level_config);
+                    gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, level_dir.absoluteFilePath(bglayers.at(i)), i, level_config);
                 }
 
                 // Read the foreground layers
                 QStringList fglayers = level_files.filter(".fg.layer");
                 for (unsigned i = 0; i < fglayers.size(); ++i) {
-                    game_tiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, level_dir.absoluteFilePath(fglayers.at(i)), i, level_config);
+                    gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, level_dir.absoluteFilePath(fglayers.at(i)), i, level_config);
                 }
 
                 if (level_dir.entryList().contains("animtiles.dat")) {
-                    game_tiles->readAnimatedTiles(level_dir.absoluteFilePath("animtiles.dat"));
+                    gameTiles->readAnimatedTiles(level_dir.absoluteFilePath("animtiles.dat"));
                 }
                 
-                game_events = new EventMap(shared_from_this(), game_tiles, getLevelWidth(), getLevelHeight());
+                gameEvents = std::make_shared<EventMap>(shared_from_this(), getLevelWidth(), getLevelHeight());
                 if (level_files.contains("event.layer")) {
-                    game_events->readEvents(level_dir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat",1).toUInt());
+                    gameEvents->readEvents(level_dir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat",1).toUInt());
                 }
 
-                game_tiles->saveInitialSpriteLayer();
+                gameTiles->saveInitialSpriteLayer();
                 
                 if (players[0] == nullptr) {
                     auto defaultplayer = std::make_shared<Player>(shared_from_this(), 320.0, 32.0);
@@ -637,14 +635,14 @@ Hitbox CarrotQt5::calcHitbox(int x, int y, int w, int h) {
 void CarrotQt5::setSavePoint() {
     lastSavePoint.player_lives = players[0]->getLives() - 1;
     lastSavePoint.player_pos = players[0]->getPosition();
-    lastSavePoint.spr_layer_copy = game_tiles->prepareSavePointLayer();
+    lastSavePoint.spr_layer_copy = gameTiles->prepareSavePointLayer();
 }
 
 void CarrotQt5::loadSavePoint() {
     clearActors();
-    game_events->deactivateAll();
+    gameEvents->deactivateAll();
     players[0]->moveInstantly(lastSavePoint.player_pos);
-    game_tiles->loadSavePointLayer(lastSavePoint.spr_layer_copy);
+    gameTiles->loadSavePointLayer(lastSavePoint.spr_layer_copy);
 }
 
 void CarrotQt5::clearActors() {
@@ -662,7 +660,7 @@ unsigned long CarrotQt5::getFrame() {
 
 void CarrotQt5::createDebris(unsigned tile_id, int x, int y) {
     for (int i = 0; i < 4; ++i) {
-        auto d = std::make_shared<DestructibleDebris>(game_tiles->getTilesetTexture(), getCanvas(), x, y, tile_id % 10, tile_id / 10,i);
+        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), getCanvas(), x, y, tile_id % 10, tile_id / 10,i);
         debris.push_back(d);
     }
 }
@@ -715,7 +713,7 @@ void CarrotQt5::delayedLevelChange() {
 
 bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collided) {
     collided = std::weak_ptr<SolidObject>();
-    if (!game_tiles->isTileEmpty(hbox,downwards)) {
+    if (!gameTiles->isTileEmpty(hbox,downwards)) {
         return false;
     }
 
@@ -760,6 +758,14 @@ std::weak_ptr<Player> CarrotQt5::getPlayer(unsigned no) {
     } else {
         return players[no];
     }
+}
+
+std::weak_ptr<TileMap> CarrotQt5::getGameTiles() {
+    return gameTiles;
+}
+
+std::weak_ptr<EventMap> CarrotQt5::getGameEvents() {
+    return gameEvents;
 }
 
 int CarrotQt5::getLightingLevel() {

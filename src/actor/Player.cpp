@@ -223,6 +223,8 @@ void Player::tickEvent() {
         osd->setHealth(health);
     }
 
+    auto tiles = root->getGameTiles().lock();
+
     // Check for pushing
     if (canJump && controllable) {
         std::weak_ptr<SolidObject> object;
@@ -246,14 +248,14 @@ void Player::tickEvent() {
 
 
     // Check if hitting a vine
-    if (root->game_tiles->isPosVine(pos_x,pos_y - 25)) {
+    if (tiles != nullptr && tiles->isPosVine(pos_x,pos_y - 25)) {
         isSuspended = true;
         isGravityAffected = false;
         speed_v = 0;
         thrust = 0;
 
         // move downwards until we're on the standard height
-        while (root->game_tiles->isPosVine(pos_x,pos_y - 25)) {
+        while (tiles->isPosVine(pos_x,pos_y - 25)) {
             pos_y -= 1;
         }
         pos_y += 5;
@@ -265,12 +267,12 @@ void Player::tickEvent() {
     }
 
     // Buttstomp/etc. tiles checking
-    if ((current_animation->state & (AnimState::BUTTSTOMP | AnimState::UPPERCUT | AnimState::SIDEKICK)) > 0) {
+    if (tiles != nullptr && (current_animation->state & (AnimState::BUTTSTOMP | AnimState::UPPERCUT | AnimState::SIDEKICK)) > 0) {
         // check all corners of hitbox
-        root->game_tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y - 30 + speed_v);
-        root->game_tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y - 30 + speed_v);
-        root->game_tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y + speed_v);
-        root->game_tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y + speed_v);
+        tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y - 30 + speed_v);
+        tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y - 30 + speed_v);
+        tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y + speed_v);
+        tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y + speed_v);
 
         std::weak_ptr<SolidObject> object;
         if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, speed_v), false, shared_from_this(), object))) {
@@ -305,19 +307,21 @@ void Player::tickEvent() {
         endDamagingMove();
     }
     
-    PCEvent e = root->game_events->getPositionEvent(pos_x,pos_y-15);
-    quint16 p[8];
-    root->game_events->getPositionParams(pos_x,pos_y-15,p);
-    switch (e) {
-        case PC_LIGHT_SET:
-            root->setLighting(p[0],false);
-            break;
-        case PC_WARP_ORIGIN:
+    auto events = root->getGameEvents().lock();
+    if (events != nullptr) {
+        PCEvent e = events->getPositionEvent(pos_x, pos_y - 15);
+        quint16 p[8];
+        events->getPositionParams(pos_x, pos_y - 15, p);
+        switch (e) {
+            case PC_LIGHT_SET:
+                root->setLighting(p[0], false);
+                break;
+            case PC_WARP_ORIGIN:
             {
                 if (!inTransition || cancellableTransition) {
-                    CoordinatePair c = root->game_events->getWarpTarget(p[0]);
+                    CoordinatePair c = events->getWarpTarget(p[0]);
                     if (c.x >= 0) {
-                        setTransition(AnimState::TRANSITION_WARP,false,true,false,&Player::endWarpTransition);
+                        setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
                         isInvulnerable = true;
                         isGravityAffected = false;
                         speed_h = 0;
@@ -329,43 +333,44 @@ void Player::tickEvent() {
                 }
             }
             break;
-        case PC_MODIFIER_H_POLE:
-            if (pole_spins == 0) {
-                pos_y = (qRound(pos_y - 15) / 32) * 32 + 30;
-                setTransition(AnimState::TRANSITION_POLE_H_SLOW,false,true,false,&Player::endHPoleTransition);
-                pole_positive = (speed_h > 0);
-                pos_x = (qRound(pos_x) / 32) * 32 + 16;
-                pole_spins = 3;
-                speed_h = 0;
-                speed_v = 0;
-                push = 0;
-                thrust = 0;
-                canJump = false;
-                isGravityAffected = false;
-            }
-            break;
-        case PC_MODIFIER_V_POLE:
-            if (pole_spins == 0) {
-                pos_y = (qRound(pos_y - 15) / 32) * 32 + 15;
-                setTransition(AnimState::TRANSITION_POLE_V_SLOW,false,true,false,&Player::endVPoleTransition);
-                pole_positive = (speed_v > 0);
-                pos_x = (qRound(pos_x) / 32) * 32 + 16;
-                pole_spins = 3;
-                speed_h = 0;
-                speed_v = 0;
-                push = 0;
-                thrust = 0;
-                canJump = false;
-                isGravityAffected = false;
-            }
-            break;
-        case PC_AREA_EOL:
-            if (controllable) {
-                playSound(SFX_JAZZ_EOL);
-                root->initLevelChange(NEXT_NORMAL);
-            }
-            controllable = false;
-            break;
+            case PC_MODIFIER_H_POLE:
+                if (pole_spins == 0) {
+                    pos_y = (qRound(pos_y - 15) / 32) * 32 + 30;
+                    setTransition(AnimState::TRANSITION_POLE_H_SLOW, false, true, false, &Player::endHPoleTransition);
+                    pole_positive = (speed_h > 0);
+                    pos_x = (qRound(pos_x) / 32) * 32 + 16;
+                    pole_spins = 3;
+                    speed_h = 0;
+                    speed_v = 0;
+                    push = 0;
+                    thrust = 0;
+                    canJump = false;
+                    isGravityAffected = false;
+                }
+                break;
+            case PC_MODIFIER_V_POLE:
+                if (pole_spins == 0) {
+                    pos_y = (qRound(pos_y - 15) / 32) * 32 + 15;
+                    setTransition(AnimState::TRANSITION_POLE_V_SLOW, false, true, false, &Player::endVPoleTransition);
+                    pole_positive = (speed_v > 0);
+                    pos_x = (qRound(pos_x) / 32) * 32 + 16;
+                    pole_spins = 3;
+                    speed_h = 0;
+                    speed_v = 0;
+                    push = 0;
+                    thrust = 0;
+                    canJump = false;
+                    isGravityAffected = false;
+                }
+                break;
+            case PC_AREA_EOL:
+                if (controllable) {
+                    playSound(SFX_JAZZ_EOL);
+                    root->initLevelChange(NEXT_NORMAL);
+                }
+                controllable = false;
+                break;
+        }
     }
     
     // reduce player timers for certain things:
@@ -720,7 +725,12 @@ bool Player::setTransition(ActorState state, bool cancellable, bool remove_contr
 }
 
 void Player::onHitFloorHook() {
-    if (root->game_events->isPosHurting(pos_x,pos_y)) {
+    auto events = root->getGameEvents().lock();
+    if (events == nullptr) {
+        return;
+    }
+
+    if (events->isPosHurting(pos_x,pos_y)) {
         takeDamage(speed_h / 4);
     } else {
         if (!canJump) {
@@ -730,13 +740,23 @@ void Player::onHitFloorHook() {
 }
 
 void Player::onHitCeilingHook() {
-    if (root->game_events->isPosHurting(pos_x,pos_y - 32)) {
+    auto events = root->getGameEvents().lock();
+    if (events == nullptr) {
+        return;
+    }
+
+    if (events->isPosHurting(pos_x,pos_y - 32)) {
         takeDamage(speed_h / 4);
     }
 }
 
 void Player::onHitWallHook() {
-    if (root->game_events->isPosHurting(pos_x + (speed_h > 0 ? 1 : -1) * 16,pos_y-16)) {
+    auto events = root->getGameEvents().lock();
+    if (events == nullptr) {
+        return;
+    }
+
+    if (events->isPosHurting(pos_x + (speed_h > 0 ? 1 : -1) * 16,pos_y-16)) {
         takeDamage(speed_h / 4);
     }
 }
@@ -823,10 +843,15 @@ void Player::endVPoleTransition() {
 }
 
 void Player::endWarpTransition() {
+    auto events = root->getGameEvents().lock();
+    if (events == nullptr) {
+        return;
+    }
+
     if (transition->state == AnimState::TRANSITION_WARP) {
         quint16 p[8];
-        root->game_events->getPositionParams(pos_x,pos_y-15,p);
-        CoordinatePair c = root->game_events->getWarpTarget(p[0]);
+        events->getPositionParams(pos_x,pos_y-15,p);
+        CoordinatePair c = events->getWarpTarget(p[0]);
         moveInstantly(c); // validity checked when warping started
         setTransition(AnimState::TRANSITION_WARP_END,false,true,false,&Player::endWarpTransition);
         playSound(SFX_WARP_OUT);

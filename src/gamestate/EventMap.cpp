@@ -12,8 +12,8 @@
 #include "../actor/SavePoint.h"
 #include "../actor/WeaponTypes.h"
 
-EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, TileMap* game_tiles, unsigned int width, unsigned int height)
-    : root(game_root), tiles(game_tiles) {
+EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, unsigned int width, unsigned int height)
+    : root(game_root) {
     for (unsigned int y = 0; y <= height; ++y) {
         QList< EventTile > n;
         for (unsigned int x = 0; x <= width; ++x) {
@@ -172,6 +172,8 @@ void EventMap::setTileParam(int x, int y, unsigned char idx, quint16 value) {
 }
 
 void EventMap::readEvents(const QString& filename, unsigned layout_version) {
+
+
     QFile handle(filename);
     if (handle.open(QIODevice::ReadOnly)) {
         QByteArray event_map = qUncompress(handle.readAll());
@@ -216,8 +218,13 @@ void EventMap::readEvents(const QString& filename, unsigned layout_version) {
                         case PC_TRIGGER_AREA:
                         case PC_MODIFIER_H_POLE:
                         case PC_MODIFIER_V_POLE:
-                            storeTileEvent(x,y,static_cast<PCEvent>(ev), ev_flags, ev_params);
-                            tiles->setTileEventFlag(x,y,static_cast<PCEvent>(ev));
+                            {
+                                storeTileEvent(x,y,static_cast<PCEvent>(ev), ev_flags, ev_params);
+                                auto tiles = root->getGameTiles().lock();
+                                if (tiles != nullptr) {
+                                    tiles->setTileEventFlag(x, y, static_cast<PCEvent>(ev));
+                                }
+                            }
                             break;
                         case PC_WARP_TARGET:
                             addWarpTarget(ev_params.at(0),x,y);

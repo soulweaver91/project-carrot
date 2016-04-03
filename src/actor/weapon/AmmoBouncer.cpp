@@ -20,7 +20,8 @@ Ammo_Bouncer::~Ammo_Bouncer() {
 void Ammo_Bouncer::tickEvent() {
     CommonActor::tickEvent();
     Ammo::tickEvent();
-    if (root->game_tiles->isTileEmpty((pos_x + speed_h) / 32, (pos_y + speed_v) / 32)) {
+    auto tiles = root->getGameTiles().lock();
+    if (tiles == nullptr || tiles->isTileEmpty((pos_x + speed_h) / 32, (pos_y + speed_v) / 32)) {
         pos_x += speed_h;
         pos_y += speed_v;
     } else {

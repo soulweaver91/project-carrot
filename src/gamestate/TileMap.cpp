@@ -822,8 +822,11 @@ unsigned TileMap::getLevelHeight() {
 
 void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
     LayerTile& tile = level_layout[spr_layer].tile_layout[y][x];
-    quint16 p[8];
-    root->game_events->getPositionParams(x*32,y*32,p);
+    quint16 p[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    auto tiles = root->getGameEvents().lock();
+    if (tiles != nullptr) {
+        tiles->getPositionParams(x * 32, y * 32, p);
+    }
 
     switch (e) {
         case PC_MODIFIER_ONE_WAY:

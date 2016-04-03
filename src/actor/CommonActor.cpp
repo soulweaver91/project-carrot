@@ -318,9 +318,14 @@ bool CommonActor::perish() {
     // If health drops to 0, delete self and remove spawner from event map
     // Can be overridden, e.g. the player object instead implements death routines
     // like loading last save point here
+
+    auto events = root->getGameEvents().lock();
     if (health == 0) {
-        root->game_events->deactivate(origin_x, origin_y);
-        root->game_events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
+        if (events != nullptr) {
+            events->deactivate(origin_x, origin_y);
+            events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
+        }
+
         root->removeActor(shared_from_this());
         return true;
     }
@@ -354,8 +359,13 @@ bool CommonActor::playSound(SFXType sound) {
 }
 
 bool CommonActor::deactivate(int x, int y, int dist) {
+    auto events = root->getGameEvents().lock();
+
     if ((std::abs(x - origin_x) > dist) || (std::abs(y - origin_y) > dist)) {
-        root->game_events->deactivate(origin_x,origin_y);
+        if (events != nullptr) {
+            events->deactivate(origin_x,origin_y);
+        }
+
         root->removeActor(shared_from_this());
         return true;
     }
@@ -368,6 +378,9 @@ void CommonActor::moveInstantly(CoordinatePair location) {
 }
 
 void CommonActor::deleteFromEventMap() {
-    root->game_events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
+    auto events = root->getGameEvents().lock();
+    if (events != nullptr) {
+        events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
+    }
 }
 

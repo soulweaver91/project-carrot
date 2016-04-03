@@ -154,10 +154,10 @@ public:
     std::shared_ptr<BitmapFont> getFont();
     std::weak_ptr<SoundSystem> getSoundSystem();
     std::weak_ptr<Player> getPlayer(unsigned no);
+    std::weak_ptr<TileMap> getGameTiles();
+    std::weak_ptr<EventMap> getGameEvents();
     int getLightingLevel();
     sf::Texture* getCachedTexture(const QString& filename);
-    TileMap* game_tiles;
-    EventMap* game_events;
     double gravity;
     bool dbgShowMasked;
     int mod_temp[32]; // temporary variables for testing new features
@@ -196,6 +196,8 @@ private:
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> mainFont;
     std::shared_ptr<SoundSystem> soundSystem;
+    std::shared_ptr<TileMap> gameTiles;
+    std::shared_ptr<EventMap> gameEvents;
     QString levelName;
     QString nextLevel;
     unsigned long frame;
