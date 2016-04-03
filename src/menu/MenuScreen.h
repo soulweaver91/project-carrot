@@ -33,7 +33,7 @@ struct MenuItem {
         InvokableMenuFunction local_function;
     };
     bool is_local;
-    BitmapString* text;
+    std::unique_ptr<BitmapString> text;
     QVariant param;
 };
 
@@ -46,8 +46,8 @@ public:
 private:
     void clearMenuList();
     void setMenuItemSelected(int idx = 0, bool relative = false);
-    MenuItem* buildMenuItem(InvokableMenuFunction local_func, QVariant param, const QString& label);
-    MenuItem* buildMenuItem(InvokableRootFunction remote_func, QVariant param, const QString& label);
+    std::shared_ptr<MenuItem> buildMenuItem(InvokableMenuFunction local_func, QVariant param, const QString& label);
+    std::shared_ptr<MenuItem> buildMenuItem(InvokableRootFunction remote_func, QVariant param, const QString& label);
 
     // valid pointers in menu options
     void loadLevelList(QVariant param);
@@ -62,10 +62,10 @@ private:
     sf::Sprite glow_b[4];
     sf::Texture logo_tex;
     sf::Sprite logo;
-    QList< MenuItem* > menu_options;
-    MenuItem* cancel_item;
-    BitmapString attraction_text;
+    QList<std::shared_ptr<MenuItem>> menu_options;
+    std::shared_ptr<MenuItem> cancel_item;
     int selected_item;
+    BitmapString attraction_text;
     MenuLayout current_type;
 
 };

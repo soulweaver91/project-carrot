@@ -35,34 +35,29 @@ MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : 
 }
 
 MenuScreen::~MenuScreen() {
-    clearMenuList();
-    delete cancel_item;
+
 }
 
 void MenuScreen::clearMenuList() {
-    for (int i = menu_options.size() - 1; i >= 0; --i) {
-        delete menu_options[i]->text;
-        delete menu_options[i];
-    }
     menu_options.clear();
     selected_item = 0;
 }
 
-MenuItem* MenuScreen::buildMenuItem(InvokableMenuFunction local_func, QVariant param, const QString& label) {
-    MenuItem* m = new MenuItem;
+std::shared_ptr<MenuItem> MenuScreen::buildMenuItem(InvokableMenuFunction local_func, QVariant param, const QString& label) {
+    auto m = std::make_shared<MenuItem>();
     m->is_local = true;
     m->local_function = local_func;
     m->param = param;
-    m->text = new BitmapString(root->getFont(), label, FONT_ALIGN_CENTER);
+    m->text = std::make_unique<BitmapString>(root->getFont(), label, FONT_ALIGN_CENTER);
     return m;
 }
 
-MenuItem* MenuScreen::buildMenuItem(InvokableRootFunction remote_func, QVariant param, const QString& label) {
-    MenuItem* m = new MenuItem;
+std::shared_ptr<MenuItem> MenuScreen::buildMenuItem(InvokableRootFunction remote_func, QVariant param, const QString& label) {
+    auto m = std::make_shared<MenuItem>();
     m->is_local = false;
     m->remote_function = remote_func;
     m->param = param;
-    m->text = new BitmapString(root->getFont(), label, FONT_ALIGN_CENTER);
+    m->text = std::make_unique<BitmapString>(root->getFont(), label, FONT_ALIGN_CENTER);
     return m;
 }
 
@@ -88,7 +83,7 @@ void MenuScreen::setMenuItemSelected(int idx, bool relative) {
 }
 
 void MenuScreen::keyPressEvent(QKeyEvent* event) {
-    MenuItem* it;
+    std::shared_ptr<MenuItem> it;
     switch (event->key()) {
         case Qt::Key_Escape:
             it = cancel_item;
