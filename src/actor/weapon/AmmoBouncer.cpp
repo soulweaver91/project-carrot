@@ -1,4 +1,6 @@
 #include "AmmoBouncer.h"
+#include "../../CarrotQt5.h"
+#include "../../gamestate/TileMap.h"
 
 Ammo_Bouncer::Ammo_Bouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 140) {

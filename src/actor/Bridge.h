@@ -2,8 +2,10 @@
 
 #include <memory>
 
-#include "../CarrotQt5.h"
 #include "SolidObject.h"
+#include "../struct/Hitbox.h"
+
+class CarrotQt5;
 
 enum DynamicBridgeType {
     BRIDGE_ROPE         = 0,

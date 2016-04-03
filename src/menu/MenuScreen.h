@@ -11,6 +11,7 @@
 #include "../graphics/BitmapFont.h"
 
 class MenuScreen;
+class CarrotQt5;
 
 typedef void (MenuScreen::*InvokableMenuFunction)(QVariant);
 

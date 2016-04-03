@@ -3,8 +3,10 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
-#include "../CarrotQt5.h"
 #include "SolidObject.h"
+#include "../struct/PCEvent.h"
+
+class CarrotQt5;
 
 class PushBox : public SolidObject {
     public:

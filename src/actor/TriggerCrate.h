@@ -2,8 +2,9 @@
 
 #include <memory>
 
-#include "../CarrotQt5.h"
 #include "SolidObject.h"
+
+class CarrotQt5;
 
 class TriggerCrate : public SolidObject {
     public:

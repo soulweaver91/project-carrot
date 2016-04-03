@@ -2,8 +2,9 @@
 
 #include <memory>
 
-#include "../CarrotQt5.h"
 #include "CommonActor.h"
+
+class CarrotQt5;
 
 // These need to match the master event table (at CarrotQt5.h) where applicable
 // because created objects are directly cast from those values in the event spawner
@@ -21,9 +22,6 @@ enum CollectibleType {
 };
 
 class Collectible : public CommonActor {
-
-    Q_OBJECT
-
 public:
     Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType type, double x = 0.0, double y = 0.0, bool fromEventMap = true);
     ~Collectible();

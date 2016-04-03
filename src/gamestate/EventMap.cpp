@@ -10,7 +10,7 @@
 #include "../actor/enemy/NormalTurtle.h"
 #include "../actor/enemy/Lizard.h"
 #include "../actor/SavePoint.h"
-#include "../actor/WeaponTypes.h"
+#include "../struct/WeaponTypes.h"
 
 EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, unsigned int width, unsigned int height)
     : root(game_root) {

@@ -1,12 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <QKeyEvent>
 #include <SFML/Graphics.hpp>
 
 #include "../CarrotQt5.h"
 #include "CommonActor.h"
 #include "../graphics/BitmapFont.h"
-#include "WeaponTypes.h"
+#include "../struct/WeaponTypes.h"
 #include "../gamestate/PlayerOSD.h"
 
 enum PlayerCharacter {

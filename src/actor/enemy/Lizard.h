@@ -2,8 +2,10 @@
 
 #include <memory>
 
-#include "../../CarrotQt5.h"
 #include "Enemy.h"
+#include "../../struct/Hitbox.h"
+
+class CarrotQt5;
 
 class Enemy_Lizard : public Enemy {
     public:

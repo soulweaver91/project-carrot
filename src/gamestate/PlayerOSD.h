@@ -5,8 +5,9 @@
 #include <SFML/Graphics.hpp>
 #include "../gamestate/AnimationUser.h"
 #include "../graphics/BitmapFont.h"
-#include "../actor/WeaponTypes.h"
+#include "../struct/WeaponTypes.h"
 
+class CarrotQt5;
 class Player;
 
 enum OSDMessageType {

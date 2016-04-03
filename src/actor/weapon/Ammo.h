@@ -2,9 +2,10 @@
 
 #include <memory>
 
-#include "../../CarrotQt5.h"
 #include "../CommonActor.h"
 #include "../Player.h"
+
+class CarrotQt5;
 
 class Ammo : public CommonActor {
 public:

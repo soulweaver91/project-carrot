@@ -1,4 +1,5 @@
 #include "SolidObject.h"
+#include "../CarrotQt5.h"
 
 SolidObject::SolidObject(std::shared_ptr<CarrotQt5> root, double x, double y, bool movable) : CommonActor(root, x, y), movable(movable), one_way(false) {
 }

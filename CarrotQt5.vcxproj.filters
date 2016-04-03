@@ -81,16 +81,13 @@
     <Filter Include="Header Files\Game manager headers">
       <UniqueIdentifier>{dc95138d-b352-4495-be23-d042c71f3929}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Structures">
+      <UniqueIdentifier>{e323c3d1-65e3-4f30-a219-6ea4a51e7536}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\qrc_carrotqt5.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Collectible.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Collectible.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -258,9 +255,6 @@
     <ClInclude Include="src\actor\TriggerCrate.h">
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\actor\WeaponTypes.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\graphics\AnimatedTile.h">
       <Filter>Header Files\Graphics system headers</Filter>
     </ClInclude>
@@ -305,6 +299,18 @@
     </ClInclude>
     <ClInclude Include="src\sound\SoundSystem.h">
       <Filter>Header Files\Sound system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\WeaponTypes.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\PCEvent.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\CoordinatePair.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\Hitbox.h">
+      <Filter>Header Files\Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

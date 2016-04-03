@@ -2,9 +2,10 @@
 
 #include <memory>
 
-#include "../../CarrotQt5.h"
 #include "Ammo.h"
 #include "../Player.h"
+
+class CarrotQt5;
 
 class Ammo_Blaster : public Ammo {
 public:

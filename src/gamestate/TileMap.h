@@ -6,9 +6,11 @@
 #include <QSettings>
 #include <SFML/Graphics.hpp>
 
-#include "../CarrotQt5.h"
-#include "../actor/WeaponTypes.h"
+#include "../struct/WeaponTypes.h"
+#include "../struct/PCEvent.h"
+#include "../struct/Hitbox.h"
 
+class CarrotQt5;
 class AnimatedTile;
 
 enum LayerType {

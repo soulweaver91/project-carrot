@@ -1,4 +1,5 @@
 #include "SavePoint.h"
+#include "../CarrotQt5.h"
 
 SavePoint::SavePoint(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, true), activated(false) {
     addAnimation(AnimState::IDLE,        "object/savepoint.png",           1,1,42,70,1,19,69);

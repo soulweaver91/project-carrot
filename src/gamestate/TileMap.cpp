@@ -1,5 +1,6 @@
 #include "TileMap.h"
 #include "EventMap.h"
+#include "../CarrotQt5.h"
 #include "../graphics/AnimatedTile.h"
 
 TileMap::TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file) :

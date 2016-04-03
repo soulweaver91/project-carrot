@@ -1,6 +1,8 @@
 #include "CommonActor.h"
 
+#include "../CarrotQt5.h"
 #include "../gamestate/EventMap.h"
+#include "../struct/PCEvent.h"
 
 CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap)
     : AnimationUser(game_root), root(game_root), speed_h(0), speed_v(0), thrust(0), push(0), 

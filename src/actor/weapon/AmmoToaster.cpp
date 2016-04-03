@@ -1,4 +1,6 @@
 #include "AmmoToaster.h"
+#include "../../CarrotQt5.h"
+#include "../../gamestate/TileMap.h"
 
 Ammo_Toaster::Ammo_Toaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 70) {

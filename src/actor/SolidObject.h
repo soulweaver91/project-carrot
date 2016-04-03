@@ -2,8 +2,9 @@
 
 #include <memory>
 
-#include "../CarrotQt5.h"
 #include "CommonActor.h"
+
+class CarrotQt5;
 
 class SolidObject : public CommonActor {
     public:

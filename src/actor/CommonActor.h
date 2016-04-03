@@ -1,14 +1,19 @@
 #pragma once
 
 #include <memory>
+#include <QObject>
+#include <QKeyEvent>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "../CarrotQt5.h"
-#include "../gamestate/TileMap.h"
 #include "../gamestate/AnimationUser.h"
 #include "../gamestate/TimerUser.h"
 #include "../sound/SoundSystem.h"
+#include "../struct/CoordinatePair.h"
+#include "../struct/Hitbox.h"
+
+class CarrotQt5;
+class TileMap;
 
 class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
