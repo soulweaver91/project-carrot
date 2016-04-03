@@ -23,3 +23,7 @@ not only dumping the graphics and sounds but also assigning them an uniform name
 their location inside the file itself. Those files should be moved to `Data\Assets` relative
 to the project root or the compiled executable. (It is safe to merge the folder to the one
 in the repository.)
+
+To be able to do anything useful in-game, you do also need some levels and tilesets. Tools for
+this have been written, but they aren't available yet. I'm working on this later! In the meantime,
+you can contact me on J2Online (follow the link above) to obtain Windows binaries for them.
