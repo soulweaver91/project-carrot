@@ -717,10 +717,19 @@ void CarrotQt5::initLevelChange(ExitType e) {
 void CarrotQt5::delayedLevelChange() {
     if (last_exit == NEXT_NORMAL) {
         LevelCarryOver o = players[0]->prepareLevelCarryOver();
+        // TODO handle in a better way
+        // The principal QTimer is likely to fire during this process.
+        // Pausing should allow the tick function to be mostly ignored without ill effects.
+        paused = true;
+
         cleanUpLevel();
-        loadLevel("Levels/" + nextLevel);
-        players[0]->receiveLevelCarryOver(o);
-        last_exit = NEXT_NONE;
+        if (loadLevel("Levels/" + nextLevel)) {
+            players[0]->receiveLevelCarryOver(o);
+            last_exit = NEXT_NONE;
+            paused = false;
+        } else {
+            startMainMenu();
+        }
     }
 }
 
