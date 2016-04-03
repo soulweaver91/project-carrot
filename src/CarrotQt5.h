@@ -191,9 +191,9 @@ private:
     std::shared_ptr<Player> players[32];
     bool paused;
     std::unique_ptr<sf::View> uiView;
-    std::unique_ptr<sf::Texture> windowTexture;
+    std::unique_ptr<sf::Texture> pausedScreenshot;
     std::unique_ptr<sf::RenderTexture> lightTexture;
-    std::unique_ptr<sf::Sprite> pauseCap;
+    std::unique_ptr<sf::Sprite> pausedScreenshotSprite;
     std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> mainFont;

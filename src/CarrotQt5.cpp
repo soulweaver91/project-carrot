@@ -92,12 +92,12 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     installEventFilter(this);
 
     // Define pause screen resources
-    windowTexture = std::make_unique<sf::Texture>();
-    windowTexture->create(800,600);
-    windowTexture->update(*windowCanvas);
+    pausedScreenshot = std::make_unique<sf::Texture>();
+    pausedScreenshot->create(800,600);
+    pausedScreenshot->update(*windowCanvas);
 
-    pauseCap = std::make_unique<sf::Sprite>();
-    pauseCap->setTexture(*windowTexture);
+    pausedScreenshotSprite = std::make_unique<sf::Sprite>();
+    pausedScreenshotSprite->setTexture(*pausedScreenshot);
 
     // Define the pause text and add vertical bounce animation to it
     pausedText = std::make_unique<BitmapString>(mainFont,"Pause",FONT_ALIGN_CENTER);
@@ -239,7 +239,7 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
         BASS_ChannelSlideAttribute(currentMusic,BASS_ATTRIB_MUSIC_VOL_GLOBAL,0,1000);
         paused = true;
         windowCanvas->setView(*uiView);
-        windowTexture->update(*windowCanvas);
+        pausedScreenshot->update(*windowCanvas);
     } else if (e->type() == QEvent::Resize) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
@@ -250,7 +250,7 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
         ui.mainFrame->resize(ui.centralWidget->size());
         windowCanvas->setSize(sf::Vector2u(w,h));
         windowCanvas->setView(*uiView);
-        windowTexture->create(w,h);
+        pausedScreenshot->create(w,h);
     }
     return FALSE;  // dispatch normally
 }
@@ -325,7 +325,7 @@ void CarrotQt5::gameTick() {
         sf::RectangleShape overlay(sf::Vector2f(800.0,600.0));
         overlay.setFillColor(sf::Color(0,0,0,120));
         
-        windowCanvas->draw(*pauseCap);
+        windowCanvas->draw(*pausedScreenshotSprite);
         windowCanvas->draw(overlay);
 
         // Draw the pause string
