@@ -40,7 +40,7 @@ public:
     Hitbox getHitbox();
     bool setTransition(ActorState state, bool cancellable, bool remove_control = false, bool set_special = false, void(Player::*callback)() = nullptr);
     void takeDamage(double push);
-    void setToViewCenter(sf::View* view);
+    void setToViewCenter();
     bool deactivate(int x, int y, int dist) override;
     LevelCarryOver prepareLevelCarryOver();
     void receiveLevelCarryOver(LevelCarryOver o);

@@ -55,7 +55,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png",29,31,1,224,32,256);
     
     // Define the game view which we'll use for following the player
-    game_view = new sf::View(sf::FloatRect(0.0,0.0,800.0,600.0));
+    gameView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
     uiView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
 
     soundSystem = std::make_shared<SoundSystem>();
@@ -134,7 +134,6 @@ CarrotQt5::~CarrotQt5() {
         cleanUpLevel();
         clearTextureCache();
     }
-    delete game_view;
 }
 
 void CarrotQt5::parseCommandLine() {
@@ -235,7 +234,7 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
 
-        game_view->setSize(w,h);
+        gameView->setSize(w,h);
         uiView->setSize(w,h);
         uiView->setCenter(w/2.0,h/2.0);
         ui.mainFrame->resize(ui.centralWidget->size());
@@ -331,8 +330,8 @@ void CarrotQt5::gameTick() {
     windowCanvas->clear();
 
     // Set player to the center of the view
-    players[0]->setToViewCenter(game_view);
-    windowCanvas->setView(*game_view);
+    players[0]->setToViewCenter();
+    windowCanvas->setView(*gameView);
 
     // Deactivate far away instances, create near instances
     int view_x = static_cast<unsigned>(windowCanvas->getView().getCenter().x) / 32;
@@ -398,7 +397,7 @@ void CarrotQt5::gameTick() {
     // Update the drawn surface to the screen and set the view back to the player
     //windowCanvas->display();
     windowCanvas->updateContents();
-    windowCanvas->setView(*game_view);
+    windowCanvas->setView(*gameView);
 
 }
 
@@ -745,11 +744,17 @@ bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_
 }
 
 unsigned CarrotQt5::getViewHeight() {
-    return game_view->getSize().y;
+    return gameView->getSize().y;
+}
+
+CoordinatePair CarrotQt5::getViewCenter() {
+    auto center = gameView->getCenter();
+    CoordinatePair pair = { center.x, center.y };
+    return pair;
 }
 
 unsigned CarrotQt5::getViewWidth() {
-    return game_view->getSize().x;
+    return gameView->getSize().x;
 }
 
 std::weak_ptr<Player> CarrotQt5::getPlayer(unsigned no) {
@@ -770,6 +775,14 @@ std::weak_ptr<EventMap> CarrotQt5::getGameEvents() {
 
 int CarrotQt5::getLightingLevel() {
     return lightingLevel;
+}
+
+void CarrotQt5::centerView(double x, double y) {
+    gameView->setCenter(x, y);
+}
+
+void CarrotQt5::centerView(CoordinatePair pair) {
+    gameView->setCenter(pair.x, pair.y);
 }
 
 sf::Texture* CarrotQt5::getCachedTexture(const QString& filename) {

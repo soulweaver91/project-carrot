@@ -197,7 +197,8 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
 
     // translation to the center of the screen
     sf::Transform transform;
-    transform.translate(root->game_view->getCenter());
+    auto viewCenter = root->getViewCenter();
+    transform.translate(viewCenter.x, viewCenter.y);
 
     // combine translation to texture binding
     sf::RenderStates states;
@@ -252,8 +253,9 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     double sy = layer.yspeed;
     
     // Find out coordinates for a tile from outside the boundaries from topleft corner of the screen 
-    double x1 = root->game_view->getCenter().x - 70.0 - (root->getViewWidth() / 2);
-    double y1 = root->game_view->getCenter().y - 70.0 - (root->getViewHeight() / 2);
+    auto viewCenter = root->getViewCenter();
+    double x1 = viewCenter.x - 70.0 - (root->getViewWidth() / 2);
+    double y1 = viewCenter.y - 70.0 - (root->getViewHeight() / 2);
     
     // Figure out the floating point offset from the calculated coordinates and the actual tile
     // corner coordinates

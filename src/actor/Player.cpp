@@ -778,12 +778,12 @@ void Player::takeDamage(double npush) {
     }
 }
 
-void Player::setToViewCenter(sf::View* view) {
+void Player::setToViewCenter() {
     int shift_offset = 0;
     if (abs(camera_shift) > 48) {
         shift_offset = (abs(camera_shift) - 48) * (camera_shift > 0 ? 1 : -1);
     }
-    view->setCenter(
+    root->centerView(
         std::max(root->getViewWidth() / 2.0,std::min(32.0 * (root->getLevelWidth()+1)  - root->getViewWidth()  / 2.0, (double)qRound(pos_x))),
         std::max(root->getViewHeight()/ 2.0,std::min(32.0 * (root->getLevelHeight()+1) - root->getViewHeight() / 2.0, (double)qRound(pos_y + shift_offset - 15)))
     );

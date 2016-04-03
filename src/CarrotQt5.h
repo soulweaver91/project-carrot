@@ -127,11 +127,13 @@ public:
     ~CarrotQt5();
     void parseCommandLine();
     void startMainMenu();
-    sf::View* game_view;
     unsigned getLevelWidth();
     unsigned getLevelHeight();
     unsigned getViewWidth();
     unsigned getViewHeight();
+    CoordinatePair getViewCenter();
+    void centerView(CoordinatePair pos);
+    void centerView(double x, double y);
     bool addActor(std::shared_ptr<CommonActor> actor);
     bool addPlayer(std::shared_ptr<Player> actor, short player_id = -1);
     void removeActor(std::shared_ptr<CommonActor> actor);
@@ -198,6 +200,7 @@ private:
     std::shared_ptr<SoundSystem> soundSystem;
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;
+    std::unique_ptr<sf::View> gameView;
     QString levelName;
     QString nextLevel;
     unsigned long frame;
