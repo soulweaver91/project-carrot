@@ -39,10 +39,10 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
         animation_bank.at(index)->frame_height));
     charIconSprite->setPosition(5, root->getViewHeight() - 40);
 
-    collectionMessage = std::make_unique<BitmapString>(root->mainFont, "", FONT_ALIGN_CENTER);
-    livesString       = std::make_unique<BitmapString>(root->mainFont, "x3", FONT_ALIGN_LEFT);
-    scoreString       = std::make_unique<BitmapString>(root->mainFont, "00000000", FONT_ALIGN_LEFT);
-    ammoString        = std::make_unique<BitmapString>(root->mainFont, "x^", FONT_ALIGN_LEFT);
+    collectionMessage = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
+    livesString       = std::make_unique<BitmapString>(root->getFont(), "x3", FONT_ALIGN_LEFT);
+    scoreString       = std::make_unique<BitmapString>(root->getFont(), "00000000", FONT_ALIGN_LEFT);
+    ammoString        = std::make_unique<BitmapString>(root->getFont(), "x^", FONT_ALIGN_LEFT);
 }
 
 PlayerOSD::~PlayerOSD() {

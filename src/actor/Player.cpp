@@ -595,9 +595,9 @@ void Player::drawUIOverlay() {
         return;
     }
 
-    BitmapString::drawString(canvas, root->mainFont, "P1: " + QString::number(pos_x) + "," + QString::number(pos_y), 6, 86);
-    BitmapString::drawString(canvas, root->mainFont, "  Hsp " + QString::number(speed_h), 6, 116);
-    BitmapString::drawString(canvas, root->mainFont, "  Vsp " + QString::number(speed_v), 6, 146);
+    BitmapString::drawString(canvas, root->getFont(), "P1: " + QString::number(pos_x) + "," + QString::number(pos_y), 6, 86);
+    BitmapString::drawString(canvas, root->getFont(), "  Hsp " + QString::number(speed_h), 6, 116);
+    BitmapString::drawString(canvas, root->getFont(), "  Vsp " + QString::number(speed_v), 6, 146);
 }
 
 bool Player::selectWeapon(enum WeaponType new_type) {

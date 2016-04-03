@@ -52,7 +52,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     std::fill_n(players, 32, nullptr);
 
     // Read the main font
-    mainFont = new BitmapFont("Data/Assets/ui/font_medium.png",29,31,1,224,32,256);
+    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png",29,31,1,224,32,256);
     
     // Define the game view which we'll use for following the player
     game_view = new sf::View(sf::FloatRect(0.0,0.0,800.0,600.0));
@@ -400,9 +400,9 @@ void CarrotQt5::gameTick() {
     players[0]->drawUIOverlay();
     
     //BitmapString::drawString(window,mainFont,"Frame: " + QString::number(frame),6,56);
-    BitmapString::drawString(getCanvas(),mainFont,"Actors: " + QString::number(actors.size()),6,176);
-    BitmapString::drawString(getCanvas(),mainFont,"FPS: " + QString::number(fps,'f',2) + " at " + QString::number(1000 / fps) + "ms/f",6,56);
-    BitmapString::drawString(getCanvas(),mainFont,"Mod-" + QString::number(mod_current) + " " + mod_name[mod_current] + ": " + QString::number(mod_temp[mod_current]),6,540);
+    BitmapString::drawString(getCanvas(), getFont(), "Actors: " + QString::number(actors.size()),6,176);
+    BitmapString::drawString(getCanvas(), getFont(), "FPS: " + QString::number(fps,'f',2) + " at " + QString::number(1000 / fps) + "ms/f",6,56);
+    BitmapString::drawString(getCanvas(), getFont(), "Mod-" + QString::number(mod_current) + " " + mod_name[mod_current] + ": " + QString::number(mod_temp[mod_current]),6,540);
 
     // Update the drawn surface to the screen and set the view back to the player
     //windowCanvas->display();
@@ -485,7 +485,7 @@ bool CarrotQt5::loadLevel(const QString& name) {
             sf::Sprite s(t);
             s.setPosition(80,60);
             windowCanvas->draw(s);
-            BitmapString::drawString(getCanvas(),mainFont,levelName,400,360,FONT_ALIGN_CENTER);
+            BitmapString::drawString(getCanvas(),getFont(), levelName, 400, 360, FONT_ALIGN_CENTER);
             windowCanvas->updateContents();
             
             QString tileset = level_config.value("Level/Tileset","").toString();
@@ -805,6 +805,10 @@ void CarrotQt5::quitFromMainMenu(QVariant param) {
 
 std::weak_ptr<CarrotCanvas> CarrotQt5::getCanvas() {
     return this->windowCanvas;
+}
+
+std::shared_ptr<BitmapFont> CarrotQt5::getFont() {
+    return mainFont;
 }
 
 int main(int argc, char *argv[]) {

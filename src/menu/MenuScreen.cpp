@@ -4,7 +4,7 @@
 #include <QSettings>
 
 MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : root(root), selected_item(0),
-    current_type(MENU_PLAIN_LIST), attraction_text(root->mainFont, "", FONT_ALIGN_RIGHT) {
+    current_type(MENU_PLAIN_LIST), attraction_text(root->getFont(), "", FONT_ALIGN_RIGHT) {
     glow_a_tex.loadFromFile("Data/Textures/radialglow.png");
     glow_a.setTexture(glow_a_tex);
     glow_a.setPosition(400,100);
@@ -53,7 +53,7 @@ MenuItem* MenuScreen::buildMenuItem(InvokableMenuFunction local_func, QVariant p
     m->is_local = true;
     m->local_function = local_func;
     m->param = param;
-    m->text = new BitmapString(root->mainFont,label,FONT_ALIGN_CENTER);
+    m->text = new BitmapString(root->getFont(), label, FONT_ALIGN_CENTER);
     return m;
 }
 
@@ -62,7 +62,7 @@ MenuItem* MenuScreen::buildMenuItem(InvokableRootFunction remote_func, QVariant 
     m->is_local = false;
     m->remote_function = remote_func;
     m->param = param;
-    m->text = new BitmapString(root->mainFont,label,FONT_ALIGN_CENTER);
+    m->text = new BitmapString(root->getFont(), label, FONT_ALIGN_CENTER);
     return m;
 }
 
@@ -139,7 +139,7 @@ void MenuScreen::tickEvent() {
     canvas->draw(logo);
     
 
-    BitmapString::drawString(canvas,root->mainFont,CP_VERSION + " v" + QString::number(CP_VERSION_NUM),10,view_h-30);
+    BitmapString::drawString(canvas,root->getFont(), CP_VERSION + " v" + QString::number(CP_VERSION_NUM), 10,view_h - 30);
     attraction_text.drawString(canvas,view_w-10,view_h-30);
 
     switch (current_type) {
@@ -154,10 +154,10 @@ void MenuScreen::tickEvent() {
                     menu_options[i]->text->drawString(canvas,view_w / 2,226 + 26*j);
                 }
                 if (selected_item > 5) {
-                    BitmapString::drawString(canvas,root->mainFont,"-=...=-",view_w / 2 - 40,200);
+                    BitmapString::drawString(canvas, root->getFont(), "-=...=-", view_w / 2 - 40, 200);
                 }
                 if ((menu_options.size() - selected_item - 1) > 5) {
-                    BitmapString::drawString(canvas,root->mainFont,"-=...=-",view_w / 2 - 40,512);
+                    BitmapString::drawString(canvas, root->getFont(), "-=...=-", view_w / 2 - 40, 512);
                 }
             }
             break;

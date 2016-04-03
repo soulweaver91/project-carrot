@@ -29,7 +29,7 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     }
     for (; i < last; ++i, ++curr_id) {
         char_width[i] = w_table[curr_id];
-        sf::Sprite* new_spr = new sf::Sprite(font_tex,sf::IntRect(curr_x,curr_y,w_table[curr_id],height));
+        auto new_spr = std::make_shared<sf::Sprite>(font_tex, sf::IntRect(curr_x, curr_y, w_table[curr_id], height));
         char_map.push_back(new_spr);
         curr_x += width;
         if (curr_id % cols == (cols - 1)) {
@@ -45,7 +45,7 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     }
 }
 
-sf::Sprite* BitmapFont::getCharacterSprite(QChar code) {
+std::shared_ptr<sf::Sprite> BitmapFont::getCharacterSprite(QChar code) {
     short num = code.toLatin1() - first_char;
     if (num < 0 || num >= char_map.size()) {
         return nullptr;
@@ -63,7 +63,7 @@ unsigned BitmapFont::getCharacterWidth(QChar code) {
     }
 }
 
-BitmapString::BitmapString(BitmapFont* font, const QString& init_str, FontAlign init_align) :
+BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& init_str, FontAlign init_align) :
     align(init_align), animate(false), xvariance(0.0), yvariance(0.0), phase(0.0), anim_speed(0.0),
     angle_offset(0.0), str_text(init_str), coloured(false), spacing(-1) {
     inner_font = font;
@@ -103,7 +103,7 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x,
             diff_x = cos(((phase + i)*angle_offset) * PI) * xvariance;
             diff_y = sin(((phase + i)*angle_offset) * PI) * yvariance;
         }
-        sf::Sprite* spr = inner_font->getCharacterSprite(str_text.at(i));
+        auto spr = inner_font->getCharacterSprite(str_text.at(i));
         if (spr != nullptr) {
             if (coloured) {
                 spr->setColor(Colour[i % 7]);
@@ -150,7 +150,8 @@ unsigned BitmapString::getWidth() {
     return width;
 }
 
-void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, BitmapFont* font, QString text, int x, int y, FontAlign align) {
+void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, std::shared_ptr<BitmapFont> font,
+    QString text, int x, int y, FontAlign align) {
     auto canvas = destWindow.lock();
     if (canvas == nullptr) {
         return;
@@ -158,14 +159,14 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, Bitmap
 
     int curr_x = x;
     if (align == FONT_ALIGN_CENTER) {
-        curr_x -= getStaticWidth(text,font) / 2;
+        curr_x -= getStaticWidth(text, font) / 2;
     } else if (align == FONT_ALIGN_RIGHT) {
-        curr_x -= getStaticWidth(text,font);
+        curr_x -= getStaticWidth(text, font);
     }
     double diff_x = 0.0;
     double diff_y = 0.0;
     for (int i = 0; i < text.length(); ++i) {
-        sf::Sprite* spr = font->getCharacterSprite(text.at(i));
+        auto spr = font->getCharacterSprite(text.at(i));
         if (spr != nullptr) {
             spr->setPosition(curr_x + diff_x, y + diff_y);
             spr->setColor(sf::Color::White);
@@ -175,7 +176,7 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, Bitmap
     }
 }
 
-unsigned BitmapString::getStaticWidth(QString text, BitmapFont* font) {
+unsigned BitmapString::getStaticWidth(QString text, std::shared_ptr<BitmapFont> font) {
     unsigned sum = 0;
     for(unsigned i = 0; i < text.length(); ++i) {
         sum += font->getCharacterWidth(text.at(i));
