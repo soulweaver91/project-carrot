@@ -51,7 +51,7 @@ void AnimationUser::animationAdvance() {
 size_t AnimationUser::addAnimation(ActorState state, const QString& filename, int frame_cols, int frame_rows,
     int frame_width, int frame_height, int fps, int offset_x, int offset_y) {
     auto new_ani = std::make_shared<StateAnimationPair>();
-    sf::Texture* loaded_frames = root->getCachedTexture("Data/Assets/" + filename);
+    auto loaded_frames = root->requestTexture("Data/Assets/" + filename);
 
     if (loaded_frames != nullptr) {
         new_ani->animation_frames = loaded_frames;
@@ -84,7 +84,7 @@ size_t AnimationUser::assignAnimation(ActorState state, size_t original_idx) {
     }
 
     // Copy the requested state-animation pair and set a new state to it
-    auto new_ani = std::make_shared<StateAnimationPair>(*animation_bank.at(original_idx).get());
+    auto new_ani = std::make_shared<StateAnimationPair>(*animation_bank.at(original_idx));
     new_ani->state = state;
 
     // Add the new pair to the animation bank and return its index

@@ -188,6 +188,9 @@
     <ClCompile Include="src\sound\SoundSystem.cpp">
       <Filter>Source Files\Sound system</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\GraphicsCache.cpp">
+      <Filter>Source Files\Graphics system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -311,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="src\struct\Hitbox.h">
       <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\GraphicsCache.h">
+      <Filter>Header Files\Graphics system headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

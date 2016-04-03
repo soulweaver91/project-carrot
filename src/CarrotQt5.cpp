@@ -83,6 +83,8 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     soundSystem->addSFX(SFX_LIZARD_SPONTANEOUS,"lizard/noise_4.wav");
     soundSystem->addSFX(SFX_BLOCK_DESTRUCT,"common/scenery_destruct.wav");
 
+    graphicsCache = std::make_shared<GraphicsCache>();
+
     installEventFilter(this);
 
     // Define pause screen resources
@@ -132,7 +134,6 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
 CarrotQt5::~CarrotQt5() {
     if (!isMenu) {
         cleanUpLevel();
-        clearTextureCache();
     }
 }
 
@@ -156,7 +157,7 @@ void CarrotQt5::parseCommandLine() {
 void CarrotQt5::cleanUpLevel() {
     actors.clear();
     std::fill_n(players, 32, nullptr);
-    clearTextureCache();
+    graphicsCache->flush();
     
     windowCanvas->setView(*uiView);
 }
@@ -773,6 +774,10 @@ std::weak_ptr<EventMap> CarrotQt5::getGameEvents() {
     return gameEvents;
 }
 
+std::shared_ptr<sf::Texture> CarrotQt5::requestTexture(const QString& filename) {
+    return graphicsCache->request(filename);
+}
+
 int CarrotQt5::getLightingLevel() {
     return lightingLevel;
 }
@@ -783,24 +788,6 @@ void CarrotQt5::centerView(double x, double y) {
 
 void CarrotQt5::centerView(CoordinatePair pair) {
     gameView->setCenter(pair.x, pair.y);
-}
-
-sf::Texture* CarrotQt5::getCachedTexture(const QString& filename) {
-    if (!textureCache.contains(filename)) {
-        // try to add the texture to the cache
-        auto t = std::make_shared<sf::Texture>();
-        if (t->loadFromFile(filename.toStdString())) {
-            textureCache.insert(filename, t);
-            return t.get();
-        } else {
-            return nullptr;
-        }
-    }
-    return textureCache.value(filename).get();
-}
-
-void CarrotQt5::clearTextureCache() {
-    textureCache.clear();
 }
 
 void CarrotQt5::invokeFunction(InvokableRootFunction func, QVariant param) {

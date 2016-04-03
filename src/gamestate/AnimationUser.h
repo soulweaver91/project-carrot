@@ -92,7 +92,7 @@ namespace AnimState {
 
 struct StateAnimationPair {
     ActorState state;
-    sf::Texture* animation_frames;
+    std::shared_ptr<sf::Texture> animation_frames;
     int frame_width;
     int frame_height;
     int frame_rows;
