@@ -25,10 +25,10 @@
 #include "ui_carrotqt5.h"
 #include "graphics/BitmapFont.h"
 #include "graphics/CarrotCanvas.h"
-#include "graphics/GraphicsCache.h"
-#include "sound/SoundSystem.h"
+#include "gamestate/ResourceManager.h"
 #include "struct/CoordinatePair.h"
 #include "struct/Hitbox.h"
+#include "struct/Resources.h"
 
 class CommonActor;
 class Player;
@@ -95,7 +95,7 @@ public:
     std::weak_ptr<Player> getPlayer(unsigned no);
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
-    std::shared_ptr<sf::Texture> requestTexture(const QString& filename);
+    std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
     int getLightingLevel();
     double gravity;
     bool dbgShowMasked;
@@ -133,11 +133,10 @@ private:
     std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> mainFont;
-    std::shared_ptr<SoundSystem> soundSystem;
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;
-    std::shared_ptr<GraphicsCache> graphicsCache;
     std::unique_ptr<sf::View> gameView;
+    std::unique_ptr<ResourceManager> resourceManager;
     QString levelName;
     QString nextLevel;
     unsigned long frame;

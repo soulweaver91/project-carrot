@@ -2,6 +2,7 @@
 
 #include "../CarrotQt5.h"
 #include "../gamestate/EventMap.h"
+#include "../gamestate/ResourceManager.h"
 #include "../struct/PCEvent.h"
 
 CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap)
@@ -45,7 +46,7 @@ void CommonActor::DrawUpdate() {
     
     if (!((isBlinking) && ((root->getFrame() % 6) > 2))) {
         // Pick the appropriate animation depending on if we are in the midst of a transition
-        auto source = (inTransition ? transition : current_animation);
+        auto source = (inTransition ? transition : currentAnimation);
     
         sprite.setScale((facingLeft ? -1 : 1),1);
         sprite.setPosition(pos_x,pos_y);
@@ -175,7 +176,7 @@ void CommonActor::tickEvent() {
             }
         }
     }
-    
+
     if (std::abs(push) > 1e-6) {
         // Reduce remaining push
         if (push > 0) {
@@ -195,8 +196,8 @@ void CommonActor::tickEvent() {
     // anything if the animation is the same as it was earlier
 
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
-    if (current_animation != nullptr) {
-        int composite = current_animation->state & 0xFFFFFFE0;
+    if (currentAnimation != nullptr) {
+        int composite = currentState & 0xFFFFFFE0;
         if (abs(speed_h) > 3) {
             // shift-running, speed is more than 3px/frame
             composite += 3;
@@ -222,8 +223,7 @@ void CommonActor::tickEvent() {
             }
         }
     
-        ActorState oldstate = current_animation->state;
-        ActorState newstate = ActorState(composite);
+        AnimStateT newstate = AnimStateT(composite);
         setAnimation(newstate);
     }
 
@@ -245,25 +245,43 @@ CoordinatePair CommonActor::getPosition() {
 }
 
 Hitbox CommonActor::getHitbox() {
-    if (current_animation != nullptr) {
-        Hitbox box = {pos_x - current_animation->offset_x,
-                      pos_y - current_animation->offset_y,
-                      pos_x - current_animation->offset_x + current_animation->frame_width,
-                      pos_y - current_animation->offset_y + current_animation->frame_height
-        };
-        return box;
+    if (currentAnimation != nullptr) {
+        return getHitbox(currentAnimation->frameDimensions.x, currentAnimation->frameDimensions.y);
+    } else {
+        return { 0, 0, 0, 0 };
     }
-    Hitbox box = {0,0,0,0};
-    return box;
 }
 
-bool CommonActor::setAnimation(ActorState state) {
-    ActorState oldstate = AnimState::IDLE;
-    if (current_animation != nullptr) {
-        if ((current_animation->state == state) || ((inTransition) && (!cancellableTransition))) {
+Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
+    if (currentAnimation != nullptr) {
+        if (currentAnimation->hasColdspot) {
+            return {
+                pos_x - currentAnimation->hotspot.x + currentAnimation->coldspot.x - (w / 2),
+                pos_y - currentAnimation->hotspot.y + currentAnimation->coldspot.y - h,
+                pos_x - currentAnimation->hotspot.x + currentAnimation->coldspot.x + (w / 2),
+                pos_y - currentAnimation->hotspot.y + currentAnimation->coldspot.y
+            };
+        } else {
+            // Collision base set to the bottom of the sprite.
+            // This is probably still not the correct way to do it, but at least it works for now.
+            return {
+                pos_x - (w / 2),
+                pos_y - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y - h,
+                pos_x + (w / 2),
+                pos_y - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y
+            };
+        }
+    }
+    return { 0, 0, 0, 0 };
+}
+
+bool CommonActor::setAnimation(AnimStateT state) {
+    AnimStateT oldstate = AnimState::IDLE;
+    if (currentAnimation != nullptr) {
+        if ((currentState == state) || ((inTransition) && (!cancellableTransition))) {
             return true;
         }
-        oldstate = current_animation->state;
+        oldstate = currentState;
     }
 
     bool changed = AnimationUser::setAnimation(state);
@@ -271,7 +289,7 @@ bool CommonActor::setAnimation(ActorState state) {
         return false;
     }
 
-    ActorState newstate = state;
+    AnimStateT newstate = state;
 
     switch (oldstate) {
         case AnimState::RUN:
@@ -350,14 +368,30 @@ void CommonActor::onHitWallHook() {
     // Objects should override this if they need to.
 }
 
-bool CommonActor::playSound(SFXType sound) {
+bool CommonActor::loadResources(const QString& classId) {
+    auto loadedResources = root->loadActorTypeResources(classId);
+    if (loadedResources != nullptr) {
+        resources = loadedResources;
+        loadAnimationSet(resources->graphics);
+        return true;
+    }
+    
+    return false;
+}
+
+bool CommonActor::playSound(const QString& id) {
     auto soundSystem = root->getSoundSystem().lock();
     if (soundSystem == nullptr) {
         return false;
     }
 
-    soundSystem->playSFX(sound);
-    return true;
+    auto sounds = resources->sounds.values(id);
+    if (sounds.length() > 0) {
+        soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound);
+        return true;
+    }
+
+    return false;
 }
 
 bool CommonActor::deactivate(int x, int y, int dist) {

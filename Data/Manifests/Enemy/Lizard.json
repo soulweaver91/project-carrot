@@ -1,0 +1,15 @@
+{
+  "graphics": {
+    "ENEMY_LIZARD_WALK": {
+      "filename": "lizard/walk.png",
+      "states": [
+        "0", "1", "2", "8", "9", "10"
+      ]
+    }
+  },
+  "sounds": {
+    "ENEMY_LIZARD_SPONTANEOUS": {
+      "filename": "lizard/noise_4.wav"
+    }
+  }
+}

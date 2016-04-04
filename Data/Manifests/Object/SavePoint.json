@@ -1,0 +1,32 @@
+{
+  "graphics": {
+    "OBJECT_SAVEPOINT_CLOSED": {
+      "filename": "object/savepoint.png",
+      "states": [
+        "0"
+      ],
+      "fps": 0,
+      "frameCount": 1
+    },
+    "OBJECT_SAVEPOINT_OPENED": {
+      "filename": "object/savepoint.png",
+      "states": [
+        "0"
+      ],
+      "fps": 0,
+      "frameOffset": 13,
+      "frameCount": 1
+    },
+    "OBJECT_SAVEPOINT_ACTIVATED": {
+      "filename": "object/savepoint.png",
+      "states": [
+        "1325400064"
+      ]
+    }
+  },
+  "sounds": {
+    "OBJECT_SAVEPOINT_ACTIVATED": {
+      "filename": "object/savepoint_open.wav"
+    }
+  }
+}

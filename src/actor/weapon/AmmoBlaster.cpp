@@ -3,14 +3,14 @@
 
 Ammo_Blaster::Ammo_Blaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
+    loadResources("Weapon/Blaster");
     if (firedUp) {
         speed_v = -8;
-        addAnimation(AnimState::IDLE,        "weapon/bullet_blaster_ver.png",    3,1,4,13,10,2,7);
+        AnimationUser::setAnimation("WEAPON_BLASTER_VER");
     } else {
+        AnimationUser::setAnimation("WEAPON_BLASTER_HOR");
         speed_h = (firedLeft ? -12 : 12);
-        addAnimation(AnimState::IDLE,        "weapon/bullet_blaster_hor.png",    3,1,13,4,10,7,2);
     }
-    setAnimation(AnimState::IDLE);
 }
 
 
@@ -28,10 +28,10 @@ void Ammo_Blaster::tickEvent() {
             ricochet();
         } else {
             health = 0;
-            playSound(SFX_AMMO_HIT_WALL);
+            playSound("SFX_AMMO_HIT_WALL");
 
-            double coll_x = pos_x + (speed_v < -1e-6 ? 0 : speed_h + (facingLeft ? -1 : 1) * current_animation->offset_x);
-            double coll_y = pos_y + (speed_v < -1e-6 ? speed_v - current_animation->offset_y : 0);
+            double coll_x = pos_x + (speed_v < -1e-6 ? 0 : speed_h + (facingLeft ? -1 : 1) * currentAnimation->hotspot.x);
+            double coll_y = pos_y + (speed_v < -1e-6 ? speed_v - currentAnimation->hotspot.y : 0);
             CoordinatePair c = {coll_x, coll_y};
             moveInstantly(c);
             checkCollisions();

@@ -2,9 +2,9 @@
 #include "Player.h"
 
 DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x, double y, DynamicBridgeType type) : SolidObject(root, x, y, false) {
+    loadResources("Object/BridgePiece");
     // temp
-    addAnimation(AnimState::IDLE,        "bridge/gem.png",    1,1,14,13,1,0,0);
-    setAnimation(AnimState::IDLE);
+    AnimationUser::setAnimation("OBJECT_BRIDGE_PIECE_GEM");
     
     isGravityAffected = false;
     one_way = true;
@@ -13,6 +13,7 @@ DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x
 DynamicBridgePiece::~DynamicBridgePiece() {
 
 }
+
 
 bool DynamicBridgePiece::deactivate(int x, int y, int dist) {
     // removal of bridge pieces is handled by the bridge event
@@ -28,6 +29,8 @@ Hitbox DynamicBridgePiece::getCollHitbox() {
 
 DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y, unsigned int width, DynamicBridgeType type, unsigned int toughness)
     : CommonActor(root, x - 16.0, y - 16.0), toughness(toughness), bridge_width(width), bridge_type(type), original_y(y) {
+    loadResources("Object/Bridge");
+
     for (int i = 0; i < width; ++i) {
         auto piece_n = std::make_shared<DynamicBridgePiece>(root,x + 16 * i - 16,y - 16,type);
         root->addActor(piece_n);

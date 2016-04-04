@@ -1,0 +1,25 @@
+{
+  "graphics": {
+    "ENEMY_TURTLE_WALK": {
+      "filename": "turtle/walk.png",
+      "states": [
+        "0", "1", "2", "8", "9", "10"
+      ]
+    },
+    "ENEMY_TURTLE_WITHDRAW": {
+      "filename": "turtle/turn_start.png",
+      "states": [
+        "1073741841"
+      ]
+    },
+    "ENEMY_TURTLE_WITHDRAW_END": {
+      "filename": "turtle/turn_end.png",
+      "states": [
+        "1073741842"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

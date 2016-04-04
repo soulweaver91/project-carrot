@@ -22,58 +22,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     std::fill_n(collected_coins,2,0);
     std::fill_n(collected_gems,4,0);
 
-    addAnimation(AnimState::IDLE,                       "jazz/idle.png",         1,1,34,48,1 ,16,47);
-    addAnimation(AnimState::RUN,                        "jazz/run.png",          8,1,56,43,15,24,42);
-    addAnimation(AnimState::JUMP,                       "jazz/jump.png",         3,1,40,49,15,23,47);
-    addAnimation(AnimState::RUN | AnimState::JUMP,      "jazz/jump_diag.png",    9,1,49,55,15,21,42);
-    addAnimation(AnimState::FALL,                       "jazz/fall.png",         3,1,57,47,15,25,43);
-    addAnimation(AnimState::RUN | AnimState::FALL,      "jazz/fall_diag.png",    3,1,34,47,30,15,44);
-    addAnimation(AnimState::DASH,                       "jazz/dash.png",         4,1,67,40,15,30,33);
-    addAnimation(AnimState::DASH | AnimState::JUMP,     "jazz/ball.png",         8,1,35,28,15,19,29);
-    addAnimation(AnimState::DASH | AnimState::FALL,     "jazz/fall_diag.png",    3,1,34,47,15,15,38);
-    addAnimation(AnimState::LOOKUP,                     "jazz/lookup_start.png", 1,1,48,38,1 ,22,37);
-    addAnimation(AnimState::CROUCH,                     "jazz/crouch.png",       1,1,56,20,1 ,17,19);
-    addAnimation(AnimState::SHOOT,                      "jazz/shoot.png",        2,1,44,43,8,17,42);
-    addAnimation(AnimState::CROUCH | AnimState::SHOOT,  "jazz/crouch_shoot.png", 2,1,63,21,8,16,20);
-    addAnimation(AnimState::LOOKUP | AnimState::SHOOT,  "jazz/shoot_ver.png",    2,1,37,66,8,19,64);
-    addAnimation(AnimState::HURT,                       "jazz/hurt.png",         9,1,72,64,15,33,52);
-    addAnimation(AnimState::UPPERCUT,                   "jazz/uppercut.png",     3,1,23,55,11,11,36);
-    addAnimation(AnimState::BUTTSTOMP,                  "jazz/buttstomp.png",    8,1,47,58,15,23,56);
-    addAnimation(AnimState::HOOK,                       "jazz/vine_idle.png",    1,1,30,50,1 , 9,34);
-    addAnimation(AnimState::HOOK | AnimState::RUN,      "jazz/vine_walk.png",    8,1,55,65,15,27,44);
-
-    // temp
-    anim_idx = addAnimation(AnimState::COPTER,                     "jazz/copter.png",        8,1,36,52,10,18,47);
-    assignAnimation(AnimState::COPTER | AnimState::FALL, anim_idx);
-    assignAnimation(AnimState::COPTER | AnimState::FALL | AnimState::WALK, anim_idx);
-    assignAnimation(AnimState::COPTER | AnimState::FALL | AnimState::RUN, anim_idx);
-    assignAnimation(AnimState::COPTER | AnimState::FALL | AnimState::DASH, anim_idx);
-
-    anim_idx = addAnimation(AnimState::SHOOT | AnimState::FALL, "jazz/fall_shoot.png",2,1,43,56,20,11,50);
-    assignAnimation(AnimState::JUMP | AnimState::SHOOT, anim_idx);
-    assignAnimation(AnimState::WALK | AnimState::FALL | AnimState::SHOOT, anim_idx);
-    assignAnimation(AnimState::WALK | AnimState::JUMP | AnimState::SHOOT, anim_idx);
-    assignAnimation(AnimState::RUN  | AnimState::FALL | AnimState::SHOOT, anim_idx);
-    assignAnimation(AnimState::RUN  | AnimState::JUMP | AnimState::SHOOT, anim_idx);
-    assignAnimation(AnimState::DASH | AnimState::FALL | AnimState::SHOOT, anim_idx);
-    assignAnimation(AnimState::DASH | AnimState::JUMP | AnimState::SHOOT, anim_idx);
-    
-    addAnimation(AnimState::TRANSITION_RUN_TO_IDLE,       "jazz/run_stop.png",          8,1,73,56,15,32,54);
-    addAnimation(AnimState::TRANSITION_RUN_TO_DASH,       "jazz/dash_start.png",        8,1,67,35,20,30,34);
-    addAnimation(AnimState::TRANSITION_IDLE_FALL_TO_IDLE, "jazz/fall_end.png",          5,1,62,46,15,20,45);
-    addAnimation(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE,"jazz/shoot_end.png",         4,1,49,56,15,20,54);
-    addAnimation(AnimState::TRANSITION_UPPERCUT_A,        "jazz/uppercut_start.png",    4,1,55,52,15,17,46);
-    addAnimation(AnimState::TRANSITION_UPPERCUT_B,        "jazz/uppercut_start.png"    ,3,1,55,52,15,17,46);
-    addAnimation(AnimState::TRANSITION_END_UPPERCUT,      "jazz/uppercut_end.png"      ,2,1,50,51,15,31,44);
-    addAnimation(AnimState::TRANSITION_BUTTSTOMP_START,   "jazz/spring.png"            ,8,1,47,52,15,24,44);
-    addAnimation(AnimState::TRANSITION_POLE_H,            "jazz/pole_h.png"            ,6,1,100,31,24,49,30);
-    addAnimation(AnimState::TRANSITION_POLE_H_SLOW,       "jazz/pole_h.png"            ,6,1,100,31,12,49,30);
-    addAnimation(AnimState::TRANSITION_POLE_V,            "jazz/pole_v.png"            ,6,1,32,101,24,16,52);
-    addAnimation(AnimState::TRANSITION_POLE_V_SLOW,       "jazz/pole_v.png"            ,6,1,32,101,12,16,52);
-    addAnimation(AnimState::TRANSITION_DEATH,             "jazz/die.png"               ,20,1,98,76,15,55,64);
-    addAnimation(AnimState::TRANSITION_WARP,              "jazz/warp_in.png"           ,7,1,29,73,15,16,57);
-    addAnimation(AnimState::TRANSITION_WARP_END,          "jazz/warp_out.png"          ,8,1,58,73,15,16,57);
-
+    loadResources("Interactive/PlayerJazz");
     setAnimation(AnimState::FALL);
 
     // Get a brief invincibility at the start of the level
@@ -91,13 +40,13 @@ void Player::keyPressEvent(QKeyEvent* event) {
         case Qt::Key_Left:
             facingLeft = true;
             if (controllable) {
-                setAnimation(current_animation->state & ~(AnimState::LOOKUP | AnimState::CROUCH));
+                setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
             }
             break;
         case Qt::Key_Right:
             facingLeft = false;
             if (controllable) {
-                setAnimation(current_animation->state & ~(AnimState::LOOKUP | AnimState::CROUCH));
+                setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
             }
             break;
         case Qt::Key_Up:
@@ -142,7 +91,7 @@ void Player::keyPressEvent(QKeyEvent* event) {
         case Qt::Key_7:
         case Qt::Key_8:
         case Qt::Key_9:
-            playSound(SFX_SWITCH_AMMO);
+            playSound("PLAYER_SWITCH_AMMO");
             // Key_2 is 50 and the rest come sequentially so no need for a separate
             // case branch for each key this way
             // Change this if the key enum codes change in Qt for any reason
@@ -161,7 +110,7 @@ void Player::keyPressEvent(QKeyEvent* event) {
         case Qt::Key_Control:
             switch(character) {
                 case CHAR_JAZZ:
-                    if ((current_animation->state & AnimState::CROUCH) > 0) {
+                    if ((currentState & AnimState::CROUCH) > 0) {
                         controllable = false;
                         setAnimation(AnimState::UPPERCUT);
                         setTransition(AnimState::TRANSITION_UPPERCUT_A,true,true,true,&Player::delayedUppercutStart);
@@ -169,7 +118,7 @@ void Player::keyPressEvent(QKeyEvent* event) {
                         if (speed_v > 0 && !canJump) {
                             isGravityAffected = false;
                             speed_v = 1.5;
-                            if ((current_animation->state & AnimState::COPTER) == 0) {
+                            if ((currentState & AnimState::COPTER) == 0) {
                                 setAnimation(AnimState::COPTER);
                             }
                             copter_time = 50;
@@ -199,14 +148,14 @@ void Player::keyReleaseEvent(QKeyEvent* event) {
                 }
                 break;
             case Qt::Key_Up:
-                setAnimation(current_animation->state & ~AnimState::LOOKUP);
+                setAnimation(currentState & ~AnimState::LOOKUP);
                 break;
             case Qt::Key_Space:
-                setAnimation(current_animation->state & ~AnimState::SHOOT);
+                setAnimation(currentState & ~AnimState::SHOOT);
                 weapon_cooldown = 0;
                 break;
             case Qt::Key_Down:
-                setAnimation(current_animation->state & ~AnimState::CROUCH);
+                setAnimation(currentState & ~AnimState::CROUCH);
                 break;
         }
     }
@@ -233,12 +182,12 @@ void Player::tickEvent() {
 
             if (objectPtr != nullptr) {
                 objectPtr->push(speed_h < 0);
-                setAnimation(current_animation->state | AnimState::PUSH);
+                setAnimation(currentState | AnimState::PUSH);
             } else {
-                setAnimation(current_animation->state & ~AnimState::PUSH);
+                setAnimation(currentState & ~AnimState::PUSH);
             }
         } else {
-            setAnimation(current_animation->state & ~AnimState::PUSH);
+            setAnimation(currentState & ~AnimState::PUSH);
         }
     }
 
@@ -248,31 +197,31 @@ void Player::tickEvent() {
 
 
     // Check if hitting a vine
-    if (tiles != nullptr && tiles->isPosVine(pos_x,pos_y - 25)) {
+    if (tiles != nullptr && tiles->isPosVine(pos_x,pos_y - 5)) {
         isSuspended = true;
         isGravityAffected = false;
         speed_v = 0;
         thrust = 0;
 
         // move downwards until we're on the standard height
-        while (tiles->isPosVine(pos_x,pos_y - 25)) {
-            pos_y -= 1;
+        while (tiles->isPosVine(pos_x,pos_y - 5)) {
+            pos_y += 1;
         }
-        pos_y += 5;
+        pos_y -= 1;
     } else {
         isSuspended = false;
-        if (((current_animation->state & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (pole_spins == 0)) {
+        if (((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (pole_spins == 0)) {
             isGravityAffected = true;
         }
     }
 
     // Buttstomp/etc. tiles checking
-    if (tiles != nullptr && (current_animation->state & (AnimState::BUTTSTOMP | AnimState::UPPERCUT | AnimState::SIDEKICK)) > 0) {
+    if (tiles != nullptr && (currentState & (AnimState::BUTTSTOMP | AnimState::UPPERCUT | AnimState::SIDEKICK)) > 0) {
         // check all corners of hitbox
-        tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y - 30 + speed_v);
-        tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y - 30 + speed_v);
-        tiles->checkSpecialDestructible(pos_x - 10 + speed_h, pos_y + speed_v);
-        tiles->checkSpecialDestructible(pos_x + 10 + speed_h, pos_y + speed_v);
+        tiles->checkSpecialDestructible(pos_x - 14 + speed_h, pos_y - 6 + speed_v);
+        tiles->checkSpecialDestructible(pos_x + 14 + speed_h, pos_y - 6 + speed_v);
+        tiles->checkSpecialDestructible(pos_x - 14 + speed_h, pos_y + 22 + speed_v);
+        tiles->checkSpecialDestructible(pos_x + 14 + speed_h, pos_y + 22 + speed_v);
 
         std::weak_ptr<SolidObject> object;
         if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, speed_v), false, shared_from_this(), object))) {
@@ -284,17 +233,17 @@ void Player::tickEvent() {
     }
 
     // check if buttstomp ended
-    if (canJump && (current_animation->state & AnimState::BUTTSTOMP) > 0 || isSuspended) {
-        setAnimation(current_animation->state & ~AnimState::BUTTSTOMP);
+    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || isSuspended) {
+        setAnimation(currentState & ~AnimState::BUTTSTOMP);
         damaging_move = false;
         controllable = true;
     }
 
     // check if copter ears ended
-    if ((current_animation->state & (AnimState::COPTER)) > 0) {
+    if ((currentState & (AnimState::COPTER)) > 0) {
         if (canJump || copter_time == 0) {
             isGravityAffected = true;
-            setAnimation(current_animation->state & ~AnimState::COPTER);
+            setAnimation(currentState & ~AnimState::COPTER);
         } else {
             if (copter_time > 0) {
                 copter_time--;
@@ -303,15 +252,15 @@ void Player::tickEvent() {
     }
 
     // check if uppercut ended
-    if (((current_animation->state & (AnimState::UPPERCUT)) > 0) && speed_v > -2 && !canJump) {
+    if (((currentState & (AnimState::UPPERCUT)) > 0) && speed_v > -2 && !canJump) {
         endDamagingMove();
     }
     
     auto events = root->getGameEvents().lock();
     if (events != nullptr) {
-        PCEvent e = events->getPositionEvent(pos_x, pos_y - 15);
+        PCEvent e = events->getPositionEvent(pos_x, pos_y);
         quint16 p[8];
-        events->getPositionParams(pos_x, pos_y - 15, p);
+        events->getPositionParams(pos_x, pos_y, p);
         switch (e) {
             case PC_LIGHT_SET:
                 root->setLighting(p[0], false);
@@ -328,14 +277,14 @@ void Player::tickEvent() {
                         speed_v = 0;
                         push = 0;
                         thrust = 0;
-                        playSound(SFX_WARP_IN);
+                        playSound("COMMON_WARP_IN");
                     }
                 }
             }
             break;
             case PC_MODIFIER_H_POLE:
                 if (pole_spins == 0) {
-                    pos_y = (qRound(pos_y - 15) / 32) * 32 + 30;
+                    pos_y = (qRound(pos_y - 15) / 32) * 32 + 16;
                     setTransition(AnimState::TRANSITION_POLE_H_SLOW, false, true, false, &Player::endHPoleTransition);
                     pole_positive = (speed_h > 0);
                     pos_x = (qRound(pos_x) / 32) * 32 + 16;
@@ -350,7 +299,7 @@ void Player::tickEvent() {
                 break;
             case PC_MODIFIER_V_POLE:
                 if (pole_spins == 0) {
-                    pos_y = (qRound(pos_y - 15) / 32) * 32 + 15;
+                    pos_y = (qRound(pos_y) / 32) * 32 + 16;
                     setTransition(AnimState::TRANSITION_POLE_V_SLOW, false, true, false, &Player::endVPoleTransition);
                     pole_positive = (speed_v > 0);
                     pos_x = (qRound(pos_x) / 32) * 32 + 16;
@@ -365,7 +314,7 @@ void Player::tickEvent() {
                 break;
             case PC_AREA_EOL:
                 if (controllable) {
-                    playSound(SFX_JAZZ_EOL);
+                    playSound("PLAYER_JAZZ_EOL");
                     root->initLevelChange(NEXT_NORMAL);
                 }
                 controllable = false;
@@ -391,10 +340,10 @@ void Player::tickEvent() {
     }
     
     // Move camera if up or down held
-    if ((current_animation->state & AnimState::CROUCH) > 0) {
+    if ((currentState & AnimState::CROUCH) > 0) {
         // Down is being held, move camera one unit down
         camera_shift = std::min(128,camera_shift + 1);
-    } else if ((current_animation->state & AnimState::LOOKUP) > 0) {
+    } else if ((currentState & AnimState::LOOKUP) > 0) {
         // Up is being held, move camera one unit up
         camera_shift = std::max(-128,camera_shift - 1);
     } else {
@@ -416,14 +365,14 @@ void Player::tickEvent() {
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            setAnimation(current_animation->state | AnimState::SHOOT);
+            setAnimation(currentState | AnimState::SHOOT);
             if (weapon_cooldown == 0) {
                 switch (currentWeapon) {
                     case WEAPON_BLASTER:
                         {
                             auto newAmmo = fireWeapon<Ammo_Blaster>();
                             weapon_cooldown = std::max(0, 40 - 3 * fastfires);
-                            playSound(SFX_BLASTER_SHOOT_JAZZ);
+                            playSound("WEAPON_BLASTER_JAZZ");
                             break;
                         }
                     case WEAPON_BOUNCER:
@@ -455,7 +404,6 @@ void Player::tickEvent() {
                         if (toaster_ammo_ticks == 0) {
                             ammo[currentWeapon] -= 1;
                             toaster_ammo_ticks = 10;
-                            playSound(SFX_TOASTER_SHOOT);
                         }
                     } else {
                         ammo[currentWeapon] -= 1;
@@ -474,15 +422,15 @@ void Player::tickEvent() {
 
         if ((sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))) {
             if (isSuspended) {
-                pos_y -= 10;
+                pos_y -= 5;
                 canJump = true;
             }
-            if (canJump && ((current_animation->state & AnimState::UPPERCUT) == 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
                 thrust = 1.2;
                 speed_v = -3 - std::max(0.0, (std::abs(speed_h) - 4.0) * 0.3);
                 canJump = false;
-                setAnimation(current_animation->state & (~AnimState::LOOKUP & ~AnimState::CROUCH));
-                playSound(SFX_JUMP);
+                setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
+                playSound("COMMON_JUMP");
             }
         } else {
             if (thrust > 0) {
@@ -501,8 +449,8 @@ void Player::tickEvent() {
         if (enemy != nullptr) {
             if (damaging_move) {
                 enemy->decreaseHealth(1);
-                if ((current_animation->state & AnimState::BUTTSTOMP) > 0) {
-                    setAnimation(current_animation->state & ~AnimState::BUTTSTOMP);
+                if ((currentState & AnimState::BUTTSTOMP) > 0) {
+                    setAnimation(currentState & ~AnimState::BUTTSTOMP);
                     damaging_move = false;
                     controllable = true;
                     speed_v *= -.5;
@@ -526,27 +474,27 @@ void Player::tickEvent() {
             switch(coll->type) {
                 case COLLTYPE_FAST_FIRE:
                     fastfires = std::min(fastfires + 1, 10);
-                    playSound(SFX_COLLECT_AMMO);
+                    playSound("PLAYER_PICKUP_AMMO");
                     addScore(100);
                     break;
                 case COLLTYPE_AMMO_TOASTER:
                     addAmmo(WEAPON_TOASTER, 3);
-                    playSound(SFX_COLLECT_AMMO);
+                    playSound("PLAYER_PICKUP_AMMO");
                     addScore(100);
                     break;
                 case COLLTYPE_AMMO_SEEKER:
                     addAmmo(WEAPON_SEEKER, 3);
-                    playSound(SFX_COLLECT_AMMO);
+                    playSound("PLAYER_PICKUP_AMMO");
                     addScore(100);
                     break;
                 case COLLTYPE_AMMO_BOUNCER:
                     addAmmo(WEAPON_BOUNCER, 3);
-                    playSound(SFX_COLLECT_AMMO);
+                    playSound("PLAYER_PICKUP_AMMO");
                     addScore(100);
                     break;
                 case COLLTYPE_GEM_RED:
                     addScore(100);
-                    playSound(SFX_COLLECT_GEM);
+                    playSound("PLAYER_PICKUP_GEM");
                     gem_sfx_idx = (gem_sfx_idx + 1) % 6;
                     gem_sfx_idx_ctr = 180;
                     collected_gems[0]++;
@@ -554,7 +502,7 @@ void Player::tickEvent() {
                     break;
                 case COLLTYPE_GEM_GREEN:
                     addScore(500);
-                    playSound(SFX_COLLECT_GEM);
+                    playSound("PLAYER_PICKUP_GEM");
                     gem_sfx_idx = (gem_sfx_idx + 1) % 6;
                     gem_sfx_idx_ctr = 180;
                     collected_gems[1]++;
@@ -562,7 +510,7 @@ void Player::tickEvent() {
                     break;
                 case COLLTYPE_GEM_BLUE:
                     addScore(1000);
-                    playSound(SFX_COLLECT_GEM);
+                    playSound("PLAYER_PICKUP_GEM");
                     gem_sfx_idx = (gem_sfx_idx + 1) % 6;
                     gem_sfx_idx_ctr = 180;
                     collected_gems[2]++;
@@ -570,13 +518,13 @@ void Player::tickEvent() {
                     break;
                 case COLLTYPE_COIN_GOLD:
                     addScore(1000);
-                    playSound(SFX_COLLECT_COIN);
+                    playSound("PLAYER_PICKUP_COIN");
                     collected_coins[1]++;
                     setupOSD(OSD_COIN_GOLD);
                     break;
                 case COLLTYPE_COIN_SILVER:
                     addScore(500);
-                    playSound(SFX_COLLECT_COIN);
+                    playSound("PLAYER_PICKUP_COIN");
                     collected_coins[0]++;
                     setupOSD(OSD_COIN_SILVER);
                     break;
@@ -684,14 +632,27 @@ void Player::deathRecovery() {
 }
 
 Hitbox Player::getHitbox() {
-    Hitbox nbox = {pos_x - 12, pos_y - 24, pos_x + 12, pos_y};
-    return nbox;
+    //return CommonActor::getHitbox(24u, 24u);
+    // TODO: Figure out how to use hot/coldspots properly.
+    // The sprite is always located relative to the hotspot.
+    // The coldspot is usually located at the ground level of the sprite,
+    // but for falling sprites for some reason somewhere above the hotspot instead.
+    // It is absolutely important that the position of the hitbox stays constant
+    // to the hotspot, though; otherwise getting stuck at walls happens all the time.
+    Hitbox box = {
+        pos_x - 12,
+        pos_y - 4,
+        pos_x + 12,
+        pos_y + 20
+    };
+
+    return box;
 }
 
 void Player::endDamagingMove() {
     damaging_move = false;
     controllable = true;
-    setAnimation(current_animation->state & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
+    setAnimation(currentState & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
     setTransition(AnimState::TRANSITION_END_UPPERCUT,false);
 }
 
@@ -712,7 +673,7 @@ void Player::delayedButtstompStart() {
     setAnimation(AnimState::BUTTSTOMP);
 }
 
-bool Player::setTransition(ActorState state, bool cancellable, bool remove_control, bool set_special, void(Player::*callback)()) {
+bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, void(Player::*callback)()) {
     transition_end_function = callback;
     bool result = CommonActor::setTransition(state, cancellable);
     if (remove_control) {
@@ -730,11 +691,11 @@ void Player::onHitFloorHook() {
         return;
     }
 
-    if (events->isPosHurting(pos_x,pos_y)) {
+    if (events->isPosHurting(pos_x, pos_y + 24)) {
         takeDamage(speed_h / 4);
     } else {
         if (!canJump) {
-            playSound(SFX_LAND);
+            playSound("COMMON_LAND");
         }
     }
 }
@@ -745,7 +706,7 @@ void Player::onHitCeilingHook() {
         return;
     }
 
-    if (events->isPosHurting(pos_x,pos_y - 32)) {
+    if (events->isPosHurting(pos_x, pos_y - 4)) {
         takeDamage(speed_h / 4);
     }
 }
@@ -756,7 +717,7 @@ void Player::onHitWallHook() {
         return;
     }
 
-    if (events->isPosHurting(pos_x + (speed_h > 0 ? 1 : -1) * 16,pos_y-16)) {
+    if (events->isPosHurting(pos_x + (speed_h > 0 ? 1 : -1) * 16, pos_y)) {
         takeDamage(speed_h / 4);
     }
 }
@@ -773,7 +734,7 @@ void Player::takeDamage(double npush) {
         isInvulnerable = true;
         isBlinking = true;
         addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
-        playSound(SFX_JAZZ_HURT);
+        playSound("PLAYER_JAZZ_HURT");
         osd->setHealth(health);
     }
 }
@@ -848,13 +809,13 @@ void Player::endWarpTransition() {
         return;
     }
 
-    if (transition->state == AnimState::TRANSITION_WARP) {
+    if (currentTransitionState == AnimState::TRANSITION_WARP) {
         quint16 p[8];
-        events->getPositionParams(pos_x,pos_y-15,p);
+        events->getPositionParams(pos_x, pos_y-15, p);
         CoordinatePair c = events->getWarpTarget(p[0]);
         moveInstantly(c); // validity checked when warping started
         setTransition(AnimState::TRANSITION_WARP_END,false,true,false,&Player::endWarpTransition);
-        playSound(SFX_WARP_OUT);
+        playSound("COMMON_WARP_OUT");
     } else {
         isInvulnerable = false;
         isGravityAffected = true;
@@ -881,7 +842,8 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
 }
 
 void Player::addScore(unsigned points) {
-    score = std::min(99999999ul,score + points);
+    score = std::min(99999999ul, score + points);
+    osd->setScore(score);
 }
 
 void Player::setupOSD(OSDMessageType type, int param) {
@@ -909,10 +871,10 @@ void Player::setupOSD(OSDMessageType type, int param) {
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
-    bool crouch = ((current_animation->state & AnimState::CROUCH) > 0);
-    bool lookup = ((current_animation->state & AnimState::LOOKUP) > 0);
-    int fire_x = (lookup ? -4 : 23) * (facingLeft ? -1 : 1);
-    int fire_y = (lookup ? 0 : -5) + (crouch ? 18 : 31);
+    bool crouch = ((currentState & AnimState::CROUCH) > 0);
+    bool lookup = ((currentState & AnimState::LOOKUP) > 0);
+    int fire_x = (currentAnimation->hotspot.x - currentAnimation->gunspot.x) * (facingLeft ? 1 : -1);
+    int fire_y =  currentAnimation->hotspot.y - currentAnimation->gunspot.y;
 
     auto newAmmo = std::make_shared<T>(root, weakPtr, pos_x + fire_x, pos_y - fire_y, facingLeft, lookup);
     root->addActor(newAmmo);

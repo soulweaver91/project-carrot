@@ -84,6 +84,30 @@
     <Filter Include="Header Files\Structures">
       <UniqueIdentifier>{e323c3d1-65e3-4f30-a219-6ea4a51e7536}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Actor Resource Manifests">
+      <UniqueIdentifier>{41773591-67bd-41ad-a8ca-e00a6f8b6d89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\Object">
+      <UniqueIdentifier>{21c235c2-8c4c-4dae-8927-ad3b70e03c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\Interactive">
+      <UniqueIdentifier>{7472114f-4fe7-4526-b387-8fece97a2217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\Pickup">
+      <UniqueIdentifier>{a678effc-be85-497e-9282-6dc23df21a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\UI">
+      <UniqueIdentifier>{55b0d629-cdf2-4929-98b4-fed156a5f7c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\Enemy">
+      <UniqueIdentifier>{2dbf4256-277c-4de7-8a03-5917d9356498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\Weapon">
+      <UniqueIdentifier>{5711fe4a-d395-4bf5-9de8-8c33fa00bef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor Resource Manifests\Common">
+      <UniqueIdentifier>{1d773010-2441-454c-aeb3-83ddd3dbe369}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\qrc_carrotqt5.cpp">
@@ -132,9 +156,6 @@
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\Collectible.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\actor\CommonActor.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\Player.cpp">
@@ -191,6 +212,12 @@
     <ClCompile Include="src\graphics\GraphicsCache.cpp">
       <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\ResourceManager.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\CommonActor.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -241,9 +268,6 @@
       <Filter>Header Files\Actor headers\Weapon headers</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\Bridge.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\actor\CommonActor.h">
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\PushBox.h">
@@ -318,6 +342,18 @@
     <ClInclude Include="src\graphics\GraphicsCache.h">
       <Filter>Header Files\Graphics system headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\gamestate\ResourceManager.h">
+      <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\CommonActor.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\AnimState.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\Resources.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -338,6 +374,45 @@
     </None>
     <None Include="Data\Assets\.gitignore">
       <Filter>Documents\Data/Assets</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\PushBox.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Interactive\PlayerJazz.json">
+      <Filter>Actor Resource Manifests\Interactive</Filter>
+    </None>
+    <None Include="Data\Manifests\UI\PlayerOSD.json">
+      <Filter>Actor Resource Manifests\UI</Filter>
+    </None>
+    <None Include="Data\Manifests\Enemy\Lizard.json">
+      <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Enemy\Turtle.json">
+      <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Weapon\Blaster.json">
+      <Filter>Actor Resource Manifests\Weapon</Filter>
+    </None>
+    <None Include="Data\Manifests\Weapon\Bouncer.json">
+      <Filter>Actor Resource Manifests\Weapon</Filter>
+    </None>
+    <None Include="Data\Manifests\Weapon\Toaster.json">
+      <Filter>Actor Resource Manifests\Weapon</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\BridgePiece.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\Collectible.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\SavePoint.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\TriggerCrate.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Common\Scenery.json">
+      <Filter>Actor Resource Manifests\Common</Filter>
     </None>
   </ItemGroup>
 </Project>

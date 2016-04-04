@@ -1,0 +1,13 @@
+{
+  "graphics": {
+    "WEAPON_BOUNCER": {
+      "filename": "weapon/bullet_bouncer.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

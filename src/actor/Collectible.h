@@ -33,4 +33,5 @@ public:
 private:
     bool intact;
     double phase;
+    void setFacingDirection();
 };

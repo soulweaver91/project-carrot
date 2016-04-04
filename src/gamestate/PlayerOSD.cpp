@@ -11,32 +11,34 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
 
-    std::fill_n(weaponIconIdx, 9, -1);
-    weaponIconIdx[0] = addAnimation(AnimState::UI_WEAPON_BLASTER, "pickup/fast_fire_jazz.png", 10, 1, 17, 22, 10, 5, 12);
-    weaponIconIdx[1] = addAnimation(AnimState::UI_WEAPON_BOUNCER, "pickup/ammo_bouncer.png",   10, 1, 16, 13, 10, 5, 7);
-    weaponIconIdx[2] = addAnimation(AnimState::UI_WEAPON_FREEZER, "pickup/ammo_freezer.png",   10, 1, 13, 15, 10, 4, 8);
-    weaponIconIdx[3] = addAnimation(AnimState::UI_WEAPON_SEEKER,  "pickup/ammo_seeker.png",    10, 1, 19, 20, 10, 7, 10);
-    weaponIconIdx[4] = addAnimation(AnimState::UI_WEAPON_RF,      "pickup/ammo_rf.png",        10, 1, 13, 20, 10, 4, 10);
-    weaponIconIdx[5] = addAnimation(AnimState::UI_WEAPON_TOASTER, "pickup/ammo_toaster.png",   10, 1, 16, 14, 10, 5, 7);
-    weaponIconIdx[6] = addAnimation(AnimState::UI_WEAPON_TNT,     "pickup/ammo_tnt.png",       10, 1, 20, 27, 10, 7, 13);
-    weaponIconIdx[7] = addAnimation(AnimState::UI_WEAPON_PEPPER,  "pickup/ammo_pepper.png",     9, 1, 15, 13, 10, 5, 7);
-    weaponIconIdx[8] = addAnimation(AnimState::UI_WEAPON_ELECTRO, "pickup/ammo_electro.png",   10, 1, 30, 21, 10, 14, 10);
+    auto loadedResources = root->loadActorTypeResources("UI/PlayerOSD");
+    if (loadedResources != nullptr) {
+        loadAnimationSet(loadedResources->graphics);
+    }
+
+    std::fill_n(weaponIconIdx, 9, nullptr);
+    weaponIconIdx[0] = animationBank.value("UI_WEAPON_BLASTER_JAZZ");
+    weaponIconIdx[1] = animationBank.value("UI_WEAPON_BOUNCER");
+    weaponIconIdx[2] = animationBank.value("UI_WEAPON_FREEZER");
+    weaponIconIdx[3] = animationBank.value("UI_WEAPON_SEEKER");
+    weaponIconIdx[4] = animationBank.value("UI_WEAPON_RF");
+    weaponIconIdx[5] = animationBank.value("UI_WEAPON_TOASTER");
+    weaponIconIdx[6] = animationBank.value("UI_WEAPON_TNT");
+    weaponIconIdx[7] = animationBank.value("UI_WEAPON_PEPPER");
+    weaponIconIdx[8] = animationBank.value("UI_WEAPON_ELECTRO");
+
     weaponIconSprite = std::make_unique<sf::Sprite>();
-    weaponIconSprite->setTexture(*(animation_bank.at(weaponIconIdx[0])->animation_frames));
-    weaponIconSprite->setTextureRect(sf::IntRect(0, 0, animation_bank.at(weaponIconIdx[0])->frame_width,
-        animation_bank.at(weaponIconIdx[0])->frame_height));
-    weaponIconSprite->setPosition(root->getViewWidth() - 85 - animation_bank.at(weaponIconIdx[0])->offset_x,
-        root->getViewHeight() - 15 - animation_bank.at(weaponIconIdx[0])->offset_y);
+    weaponIconSprite->setTexture(*weaponIconIdx[0]->texture);
+    weaponIconSprite->setTextureRect(sf::IntRect(0, 0, weaponIconIdx[0]->frameDimensions.x,
+        weaponIconIdx[0]->frameDimensions.y));
+    weaponIconSprite->setPosition(root->getViewWidth() - 85 - weaponIconIdx[0]->hotspot.x,
+        root->getViewHeight() - 15 - weaponIconIdx[0]->hotspot.y);
 
-    addAnimation(AnimState::UI_OSD_GEM_RED,   "pickup/gem.png", 8, 1, 25, 26, 10, 10, 13);
-    addAnimation(AnimState::UI_OSD_GEM_GREEN, "pickup/gem.png", 8, 1, 25, 26, 10, 10, 13);
-    addAnimation(AnimState::UI_OSD_GEM_BLUE,  "pickup/gem.png", 8, 1, 25, 26, 10, 10, 13);
-
-    auto index = addAnimation(AnimState::UI_PLAYER_FACE, "ui/icon_jazz.png", 37, 1, 39, 39, 10, 0, 0);
+    auto charIcon = animationBank.value("UI_CHARACTER_ICON_JAZZ");
     charIconSprite = std::make_unique<sf::Sprite>();
-    charIconSprite->setTexture(*(animation_bank.at(index)->animation_frames));
-    charIconSprite->setTextureRect(sf::IntRect(0, 0, animation_bank.at(index)->frame_width, 
-        animation_bank.at(index)->frame_height));
+    charIconSprite->setTexture(*(charIcon->texture));
+    charIconSprite->setTextureRect(sf::IntRect(0, 0, charIcon->frameDimensions.x,
+        charIcon->frameDimensions.y));
     charIconSprite->setPosition(5, root->getViewHeight() - 40);
 
     collectionMessage = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
@@ -53,7 +55,7 @@ void PlayerOSD::drawOSD() {
     advanceTimers();
 
     auto canvasPtr = canvas.lock();
-    if (canvasPtr == nullptr) {
+    if (canvasPtr == nullptr) { // || charIconSprite == nullptr || weaponIconSprite == nullptr) {
         return;
     }
 
@@ -134,11 +136,10 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
 void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
     currentWeapon = type;
 
-    if (weaponIconIdx[type] != -1) {
-        auto wp = animation_bank.at(weaponIconIdx[type]);
-        weaponIconSprite->setTexture(*(wp->animation_frames));
-        weaponIconSprite->setTextureRect(sf::IntRect(0, 0, wp->frame_width, wp->frame_height));
-        weaponIconSprite->setPosition(root->getViewWidth() - 85 - wp->offset_x, root->getViewHeight() - 15 - wp->offset_y);
+    if (weaponIconIdx[type] != nullptr) {
+        weaponIconSprite->setTexture(*(weaponIconIdx[type]->texture));
+        weaponIconSprite->setTextureRect(sf::IntRect(0, 0, weaponIconIdx[type]->frameDimensions.x, weaponIconIdx[type]->frameDimensions.y));
+        weaponIconSprite->setPosition(root->getViewWidth() - 85 - weaponIconIdx[type]->hotspot.x, root->getViewHeight() - 15 - weaponIconIdx[type]->hotspot.y);
         weaponIconFrame = 0;
     }
 }
@@ -170,12 +171,12 @@ void PlayerOSD::advanceCharIconFrame() {
     charIconFrame = (charIconFrame + 1) % 37;
     charIconSprite->setTextureRect(sf::IntRect(charIconFrame * 39, 0, 39, 39));
 
-    if (weaponIconIdx[currentWeapon] != -1) {
-        weaponIconFrame = (weaponIconFrame + 1) % animation_bank.at(weaponIconIdx[currentWeapon])->frame_cols;
-
+    if (weaponIconIdx[currentWeapon] != nullptr) {
+        weaponIconFrame = (weaponIconFrame + 1) % weaponIconIdx[currentWeapon]->frameCount;
+    
         weaponIconSprite->setTextureRect(sf::IntRect(
-            weaponIconFrame*animation_bank.at(weaponIconIdx[currentWeapon])->frame_width, 0,
-            animation_bank.at(weaponIconIdx[currentWeapon])->frame_width,
-            animation_bank.at(weaponIconIdx[currentWeapon])->frame_height));
+            weaponIconFrame * weaponIconIdx[currentWeapon]->frameDimensions.x, 0,
+            weaponIconIdx[currentWeapon]->frameDimensions.x,
+            weaponIconIdx[currentWeapon]->frameDimensions.y));
     }
 }
