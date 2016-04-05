@@ -878,9 +878,6 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     for (int i = 0; i < 9; ++i) {
         ammo[i] = o.ammo[i];
     }
-
-    // Update the lives string as it doesn't do so automatically
-    osd->setLives(lives);
 }
 
 void Player::addScore(unsigned points) {
