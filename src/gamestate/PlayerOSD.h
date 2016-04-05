@@ -6,6 +6,7 @@
 #include "../gamestate/AnimationUser.h"
 #include "../graphics/BitmapFont.h"
 #include "../struct/WeaponTypes.h"
+#include "../struct/Resources.h"
 
 class CarrotQt5;
 class Player;
@@ -49,7 +50,7 @@ private:
 
     unsigned long messageTimer;
     unsigned messageOffsetAmount;
-    size_t weaponIconIdx[9];
+    std::shared_ptr<GraphicResource> weaponIconIdx[9];
 
     std::unique_ptr<sf::Sprite> charIconSprite;
     unsigned charIconFrame;

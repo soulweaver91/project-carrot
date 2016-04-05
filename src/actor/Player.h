@@ -39,7 +39,7 @@ public:
     unsigned getLives();
     bool perish();
     Hitbox getHitbox();
-    bool setTransition(ActorState state, bool cancellable, bool remove_control = false, bool set_special = false, void(Player::*callback)() = nullptr);
+    bool setTransition(AnimStateT state, bool cancellable, bool remove_control = false, bool set_special = false, void(Player::*callback)() = nullptr);
     void takeDamage(double push);
     void setToViewCenter();
     bool deactivate(int x, int y, int dist) override;

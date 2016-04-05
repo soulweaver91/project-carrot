@@ -25,9 +25,10 @@
 #include "ui_carrotqt5.h"
 #include "graphics/BitmapFont.h"
 #include "graphics/CarrotCanvas.h"
-#include "sound/SoundSystem.h"
+#include "gamestate/ResourceManager.h"
 #include "struct/CoordinatePair.h"
 #include "struct/Hitbox.h"
+#include "struct/Resources.h"
 
 class CommonActor;
 class Player;
@@ -94,8 +95,8 @@ public:
     std::weak_ptr<Player> getPlayer(unsigned no);
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
+    std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
     int getLightingLevel();
-    sf::Texture* getCachedTexture(const QString& filename);
     double gravity;
     bool dbgShowMasked;
     int mod_temp[32]; // temporary variables for testing new features
@@ -119,7 +120,6 @@ private:
     void spawnEventMap(const QString& filename, unsigned layout_version = 1);
     void setLevelName(const QString& name);
     void cleanUpLevel();
-    void clearTextureCache();
     Ui::CarrotQt5Class ui;
     QTimer myTimer;
     QList<std::shared_ptr<CommonActor>> actors;
@@ -133,10 +133,10 @@ private:
     std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> mainFont;
-    std::shared_ptr<SoundSystem> soundSystem;
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;
     std::unique_ptr<sf::View> gameView;
+    std::unique_ptr<ResourceManager> resourceManager;
     QString levelName;
     QString nextLevel;
     unsigned long frame;
@@ -144,7 +144,6 @@ private:
     int lightingLevel;
     int targetLightingLevel;
     ExitType last_exit;
-    QMap<QString, std::shared_ptr<sf::Texture>> textureCache;
     std::shared_ptr<MenuScreen> menuObject;
     bool isMenu;
     QTime last_timestamp;

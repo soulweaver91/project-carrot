@@ -193,6 +193,7 @@
     <ClCompile Include="src\actor\weapon\AmmoBouncer.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoToaster.cpp" />
     <ClCompile Include="src\CarrotQt5.cpp" />
+    <ClCompile Include="src\gamestate\ResourceManager.cpp" />
     <ClCompile Include="src\gamestate\AnimationUser.cpp" />
     <ClCompile Include="src\gamestate\EventMap.cpp" />
     <ClCompile Include="src\gamestate\FrameTimer.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="src\graphics\AnimatedTile.cpp" />
     <ClCompile Include="src\graphics\BitmapFont.cpp" />
     <ClCompile Include="src\graphics\CarrotCanvas.cpp" />
+    <ClCompile Include="src\graphics\GraphicsCache.cpp" />
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
@@ -231,14 +233,18 @@
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h" />
     <ClInclude Include="src\actor\Bridge.h" />
+    <ClInclude Include="src\gamestate\ResourceManager.h" />
     <ClInclude Include="src\gamestate\AnimationUser.h" />
     <ClInclude Include="src\gamestate\PlayerOSD.h" />
     <ClInclude Include="src\gamestate\TileMap.h" />
     <ClInclude Include="src\gamestate\TimerUser.h" />
+    <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
     <ClInclude Include="src\struct\PCEvent.h" />
+    <ClInclude Include="src\struct\Resources.h" />
     <ClInclude Include="src\struct\WeaponTypes.h" />
+    <ClInclude Include="src\graphics\GraphicsCache.h" />
     <ClInclude Include="src\Version.h" />
     <CustomBuild Include="src\CarrotQt5.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -374,6 +380,19 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="Data\Assets\.gitignore" />
+    <None Include="Data\Manifests\Common\Scenery.json" />
+    <None Include="Data\Manifests\Enemy\Lizard.json" />
+    <None Include="Data\Manifests\Enemy\Turtle.json" />
+    <None Include="Data\Manifests\Interactive\PlayerJazz.json" />
+    <None Include="Data\Manifests\Object\BridgePiece.json" />
+    <None Include="Data\Manifests\Object\Collectible.json" />
+    <None Include="Data\Manifests\Object\PushBox.json" />
+    <None Include="Data\Manifests\Object\SavePoint.json" />
+    <None Include="Data\Manifests\Object\TriggerCrate.json" />
+    <None Include="Data\Manifests\UI\PlayerOSD.json" />
+    <None Include="Data\Manifests\Weapon\Blaster.json" />
+    <None Include="Data\Manifests\Weapon\Bouncer.json" />
+    <None Include="Data\Manifests\Weapon\Toaster.json" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

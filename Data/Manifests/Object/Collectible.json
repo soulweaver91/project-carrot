@@ -1,0 +1,79 @@
+{
+  "graphics": {
+    "PICKUP_GEM": {
+      "filename": "pickup/gem.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_COIN_GOLD": {
+      "filename": "pickup/coin_gold.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_COIN_SILVER": {
+      "filename": "pickup/coin_silver.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FASTFIRE": {
+      "filename": "pickup/fast_fire_jazz.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_BOUNCER": {
+      "filename": "pickup/ammo_bouncer.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_FREEZER": {
+      "filename": "pickup/ammo_freezer.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_SEEKER": {
+      "filename": "pickup/ammo_seeker.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_RF": {
+      "filename": "pickup/ammo_rf.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_TOASTER": {
+      "filename": "pickup/ammo_toaster.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_TNT": {
+      "filename": "object/tnt.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_PEPPER": {
+      "filename": "pickup/ammo_pepper.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_ELECTRO": {
+      "filename": "pickup/ammo_electro.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

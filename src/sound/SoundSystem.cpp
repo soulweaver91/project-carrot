@@ -17,28 +17,20 @@ SoundSystem::~SoundSystem() {
     }
 }
 
-void SoundSystem::playSFX(SFXType type, int idx) {
-    QList< HSAMPLE > samples = effect_bank.values(type);
-    if (!samples.empty()) {
-        if ((idx == -1) || (idx >= samples.size())) {
-            idx = qrand() % samples.size();
-        } else {
-            // QMultiMap returns items in descending order of insertion
-            idx = samples.size() - (idx + 1);
-        }
-        HCHANNEL ch = BASS_SampleGetChannel(samples.at(idx),false);
-        BASS_ChannelPlay(ch,false);
+void SoundSystem::playSFX(HSAMPLE sample) {
+    HCHANNEL ch = BASS_SampleGetChannel(sample, false);
+    if (ch != NULL) {
+        BASS_ChannelPlay(ch, false);
     }
 }
 
-bool SoundSystem::addSFX(SFXType type, const QString& path) {
+HSAMPLE SoundSystem::addSFX(const QString& id, const QString& path) {
     HSAMPLE nsample = BASS_SampleLoad(false, ("Data/Assets/" + path).toUtf8().data(), false, 0, 5, 0);
     if (nsample != 0) {
-        effect_bank.insert(type,nsample);
-        return true;
-    } else {
-        return false;
+        effect_bank.insert(id, nsample);
     }
+
+    return nsample;
 }
 
 void SoundSystem::fadeMusicOut(uint ms) {

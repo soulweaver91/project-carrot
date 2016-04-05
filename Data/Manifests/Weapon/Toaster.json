@@ -1,0 +1,13 @@
+{
+  "graphics": {
+    "WEAPON_TOASTER": {
+      "filename": "weapon/bullet_toaster.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

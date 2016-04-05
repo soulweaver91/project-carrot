@@ -1,0 +1,10 @@
+{
+  "graphics": {
+
+  },
+  "sounds": {
+    "COMMON_SCENERY_DESTRUCT": {
+      "filename": "common/scenery_destruct.wav"
+    }
+  }
+}

@@ -9,6 +9,8 @@
 #include "../struct/WeaponTypes.h"
 #include "../struct/PCEvent.h"
 #include "../struct/Hitbox.h"
+#include "../struct/AnimState.h"
+#include "../struct/Resources.h"
 
 class CarrotQt5;
 class AnimatedTile;
@@ -149,4 +151,5 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         std::unique_ptr<sf::VertexArray> tex_fade;
         unsigned level_width;
         unsigned level_height;
+        std::shared_ptr<ResourceSet> sceneryResources;
 };

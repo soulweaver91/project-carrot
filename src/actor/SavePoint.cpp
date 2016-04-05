@@ -2,11 +2,8 @@
 #include "../CarrotQt5.h"
 
 SavePoint::SavePoint(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, true), activated(false) {
-    addAnimation(AnimState::IDLE,        "object/savepoint.png",           1,1,42,70,1,19,69);
-    addAnimation(AnimState::ACTIVATED,   "object/savepoint.png", 1,1,42,70,1,19,69);
-    addAnimation(AnimState::TRANSITION_ACTIVATE, "object/savepoint.png", 15,1,42,70,10,19,69);
-
-    setAnimation(AnimState::IDLE);
+    loadResources("Object/SavePoint");
+    AnimationUser::setAnimation("OBJECT_SAVEPOINT_CLOSED");
 }
 
 SavePoint::~SavePoint() {
@@ -19,10 +16,10 @@ void SavePoint::tickEvent() {
 
 void SavePoint::activateSavePoint() {
     if (!activated) {
-        setAnimation(AnimState::ACTIVATED);
+        AnimationUser::setAnimation("OBJECT_SAVEPOINT_OPENED");
         setTransition(AnimState::TRANSITION_ACTIVATE, false);
         root->setSavePoint();
-        playSound(SFX_SAVE_POINT);
+        playSound("OBJECT_SAVEPOINT_ACTIVATED");
         activated = true;
     }
 }

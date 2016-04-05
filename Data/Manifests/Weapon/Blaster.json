@@ -1,0 +1,19 @@
+{
+  "graphics": {
+    "WEAPON_BLASTER_HOR": {
+      "filename": "weapon/bullet_blaster_hor.png",
+      "states": [
+        "0"
+      ]
+    },
+    "WEAPON_BLASTER_VER": {
+      "filename": "weapon/bullet_blaster_ver.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

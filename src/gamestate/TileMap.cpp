@@ -45,6 +45,8 @@ TileMap::TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_fi
     readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, spr_layer_file);
     level_height = level_layout.at(0).tile_layout.size() - 1;
     level_width = level_layout.at(0).tile_layout.at(0).size() - 1;
+
+    sceneryResources = root->loadActorTypeResources("Common/Scenery");
 }
 
 TileMap::~TileMap() {
@@ -740,8 +742,8 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
             if (!((animated_tiles.at(tile.d_animation)->getAnimationLength() - 2) > tile.scenery_frame_idx)) {
                 // the tile was destroyed, create debris
                 auto soundSystem = root->getSoundSystem().lock();
-                if (soundSystem != nullptr) {
-                    soundSystem->playSFX(SFX_BLOCK_DESTRUCT);
+                if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
+                    soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
                 }
                 root->createDebris(animated_tiles.at(tile.d_animation)->getFrameCanonicalIndex(animated_tiles.at(tile.d_animation)->getAnimationLength() - 1),tx,ty);
             }
@@ -771,8 +773,8 @@ bool TileMap::checkSpecialDestructible(double x, double y) {
             if (!((animated_tiles.at(tile.d_animation)->getAnimationLength() - 2) > tile.scenery_frame_idx)) {
                 // the tile was destroyed, create debris
                 auto soundSystem = root->getSoundSystem().lock();
-                if (soundSystem != nullptr) {
-                    soundSystem->playSFX(SFX_BLOCK_DESTRUCT);
+                if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
+                    soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
                 }
                 root->createDebris(animated_tiles.at(tile.d_animation)->getFrameCanonicalIndex(animated_tiles.at(tile.d_animation)->getAnimationLength() - 1),tx,ty);
             }

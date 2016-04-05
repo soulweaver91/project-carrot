@@ -1,0 +1,275 @@
+{
+  "graphics": {
+    "PLAYER_JAZZ_IDLE": {
+      "filename": "jazz/idle.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PLAYER_JAZZ_RUN": {
+      "filename": "jazz/run.png",
+      "states": [
+        "2"
+      ]
+    },
+    "PLAYER_JAZZ_JUMP": {
+      "filename": "jazz/jump.png",
+      "states": [
+        "4"
+      ]
+    },
+    "PLAYER_JAZZ_RUN_JUMP": {
+      "filename": "jazz/jump_diag.png",
+      "states": [
+        "6"
+      ]
+    },
+    "PLAYER_JAZZ_FALL": {
+      "filename": "jazz/fall.png",
+      "states": [
+        "8"
+      ]
+    },
+    "PLAYER_JAZZ_FALL_DIAG": {
+      "filename": "jazz/fall_diag.png",
+      "states": [
+        "10", "11"
+      ]
+    },
+    "PLAYER_JAZZ_DASH": {
+      "filename": "jazz/dash.png",
+      "states": [
+        "3"
+      ]
+    },
+    "PLAYER_JAZZ_DASH_JUMP": {
+      "filename": "jazz/ball.png",
+      "states": [
+        "7"
+      ]
+    },
+    "PLAYER_JAZZ_LOOKUP": {
+      "filename": "jazz/lookup_start.png",
+      "states": [
+        "64"
+      ],
+      "frameOffset": 1,
+      "fps": 0
+    },
+    "PLAYER_JAZZ_CROUCH": {
+      "filename": "jazz/crouch.png",
+      "states": [
+        "32"
+      ],
+      "frameOffset": 1,
+      "fps": 0
+    },
+    "PLAYER_JAZZ_SHOOT": {
+      "filename": "jazz/shoot.png",
+      "states": [
+        "16"
+      ]
+    },
+    "PLAYER_JAZZ_CROUCH_SHOOT": {
+      "filename": "jazz/crouch_shoot.png",
+      "states": [
+        "48"
+      ]
+    },
+    "PLAYER_JAZZ_LOOKUP_SHOOT": {
+      "filename": "jazz/shoot_ver.png",
+      "states": [
+        "80"
+      ]
+    },
+    "PLAYER_JAZZ_HURT": {
+      "filename": "jazz/hurt.png",
+      "states": [
+        "2048"
+      ]
+    },
+    "PLAYER_JAZZ_UPPERCUT": {
+      "filename": "jazz/uppercut.png",
+      "states": [
+        "512"
+      ]
+    },
+    "PLAYER_JAZZ_BUTTSTOMP": {
+      "filename": "jazz/buttstomp.png",
+      "states": [
+        "256"
+      ]
+    },
+    "PLAYER_JAZZ_HOOK": {
+      "filename": "jazz/vine_idle.png",
+      "states": [
+        "12"
+      ]
+    },
+    "PLAYER_JAZZ_HOOK_MOVE": {
+      "filename": "jazz/vine_walk.png",
+      "states": [
+        "14", "15"
+      ]
+    },
+    "PLAYER_JAZZ_COPTER": {
+      "filename": "jazz/copter.png",
+      "states": [
+        "8192", "8193", "8194", "8195"
+      ]
+    },
+    "PLAYER_JAZZ_COPTER_SHOOT": {
+      "filename": "jazz/copter_shoot.png",
+      "states": [
+        "8208", "8209", "8210", "8211"
+      ]
+    },
+    "PLAYER_JAZZ_AERIAL_SHOOT": {
+      "filename": "jazz/fall_shoot.png",
+      "states": [
+        "20", "21", "22", "23", "24", "25", "26", "27"
+      ]
+    },
+    "PLAYER_JAZZ_RUN_TO_IDLE": {
+      "filename": "jazz/run_stop.png",
+      "states": [
+        "1073741824"
+      ]
+    },
+    "PLAYER_JAZZ_RUN_TO_DASH": {
+      "filename": "jazz/dash_start.png",
+      "states": [
+        "1073741825"
+      ]
+    },
+    "PLAYER_JAZZ_IDLE_FALL_TO_IDLE": {
+      "filename": "jazz/fall_end.png",
+      "states": [
+        "1073741826"
+      ]
+    },
+    "PLAYER_JAZZ_IDLE_SHOOT_TO_IDLE": {
+      "filename": "jazz/shoot_end.png",
+      "states": [
+        "1073741828"
+      ]
+    },
+    "PLAYER_JAZZ_UPPERCUT_A": {
+      "filename": "jazz/uppercut_start.png",
+      "states": [
+        "1073741831"
+      ],
+      "frameCount": 3
+    },
+    "PLAYER_JAZZ_UPPERCUT_B": {
+      "filename": "jazz/uppercut_start.png",
+      "states": [
+        "1073741832"
+      ],
+      "frameOffset": 3
+    },
+    "PLAYER_JAZZ_UPPERCUT_C": {
+      "filename": "jazz/uppercut_end.png",
+      "states": [
+        "1073741833"
+      ]
+    },
+    "PLAYER_JAZZ_BUTTSTOMP_START": {
+      "filename": "jazz/spring.png",
+      "states": [
+        "1073741834"
+      ]
+    },
+    "PLAYER_JAZZ_POLE_H": {
+      "filename": "jazz/pole_h.png",
+      "states": [
+        "1073741835"
+      ],
+      "fps":  20
+    },
+    "PLAYER_JAZZ_POLE_H_SLOW": {
+      "filename": "jazz/pole_h.png",
+      "states": [
+        "1073741837"
+      ]
+    },
+    "PLAYER_JAZZ_POLE_V": {
+      "filename": "jazz/pole_v.png",
+      "states": [
+        "1073741836"
+      ],
+      "fps":  20
+    },
+    "PLAYER_JAZZ_POLE_V_SLOW": {
+      "filename": "jazz/pole_v.png",
+      "states": [
+        "1073741838"
+      ]
+    },
+    "PLAYER_JAZZ_DEATH": {
+      "filename": "jazz/death.png",
+      "states": [
+        "1073741839"
+      ]
+    },
+    "PLAYER_JAZZ_WARP_IN": {
+      "filename": "jazz/warp_in.png",
+      "states": [
+        "1073741843"
+      ]
+    },
+    "PLAYER_JAZZ_WARP_OUT": {
+      "filename": "jazz/warp_out.png",
+      "states": [
+        "1073741844"
+      ]
+    }
+  },
+  "sounds": {
+    "PLAYER_SWITCH_AMMO": {
+      "filename": "ui/weapon_change.wav"
+    },
+    "PLAYER_JAZZ_EOL": {
+      "filename": "jazz/level_complete.wav"
+    },
+    "COMMON_WARP_IN": {
+      "filename": "common/warp_in.wav"
+    },
+    "COMMON_WARP_OUT": {
+      "filename": "common/warp_out.wav"
+    },
+    "COMMON_JUMP": {
+      "filename": "common/char_jump.wav"
+    },
+    "COMMON_LAND": {
+      "filename": "common/char_land.wav"
+    },
+    "PLAYER_JAZZ_HURT": {
+      "filename": [
+        "jazz/hurt_1.wav",
+        "jazz/hurt_2.wav",
+        "jazz/hurt_3.wav",
+        "jazz/hurt_4.wav",
+        "jazz/hurt_5.wav",
+        "jazz/hurt_6.wav",
+        "jazz/hurt_7.wav",
+        "jazz/hurt_8.wav"
+      ]
+    },
+    "PLAYER_PICKUP_AMMO": {
+      "filename": "pickup/ammo.wav"
+    },
+    "PLAYER_PICKUP_GEM": {
+      "filename": "pickup/gem.wav"
+    },
+    "PLAYER_PICKUP_COIN": {
+      "filename": "pickup/coin.wav"
+    },
+    "WEAPON_BLASTER_JAZZ": {
+      "filename": "weapon/bullet_blaster_jazz_4.wav"
+    }
+  },
+  "children": [
+    "Weapon/Blaster", "Weapon/Bouncer", "Weapon/Toaster"
+  ]
+}

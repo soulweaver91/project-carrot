@@ -5,7 +5,7 @@
 Ammo_Toaster::Ammo_Toaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 70) {
     isGravityAffected = false;
-    addAnimation(AnimState::IDLE,        "weapon/bullet_toaster.png",    9,1,18,26,9,10,24);
+    loadResources("Weapon/Toaster");
     if (firedUp) {
         speed_h = (qrand() % 100 - 50.0) / 100.0;
         speed_v = (1.0 + qrand() % 100 * 0.001) * -3;

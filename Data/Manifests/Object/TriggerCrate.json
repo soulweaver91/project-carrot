@@ -1,0 +1,13 @@
+{
+  "graphics": {
+    "OBJECT_TRIGGER_CRATE": {
+      "filename": "object/trigger_crate.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

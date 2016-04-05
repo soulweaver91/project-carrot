@@ -1,0 +1,19 @@
+{
+  "graphics": {
+    "OBJECT_PUSHBOX_ROCK": {
+      "filename": "object/pushbox_rock.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_PUSHBOX_CRATE": {
+      "filename": "object/pushbox_crate.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

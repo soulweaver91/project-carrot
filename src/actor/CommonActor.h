@@ -8,9 +8,9 @@
 
 #include "../gamestate/AnimationUser.h"
 #include "../gamestate/TimerUser.h"
-#include "../sound/SoundSystem.h"
 #include "../struct/CoordinatePair.h"
 #include "../struct/Hitbox.h"
+#include "../struct/Resources.h"
 
 class CarrotQt5;
 class TileMap;
@@ -27,18 +27,20 @@ public:
     virtual void setToViewCenter(sf::View* view);
     CoordinatePair getPosition();
     virtual Hitbox getHitbox();
+    virtual Hitbox getHitbox(const uint& w, const uint& h);
     virtual bool perish();
     virtual bool deactivate(int x, int y, int dist);
     void moveInstantly(CoordinatePair location);
     void deleteFromEventMap();
         
 protected:
-    bool setAnimation(ActorState state) override;
+    bool setAnimation(AnimStateT state) override;
     void removeInvulnerability();
     virtual void onHitFloorHook();
     virtual void onHitCeilingHook();
     virtual void onHitWallHook();
-    bool playSound(SFXType sound);
+    bool loadResources(const QString& classId);
+    bool playSound(const QString& id);
     std::shared_ptr<CarrotQt5> root;
     unsigned max_health;
     unsigned health;
@@ -60,4 +62,5 @@ protected:
     bool createdFromEventMap;
     int origin_x;
     int origin_y;
+    std::shared_ptr<ResourceSet> resources;
 };
