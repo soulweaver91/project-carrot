@@ -48,6 +48,7 @@ struct LayerTile {
     int scenery_frame_idx; // denotes the specific frame from the above animation that is currently active
     // Collapsible: delay ("wait" parameter); trigger: trigger id
     unsigned extra_byte;
+    bool tilesetDefault;
 };
 
 struct Tileset {
@@ -64,7 +65,7 @@ struct Tileset {
 struct TileMapLayer {
     enum LayerType type;
     unsigned idx;
-    QList< QList< LayerTile > > tile_layout;
+    QList<QList<std::shared_ptr<LayerTile>>> tile_layout;
     double xspeed;
     double yspeed;
     double auto_xspeed;
@@ -120,8 +121,8 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         unsigned getLevelHeight();
         void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
         bool isPosVine(double x, double y);
-        QList< QList< LayerTile > > prepareSavePointLayer();
-        void loadSavePointLayer(const QList< QList< LayerTile > >& layer);
+        QList<QList<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
+        void loadSavePointLayer(const QList<QList<std::shared_ptr<LayerTile>>>& layer);
         bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);
         bool checkSpecialDestructible(double x, double y);
         void saveInitialSpriteLayer();
@@ -144,7 +145,7 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         Tileset level_tileset;
         QList< TileMapLayer > level_layout;
         unsigned spr_layer;
-        QList<QList<LayerTile>> initial_spr_layer_copy;
+        QList<QList<std::shared_ptr<LayerTile>>> initial_spr_layer_copy;
         QList<std::shared_ptr<AnimatedTile>> animated_tiles;
         bool trigger_state[256];
         std::unique_ptr<sf::RenderTexture> tex_back;
@@ -152,4 +153,6 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         unsigned level_width;
         unsigned level_height;
         std::shared_ptr<ResourceSet> sceneryResources;
+        QList<std::shared_ptr<LayerTile>> defaultLayerTiles;
+        std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
 };
