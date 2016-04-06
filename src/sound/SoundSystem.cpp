@@ -1,13 +1,15 @@
 #include "SoundSystem.h"
 #include <QList>
+#include <cassert>
 
 SoundSystem::SoundSystem() : initialized(false) {
     // Attempt to start up the sound system, using the default audio device
-    if (!BASS_Init(-1, 44100, 0, 0, NULL)) {
+    if (!BASS_Init(-1, 44100, 0, 0, NULL) || !BASS_PluginLoad("bassfx.dll", 0)) {
         return;
     }
 
     BASS_SetVolume(1.0);
+    BASS_FX_GetVersion();
     initialized = true;
 }
 
@@ -15,11 +17,35 @@ SoundSystem::~SoundSystem() {
     BASS_Free();
 }
 
-void SoundSystem::playSFX(HSAMPLE sample) {
+HCHANNEL SoundSystem::playSFX(HSAMPLE sample) {
     HCHANNEL ch = BASS_SampleGetChannel(sample, false);
     if (ch != NULL) {
         BASS_ChannelPlay(ch, false);
     }
+    return ch;
+}
+
+HSTREAM SoundSystem::playSFX(HSAMPLE sample, float speed, float pitch, float freq) {
+    BASS_SAMPLE params;
+    if (!BASS_SampleGetInfo(sample, &params)) {
+        return NULL;
+    }
+
+    void* buffer = operator new(params.length);
+    BASS_SampleGetData(sample, buffer);
+
+    HSTREAM stream = BASS_StreamCreate(params.freq, params.chans, params.flags | BASS_STREAM_DECODE, STREAMPROC_PUSH, NULL);
+    BASS_StreamPutData(stream, buffer, params.length | BASS_STREAMPROC_END);
+    operator delete(buffer);
+
+    HSTREAM ch = BASS_FX_TempoCreate(stream, BASS_STREAM_AUTOFREE);
+    if (ch != NULL) {
+        BASS_ChannelSetAttribute(ch, BASS_ATTRIB_TEMPO, speed);
+        BASS_ChannelSetAttribute(ch, BASS_ATTRIB_TEMPO_PITCH, pitch);
+        BASS_ChannelSetAttribute(ch, BASS_ATTRIB_TEMPO_FREQ, freq * params.freq);
+        BASS_ChannelPlay(ch, false);
+    }
+    return ch;
 }
 
 HSAMPLE SoundSystem::addSFX(const QString& id, const QString& path) {
