@@ -1,0 +1,141 @@
+{
+  "graphics": {
+    "OBJECT_SPRING_IDLE_RED": {
+      "filename": "object/spring_red_ver.png",
+      "states": [
+        "1024"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_IDLE_GREEN": {
+      "filename": "object/spring_green_ver.png",
+      "states": [
+        "2048"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_IDLE_BLUE": {
+      "filename": "object/spring_blue_ver.png",
+      "states": [
+        "3072"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_ACTIVE_RED": {
+      "filename": "object/spring_red_ver.png",
+      "states": [
+        "1536"
+      ]
+    },
+    "OBJECT_SPRING_ACTIVE_GREEN": {
+      "filename": "object/spring_green_ver.png",
+      "states": [
+        "2560"
+      ]
+    },
+    "OBJECT_SPRING_ACTIVE_BLUE": {
+      "filename": "object/spring_blue_ver.png",
+      "states": [
+        "3584"
+      ]
+    },
+    "OBJECT_SPRING_IDLE_RED_HOR": {
+      "filename": "object/spring_red_hor.png",
+      "states": [
+        "5120"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_IDLE_GREEN_HOR": {
+      "filename": "object/spring_green_hor.png",
+      "states": [
+        "6144"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_IDLE_BLUE_HOR": {
+      "filename": "object/spring_blue_hor.png",
+      "states": [
+        "7168"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_ACTIVE_RED_HOR": {
+      "filename": "object/spring_red_hor.png",
+      "states": [
+        "5632"
+      ]
+    },
+    "OBJECT_SPRING_ACTIVE_GREEN_HOR": {
+      "filename": "object/spring_green_hor.png",
+      "states": [
+        "6656"
+      ]
+    },
+    "OBJECT_SPRING_ACTIVE_BLUE_HOR": {
+      "filename": "object/spring_blue_hor.png",
+      "states": [
+        "7680"
+      ]
+    },
+    "OBJECT_SPRING_IDLE_RED_REVERSE": {
+      "filename": "object/spring_red_ver_reverse.png",
+      "states": [
+        "9216"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_IDLE_GREEN_REVERSE": {
+      "filename": "object/spring_green_ver_reverse.png",
+      "states": [
+        "10240"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_IDLE_BLUE_REVERSE": {
+      "filename": "object/spring_blue_ver_reverse.png",
+      "states": [
+        "11264"
+      ],
+      "frameCount": 1,
+      "fps": 0
+    },
+    "OBJECT_SPRING_ACTIVE_RED_REVERSE": {
+      "filename": "object/spring_red_ver_reverse.png",
+      "states": [
+        "9728"
+      ]
+    },
+    "OBJECT_SPRING_ACTIVE_GREEN_REVERSE": {
+      "filename": "object/spring_green_ver_reverse.png",
+      "states": [
+        "10752"
+      ]
+    },
+    "OBJECT_SPRING_ACTIVE_BLUE_REVERSE": {
+      "filename": "object/spring_blue_ver_reverse.png",
+      "states": [
+        "11776"
+      ]
+    }
+  },
+  "sounds": {
+    "OBJECT_SPRING_VERTICAL": {
+      "filename": "spring/spring_2.wav"
+    },
+    "OBJECT_SPRING_VERTICAL_REVERSED": {
+      "filename": "spring/spring_ver_down.wav"
+    },
+    "OBJECT_SPRING_HORIZONTAL": {
+      "filename": "spring/spring.wav"
+    }
+  }
+}

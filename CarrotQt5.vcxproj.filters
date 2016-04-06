@@ -224,6 +224,9 @@
     <ClCompile Include="src\graphics\ShaderSource.cpp">
       <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\Spring.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -363,6 +366,9 @@
     <ClInclude Include="src\graphics\ShaderSource.h">
       <Filter>Header Files\Graphics system headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\Spring.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -425,6 +431,9 @@
     </None>
     <None Include="Shaders\ColorizeShader.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\Spring.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
 </Project>

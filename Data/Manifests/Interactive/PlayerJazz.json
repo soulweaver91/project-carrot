@@ -223,6 +223,12 @@
       "states": [
         "1073741844"
       ]
+    },
+    "PLAYER_JAZZ_SPRING": {
+      "filename": "jazz/spring.png",
+      "states": [
+        "1073741845"
+      ]
     }
   },
   "sounds": {

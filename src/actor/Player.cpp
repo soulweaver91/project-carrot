@@ -6,6 +6,7 @@
 #include "enemy/Enemy.h"
 #include "Collectible.h"
 #include "SavePoint.h"
+#include "Spring.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
@@ -361,7 +362,7 @@ void Player::tickEvent() {
                 speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1),3.0),-3.0);
             }
         } else {
-            speed_h = std::max((abs(speed_h) - 0.25),0.0) * (facingLeft ? -1 : 1);
+            speed_h = std::max((abs(speed_h) - 0.25),0.0) * (speed_h < -1e-6 ? -1 : 1);
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
@@ -445,28 +446,51 @@ void Player::tickEvent() {
 
         // Different things happen with different actor types
 
-        auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
-        if (enemy != nullptr) {
-            if (damaging_move) {
-                enemy->decreaseHealth(1);
-                if ((currentState & AnimState::BUTTSTOMP) > 0) {
-                    setAnimation(currentState & ~AnimState::BUTTSTOMP);
-                    damaging_move = false;
-                    controllable = true;
-                    speed_v *= -.5;
+        {
+            auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
+            if (enemy != nullptr) {
+                if (damaging_move) {
+                    enemy->decreaseHealth(1);
+                    if ((currentState & AnimState::BUTTSTOMP) > 0) {
+                        setAnimation(currentState & ~AnimState::BUTTSTOMP);
+                        damaging_move = false;
+                        controllable = true;
+                        speed_v *= -.5;
+                    }
+                } else {
+                    if (enemy->hurtsPlayer()) {
+                        takeDamage(4 * (pos_x > enemy->getPosition().x ? 1 : -1));
+                    }
                 }
-            } else {
-                if (enemy->hurtsPlayer()) {
-                    takeDamage(4 * (pos_x > enemy->getPosition().x ? 1 : -1));
-                }
+                continue;
             }
-            continue;
         }
         
-        auto sp = std::dynamic_pointer_cast<SavePoint>(collisionPtr);
-        if (sp != nullptr) {
-            sp->activateSavePoint();
-            continue;
+        {
+            auto sp = std::dynamic_pointer_cast<SavePoint>(collisionPtr);
+            if (sp != nullptr) {
+                sp->activateSavePoint();
+                continue;
+            }
+        }
+
+        {
+            auto spr = std::dynamic_pointer_cast<Spring>(collisionPtr);
+            if (spr != nullptr) {
+                sf::Vector2f params = spr->activate();
+                short sign = ((params.x + params.y) > 1e-6 ? 1 : -1);
+                if (abs(params.x) > 1e-6) {
+                    speed_h = (4 + abs(params.x)) * sign;
+                    push = params.x;
+                    setTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
+                } else {
+                    speed_v = (4 + abs(params.y / 2)) * sign;
+                    thrust = -params.y / 2;
+                    setTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
+                }
+                canJump = false;
+                continue;
+            }
         }
 
         auto coll = std::dynamic_pointer_cast<Collectible>(collisionPtr);

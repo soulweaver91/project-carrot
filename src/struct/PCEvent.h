@@ -26,6 +26,9 @@ enum PCEvent {
     PC_GEM_GREEN            = 0x0041,
     PC_GEM_BLUE             = 0x0042,
     PC_SAVE_POINT           = 0x005A,
+    PC_SPRING_RED           = 0x00C0,
+    PC_SPRING_GREEN         = 0x00C1,
+    PC_SPRING_BLUE          = 0x00C2,
     PC_JAZZ_LEVEL_START     = 0x0100,
     PC_SPAZ_LEVEL_START     = 0x0101, // not implemented
     PC_LORI_LEVEL_START     = 0x0102, // not implemented

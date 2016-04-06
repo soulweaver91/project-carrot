@@ -55,6 +55,7 @@ namespace AnimState {
     unsigned const TRANSITION_WITHDRAW_END                  = 0x40000012;
     unsigned const TRANSITION_WARP                          = 0x40000013;
     unsigned const TRANSITION_WARP_END                      = 0x40000014;
+    unsigned const TRANSITION_SPRING                        = 0x40000015;
 
     // 31st bit: UI icon range
     unsigned const UI_PLAYER_FACE       = 0x80000000;

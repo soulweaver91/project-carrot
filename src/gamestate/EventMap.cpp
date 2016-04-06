@@ -10,6 +10,7 @@
 #include "../actor/enemy/NormalTurtle.h"
 #include "../actor/enemy/Lizard.h"
 #include "../actor/SavePoint.h"
+#include "../actor/Spring.h"
 #include "../struct/WeaponTypes.h"
 
 EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, unsigned int width, unsigned int height)
@@ -117,6 +118,14 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                         {
                             auto e = std::make_shared<DynamicBridge>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
                                 tile.event_params[0], static_cast< DynamicBridgeType >(tile.event_params[1]), tile.event_params[2]);
+                            root->addActor(e);
+                        }
+                        break;
+                    case PC_SPRING_RED:
+                    case PC_SPRING_GREEN:
+                    case PC_SPRING_BLUE:
+                        {
+                            auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, (SpringType)(1 + (tile.stored_event - PC_SPRING_RED)), (byte)tile.event_params[0]);
                             root->addActor(e);
                         }
                         break;

@@ -187,6 +187,7 @@
     <ClCompile Include="src\actor\PushBox.cpp" />
     <ClCompile Include="src\actor\SavePoint.cpp" />
     <ClCompile Include="src\actor\SolidObject.cpp" />
+    <ClCompile Include="src\actor\Spring.cpp" />
     <ClCompile Include="src\actor\TriggerCrate.cpp" />
     <ClCompile Include="src\actor\weapon\Ammo.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoBlaster.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h" />
     <ClInclude Include="src\actor\Bridge.h" />
+    <ClInclude Include="src\actor\Spring.h" />
     <ClInclude Include="src\gamestate\ResourceManager.h" />
     <ClInclude Include="src\gamestate\AnimationUser.h" />
     <ClInclude Include="src\gamestate\PlayerOSD.h" />
@@ -390,6 +392,7 @@
     <None Include="Data\Manifests\Object\Collectible.json" />
     <None Include="Data\Manifests\Object\PushBox.json" />
     <None Include="Data\Manifests\Object\SavePoint.json" />
+    <None Include="Data\Manifests\Object\Spring.json" />
     <None Include="Data\Manifests\Object\TriggerCrate.json" />
     <None Include="Data\Manifests\UI\PlayerOSD.json" />
     <None Include="Data\Manifests\Weapon\Blaster.json" />
