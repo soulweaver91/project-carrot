@@ -1,4 +1,5 @@
 #include "EventMap.h"
+#include <QList>
 #include "../CarrotQt5.h"
 #include "../actor/SolidObject.h"
 #include "../actor/Collectible.h"
@@ -16,7 +17,7 @@
 EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, unsigned int width, unsigned int height)
     : root(game_root) {
     for (unsigned int y = 0; y <= height; ++y) {
-        QList<std::shared_ptr<EventTile>> n;
+        QVector<std::shared_ptr<EventTile>> n;
         for (unsigned int x = 0; x <= width; ++x) {
             // std::fill_n doesn't seem to work here
             n << nullptr;
@@ -43,7 +44,7 @@ unsigned short EventMap::isPosPole(double x, double y) {
            (event == PC_MODIFIER_V_POLE ? 1 : 0));
 }
 
-void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QList< quint16 >& params) {
+void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QVector<quint16>& params) {
     if (e == PC_NONE && event_layout.at(y).at(x) == nullptr) {
         return;
     }
@@ -231,14 +232,14 @@ void EventMap::readEvents(const QString& filename, unsigned layout_version) {
                         break;
                     }
                     quint8 ev_flags = 0;
-                    QList< quint16 > ev_params;
+                    QVector<quint16> ev_params(8);
 
                     if (layout_version > 3) {
                         outstr >> ev_flags;
                         for (int i = 0; i < 8; ++i) {
                             quint16 j;
                             outstr >> j;
-                            ev_params.push_back(j);
+                            ev_params[i] = j;
                         }
                     }
 
@@ -301,7 +302,7 @@ bool EventMap::positionHasEvent(int x, int y) {
 }
 
 CoordinatePair EventMap::getWarpTarget(unsigned id) {
-    QList< CoordinatePair > targets = warpTargets.values(id);
+    QList<CoordinatePair> targets = warpTargets.values(id);
     if (targets.size() > 0) {
         return targets.at(qrand() % targets.size());
     } else {

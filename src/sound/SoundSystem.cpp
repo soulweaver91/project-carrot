@@ -1,4 +1,5 @@
 #include "SoundSystem.h"
+#include <QList>
 
 SoundSystem::SoundSystem() : initialized(false) {
     // Attempt to start up the sound system, using the default audio device

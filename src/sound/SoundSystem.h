@@ -2,7 +2,7 @@
 
 #include <bass.h>
 #include <QString>
-#include <QList>
+#include <QVector>
 #include <QMultiMap>
 
 struct SFXBinding {

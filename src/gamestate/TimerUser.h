@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QList>
+#include <QVector>
 #include <QPair>
 
 class TimerUser;
@@ -32,7 +32,7 @@ protected:
     virtual unsigned long addTimer(unsigned frames, bool recurring, TimerCallbackFunc func);
     virtual void invokeTimer(int idx);
     void cancelTimer(unsigned long idx);
-    QList< QPair< unsigned long, ActorTimer > > timers;
+    QVector<QPair<unsigned long, ActorTimer>> timers;
     unsigned long next_timer;
     unsigned long animation_timer;
 };

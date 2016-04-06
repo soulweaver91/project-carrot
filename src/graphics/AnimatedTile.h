@@ -2,14 +2,14 @@
 
 #include <memory>
 #include <QObject>
-#include <QList>
+#include <QVector>
 #include <SFML/Graphics.hpp>
 
 #include "../gamestate/TileMap.h"
 
 class AnimatedTile {
     public:
-        AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QList< unsigned short >& tile_refs, 
+        AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tile_refs,
             int fps = 10, int delay = 0, int delay_jitter = 0, bool ping_pong = false, 
             int ping_pong_delay = 0);
         ~AnimatedTile();
@@ -22,7 +22,7 @@ class AnimatedTile {
         void scheduleUpdate(double frames_to_next);
         void updateTile();
 
-        QList<std::shared_ptr<LayerTile>> animation_tiles;
+        QVector<std::shared_ptr<LayerTile>> animation_tiles;
         int fps;
         int delay;
         int delay_jitter;

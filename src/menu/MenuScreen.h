@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <QList>
+#include <QVector>
 #include <QVariant>
 #include <QKeyEvent>
 #include <QString>
@@ -63,7 +63,7 @@ private:
     sf::Sprite glow_b[4];
     sf::Texture logo_tex;
     sf::Sprite logo;
-    QList<std::shared_ptr<MenuItem>> menu_options;
+    QVector<std::shared_ptr<MenuItem>> menu_options;
     std::shared_ptr<MenuItem> cancel_item;
     int selected_item;
     BitmapString attraction_text;

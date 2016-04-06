@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <QString>
-#include <QList>
 #include <SFML/Graphics.hpp>
 #include "TimerUser.h"
 #include "../struct/AnimState.h"

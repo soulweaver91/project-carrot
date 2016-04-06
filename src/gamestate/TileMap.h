@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <QBitArray>
-#include <QList>
+#include <QVector>
 #include <QSettings>
 #include <SFML/Graphics.hpp>
 
@@ -57,15 +57,15 @@ struct Tileset {
     unsigned long tile_amount;
     unsigned tiles_col; // number of tiles next to each other
     std::shared_ptr<sf::Texture> tiles;
-    QList< QBitArray > masks;
-    QList< bool > mask_empty; // to speed up collision checking so that not every tile needs to be pixel perfect checked
-    QList< bool > mask_full;  // same with this one
+    QVector< QBitArray > masks;
+    QVector< bool > mask_empty; // to speed up collision checking so that not every tile needs to be pixel perfect checked
+    QVector< bool > mask_full;  // same with this one
 };
 
 struct TileMapLayer {
     enum LayerType type;
     unsigned idx;
-    QList<QList<std::shared_ptr<LayerTile>>> tile_layout;
+    QVector<QVector<std::shared_ptr<LayerTile>>> tile_layout;
     double xspeed;
     double yspeed;
     double auto_xspeed;
@@ -121,8 +121,8 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         unsigned getLevelHeight();
         void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
         bool isPosVine(double x, double y);
-        QList<QList<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
-        void loadSavePointLayer(const QList<QList<std::shared_ptr<LayerTile>>>& layer);
+        QVector<QVector<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
+        void loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer);
         bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);
         bool checkSpecialDestructible(double x, double y);
         void saveInitialSpriteLayer();
@@ -143,16 +143,16 @@ class TileMap : public std::enable_shared_from_this<TileMap> {
         void initializeBackgroundTexture(TileMapLayer& background);
         void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target);
         Tileset level_tileset;
-        QList< TileMapLayer > level_layout;
+        QVector< TileMapLayer > level_layout;
         unsigned spr_layer;
-        QList<QList<std::shared_ptr<LayerTile>>> initial_spr_layer_copy;
-        QList<std::shared_ptr<AnimatedTile>> animated_tiles;
+        QVector<QVector<std::shared_ptr<LayerTile>>> initial_spr_layer_copy;
+        QVector<std::shared_ptr<AnimatedTile>> animated_tiles;
         bool trigger_state[256];
         std::unique_ptr<sf::RenderTexture> tex_back;
         std::unique_ptr<sf::VertexArray> tex_fade;
         unsigned level_width;
         unsigned level_height;
         std::shared_ptr<ResourceSet> sceneryResources;
-        QList<std::shared_ptr<LayerTile>> defaultLayerTiles;
+        QVector<std::shared_ptr<LayerTile>> defaultLayerTiles;
         std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
 };

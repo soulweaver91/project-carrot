@@ -1,6 +1,6 @@
 #include "AnimatedTile.h"
 
-AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QList< unsigned short >& tile_ids, int fps, int delay,
+AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tile_ids, int fps, int delay,
     int delay_jitter, bool ping_pong, int ping_pong_delay)
     : delay(delay), delay_jitter(delay_jitter), ping_pong(ping_pong), ping_pong_delay(ping_pong_delay), curr_idx(0),
     forwards(true), frames_left(0), frames_original(0.0), frames_remainder(0.0), fps(fps) {

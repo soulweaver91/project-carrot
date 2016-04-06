@@ -452,7 +452,7 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
             int row = 0;
             // Read data until no more data available
             while (!outstr.atEnd()) {
-                QList<std::shared_ptr<LayerTile>> new_row;
+                QVector<std::shared_ptr<LayerTile>> new_row;
                 int col = 0;
 
                 while (!outstr.atEnd()) {
@@ -718,7 +718,7 @@ void TileMap::readAnimatedTiles(const QString& filename) {
 
             // Read data until no more data available
             while (!outstr.atEnd()) {
-                QList< unsigned short > frames;
+                QVector<unsigned short> frames;
                 // Read type short from the stream
                 for (int i = 0; i < 64; ++i) {
                     quint16 tile;
@@ -752,7 +752,7 @@ const std::shared_ptr<sf::Texture> TileMap::getTilesetTexture() {
 }
 
 
-QList<QList<std::shared_ptr<LayerTile>>> TileMap::prepareSavePointLayer() {
+QVector<QVector<std::shared_ptr<LayerTile>>> TileMap::prepareSavePointLayer() {
     /*
     TODO: make use of this improved algorithm as an option
 
@@ -766,7 +766,7 @@ QList<QList<std::shared_ptr<LayerTile>>> TileMap::prepareSavePointLayer() {
     return initial_spr_layer_copy;
 }
 
-void TileMap::loadSavePointLayer(const QList<QList<std::shared_ptr<LayerTile>>>& layer) {
+void TileMap::loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer) {
     level_layout[spr_layer].tile_layout = layer;
 }
 

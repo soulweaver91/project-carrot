@@ -99,7 +99,7 @@ bool AnimationUser::setAnimation(AnimStateT state) {
         }
     }
 
-    QList<std::shared_ptr<GraphicResource>> candidates;
+    QVector<std::shared_ptr<GraphicResource>> candidates;
     foreach(auto a, animationBank) {
         if (a->state.contains(state)) {
             candidates << a;
@@ -176,7 +176,7 @@ bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
 }
 
 bool AnimationUser::setTransition(AnimStateT state, bool cancellable) {
-    QList<std::shared_ptr<GraphicResource>> candidates;
+    QVector<std::shared_ptr<GraphicResource>> candidates;
     foreach(auto a, animationBank) {
         if (a->state.contains(state)) {
             candidates << a;

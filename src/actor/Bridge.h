@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-
+#include <QVector>
 #include "SolidObject.h"
 #include "../struct/Hitbox.h"
 
@@ -39,5 +39,5 @@ class DynamicBridge : public CommonActor {
         unsigned short toughness;
         DynamicBridgeType bridge_type;
         unsigned int bridge_width;
-        QList<std::shared_ptr<DynamicBridgePiece>> bridge_objs;
+        QVector<std::shared_ptr<DynamicBridgePiece>> bridge_objs;
 };

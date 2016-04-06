@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <QList>
+#include <QVector>
 #include <QPair>
 
 class TimerManager;
@@ -36,7 +36,7 @@ class TimerManager {
     private:
         // calls timers.value(index).func on timers.value(index).callee
         void invokeTimer(int internal_index);
-        QList< QPair<unsigned long, FrameTimer> > timers;
+        QVector<QPair<unsigned long, FrameTimer>> timers;
 
         // manage indices manually to not reuse or move existing ones
         unsigned long next_index;

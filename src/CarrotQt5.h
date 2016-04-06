@@ -18,6 +18,7 @@
 #include <QWidget>
 #include <QObject>
 #include <QMap>
+#include <QVector>
 #include <bass.h>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -51,7 +52,7 @@ enum ExitType {
 struct SavedState {
     CoordinatePair player_pos;
     int player_lives;
-    QList<QList<std::shared_ptr<LayerTile>>> spr_layer_copy;
+    QVector<QVector<std::shared_ptr<LayerTile>>> spr_layer_copy;
 };
 
 typedef void (CarrotQt5::*InvokableRootFunction)(QVariant);
@@ -77,8 +78,8 @@ public:
     void removeActor(std::shared_ptr<CommonActor> actor);
     bool destroyAllActors();
     bool loadLevel(const QString& name);
-    QList<std::weak_ptr<CommonActor>> findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me = nullptr);
-    QList<std::weak_ptr<CommonActor>> findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me = nullptr);
+    QVector<std::weak_ptr<CommonActor>> findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me = nullptr);
+    QVector<std::weak_ptr<CommonActor>> findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me = nullptr);
     static Hitbox calcHitbox(const Hitbox& hbox, double hor, double ver);
     static Hitbox calcHitbox(int x, int y, int w, int h);
     void setSavePoint();
@@ -124,8 +125,8 @@ private:
     void cleanUpLevel();
     Ui::CarrotQt5Class ui;
     QTimer myTimer;
-    QList<std::shared_ptr<CommonActor>> actors;
-    QList<std::shared_ptr<DestructibleDebris>> debris;
+    QVector<std::shared_ptr<CommonActor>> actors;
+    QVector<std::shared_ptr<DestructibleDebris>> debris;
     std::shared_ptr<Player> players[32];
     bool paused;
     std::unique_ptr<sf::View> uiView;

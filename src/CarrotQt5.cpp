@@ -555,8 +555,8 @@ void CarrotQt5::removeActor(std::shared_ptr<CommonActor> actor) {
     }
 }
 
-QList<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me) {
-    QList<std::weak_ptr<CommonActor>> res;
+QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me) {
+    QVector<std::weak_ptr<CommonActor>> res;
     for (int i = 0; i < actors.size(); ++i) {
         CoordinatePair pos2 = actors.at(i)->getPosition();
         if ((std::abs(pos.x - pos2.x) < 10) && (std::abs(pos.y - pos2.y) < 10)) {
@@ -566,8 +566,8 @@ QList<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(CoordinatePair 
     return res;
 }
 
-QList<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me) {
-    QList<std::weak_ptr<CommonActor>> res;
+QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me) {
+    QVector<std::weak_ptr<CommonActor>> res;
     for (int i = 0; i < actors.size(); ++i) {
         if (me == actors.at(i)) {
             continue;
@@ -694,7 +694,7 @@ bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_
     }
 
     // check for solid objects
-    QList<std::weak_ptr<CommonActor>> collision = findCollisionActors(hbox, me);
+    QVector<std::weak_ptr<CommonActor>> collision = findCollisionActors(hbox, me);
     for (int i = 0; i < collision.size(); ++i) {
         auto collisionPtr = collision.at(i).lock();
         if (collisionPtr == nullptr) {

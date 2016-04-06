@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <QString>
-#include <QList>
+#include <QVector>
 #include <SFML/Graphics.hpp>
 
 enum FontAlign {
@@ -19,7 +19,7 @@ class BitmapFont {
     private:
         short char_width[256];
         sf::Texture font_tex;
-        QList<std::shared_ptr<sf::Sprite>> char_map;
+        QVector<std::shared_ptr<sf::Sprite>> char_map;
         short first_char;
 };
 
