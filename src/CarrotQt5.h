@@ -51,7 +51,7 @@ enum ExitType {
 struct SavedState {
     CoordinatePair player_pos;
     int player_lives;
-    QList< QList< LayerTile > > spr_layer_copy;
+    QList<QList<std::shared_ptr<LayerTile>>> spr_layer_copy;
 };
 
 typedef void (CarrotQt5::*InvokableRootFunction)(QVariant);

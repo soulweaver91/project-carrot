@@ -31,7 +31,9 @@ class EventMap {
         void deactivate(int x, int y);
         int getPositionWarp(double x, double y);
         PCEvent getPositionEvent(double x, double y);
+        PCEvent getPositionEvent(int x, int y);
         void getPositionParams(double x, double y, quint16 (&params)[8]);
+        void getPositionParams(int x, int y, quint16(&params)[8]);
         void deactivateAll();
         void setTileParam(int x, int y, unsigned char idx, quint16 value);
         void readEvents(const QString& filename, unsigned layout_version);
@@ -39,7 +41,8 @@ class EventMap {
 
     private:
         void addWarpTarget(unsigned id, unsigned x, unsigned y);
+        bool positionHasEvent(int x, int y);
         std::shared_ptr<CarrotQt5> root;
-        QList<QList<EventTile>> event_layout;
+        QList<QList<std::shared_ptr<EventTile>>> event_layout;
         QMultiMap<unsigned, CoordinatePair> warpTargets;
 };
