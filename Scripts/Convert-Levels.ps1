@@ -42,7 +42,7 @@ $levels = @(
     ('042_jungle2_junglejump'            , 'Jung2'     , 23, 99), # 22
     ('043_inferno1_acolddayinheck'       , 'Hell'      , 24, 99), # 23
     ('044_inferno2_rabbitroast'          , 'Hell2'     , 25, 99), # 24
-    ('045_damn1_burninbiscuits'          , 'Damn1'     , 26, 99), # 25
+    ('045_damn1_burninbiscuits'          , 'Damn'      , 26, 99), # 25
     ('046_damn2_badpitt'                 , 'Damn2'     , 99, 99), # 26
     ('051_labrat_darnratz'               , 'Share1'    , 28, 99), # 27
     ('052_psych_retrorabbit'             , 'Share2'    , 29, 99), # 28
