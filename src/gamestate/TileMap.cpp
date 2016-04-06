@@ -878,7 +878,7 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
     quint16 p[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     auto tiles = root->getGameEvents().lock();
     if (tiles != nullptr) {
-        tiles->getPositionParams(x * 32, y * 32, p);
+        tiles->getPositionParams(x, y, p);
     }
 
     switch (e) {

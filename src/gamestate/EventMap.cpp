@@ -16,13 +16,10 @@
 EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, unsigned int width, unsigned int height)
     : root(game_root) {
     for (unsigned int y = 0; y <= height; ++y) {
-        QList< EventTile > n;
+        QList<std::shared_ptr<EventTile>> n;
         for (unsigned int x = 0; x <= width; ++x) {
-            EventTile e;
-            e.event_active = false;
-            e.stored_event = PC_EMPTY;
-            std::fill_n(e.event_params,8,0);
-            n << e;
+            // std::fill_n doesn't seem to work here
+            n << nullptr;
         }
         event_layout << n;
     }
@@ -35,29 +32,36 @@ EventMap::~EventMap() {
 bool EventMap::isPosHurting(double x, double y) {
     int ax = static_cast<int>(x) / 32;
     int ay = static_cast<int>(y) / 32;
-    return (event_layout.at(ay).at(ax).stored_event == PC_MODIFIER_HURT);
+    return getPositionEvent(ax, ay) == PC_MODIFIER_HURT;
 }
 
 unsigned short EventMap::isPosPole(double x, double y) {
     int ax = static_cast<int>(x) / 32;
     int ay = static_cast<int>(y) / 32;
-    return (event_layout.at(ay).at(ax).stored_event == PC_MODIFIER_H_POLE ? 2 :
-           (event_layout.at(ay).at(ax).stored_event == PC_MODIFIER_V_POLE ? 1 : 0));
+    PCEvent event = getPositionEvent(ax, ay);
+    return (event == PC_MODIFIER_H_POLE ? 2 :
+           (event == PC_MODIFIER_V_POLE ? 1 : 0));
 }
 
 void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QList< quint16 >& params) {
-    EventTile& tile = event_layout[y][x];
-    tile.stored_event = e;
-    tile.event_active = false;
+    if (e == PC_NONE && event_layout.at(y).at(x) == nullptr) {
+        return;
+    }
+
+    auto tile = std::make_shared<EventTile>();
+    tile->stored_event = e;
+    tile->event_active = false;
 
     // Store event parameters
     int i = 0;
     for (; i < std::min(params.size(), 8); ++i) {
-        tile.event_params[i] = params.at(i);
+        tile->event_params[i] = params.at(i);
     }
     for (; i < 8; ++i) {
-        tile.event_params[i] = 0;
+        tile->event_params[i] = 0;
     }
+
+    event_layout[y][x] = tile;
 }
 
 void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
@@ -68,9 +72,13 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
 
     for (unsigned x = x1; x <= x2; ++x) {
         for (unsigned y = y1; y <= y2; ++y) {
-            EventTile& tile = event_layout[y][x];
-            if (!tile.event_active && tile.stored_event != PC_EMPTY) {
-                switch (tile.stored_event) {
+            auto tile = event_layout.at(y).at(x);
+            if (tile == nullptr) {
+                continue;
+            }
+
+            if (!tile->event_active && tile->stored_event != PC_EMPTY) {
+                switch (tile->stored_event) {
                     case PC_FAST_FIRE:
                     case PC_GEM_RED:
                     case PC_GEM_GREEN:
@@ -86,7 +94,7 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                     case PC_COIN_SILVER:
                     case PC_COIN_GOLD:
                         {
-                            auto c = std::make_shared<Collectible>(root,static_cast< CollectibleType >(tile.stored_event), 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto c = std::make_shared<Collectible>(root,static_cast< CollectibleType >(tile->stored_event), 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(c);
                         }
                         break;
@@ -116,14 +124,14 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                         break;
                     case PC_TRIGGER_CRATE:
                         {
-                            auto e = std::make_shared<TriggerCrate>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile.event_params[0]);
+                            auto e = std::make_shared<TriggerCrate>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile->event_params[0]);
                             root->addActor(e);
                         }
                         break;
                     case PC_BRIDGE:
                         {
                             auto e = std::make_shared<DynamicBridge>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
-                                tile.event_params[0], static_cast< DynamicBridgeType >(tile.event_params[1]), tile.event_params[2]);
+                                tile->event_params[0], static_cast< DynamicBridgeType >(tile->event_params[1]), tile->event_params[2]);
                             root->addActor(e);
                         }
                         break;
@@ -131,19 +139,21 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                     case PC_SPRING_GREEN:
                     case PC_SPRING_BLUE:
                         {
-                            auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, (SpringType)(1 + (tile.stored_event - PC_SPRING_RED)), (byte)tile.event_params[0]);
+                            auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, (SpringType)(1 + (tile->stored_event - PC_SPRING_RED)), (byte)tile->event_params[0]);
                             root->addActor(e);
                         }
                         break;
                 }
-                tile.event_active = true;
+                tile->event_active = true;
             }
         }
     }
 }
 
 void EventMap::deactivate(int x, int y) {
-    event_layout[y][x].event_active = false;
+    if (positionHasEvent(x, y)) {
+        event_layout[y][x]->event_active = false;
+    }
 }
 
 void EventMap::deactivateAll() {
@@ -157,9 +167,9 @@ void EventMap::deactivateAll() {
 int EventMap::getPositionWarp(double x, double y) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
-    EventTile& tile = event_layout[ty][tx];
-    if (tile.stored_event == PC_WARP_ORIGIN) {
-        return tile.event_params[0];
+    if (getPositionEvent(tx, ty) == PC_WARP_ORIGIN) {
+        // .get() should not fail here, as getPositionEvent() only returns PC_EVENT if coordinates had nullptr
+        return event_layout.at(ty).at(tx).get()->event_params[0];
     } else {
         return -1;
     }
@@ -168,22 +178,38 @@ int EventMap::getPositionWarp(double x, double y) {
 PCEvent EventMap::getPositionEvent(double x, double y) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
-    return event_layout[ty][tx].stored_event;
+    return getPositionEvent(tx, ty);
+}
+
+PCEvent EventMap::getPositionEvent(int x, int y) {
+    if (positionHasEvent(x, y)) {
+        return event_layout.at(y).at(x)->stored_event;
+    }
+    return PC_EMPTY;
 }
 
 void EventMap::getPositionParams(double x, double y, quint16 (&params)[8]) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
-    for (int i = 0; i < 8; ++i) {
-        params[i] = event_layout[ty][tx].event_params[i];
+    return getPositionParams(tx, ty, params);
+}
+
+void EventMap::getPositionParams(int x, int y, quint16 (&params)[8]) {
+    if (positionHasEvent(x, y)) {
+        for (int i = 0; i < 8; ++i) {
+            params[i] = event_layout.at(y).at(x)->event_params[i];
+        }
+        return;
     }
+
+    std::fill_n(params, 8, 0);
 }
 
 void EventMap::setTileParam(int x, int y, unsigned char idx, quint16 value) {
-    if (idx >= 8 || y > event_layout.size() || x > event_layout[y].size()) {
+    if (idx >= 8 || !positionHasEvent(x, y)) {
         return;
     }
-    event_layout[y][x].event_params[idx] = value;
+    event_layout[y][x]->event_params[idx] = value;
 }
 
 void EventMap::readEvents(const QString& filename, unsigned layout_version) {
@@ -268,6 +294,10 @@ void EventMap::readEvents(const QString& filename, unsigned layout_version) {
 void EventMap::addWarpTarget(unsigned id, unsigned x, unsigned y) {
     CoordinatePair p = {x * 32.0 + 16.0, y * 32.0 + 30.0};
     warpTargets.insert(id, p);
+}
+
+bool EventMap::positionHasEvent(int x, int y) {
+    return (y < event_layout.size() && x < event_layout[0].size() && event_layout.at(y).at(x) != nullptr);
 }
 
 CoordinatePair EventMap::getWarpTarget(unsigned id) {
