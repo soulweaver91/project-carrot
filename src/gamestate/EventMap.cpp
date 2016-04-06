@@ -77,6 +77,12 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                     case PC_GEM_BLUE:
                     case PC_AMMO_TOASTER:
                     case PC_AMMO_BOUNCER:
+                    case PC_AMMO_FREEZER:
+                    case PC_AMMO_SEEKER:
+                    case PC_AMMO_RF:
+                    case PC_AMMO_TNT:
+                    case PC_AMMO_PEPPER:
+                    case PC_AMMO_ELECTRO:
                     case PC_COIN_SILVER:
                     case PC_COIN_GOLD:
                         {

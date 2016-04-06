@@ -12,9 +12,14 @@ Collectible::Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType t
     // temporary code
     switch(type) {
         case COLLTYPE_FAST_FIRE:    AnimationUser::setAnimation("PICKUP_FASTFIRE"); break;
-        case COLLTYPE_AMMO_TOASTER: AnimationUser::setAnimation("PICKUP_AMMO_TOASTER"); break;
         case COLLTYPE_AMMO_BOUNCER: AnimationUser::setAnimation("PICKUP_AMMO_BOUNCER"); break;
+        case COLLTYPE_AMMO_FREEZER: AnimationUser::setAnimation("PICKUP_AMMO_FREEZER"); break;
         case COLLTYPE_AMMO_SEEKER:  AnimationUser::setAnimation("PICKUP_AMMO_SEEKER"); break;
+        case COLLTYPE_AMMO_RF:      AnimationUser::setAnimation("PICKUP_AMMO_RF"); break;
+        case COLLTYPE_AMMO_TOASTER: AnimationUser::setAnimation("PICKUP_AMMO_TOASTER"); break;
+        case COLLTYPE_AMMO_TNT:     AnimationUser::setAnimation("PICKUP_AMMO_TNT"); break;
+        case COLLTYPE_AMMO_PEPPER:  AnimationUser::setAnimation("PICKUP_AMMO_PEPPER"); break;
+        case COLLTYPE_AMMO_ELECTRO: AnimationUser::setAnimation("PICKUP_AMMO_ELECTRO"); break;
         case COLLTYPE_GEM_RED:      
             AnimationUser::setAnimation("PICKUP_GEM");
             color = { 511, 0, 0 };

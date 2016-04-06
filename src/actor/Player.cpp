@@ -516,6 +516,31 @@ void Player::tickEvent() {
                     playSound("PLAYER_PICKUP_AMMO");
                     addScore(100);
                     break;
+                case COLLTYPE_AMMO_FREEZER:
+                    addAmmo(WEAPON_FREEZER, 3);
+                    playSound("PLAYER_PICKUP_AMMO");
+                    addScore(100);
+                    break;
+                case COLLTYPE_AMMO_RF:
+                    addAmmo(WEAPON_RF, 3);
+                    playSound("PLAYER_PICKUP_AMMO");
+                    addScore(100);
+                    break;
+                case COLLTYPE_AMMO_TNT:
+                    addAmmo(WEAPON_TNT, 3);
+                    playSound("PLAYER_PICKUP_AMMO");
+                    addScore(100);
+                    break;
+                case COLLTYPE_AMMO_PEPPER:
+                    addAmmo(WEAPON_PEPPER, 3);
+                    playSound("PLAYER_PICKUP_AMMO");
+                    addScore(100);
+                    break;
+                case COLLTYPE_AMMO_ELECTRO:
+                    addAmmo(WEAPON_ELECTRO, 3);
+                    playSound("PLAYER_PICKUP_AMMO");
+                    addScore(100);
+                    break;
                 case COLLTYPE_GEM_RED:
                     addScore(100);
                     playSound("PLAYER_PICKUP_GEM");
