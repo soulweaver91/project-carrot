@@ -50,7 +50,8 @@ void CommonActor::DrawUpdate() {
     
         sprite.setScale((facingLeft ? -1 : 1),1);
         sprite.setPosition(pos_x,pos_y);
-        canvas->draw(sprite);
+
+        drawCurrentFrame();
     }
 }
 

@@ -3,7 +3,7 @@
 
 AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
     : root(root), inTransition(false), cancellableTransition(false), currentAnimation(nullptr), transition(nullptr),
-    currentState(AnimState::IDLE), currentTransitionState(AnimState::IDLE) {
+    currentState(AnimState::IDLE), currentTransitionState(AnimState::IDLE), color({ 0, 0, 0 }) {
 
 }
 
@@ -139,6 +139,27 @@ bool AnimationUser::setAnimation(const QString& animationId, const size_t& idx) 
     }
 
     return true;
+}
+
+void AnimationUser::drawCurrentFrame() {
+    auto canvas = root->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
+    }
+
+    sf::RenderStates state;
+    if (color != sf::Vector3i(0, 0, 0)) {
+        auto shaderSource = root->getShaderSource();
+        if (shaderSource != nullptr) {
+            auto shader = shaderSource->getShader("ColorizeShader").get();
+            if (shader != nullptr) {
+                shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+                state.shader = shader;
+            }
+        }
+    }
+
+    canvas->draw(sprite, state);
 }
 
 bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {

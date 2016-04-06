@@ -25,6 +25,7 @@
 #include "ui_carrotqt5.h"
 #include "graphics/BitmapFont.h"
 #include "graphics/CarrotCanvas.h"
+#include "graphics/ShaderSource.h"
 #include "gamestate/ResourceManager.h"
 #include "struct/CoordinatePair.h"
 #include "struct/Hitbox.h"
@@ -96,6 +97,7 @@ public:
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
+    std::shared_ptr<ShaderSource> getShaderSource();
     int getLightingLevel();
     double gravity;
     bool dbgShowMasked;
@@ -135,6 +137,7 @@ private:
     std::shared_ptr<BitmapFont> mainFont;
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;
+    std::shared_ptr<ShaderSource> shaderSource;
     std::unique_ptr<sf::View> gameView;
     std::unique_ptr<ResourceManager> resourceManager;
     QString levelName;

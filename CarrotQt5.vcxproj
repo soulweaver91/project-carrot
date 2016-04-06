@@ -203,6 +203,7 @@
     <ClCompile Include="src\graphics\AnimatedTile.cpp" />
     <ClCompile Include="src\graphics\BitmapFont.cpp" />
     <ClCompile Include="src\graphics\CarrotCanvas.cpp" />
+    <ClCompile Include="src\graphics\ShaderSource.cpp" />
     <ClCompile Include="src\graphics\GraphicsCache.cpp" />
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="src\gamestate\PlayerOSD.h" />
     <ClInclude Include="src\gamestate\TileMap.h" />
     <ClInclude Include="src\gamestate\TimerUser.h" />
+    <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
@@ -394,6 +396,7 @@
     <None Include="Data\Manifests\Weapon\Bouncer.json" />
     <None Include="Data\Manifests\Weapon\Toaster.json" />
     <None Include="README.md" />
+    <None Include="Shaders\ColorizeShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

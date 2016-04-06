@@ -59,6 +59,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     uiView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
 
     resourceManager = std::make_unique<ResourceManager>();
+    shaderSource = std::make_unique<ShaderSource>();
 
     installEventFilter(this);
 
@@ -751,6 +752,10 @@ std::weak_ptr<EventMap> CarrotQt5::getGameEvents() {
 
 std::shared_ptr<ResourceSet> CarrotQt5::loadActorTypeResources(const QString& actorType) {
     return resourceManager->loadActorTypeResources(actorType);
+}
+
+std::shared_ptr<ShaderSource> CarrotQt5::getShaderSource() {
+    return shaderSource;
 }
 
 int CarrotQt5::getLightingLevel() {

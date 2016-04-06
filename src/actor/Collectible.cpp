@@ -15,9 +15,18 @@ Collectible::Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType t
         case COLLTYPE_AMMO_TOASTER: AnimationUser::setAnimation("PICKUP_AMMO_TOASTER"); break;
         case COLLTYPE_AMMO_BOUNCER: AnimationUser::setAnimation("PICKUP_AMMO_BOUNCER"); break;
         case COLLTYPE_AMMO_SEEKER:  AnimationUser::setAnimation("PICKUP_AMMO_SEEKER"); break;
-        case COLLTYPE_GEM_RED:      AnimationUser::setAnimation("PICKUP_GEM"); break;
-        case COLLTYPE_GEM_GREEN:    AnimationUser::setAnimation("PICKUP_GEM"); break;
-        case COLLTYPE_GEM_BLUE:     AnimationUser::setAnimation("PICKUP_GEM"); break;
+        case COLLTYPE_GEM_RED:      
+            AnimationUser::setAnimation("PICKUP_GEM");
+            color = { 511, 0, 0 };
+            break;
+        case COLLTYPE_GEM_GREEN:    
+            AnimationUser::setAnimation("PICKUP_GEM");
+            color = { 0, 511, 0 };
+            break;
+        case COLLTYPE_GEM_BLUE:     
+            AnimationUser::setAnimation("PICKUP_GEM");
+            color = { 0, 0, 511 };
+            break;
         case COLLTYPE_COIN_GOLD:    AnimationUser::setAnimation("PICKUP_COIN_GOLD"); break;
         case COLLTYPE_COIN_SILVER:  AnimationUser::setAnimation("PICKUP_COIN_SILVER"); break;
     }

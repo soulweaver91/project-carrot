@@ -108,6 +108,9 @@
     <Filter Include="Actor Resource Manifests\Common">
       <UniqueIdentifier>{1d773010-2441-454c-aeb3-83ddd3dbe369}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{eef99337-8b0a-4017-8d30-034b35bf1147}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\qrc_carrotqt5.cpp">
@@ -217,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="src\actor\CommonActor.cpp">
       <Filter>Source Files\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\ShaderSource.cpp">
+      <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -354,6 +360,9 @@
     <ClInclude Include="src\struct\Resources.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
+    <ClInclude Include="src\graphics\ShaderSource.h">
+      <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -413,6 +422,9 @@
     </None>
     <None Include="Data\Manifests\Common\Scenery.json">
       <Filter>Actor Resource Manifests\Common</Filter>
+    </None>
+    <None Include="Shaders\ColorizeShader.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
