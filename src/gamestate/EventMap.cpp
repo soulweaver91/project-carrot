@@ -45,8 +45,8 @@ unsigned short EventMap::isPosPole(double x, double y) {
 }
 
 void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QVector<quint16>& params) {
-    if (e == PC_NONE && (x >= 0 || y >= 0 || y < event_layout.size() ||
-        x < event_layout[0].size() || event_layout.at(y).at(x) == nullptr)) {
+    if (e == PC_NONE && (x < 0 || y < 0 || y >= event_layout.size() ||
+        x >= event_layout[0].size() || event_layout.at(y).at(x) == nullptr)) {
         return;
     }
 
