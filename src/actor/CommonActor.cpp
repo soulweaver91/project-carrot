@@ -55,12 +55,17 @@ void CommonActor::DrawUpdate() {
     }
 }
 
-void CommonActor::keyPressEvent(QKeyEvent* event) {
+void CommonActor::processControlDownEvent(const ControlEvent& e) {
     // nothing to do in this event unless a child class
     // overrides the function
 }
 
-void CommonActor::keyReleaseEvent(QKeyEvent* event) {
+void CommonActor::processControlUpEvent(const ControlEvent& e) {
+    // nothing to do in this event unless a child class
+    // overrides the function
+}
+
+void CommonActor::processControlHeldEvent(const ControlEvent& e) {
     // nothing to do in this event unless a child class
     // overrides the function
 }

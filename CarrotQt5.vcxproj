@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\gamestate\ControlManager.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_CarrotQt5.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -232,6 +233,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gamestate\ControlManager.h" />
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h" />
     <ClInclude Include="src\actor\Bridge.h" />
@@ -243,6 +245,7 @@
     <ClInclude Include="src\gamestate\TimerUser.h" />
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\struct\AnimState.h" />
+    <ClInclude Include="src\struct\Controls.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
     <ClInclude Include="src\struct\PCEvent.h" />

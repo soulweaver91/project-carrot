@@ -36,8 +36,8 @@ Player::~Player() {
 
 }
 
-void Player::keyPressEvent(QKeyEvent* event) {
-    switch(event->key()) {
+void Player::processControlDownEvent(const ControlEvent& e) {
+    switch (e.first.keyboardKey) {
         case Qt::Key_Left:
             facingLeft = true;
             if (controllable) {
@@ -76,7 +76,7 @@ void Player::keyPressEvent(QKeyEvent* event) {
                         isGravityAffected = false;
                         damaging_move = true;
                         setAnimation(AnimState::BUTTSTOMP);
-                        setTransition(AnimState::TRANSITION_BUTTSTOMP_START,true,false,false,&Player::delayedButtstompStart);
+                        setTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, &Player::delayedButtstompStart);
                         break;
                     }
                 }
@@ -96,25 +96,25 @@ void Player::keyPressEvent(QKeyEvent* event) {
             // Key_2 is 50 and the rest come sequentially so no need for a separate
             // case branch for each key this way
             // Change this if the key enum codes change in Qt for any reason
-            selectWeapon(static_cast<WeaponType>(event->key() - 49));
+            selectWeapon(static_cast<WeaponType>(e.first.keyboardKey - 49));
             break;
         case Qt::Key_Return:
         case Qt::Key_Enter:
-            {
-                // Select next available weapon in numerical order
-                int new_type = (currentWeapon + 1) % 9;
-                while (!selectWeapon(static_cast< WeaponType >(new_type))) {
-                    new_type = (new_type + 1) % 9;
-                }
+        {
+            // Select next available weapon in numerical order
+            int new_type = (currentWeapon + 1) % 9;
+            while (!selectWeapon(static_cast<WeaponType>(new_type))) {
+                new_type = (new_type + 1) % 9;
             }
-            break;
+        }
+        break;
         case Qt::Key_Control:
-            switch(character) {
+            switch (character) {
                 case CHAR_JAZZ:
                     if ((currentState & AnimState::CROUCH) > 0) {
                         controllable = false;
                         setAnimation(AnimState::UPPERCUT);
-                        setTransition(AnimState::TRANSITION_UPPERCUT_A,true,true,true,&Player::delayedUppercutStart);
+                        setTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, &Player::delayedUppercutStart);
                     } else {
                         if (speed_v > 0 && !canJump) {
                             isGravityAffected = false;
@@ -135,9 +135,9 @@ void Player::keyPressEvent(QKeyEvent* event) {
     }
 }
 
-void Player::keyReleaseEvent(QKeyEvent* event) {
+void Player::processControlUpEvent(const ControlEvent& e) {
     if (controllable) {
-        switch(event->key()) {
+        switch (e.first.keyboardKey) {
             case Qt::Key_Left:
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
                     facingLeft = false;
@@ -161,6 +161,7 @@ void Player::keyReleaseEvent(QKeyEvent* event) {
         }
     }
 }
+
 
 void Player::tickEvent() {
     // Initialize these ASAP

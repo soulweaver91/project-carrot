@@ -43,7 +43,9 @@ public:
     MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry = MENU_MAIN_MENU);
     ~MenuScreen();
     void tickEvent();
-    void keyPressEvent(QKeyEvent* event);
+    void processControlDownEvent(const ControlEvent& e);
+    void processControlHeldEvent(const ControlEvent& e);
+    void processControlUpEvent(const ControlEvent& e);
 private:
     void clearMenuList();
     void setMenuItemSelected(int idx = 0, bool relative = false);

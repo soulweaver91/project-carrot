@@ -8,6 +8,7 @@
 
 #include "../gamestate/AnimationUser.h"
 #include "../gamestate/TimerUser.h"
+#include "../struct/Controls.h"
 #include "../struct/CoordinatePair.h"
 #include "../struct/Hitbox.h"
 #include "../struct/Resources.h"
@@ -21,8 +22,9 @@ public:
     ~CommonActor();
     virtual void DrawUpdate();
     virtual void tickEvent();
-    virtual void keyPressEvent(QKeyEvent* event);
-    virtual void keyReleaseEvent(QKeyEvent* event);
+    virtual void processControlDownEvent(const ControlEvent& e);
+    virtual void processControlUpEvent(const ControlEvent& e);
+    virtual void processControlHeldEvent(const ControlEvent& e);
     void decreaseHealth(unsigned amount = 1);
     virtual void setToViewCenter(sf::View* view);
     CoordinatePair getPosition();

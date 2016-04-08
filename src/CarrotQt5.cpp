@@ -60,6 +60,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
 
     resourceManager = std::make_unique<ResourceManager>();
     shaderSource = std::make_unique<ShaderSource>();
+    controlManager = std::make_shared<ControlManager>();
 
     installEventFilter(this);
 
@@ -222,14 +223,54 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
     return FALSE;  // dispatch normally
 }
 
+void CarrotQt5::processControlEvents() {
+    ControlEventList events = controlManager->getPendingEvents();
+
+    foreach(auto pair, events.controlDownEvents) {
+        if (isMenu) {
+            if (menuObject != nullptr) {
+                menuObject->processControlDownEvent(pair);
+            }
+        } else {
+            foreach (auto& actor, actors) {
+                actor->processControlDownEvent(pair);
+            }
+        }
+    }
+
+    foreach(auto pair, events.controlHeldEvents) {
+        if (isMenu) {
+            if (menuObject != nullptr) {
+                menuObject->processControlHeldEvent(pair);
+            }
+        } else {
+            foreach(auto& actor, actors) {
+                actor->processControlHeldEvent(pair);
+            }
+        }
+    }
+
+    foreach(auto pair, events.controlUpEvents) {
+        if (isMenu) {
+            if (menuObject != nullptr) {
+                menuObject->processControlUpEvent(pair);
+            }
+        } else {
+            foreach(auto& actor, actors) {
+                actor->processControlUpEvent(pair);
+            }
+        }
+    }
+
+    controlManager->processFrame();
+}
+
 void CarrotQt5::keyPressEvent(QKeyEvent* event) {
+    if (event->isAutoRepeat()) {
+        return;
+    }
+
     if (!isMenu) {
-        if (event->isAutoRepeat()) {
-            return;
-        }
-        for(unsigned i = 0; i < actors.size(); i++) {
-            actors.at(i)->keyPressEvent(event);
-        }
         if (event->key() == Qt::Key::Key_Escape) {
             cleanUpLevel();
             startMainMenu();
@@ -247,30 +288,26 @@ void CarrotQt5::keyPressEvent(QKeyEvent* event) {
         if (event->key() == Qt::Key::Key_PageDown) {
             mod_current = (mod_current + 31) % 32;
         }
-    } else {
-        if (menuObject != nullptr) {
-            menuObject->keyPressEvent(event);
-        }
     }
+
+    controlManager->setControlHeldDown(event->key());
 }
 
 void CarrotQt5::keyReleaseEvent(QKeyEvent* event) {
-    if (!isMenu) {
-        if (event->isAutoRepeat()) {
-            return;
-        }
-        for(unsigned i = 0; i < actors.size(); i++) {
-            actors.at(i)->keyReleaseEvent(event);
-        }
+    if (event->isAutoRepeat()) {
+        return;
     }
+
+    controlManager->setControlReleased(event->key());
 }
 
 void CarrotQt5::mainMenuTick() {
     frame++;
+    processControlEvents();
     
     // Clear the drawing surface
     windowCanvas->clear();
-    
+
     if (menuObject != nullptr) {
         menuObject->tickEvent();
     }
@@ -335,7 +372,8 @@ void CarrotQt5::gameTick() {
         }
     }
 
-
+    processControlEvents();
+    
     // Draw the layers: first lower (background and sprite) levels...
     gameTiles->drawLowerLevels();
     // ...then draw all the actors...
@@ -375,7 +413,6 @@ void CarrotQt5::gameTick() {
     //windowCanvas->display();
     windowCanvas->updateContents();
     windowCanvas->setView(*gameView);
-
 }
 
 unsigned CarrotQt5::getLevelWidth() {
@@ -797,4 +834,3 @@ int main(int argc, char *argv[]) {
     w->parseCommandLine();
     return a.exec();
 }
-

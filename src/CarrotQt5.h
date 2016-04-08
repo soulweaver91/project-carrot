@@ -27,7 +27,9 @@
 #include "graphics/BitmapFont.h"
 #include "graphics/CarrotCanvas.h"
 #include "graphics/ShaderSource.h"
+#include "gamestate/ControlManager.h"
 #include "gamestate/ResourceManager.h"
+#include "struct/Controls.h"
 #include "struct/CoordinatePair.h"
 #include "struct/Hitbox.h"
 #include "struct/Resources.h"
@@ -123,6 +125,7 @@ private:
     void spawnEventMap(const QString& filename, unsigned layout_version = 1);
     void setLevelName(const QString& name);
     void cleanUpLevel();
+    void processControlEvents();
     Ui::CarrotQt5Class ui;
     QTimer myTimer;
     QVector<std::shared_ptr<CommonActor>> actors;
@@ -141,6 +144,7 @@ private:
     std::shared_ptr<ShaderSource> shaderSource;
     std::unique_ptr<sf::View> gameView;
     std::unique_ptr<ResourceManager> resourceManager;
+    std::shared_ptr<ControlManager> controlManager;
     QString levelName;
     QString nextLevel;
     unsigned long frame;

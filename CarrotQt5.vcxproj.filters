@@ -227,6 +227,9 @@
     <ClCompile Include="src\actor\Spring.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\ControlManager.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -368,6 +371,12 @@
     </ClInclude>
     <ClInclude Include="src\actor\Spring.h">
       <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\ControlManager.h">
+      <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\Controls.h">
+      <Filter>Header Files\Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

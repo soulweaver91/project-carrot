@@ -82,9 +82,9 @@ void MenuScreen::setMenuItemSelected(int idx, bool relative) {
     menu_options[selected_item]->text->setColoured(true);
 }
 
-void MenuScreen::keyPressEvent(QKeyEvent* event) {
+void MenuScreen::processControlDownEvent(const ControlEvent& e) {
     std::shared_ptr<MenuItem> it;
-    switch (event->key()) {
+    switch (e.first.keyboardKey) {
         case Qt::Key_Escape:
             it = cancel_item;
             if (it->is_local) {
@@ -112,6 +112,16 @@ void MenuScreen::keyPressEvent(QKeyEvent* event) {
             setMenuItemSelected(1,true);
             break;
     }
+}
+
+void MenuScreen::processControlHeldEvent(const ControlEvent& e) {
+    if (e.second.heldDuration > 20 && e.second.heldDuration % 5 == 0) {
+        processControlDownEvent(e);
+    }
+}
+
+void MenuScreen::processControlUpEvent(const ControlEvent& e) {
+    // No use at the moment, but defined for the sake of consistency.
 }
 
 void MenuScreen::tickEvent() {
