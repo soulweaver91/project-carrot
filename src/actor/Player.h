@@ -6,9 +6,10 @@
 
 #include "../CarrotQt5.h"
 #include "CommonActor.h"
-#include "../graphics/BitmapFont.h"
-#include "../struct/WeaponTypes.h"
 #include "../gamestate/PlayerOSD.h"
+#include "../graphics/BitmapFont.h"
+#include "../struct/Controls.h"
+#include "../struct/WeaponTypes.h"
 
 enum PlayerCharacter {
     CHAR_JAZZ       = 0x00,
@@ -31,8 +32,10 @@ class Player : public CommonActor {
 public:
     Player(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0);
     ~Player();
-    void keyPressEvent(QKeyEvent* event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
+    void processControlDownEvent(const ControlEvent& e) override;
+    void processControlUpEvent(const ControlEvent& e) override;
+    void processControlHeldEvent(const ControlEvent& e) override;
+    void processAllControlHeldEvents(const QMap<Control, ControlState>& e) override;
     void tickEvent();
     void drawUIOverlay();
     unsigned getHealth();
@@ -62,6 +65,7 @@ private:
 
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
+    ControlScheme controls;
 
     unsigned lives;
     unsigned ammo[9];

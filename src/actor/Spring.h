@@ -20,6 +20,6 @@ public:
 
 private:
     byte orientation;
-    byte strength;
+    float strength;
     SpringType type;
 };

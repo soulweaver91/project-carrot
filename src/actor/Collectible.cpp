@@ -52,8 +52,8 @@ void Collectible::tickEvent() {
 
 void Collectible::impact(double force_h, double force_v) {
     if (intact) {
-        push   += force_h * (0.9 + (qrand() % 2000) / 10000.0);
-        thrust += force_v * (0.9 + (qrand() % 2000) / 10000.0);
+        externalForceX += force_h * (0.9 + (qrand() % 2000) / 10000.0);
+        externalForceY += force_v * (0.9 + (qrand() % 2000) / 10000.0);
     }
     intact = false;
 }

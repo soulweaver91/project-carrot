@@ -6,8 +6,8 @@
 #include "../struct/PCEvent.h"
 
 CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap)
-    : AnimationUser(game_root), root(game_root), speed_h(0), speed_v(0), thrust(0), push(0), 
-    canJump(false), facingLeft(false), max_health(1), health(1), isGravityAffected(true),
+    : AnimationUser(game_root), root(game_root), speed_h(0), speed_v(0), externalForceY(0), externalForceX(0), 
+    canJump(false), facingLeft(false), max_health(1), health(1), isGravityAffected(true), internalForceY(0),
     isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity/3),
     isBlinking(false), isSuspended(false), pos_x(x), pos_y(y), createdFromEventMap(fromEventMap) {
     origin_x = static_cast<int>(x) / 32;
@@ -55,31 +55,51 @@ void CommonActor::DrawUpdate() {
     }
 }
 
-void CommonActor::keyPressEvent(QKeyEvent* event) {
+void CommonActor::processControlDownEvent(const ControlEvent& e) {
     // nothing to do in this event unless a child class
     // overrides the function
 }
 
-void CommonActor::keyReleaseEvent(QKeyEvent* event) {
+void CommonActor::processControlUpEvent(const ControlEvent& e) {
     // nothing to do in this event unless a child class
     // overrides the function
+}
+
+void CommonActor::processControlHeldEvent(const ControlEvent& e) {
+    // nothing to do in this event unless a child class
+    // overrides the function
+}
+
+void CommonActor::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
+    // By default, there is no functionality here. Most actors do not process control
+    // events at all. If they do, they can override this function and call the
+    // processAllControlHeldEventsDefaultHandler function for easy handling of each
+    // key directly in processControlHeldEvent. Keys that do one thing if they are
+    // held and another if not should not be handled there but here directly, though.
+}
+
+void CommonActor::processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e) {
+    // By default, just go through all events.
+    foreach(auto ev, e.keys()) {
+        processControlHeldEvent(qMakePair(ev, e.value(ev)));
+    }
 }
 
 void CommonActor::tickEvent() {
     // Sign of the speed: either -1, 0 or 1
-    short sign = ((speed_h + push) > 1e-6) ? 1 : (((speed_h + push) < -1e-6) ? -1 : 0);
+    short sign = ((speed_h + externalForceX) > 1e-6) ? 1 : (((speed_h + externalForceX) < -1e-6) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
    
     speed_h = std::min(std::max(speed_h, -16.0), 16.0);
-    speed_v = std::min(std::max(speed_v + gravity - thrust, -16.0), 16.0);
+    speed_v = std::min(std::max(speed_v + gravity - internalForceY - externalForceY, -16.0), 16.0);
 
     auto thisPtr = shared_from_this();
 
     Hitbox here = getHitbox();
-    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + push,speed_v), speed_v > 0, thisPtr)) {
-        if (abs(speed_h + push) > 1e-6) {
+    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + externalForceX,speed_v), speed_v > 0, thisPtr)) {
+        if (abs(speed_h + externalForceX) > 1e-6) {
             // We are walking, thus having both vertical and horizontal speed
-            if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + push,0), speed_v > 0, thisPtr)) {
+            if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + externalForceX,0), speed_v > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
                 // Chances are we're just casually strolling and gravity tries to pull us through,
                 // or we are falling diagonally and hit a floor
@@ -91,18 +111,19 @@ void CommonActor::tickEvent() {
                 } else {
                     // Nope, hit a wall from below diagonally then. Let's bump back a bit
                     speed_v = 1;
-                    thrust = 0;
+                    externalForceY = 0;
+                    internalForceY = 0;
                     canJump = false;
                     onHitCeilingHook();
                 }
             } else {
                 // Nope, there's also some obstacle horizontally
                 // Let's figure out if we are going against an upward slope
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + push, -abs(speed_h + push) - 5), false, thisPtr)) {
+                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + externalForceX, -abs(speed_h + externalForceX) - 5), false, thisPtr)) {
                     // Yes, we indeed are
                     speed_v = -(elasticity * speed_v);
                     canJump = true;
-                    pos_y -= abs(speed_h + push)+1;
+                    pos_y -= abs(speed_h + externalForceX)+1;
                     /*while (root->game_tiles->isTileEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h,speed_v-abs(speed_h)-2))) {
                         pos_y += 0.5;
                     }
@@ -113,7 +134,7 @@ void CommonActor::tickEvent() {
                 } else {
                     // Nope. Cannot move horizontally at all. Can we just go vertically then?
                     speed_h = -(elasticity * speed_h);
-                    push *= -1;
+                    externalForceX *= -1;
                     if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, 0, speed_v), speed_v > 0, thisPtr)) {
                         // Yeah
                         canJump = false;
@@ -125,7 +146,8 @@ void CommonActor::tickEvent() {
                         }
 
                         speed_v = -(elasticity * speed_v);
-                        thrust = 0;
+                        externalForceY = 0;
+                        internalForceY = 0;
                         // TODO: fix a problem with hurt getting player stuck in a wall here
                         onHitWallHook();
                         onHitFloorHook();
@@ -155,7 +177,8 @@ void CommonActor::tickEvent() {
                 // We are jumping
                 if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, 0, speed_v), false, thisPtr)) {
                     speed_v = -(elasticity * speed_v);
-                    thrust = 0;
+                    externalForceY = 0;
+                    internalForceY = 0;
                     onHitCeilingHook();
                 } else {
                     // we can go vertically anyway
@@ -166,8 +189,8 @@ void CommonActor::tickEvent() {
     } else {
         if (canJump) {
             // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
-            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + push,speed_v+abs(speed_h + push)+5), false, thisPtr)) {
-                while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h + push,speed_v+abs(speed_h + push)), false, thisPtr)) {
+            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + externalForceX,speed_v+abs(speed_h + externalForceX)+5), false, thisPtr)) {
+                while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h + externalForceX,speed_v+abs(speed_h + externalForceX)), false, thisPtr)) {
                     pos_y += 0.1;
                 }
                 pos_y -= 0.1;
@@ -178,18 +201,19 @@ void CommonActor::tickEvent() {
         }
     }
 
-    if (std::abs(push) > 1e-6) {
+    if (std::abs(externalForceX) > 1e-6) {
         // Reduce remaining push
-        if (push > 0) {
-            push = std::max(push - friction,0.0);
+        if (externalForceX > 0) {
+            externalForceX = std::max(externalForceX - friction,0.0);
         } else {
-            push = std::min(push + friction,0.0);
+            externalForceX = std::min(externalForceX + friction,0.0);
         }
     }
-    thrust = std::max(thrust - gravity/3,0.0);
+    externalForceY = std::max(externalForceY - gravity / 3, 0.0);
+    internalForceY = std::max(internalForceY - gravity / 3, 0.0);
     //speed_h = sign * std::max((sign * speed_h) - friction, 0.0);
 
-    pos_x += speed_h + push;
+    pos_x += speed_h + externalForceX;
     pos_y += speed_v;
 
     // determine current animation last bits from speeds

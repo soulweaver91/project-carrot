@@ -37,7 +37,27 @@ Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType t
     }
 
     setAnimation((AnimStateT)(((int)type << 10) | orientationBit << 12));
-    strength = (int)type * 4 + 5;
+    if (orientation % 2 == 1) {
+        // Horizontal springs all seem to have the same strength.
+        // This constant strength gives about the correct amount of horizontal push.
+        strength = 9.5;
+    } else {
+        // Vertical springs should work as follows:
+        // Red spring lifts the player 9 tiles, green 14, and blue 19.
+        // Vertical strength currently works differently from horizontal, that explains
+        // the otherwise inexplicable difference of scale between the two types.
+        switch (type) {
+            case SpringType::SPRING_RED:
+                strength = 1.25;
+                break;
+            case SpringType::SPRING_GREEN:
+                strength = 1.50;
+                break;
+            case SpringType::SPRING_BLUE:
+                strength = 1.65;
+                break;
+        }
+    }
 }
 
 Spring::~Spring() {

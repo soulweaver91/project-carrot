@@ -8,6 +8,7 @@
 
 #include "../gamestate/AnimationUser.h"
 #include "../gamestate/TimerUser.h"
+#include "../struct/Controls.h"
 #include "../struct/CoordinatePair.h"
 #include "../struct/Hitbox.h"
 #include "../struct/Resources.h"
@@ -21,8 +22,9 @@ public:
     ~CommonActor();
     virtual void DrawUpdate();
     virtual void tickEvent();
-    virtual void keyPressEvent(QKeyEvent* event);
-    virtual void keyReleaseEvent(QKeyEvent* event);
+    virtual void processControlDownEvent(const ControlEvent& e);
+    virtual void processControlUpEvent(const ControlEvent& e);
+    virtual void processAllControlHeldEvents(const QMap<Control, ControlState>& e);
     void decreaseHealth(unsigned amount = 1);
     virtual void setToViewCenter(sf::View* view);
     CoordinatePair getPosition();
@@ -34,6 +36,8 @@ public:
     void deleteFromEventMap();
         
 protected:
+    void processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e);
+    virtual void processControlHeldEvent(const ControlEvent& e);
     bool setAnimation(AnimStateT state) override;
     void removeInvulnerability();
     virtual void onHitFloorHook();
@@ -48,8 +52,9 @@ protected:
     double pos_y;
     double speed_h;
     double speed_v;
-    double thrust;
-    double push;
+    double externalForceY;
+    double externalForceX;
+    double internalForceY;
     bool canJump;
     bool facingLeft;
     bool isGravityAffected;
