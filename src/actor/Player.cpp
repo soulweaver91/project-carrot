@@ -26,6 +26,17 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     loadResources("Interactive/PlayerJazz");
     setAnimation(AnimState::FALL);
 
+    controls = {
+        Qt::Key::Key_Left,
+        Qt::Key::Key_Right,
+        Qt::Key::Key_Up,
+        Qt::Key::Key_Down,
+        Qt::Key::Key_Control,
+        Qt::Key::Key_Space,
+        Qt::Key::Key_Shift,
+        Qt::Key::Key_Enter
+    };
+
     // Get a brief invincibility at the start of the level
     isInvulnerable = true;
     isBlinking = true;
@@ -37,112 +48,121 @@ Player::~Player() {
 }
 
 void Player::processControlDownEvent(const ControlEvent& e) {
-    switch (e.first.keyboardKey) {
-        case Qt::Key_Left:
-        case Qt::Key_Right:
-            if (controllable) {
-                setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
-            }
-            break;
-        case Qt::Key_Up:
-            if (controllable && canJump && std::abs(speed_h < 1e-6)) {
-                setAnimation(AnimState::LOOKUP);
-            }
-            break;
-        case Qt::Key_Space:
-            // only TNT needs to be handled here
-            if (canJump) {
-            }
-            break;
-        case Qt::Key_Down:
-            if (controllable) {
-                if (canJump && std::abs(speed_h < 1e-6)) {
-                    setAnimation(AnimState::CROUCH);
+    const Control& control = e.first;
+
+    if (control == controls.leftButton || control == controls.rightButton) {
+        if (controllable) {
+            setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
+        }
+        return;
+    }
+
+    if (control == controls.upButton) {
+        if (controllable && canJump && std::abs(speed_h < 1e-6)) {
+            setAnimation(AnimState::LOOKUP);
+        }
+        return;
+    }
+
+    if (control == controls.fireButton) {
+        // only TNT needs to be handled here
+        if (canJump) {
+        }
+        return;
+    }
+
+    if (control == controls.downButton) {
+        if (controllable) {
+            if (canJump && std::abs(speed_h < 1e-6)) {
+                setAnimation(AnimState::CROUCH);
+            } else {
+                if (isSuspended) {
+                    pos_y += 10;
+                    isSuspended = false;
                 } else {
-                    if (isSuspended) {
-                        pos_y += 10;
-                        isSuspended = false;
-                    } else {
-                        controllable = false;
-                        speed_h = 0;
-                        speed_v = 0;
-                        internalForceY = 0;
-                        externalForceY = 0;
-                        isGravityAffected = false;
-                        damaging_move = true;
-                        setAnimation(AnimState::BUTTSTOMP);
-                        setTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, &Player::delayedButtstompStart);
-                        break;
-                    }
+                    controllable = false;
+                    speed_h = 0;
+                    speed_v = 0;
+                    internalForceY = 0;
+                    externalForceY = 0;
+                    isGravityAffected = false;
+                    damaging_move = true;
+                    setAnimation(AnimState::BUTTSTOMP);
+                    setTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, &Player::delayedButtstompStart);
                 }
             }
-            break;
-        case Qt::Key_1:
-            selectWeapon(WEAPON_BLASTER); break;
-        case Qt::Key_2:
-        case Qt::Key_3:
-        case Qt::Key_4:
-        case Qt::Key_5:
-        case Qt::Key_6:
-        case Qt::Key_7:
-        case Qt::Key_8:
-        case Qt::Key_9:
-            playSound("PLAYER_SWITCH_AMMO");
-            // Key_2 is 50 and the rest come sequentially so no need for a separate
-            // case branch for each key this way
-            // Change this if the key enum codes change in Qt for any reason
-            selectWeapon(static_cast<WeaponType>(e.first.keyboardKey - 49));
-            break;
-        case Qt::Key_Return:
-        case Qt::Key_Enter:
-        {
-            // Select next available weapon in numerical order
-            int new_type = (currentWeapon + 1) % 9;
-            while (!selectWeapon(static_cast<WeaponType>(new_type))) {
-                new_type = (new_type + 1) % 9;
-            }
         }
-        break;
-        case Qt::Key_Control:
-            switch (character) {
-                case CHAR_JAZZ:
-                    if ((currentState & AnimState::CROUCH) > 0) {
-                        controllable = false;
-                        setAnimation(AnimState::UPPERCUT);
-                        setTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, &Player::delayedUppercutStart);
-                    } else {
-                        if (speed_v > 0 && !canJump) {
-                            isGravityAffected = false;
-                            speed_v = 1.5;
-                            if ((currentState & AnimState::COPTER) == 0) {
-                                setAnimation(AnimState::COPTER);
-                            }
-                            copter_time = 50;
+        return;
+    }
+
+    if (control == Qt::Key_1) {
+        selectWeapon(WEAPON_BLASTER);
+        return;
+    }
+
+    if (control > Qt::Key_1 && control < Qt::Key_9 + 1) {
+        playSound("PLAYER_SWITCH_AMMO");
+        // Key_2 is 50 and the rest come sequentially so no need for a separate
+        // case branch for each key this way
+        // Change this if the key enum codes change in Qt for any reason
+        selectWeapon(static_cast<WeaponType>(control.keyboardKey - 49));
+        return;
+    }
+
+    if (control == controls.weaponChangeButton) {
+        // Select next available weapon in numerical order
+        int new_type = (currentWeapon + 1) % 9;
+        while (!selectWeapon(static_cast<WeaponType>(new_type))) {
+            new_type = (new_type + 1) % 9;
+        }
+        return;
+    }
+
+    if (control == controls.jumpButton) {
+        switch (character) {
+            case CHAR_JAZZ:
+                if ((currentState & AnimState::CROUCH) > 0) {
+                    controllable = false;
+                    setAnimation(AnimState::UPPERCUT);
+                    setTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, &Player::delayedUppercutStart);
+                } else {
+                    if (speed_v > 0 && !canJump) {
+                        isGravityAffected = false;
+                        speed_v = 1.5;
+                        if ((currentState & AnimState::COPTER) == 0) {
+                            setAnimation(AnimState::COPTER);
                         }
+                        copter_time = 50;
                     }
-                    break;
-                case CHAR_SPAZ:
-                case CHAR_LORI:
-                    // sidekick
-                    break;
-            }
-            break;
+                }
+                break;
+            case CHAR_SPAZ:
+            case CHAR_LORI:
+                // sidekick
+                break;
+        }
+        return;
     }
 }
 
 void Player::processControlUpEvent(const ControlEvent& e) {
+    const Control& control = e.first;
+
     if (controllable) {
-        switch (e.first.keyboardKey) {
-            case Qt::Key_Up:
+        if (control == controls.upButton) {
                 setAnimation(currentState & ~AnimState::LOOKUP);
-                break;
-            case Qt::Key_Space:
+                return;
+        }
+
+        if (control == controls.jumpButton) {
                 setAnimation(currentState & ~AnimState::SHOOT);
                 weapon_cooldown = 0;
-                break;
-            case Qt::Key_Down:
+                return;
+        }
+
+        if (control == controls.downButton) {
                 setAnimation(currentState & ~AnimState::CROUCH);
-                break;
+                return;
         }
     }
 }
@@ -152,10 +172,10 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
         return;
     }
 
-    if (e.contains(Control(Qt::Key::Key_Left)) || e.contains(Control(Qt::Key::Key_Right))) {
-        facingLeft = !e.contains(Control(Qt::Key_Right));
+    if (e.contains(controls.leftButton) || e.contains(controls.rightButton)) {
+        facingLeft = !e.contains(controls.rightButton);
 
-        if (!isSuspended && (e.contains(Control(Qt::Key::Key_Shift)))) {
+        if (!isSuspended && (e.contains(controls.dashButton))) {
             speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1), 9.0), -9.0);
         } else {
             speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1), 3.0), -3.0);
@@ -165,12 +185,12 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
         speed_h = std::max((abs(speed_h) - 0.25), 0.0) * (speed_h < -1e-6 ? -1 : 1);
     }
 
-    if (e.contains(Control(Qt::Key::Key_Control))) {
+    if (e.contains(controls.jumpButton)) {
         if (isSuspended) {
             pos_y -= 5;
             canJump = true;
         }
-        if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(Qt::Key::Key_Down)) {
+        if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
             internalForceY = 1.2;
             speed_v = -3 - std::max(0.0, (std::abs(speed_h) - 4.0) * 0.3);
             canJump = false;
@@ -187,7 +207,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
 }
 
 void Player::processControlHeldEvent(const ControlEvent& e) {
-    if (e.first == Control(Qt::Key::Key_Space)) {
+    if (e.first == controls.fireButton) {
         setAnimation(currentState | AnimState::SHOOT);
         if (weapon_cooldown == 0) {
             switch (currentWeapon) {

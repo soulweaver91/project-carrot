@@ -35,6 +35,10 @@ struct Control {
         return keyboardKey < other.keyboardKey;
     }
 
+    bool operator>(const Control& other) const {
+        return other < *this;
+    }
+
     bool operator==(const int& key) const {
         return isKeyboard && keyboardKey == key;
     }
@@ -56,4 +60,15 @@ struct ControlEventList {
     QVector<ControlEvent> controlDownEvents;
     QVector<ControlEvent> controlUpEvents;
     QMap<Control, ControlState> controlHeldEvents;
+};
+
+struct ControlScheme {
+    Control leftButton;
+    Control rightButton;
+    Control upButton;
+    Control downButton;
+    Control jumpButton;
+    Control fireButton;
+    Control dashButton;
+    Control weaponChangeButton;
 };

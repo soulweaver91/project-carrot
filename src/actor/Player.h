@@ -65,6 +65,7 @@ private:
 
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
+    ControlScheme controls;
 
     unsigned lives;
     unsigned ammo[9];
