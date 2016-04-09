@@ -178,7 +178,7 @@ void CarrotQt5::openAboutCarrot() {
 }
 
 void CarrotQt5::openHomePage() {
-    QDesktopServices::openUrl(QUrl("http://soul-weaver.tk/index.php?i=carrot"));
+    QDesktopServices::openUrl(QUrl("http://www.jazz2online.com/jcf/showthread.php?t=19535"));
 }
 
 /*void CarrotQt5::openHelp() {
