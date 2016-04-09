@@ -918,7 +918,6 @@ void Player::setupOSD(OSDMessageType type, int param) {
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
-    bool crouch = ((currentState & AnimState::CROUCH) > 0);
     bool lookup = ((currentState & AnimState::LOOKUP) > 0);
     int fire_x = (currentAnimation->hotspot.x - currentAnimation->gunspot.x) * (facingLeft ? 1 : -1);
     int fire_y =  currentAnimation->hotspot.y - currentAnimation->gunspot.y;
