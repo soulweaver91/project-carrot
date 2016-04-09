@@ -39,13 +39,7 @@ Player::~Player() {
 void Player::processControlDownEvent(const ControlEvent& e) {
     switch (e.first.keyboardKey) {
         case Qt::Key_Left:
-            facingLeft = true;
-            if (controllable) {
-                setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
-            }
-            break;
         case Qt::Key_Right:
-            facingLeft = false;
             if (controllable) {
                 setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
             }
@@ -72,7 +66,8 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                         controllable = false;
                         speed_h = 0;
                         speed_v = 0;
-                        thrust = 0;
+                        internalForceY = 0;
+                        externalForceY = 0;
                         isGravityAffected = false;
                         damaging_move = true;
                         setAnimation(AnimState::BUTTSTOMP);
@@ -138,16 +133,6 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 void Player::processControlUpEvent(const ControlEvent& e) {
     if (controllable) {
         switch (e.first.keyboardKey) {
-            case Qt::Key_Left:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                    facingLeft = false;
-                }
-                break;
-            case Qt::Key_Right:
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                    facingLeft = true;
-                }
-                break;
             case Qt::Key_Up:
                 setAnimation(currentState & ~AnimState::LOOKUP);
                 break;
@@ -162,6 +147,102 @@ void Player::processControlUpEvent(const ControlEvent& e) {
     }
 }
 
+void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
+    if (!controllable) {
+        return;
+    }
+
+    if (e.contains(Control(Qt::Key::Key_Left)) || e.contains(Control(Qt::Key::Key_Right))) {
+        facingLeft = !e.contains(Control(Qt::Key_Right));
+
+        if (!isSuspended && (e.contains(Control(Qt::Key::Key_Shift)))) {
+            speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1), 9.0), -9.0);
+        } else {
+            speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1), 3.0), -3.0);
+        }
+
+    } else {
+        speed_h = std::max((abs(speed_h) - 0.25), 0.0) * (speed_h < -1e-6 ? -1 : 1);
+    }
+
+    if (e.contains(Control(Qt::Key::Key_Control))) {
+        if (isSuspended) {
+            pos_y -= 5;
+            canJump = true;
+        }
+        if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(Qt::Key::Key_Down)) {
+            internalForceY = 1.2;
+            speed_v = -3 - std::max(0.0, (std::abs(speed_h) - 4.0) * 0.3);
+            canJump = false;
+            setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
+            playSound("COMMON_JUMP");
+        }
+    } else {
+        if (internalForceY > 0) {
+            internalForceY = 0;
+        }
+    }
+
+    processAllControlHeldEventsDefaultHandler(e);
+}
+
+void Player::processControlHeldEvent(const ControlEvent& e) {
+    if (e.first == Control(Qt::Key::Key_Space)) {
+        setAnimation(currentState | AnimState::SHOOT);
+        if (weapon_cooldown == 0) {
+            switch (currentWeapon) {
+                case WEAPON_BLASTER:
+                {
+                    auto newAmmo = fireWeapon<Ammo_Blaster>();
+                    weapon_cooldown = std::max(0, 40 - 3 * fastfires);
+                    playSound("WEAPON_BLASTER_JAZZ");
+                    break;
+                }
+                case WEAPON_BOUNCER:
+                {
+                    auto newAmmo = fireWeapon<Ammo_Bouncer>();
+                    weapon_cooldown = 25;
+                    break;
+                }
+                case WEAPON_TOASTER:
+                {
+                    auto newAmmo = fireWeapon<Ammo_Toaster>();
+                    weapon_cooldown = 3;
+                    break;
+                }
+                case WEAPON_TNT:
+                    // do nothing, TNT can only be placed by keypress, not by holding space down
+                    break;
+                case WEAPON_FREEZER:
+                case WEAPON_SEEKER:
+                case WEAPON_RF:
+                case WEAPON_PEPPER:
+                case WEAPON_ELECTRO:
+                default:
+                    break;
+            }
+            if (currentWeapon != WEAPON_BLASTER) {
+                if (currentWeapon == WEAPON_TOASTER) {
+                    --toaster_ammo_ticks;
+                    if (toaster_ammo_ticks == 0) {
+                        ammo[currentWeapon] -= 1;
+                        toaster_ammo_ticks = 10;
+                    }
+                } else {
+                    ammo[currentWeapon] -= 1;
+                }
+
+                if (ammo[currentWeapon] == 0) {
+                    int new_type = (currentWeapon + 1) % 9;
+                    // Iterate through weapons to pick the next usable when running out of ammo
+                    while (!selectWeapon(static_cast< WeaponType >(new_type))) {
+                        new_type = (new_type + 1) % 9;
+                    }
+                }
+            }
+        }
+    }
+}
 
 void Player::tickEvent() {
     // Initialize these ASAP
@@ -194,7 +275,7 @@ void Player::tickEvent() {
     }
 
     CommonActor::tickEvent();
-    short sign = ((speed_h + push) > 1e-6) ? 1 : (((speed_h + push) < -1e-6) ? -1 : 0);
+    short sign = ((speed_h + externalForceX) > 1e-6) ? 1 : (((speed_h + externalForceX) < -1e-6) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
 
 
@@ -203,7 +284,7 @@ void Player::tickEvent() {
         isSuspended = true;
         isGravityAffected = false;
         speed_v = 0;
-        thrust = 0;
+        externalForceY = 0;
 
         // move downwards until we're on the standard height
         while (tiles->isPosVine(pos_x,pos_y - 5)) {
@@ -277,8 +358,9 @@ void Player::tickEvent() {
                         isGravityAffected = false;
                         speed_h = 0;
                         speed_v = 0;
-                        push = 0;
-                        thrust = 0;
+                        externalForceX = 0;
+                        externalForceY = 0;
+                        internalForceY = 0;
                         playSound("COMMON_WARP_IN");
                     }
                 }
@@ -293,8 +375,9 @@ void Player::tickEvent() {
                     pole_spins = 3;
                     speed_h = 0;
                     speed_v = 0;
-                    push = 0;
-                    thrust = 0;
+                    externalForceX = 0;
+                    externalForceY = 0;
+                    internalForceY = 0;
                     canJump = false;
                     isGravityAffected = false;
                 }
@@ -308,8 +391,9 @@ void Player::tickEvent() {
                     pole_spins = 3;
                     speed_h = 0;
                     speed_v = 0;
-                    push = 0;
-                    thrust = 0;
+                    externalForceX = 0;
+                    externalForceY = 0;
+                    internalForceY = 0;
                     canJump = false;
                     isGravityAffected = false;
                 }
@@ -353,94 +437,6 @@ void Player::tickEvent() {
         camera_shift = (camera_shift > 0 ? 1 : -1) * std::max(0, abs(camera_shift) - 10);
     }
 
-    if (controllable) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            if (!isSuspended && (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)
-                || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))) {
-                speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1),9.0),-9.0);
-            } else {
-                speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1),3.0),-3.0);
-            }
-        } else {
-            speed_h = std::max((abs(speed_h) - 0.25),0.0) * (speed_h < -1e-6 ? -1 : 1);
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            setAnimation(currentState | AnimState::SHOOT);
-            if (weapon_cooldown == 0) {
-                switch (currentWeapon) {
-                    case WEAPON_BLASTER:
-                        {
-                            auto newAmmo = fireWeapon<Ammo_Blaster>();
-                            weapon_cooldown = std::max(0, 40 - 3 * fastfires);
-                            playSound("WEAPON_BLASTER_JAZZ");
-                            break;
-                        }
-                    case WEAPON_BOUNCER:
-                        {
-                            auto newAmmo = fireWeapon<Ammo_Bouncer>();
-                            weapon_cooldown = 25;
-                            break;
-                        }
-                    case WEAPON_TOASTER:
-                        {
-                            auto newAmmo = fireWeapon<Ammo_Toaster>();
-                            weapon_cooldown = 3;
-                            break;
-                        }
-                    case WEAPON_TNT:
-                        // do nothing, TNT can only be placed by keypress, not by holding space down
-                        break;
-                    case WEAPON_FREEZER:
-                    case WEAPON_SEEKER:
-                    case WEAPON_RF:
-                    case WEAPON_PEPPER:
-                    case WEAPON_ELECTRO:
-                    default:
-                        break;
-                }
-                if (currentWeapon != WEAPON_BLASTER) {
-                    if (currentWeapon == WEAPON_TOASTER) {
-                        --toaster_ammo_ticks;
-                        if (toaster_ammo_ticks == 0) {
-                            ammo[currentWeapon] -= 1;
-                            toaster_ammo_ticks = 10;
-                        }
-                    } else {
-                        ammo[currentWeapon] -= 1;
-                    }
-
-                    if (ammo[currentWeapon] == 0) {
-                        int new_type = (currentWeapon + 1) % 9;
-                        // Iterate through weapons to pick the next usable when running out of ammo
-                        while (!selectWeapon(static_cast< WeaponType >(new_type))) {
-                            new_type = (new_type + 1) % 9;
-                        }
-                    }
-                }
-            }
-        }
-
-        if ((sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))) {
-            if (isSuspended) {
-                pos_y -= 5;
-                canJump = true;
-            }
-            if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                thrust = 1.2;
-                speed_v = -3 - std::max(0.0, (std::abs(speed_h) - 4.0) * 0.3);
-                canJump = false;
-                setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
-                playSound("COMMON_JUMP");
-            }
-        } else {
-            if (thrust > 0) {
-                thrust = 0;
-            }
-        }
-    }
-
     auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
     foreach (auto collision, collisions) {
         auto collisionPtr = collision.lock();
@@ -482,11 +478,11 @@ void Player::tickEvent() {
                 short sign = ((params.x + params.y) > 1e-6 ? 1 : -1);
                 if (abs(params.x) > 1e-6) {
                     speed_h = (4 + abs(params.x)) * sign;
-                    push = params.x;
+                    externalForceX = params.x;
                     setTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
                 } else {
-                    speed_v = (4 + abs(params.y / 2)) * sign;
-                    thrust = -params.y / 2;
+                    speed_v = (4 + abs(params.y)) * sign;
+                    externalForceY = -params.y;
                     setTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
                 }
                 canJump = false;
@@ -668,8 +664,9 @@ void Player::deathRecovery() {
         // Negate all possible movement effects etc.
         onTransitionEndHook();
         canJump = false;
-        push = 0;
-        thrust = 0;
+        externalForceX = 0;
+        externalForceY = 0;
+        internalForceY = 0;
         speed_h = 0;
         speed_v = 0;
         controllable = true;
@@ -711,7 +708,7 @@ void Player::returnControl() {
 }
 
 void Player::delayedUppercutStart() {
-    thrust = 1.5;
+    externalForceY = 1.5;
     speed_v = -2;
     canJump = false;
     setTransition(AnimState::TRANSITION_UPPERCUT_B,true,true,true);
@@ -775,8 +772,8 @@ void Player::onHitWallHook() {
 void Player::takeDamage(double npush) {
     if (!isInvulnerable) {
         health = static_cast<unsigned>(std::max(static_cast<int>(health - 1), 0));
-        push = npush;
-        thrust = 0;
+        externalForceX = npush;
+        internalForceY = 0;
         speed_v = -6.5;
         speed_h = 0;
         canJump = false;
@@ -832,7 +829,7 @@ void Player::endHPoleTransition() {
     } else {
         int mp = pole_positive ? 1 : -1;
         speed_h = 10 * mp;
-        push = 10 * mp;
+        externalForceX = 10 * mp;
         controllable = true;
         isGravityAffected = true;
         facingLeft = !pole_positive;
@@ -847,7 +844,7 @@ void Player::endVPoleTransition() {
         int mp = pole_positive ? 1 : -1;
         pos_y += mp * 32;
         speed_v = 10 * mp;
-        thrust = -1 * mp;
+        externalForceY = -1 * mp;
         controllable = true;
         isGravityAffected = true;
     }

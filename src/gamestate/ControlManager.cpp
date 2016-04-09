@@ -81,7 +81,7 @@ ControlEventList ControlManager::getPendingEvents() {
         // 2 frames = U on frame 1, H on 2, D on 3
         // and so on.
         if (!state.pressEnded && !state.pressStarted) {
-            events.controlHeldEvents << event;
+            events.controlHeldEvents.insert(event.first, event.second);
         }
     }
 

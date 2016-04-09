@@ -2,6 +2,7 @@
 
 #include <QVector>
 #include <QPair>
+#include <QMap>
 
 // TODO: Add joystick controls here as well
 // Probably use QGamepad from Qt 5.7?
@@ -54,5 +55,5 @@ typedef QPair<Control, ControlState> ControlEvent;
 struct ControlEventList {
     QVector<ControlEvent> controlDownEvents;
     QVector<ControlEvent> controlUpEvents;
-    QVector<ControlEvent> controlHeldEvents;
+    QMap<Control, ControlState> controlHeldEvents;
 };

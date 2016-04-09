@@ -232,21 +232,21 @@ void CarrotQt5::processControlEvents() {
                 menuObject->processControlDownEvent(pair);
             }
         } else {
-            foreach (auto& actor, actors) {
+            foreach(auto& actor, actors) {
                 actor->processControlDownEvent(pair);
             }
         }
     }
 
-    foreach(auto pair, events.controlHeldEvents) {
-        if (isMenu) {
+    if (isMenu) {
+        foreach(auto key, events.controlHeldEvents.keys()) {
             if (menuObject != nullptr) {
-                menuObject->processControlHeldEvent(pair);
+                menuObject->processControlHeldEvent(qMakePair(key, events.controlHeldEvents.value(key)));
             }
-        } else {
-            foreach(auto& actor, actors) {
-                actor->processControlHeldEvent(pair);
-            }
+        }
+    } else {
+        foreach(auto& actor, actors) {
+            actor->processAllControlHeldEvents(events.controlHeldEvents);
         }
     }
 

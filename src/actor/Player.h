@@ -34,6 +34,8 @@ public:
     ~Player();
     void processControlDownEvent(const ControlEvent& e) override;
     void processControlUpEvent(const ControlEvent& e) override;
+    void processControlHeldEvent(const ControlEvent& e) override;
+    void processAllControlHeldEvents(const QMap<Control, ControlState>& e) override;
     void tickEvent();
     void drawUIOverlay();
     unsigned getHealth();
