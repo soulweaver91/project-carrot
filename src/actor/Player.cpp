@@ -165,6 +165,10 @@ void Player::processControlUpEvent(const ControlEvent& e) {
                 return;
         }
     }
+
+    if (control == controls.fireButton) {
+        weapon_cooldown = std::min(2u, weapon_cooldown);
+    }
 }
 
 void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
