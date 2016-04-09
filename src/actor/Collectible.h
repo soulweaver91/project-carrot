@@ -32,11 +32,11 @@ public:
     ~Collectible();
     void tickEvent();
     enum CollectibleType type;
-    void impact(double force_h = 0.0, double force_v = 0.0);
-    void DrawUpdate();
+    void impact(double forceX = 0.0, double forceY = 0.0);
+    void drawUpdate() override;
 
 private:
-    bool intact;
+    bool untouched;
     double phase;
     void setFacingDirection();
 };

@@ -22,7 +22,7 @@ protected:
     void animationAdvance();
     virtual void onTransitionEndHook();
     bool setAnimation(std::shared_ptr<GraphicResource> animation);
-    bool setAnimation(const QString& animationId, const size_t& idx = 0);
+    bool setAnimation(const QString& animationID, const size_t& idx = 0);
     void drawCurrentFrame();
 
     QMap<QString, std::shared_ptr<GraphicResource>> animationBank;
@@ -38,4 +38,5 @@ protected:
     sf::Sprite sprite;
     sf::Vector3i color;
     std::shared_ptr<CarrotQt5> root;
+    unsigned long animationTimer;
 };

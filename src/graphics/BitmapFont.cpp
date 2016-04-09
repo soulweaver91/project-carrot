@@ -3,85 +3,82 @@
 
 #define PI 3.1415926535
 
-BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned rows, unsigned cols, unsigned first, unsigned last) {
-    if (!(font_tex.loadFromFile(filename.toUtf8().data()))) {
+BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned rows, 
+    unsigned cols, unsigned first, unsigned last) {
+    if (!(fontTexture.loadFromFile(filename.toUtf8().data()))) {
         throw 0;
     }
 
-    char w_table[256];
-    std::fill_n(w_table, 256, static_cast< char >(width % 256));
+    char widthFromFileTable[256];
+    std::fill_n(widthFromFileTable, 256, static_cast<char>(width % 256));
 
-    QFile widthfile(filename + ".config");
-    if (!(widthfile.open(QIODevice::ReadOnly))) {
+    QFile widthFile(filename + ".config");
+    if (!(widthFile.open(QIODevice::ReadOnly))) {
         // oops, something went wrong
     } else {
-        widthfile.read(w_table,256);
+        widthFile.read(widthFromFileTable,256);
     }
-    widthfile.close();
+    widthFile.close();
 
-    int curr_x = 0;
-    int curr_y = 0;
-    int curr_id = 0;
-    first_char = first;
+    int charX = 0;
+    int charY = 0;
+    int charCode = 0;
+    firstCharCode = first;
     unsigned i = 0;
     for (; i < first; ++i) {
-        char_width[i] = 0;
+        charWidth[i] = 0;
     }
-    for (; i < last; ++i, ++curr_id) {
-        char_width[i] = w_table[curr_id];
-        auto new_spr = std::make_shared<sf::Sprite>(font_tex, sf::IntRect(curr_x, curr_y, w_table[curr_id], height));
-        char_map.push_back(new_spr);
-        curr_x += width;
-        if (curr_id % cols == (cols - 1)) {
-            curr_y += height;
-            curr_x = 0;
+    for (; i < last; ++i, ++charCode) {
+        charWidth[i] = widthFromFileTable[charCode];
+        auto new_spr = std::make_shared<sf::Sprite>(fontTexture, sf::IntRect(charX, charY, widthFromFileTable[charCode], height));
+        characterMap.push_back(new_spr);
+        charX += width;
+        if (charCode % cols == (cols - 1)) {
+            charY += height;
+            charX = 0;
         }
-        if ((curr_id > last) || (i >= 255)) {
+        if ((charCode > last) || (i >= 255)) {
             break;
         }
     }
     for (; i < 256; ++i) {
-        char_width[i] = 0;
+        charWidth[i] = 0;
     }
 }
 
 std::shared_ptr<sf::Sprite> BitmapFont::getCharacterSprite(QChar code) {
-    short num = code.toLatin1() - first_char;
-    if (num < 0 || num >= char_map.size()) {
+    short num = code.toLatin1() - firstCharCode;
+    if (num < 0 || num >= characterMap.size()) {
         return nullptr;
     } else {
-        return char_map.at(num);
+        return characterMap.at(num);
     }
 }
 
 unsigned BitmapFont::getCharacterWidth(QChar code) {
-    short num = code.toLatin1() - first_char;
-    if (num < 0 || num >= char_map.size()) {
+    short num = code.toLatin1() - firstCharCode;
+    if (num < 0 || num >= characterMap.size()) {
         return 0;
     } else {
-        return char_map.at(num)->getTextureRect().width;
+        return characterMap.at(num)->getTextureRect().width;
     }
 }
 
-BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& init_str, FontAlign init_align) :
-    align(init_align), animate(false), xvariance(0.0), yvariance(0.0), phase(0.0), anim_speed(0.0),
-    angle_offset(0.0), str_text(init_str), coloured(false), spacing(-1) {
-    inner_font = font;
-    updateWidth();
+const sf::Color BitmapString::colouredFontColours[7] = {
+    sf::Color(192, 192, 255),
+    sf::Color(255, 192, 192),
+    sf::Color(255, 255, 192),
+    sf::Color( 24, 255, 115),
+    sf::Color(255, 192, 255),
+    sf::Color(180, 180, 240),
+    sf::Color(255, 255, 255)
+};
 
-    // Initialize the inner colour list
-    sf::Color a[7] = {
-            sf::Color(192,192,255),
-            sf::Color(255,192,192),
-            sf::Color(255,255,192),
-            sf::Color(24,255,115),
-            sf::Color(255,192,255),
-            sf::Color(180,180,240),
-            sf::Color(255,255,255)
-        };
-    for (int i = 0; i < 7; ++i) {
-        Colour[i] = a[i];
-    }
+BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& initString, FontAlign initAlign) :
+    align(initAlign), isAnimated(false), varianceX(0.0), varianceY(0.0), phase(0.0), animationSpeed(0.0),
+    angleOffset(0.0), stringText(initString), isColoured(false), spacing(-1) {
+    textFont = font;
+    updateWidth();
 }
 
 void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x, int y) {
@@ -90,57 +87,57 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x,
         return;
     }
 
-    int curr_x = x;
+    int currentX = x;
     if (align == FONT_ALIGN_CENTER) {
-        curr_x -= getWidth() / 2;
+        currentX -= getWidth() / 2;
     } else if (align == FONT_ALIGN_RIGHT) {
-        curr_x -= getWidth();
+        currentX -= getWidth();
     }
-    double diff_x = 0.0;
-    double diff_y = 0.0;
-    for (int i = 0; i < str_text.length(); ++i) {
-        if (animate) {
-            diff_x = cos(((phase + i)*angle_offset) * PI) * xvariance;
-            diff_y = sin(((phase + i)*angle_offset) * PI) * yvariance;
+    double differenceX = 0.0;
+    double differenceY = 0.0;
+    for (int i = 0; i < stringText.length(); ++i) {
+        if (isAnimated) {
+            differenceX = cos(((phase + i) * angleOffset) * PI) * varianceX;
+            differenceY = sin(((phase + i) * angleOffset) * PI) * varianceY;
         }
-        auto spr = inner_font->getCharacterSprite(str_text.at(i));
-        if (spr != nullptr) {
-            if (coloured) {
-                spr->setColor(Colour[i % 7]);
+        auto sprite = textFont->getCharacterSprite(stringText.at(i));
+        if (sprite != nullptr) {
+            if (isColoured) {
+                sprite->setColor(colouredFontColours[i % 7]);
             } else {
-                spr->setColor(sf::Color::White);
+                sprite->setColor(sf::Color::White);
             }
-            spr->setPosition(curr_x + diff_x, y + diff_y);
-            canvas->draw(*(spr));
-            curr_x += spr->getTextureRect().width + spacing;
+            sprite->setPosition(currentX + differenceX, y + differenceY);
+            canvas->draw(*(sprite));
+            currentX += sprite->getTextureRect().width + spacing;
         }
     }
-    if (animate) {
-        phase += anim_speed;
+    if (isAnimated) {
+        phase += animationSpeed;
     }
 }
 
-void BitmapString::setAnimation(bool set_anim, double x_var, double y_var, double a_speed, double a_angle) {
-    animate = set_anim;
-    xvariance = x_var;
-    yvariance = y_var;
+void BitmapString::setAnimation(bool setAnimated, double varianceX, double varianceY, double animationSpeed, double animationAngle) {
     phase = 0.0;
-    anim_speed = a_speed;
-    angle_offset = a_angle;
+    isAnimated = setAnimated;
+    angleOffset = animationAngle;
+    this->varianceX = varianceX;
+    this->varianceY = varianceY;
+    this->animationSpeed = animationSpeed;
 }
 void BitmapString::removeAnimation() {
     setAnimation();
 }
 
 void BitmapString::setText(QString text) {
-    str_text = text;
+    stringText = text;
     updateWidth();
 }
 
 unsigned BitmapString::updateWidth() {
     unsigned sum = 0;
-    for(unsigned i = 0; i < str_text.length(); ++i) {
-        sum += inner_font->getCharacterWidth(str_text.at(i));
+    for(unsigned i = 0; i < stringText.length(); ++i) {
+        sum += textFont->getCharacterWidth(stringText.at(i));
     }
     width = sum;
     return sum;
@@ -157,21 +154,21 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, std::s
         return;
     }
 
-    int curr_x = x;
+    int currentX = x;
     if (align == FONT_ALIGN_CENTER) {
-        curr_x -= getStaticWidth(text, font) / 2;
+        currentX -= getStaticWidth(text, font) / 2;
     } else if (align == FONT_ALIGN_RIGHT) {
-        curr_x -= getStaticWidth(text, font);
+        currentX -= getStaticWidth(text, font);
     }
-    double diff_x = 0.0;
-    double diff_y = 0.0;
+    double differenceX = 0.0;
+    double differenceY = 0.0;
     for (int i = 0; i < text.length(); ++i) {
-        auto spr = font->getCharacterSprite(text.at(i));
-        if (spr != nullptr) {
-            spr->setPosition(curr_x + diff_x, y + diff_y);
-            spr->setColor(sf::Color::White);
-            canvas->draw(*(spr));
-            curr_x += spr->getTextureRect().width - 1;
+        auto sprite = font->getCharacterSprite(text.at(i));
+        if (sprite != nullptr) {
+            sprite->setPosition(currentX + differenceX, y + differenceY);
+            sprite->setColor(sf::Color::White);
+            canvas->draw(*(sprite));
+            currentX += sprite->getTextureRect().width - 1;
         }
     }
 }
@@ -185,5 +182,5 @@ unsigned BitmapString::getStaticWidth(QString text, std::shared_ptr<BitmapFont> 
 }
 
 void BitmapString::setColoured(bool state) {
-    coloured = state;
+    isColoured = state;
 }

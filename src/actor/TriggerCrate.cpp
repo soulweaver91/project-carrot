@@ -2,8 +2,8 @@
 #include "../CarrotQt5.h"
 #include "../gamestate/TileMap.h"
 
-TriggerCrate::TriggerCrate(std::shared_ptr<CarrotQt5> root, double x, double y, int trigger_id) 
-    : SolidObject(root, x, y, true), trigger_id(trigger_id) {
+TriggerCrate::TriggerCrate(std::shared_ptr<CarrotQt5> root, double x, double y, int triggerID) 
+    : SolidObject(root, x, y, true), triggerID(triggerID) {
     loadResources("Object/TriggerCrate");
     setAnimation(AnimState::IDLE);
 }
@@ -18,7 +18,7 @@ bool TriggerCrate::perish() {
         auto tiles = root->getGameTiles().lock();
 
         if (tiles != nullptr) {
-            tiles->setTrigger(trigger_id, true);
+            tiles->setTrigger(triggerID, true);
         }
     }
     return CommonActor::perish();

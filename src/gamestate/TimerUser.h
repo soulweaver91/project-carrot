@@ -9,11 +9,11 @@ typedef void(TimerUser::*TimerCallbackFunc)();
 
 struct ActorTimer {
     // current state
-    unsigned long frames_left;
-    double frames_remainder; // increased by frames_original_remainder by every call if recurring
+    unsigned long framesLeft;
+    double framesRemainder; // increased by initialFramesRemainder by every call if recurring
                              // initial state
-    unsigned long frames_original;
-    double frames_original_remainder;
+    unsigned long initialFramesLeft;
+    double initialFramesRemainder;
     bool recurring;
 
     // callback
@@ -33,6 +33,5 @@ protected:
     virtual void invokeTimer(int idx);
     void cancelTimer(unsigned long idx);
     QVector<QPair<unsigned long, ActorTimer>> timers;
-    unsigned long next_timer;
-    unsigned long animation_timer;
+    unsigned long nextTimer;
 };

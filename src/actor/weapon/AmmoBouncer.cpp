@@ -2,41 +2,41 @@
 #include "../../CarrotQt5.h"
 #include "../../gamestate/TileMap.h"
 
-Ammo_Bouncer::Ammo_Bouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
+AmmoBouncer::AmmoBouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 140) {
     elasticity = 0.9;
     loadResources("Weapon/Bouncer");
     if (firedUp) {
-        speed_v = -2;
+        speedY = -2;
         isGravityAffected = false;
     } else {
-        speed_h = (firedLeft ? -3 : 3);
+        speedX = (firedLeft ? -3 : 3);
     }
     setAnimation(AnimState::IDLE);
 }
 
 
-Ammo_Bouncer::~Ammo_Bouncer() {
+AmmoBouncer::~AmmoBouncer() {
 }
 
-void Ammo_Bouncer::tickEvent() {
+void AmmoBouncer::tickEvent() {
     CommonActor::tickEvent();
     Ammo::tickEvent();
     auto tiles = root->getGameTiles().lock();
-    if (tiles == nullptr || tiles->isTileEmpty((pos_x + speed_h) / 32, (pos_y + speed_v) / 32)) {
-        pos_x += speed_h;
-        pos_y += speed_v;
+    if (tiles == nullptr || tiles->isTileEmpty((posX + speedX) / 32, (posY + speedY) / 32)) {
+        posX += speedX;
+        posY += speedY;
     } else {
-        CoordinatePair temp = {pos_x, pos_y};
-        CoordinatePair next = {pos_x + speed_h, pos_y + speed_v};
+        CoordinatePair temp = {posX, posY};
+        CoordinatePair next = {posX + speedX, posY + speedY};
         moveInstantly(next);
         checkCollisions();
         moveInstantly(temp);
     }
 }
 
-void Ammo_Bouncer::onHitFloorHook() {
-    if (speed_v < 0) {
-        speed_v = std::min(std::max(-4.0,speed_v),-1.0);
+void AmmoBouncer::onHitFloorHook() {
+    if (speedY < 0) {
+        speedY = std::min(std::max(-4.0, speedY), -1.0);
     }
 }

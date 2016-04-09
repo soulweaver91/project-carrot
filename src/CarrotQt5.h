@@ -52,15 +52,15 @@ enum ExitType {
 };
 
 struct SavedState {
-    CoordinatePair player_pos;
-    int player_lives;
-    QVector<QVector<std::shared_ptr<LayerTile>>> spr_layer_copy;
+    CoordinatePair playerPosition;
+    int playerLives;
+    QVector<QVector<std::shared_ptr<LayerTile>>> spriteLayerState;
 };
 
 typedef void (CarrotQt5::*InvokableRootFunction)(QVariant);
 
-class CarrotQt5 : public QMainWindow, public std::enable_shared_from_this<CarrotQt5>
-{
+class CarrotQt5 : public QMainWindow, public std::enable_shared_from_this<CarrotQt5> {
+
     Q_OBJECT
 
 public:
@@ -76,27 +76,26 @@ public:
     void centerView(CoordinatePair pos);
     void centerView(double x, double y);
     bool addActor(std::shared_ptr<CommonActor> actor);
-    bool addPlayer(std::shared_ptr<Player> actor, short player_id = -1);
+    bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);
     void removeActor(std::shared_ptr<CommonActor> actor);
-    bool destroyAllActors();
     bool loadLevel(const QString& name);
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me = nullptr);
-    QVector<std::weak_ptr<CommonActor>> findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me = nullptr);
-    static Hitbox calcHitbox(const Hitbox& hbox, double hor, double ver);
+    QVector<std::weak_ptr<CommonActor>> findCollisionActors(Hitbox hitbox, std::shared_ptr<CommonActor> me = nullptr);
+    static Hitbox calcHitbox(const Hitbox& hitbox, double diffX, double diffY);
     static Hitbox calcHitbox(int x, int y, int w, int h);
     void setSavePoint();
     void loadSavePoint();
     void clearActors();
     unsigned long getFrame();
-    void createDebris(unsigned tile_id, int x, int y);
+    void createDebris(unsigned tileId, int x, int y);
     void setLighting(int target, bool immediate);
     void initLevelChange(ExitType e = NEXT_NORMAL);
-    bool isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collided);
-    bool isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me);
+    bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collisionActor);
+    bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me);
     std::weak_ptr<CarrotCanvas> getCanvas();
     std::shared_ptr<BitmapFont> getFont();
     std::weak_ptr<SoundSystem> getSoundSystem();
-    std::weak_ptr<Player> getPlayer(unsigned no);
+    std::weak_ptr<Player> getPlayer(unsigned number);
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
@@ -104,9 +103,9 @@ public:
     int getLightingLevel();
     double gravity;
     bool dbgShowMasked;
-    int mod_temp[32]; // temporary variables for testing new features
-    QString mod_name[32];
-    unsigned char mod_current;
+    int tempModifier[32]; // temporary variables for testing new features
+    QString tempModifierName[32];
+    unsigned char currentTempModifier;
 
     // remote function evoke
     void invokeFunction(InvokableRootFunction func, QVariant param);
@@ -122,7 +121,7 @@ protected slots:
     void keyReleaseEvent(QKeyEvent* event);
 
 private:
-    void spawnEventMap(const QString& filename, unsigned layout_version = 1);
+    void spawnEventMap(const QString& filename, unsigned layoutVersion = 1);
     void setLevelName(const QString& name);
     void cleanUpLevel();
     void processControlEvents();
@@ -151,10 +150,10 @@ private:
     SavedState lastSavePoint;
     int lightingLevel;
     int targetLightingLevel;
-    ExitType last_exit;
+    ExitType lastExit;
     std::shared_ptr<MenuScreen> menuObject;
     bool isMenu;
-    QTime last_timestamp;
+    QTime lastTimestamp;
     float fps;
 
 private slots:

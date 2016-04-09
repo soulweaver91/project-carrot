@@ -55,7 +55,7 @@ void PlayerOSD::drawOSD() {
     advanceTimers();
 
     auto canvasPtr = canvas.lock();
-    if (canvasPtr == nullptr) { // || charIconSprite == nullptr || weaponIconSprite == nullptr) {
+    if (canvasPtr == nullptr) {
         return;
     }
 
@@ -138,8 +138,10 @@ void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
 
     if (weaponIconIdx[type] != nullptr) {
         weaponIconSprite->setTexture(*(weaponIconIdx[type]->texture));
-        weaponIconSprite->setTextureRect(sf::IntRect(0, 0, weaponIconIdx[type]->frameDimensions.x, weaponIconIdx[type]->frameDimensions.y));
-        weaponIconSprite->setPosition(root->getViewWidth() - 85 - weaponIconIdx[type]->hotspot.x, root->getViewHeight() - 15 - weaponIconIdx[type]->hotspot.y);
+        weaponIconSprite->setTextureRect(sf::IntRect(0, 0, weaponIconIdx[type]->frameDimensions.x,
+            weaponIconIdx[type]->frameDimensions.y));
+        weaponIconSprite->setPosition(root->getViewWidth() - 85 - weaponIconIdx[type]->hotspot.x,
+            root->getViewHeight() - 15 - weaponIconIdx[type]->hotspot.y);
         weaponIconFrame = 0;
     }
 }

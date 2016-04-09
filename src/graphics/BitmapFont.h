@@ -17,18 +17,18 @@ class BitmapFont {
         std::shared_ptr<sf::Sprite> getCharacterSprite(QChar code);
         unsigned getCharacterWidth(QChar code);
     private:
-        short char_width[256];
-        sf::Texture font_tex;
-        QVector<std::shared_ptr<sf::Sprite>> char_map;
-        short first_char;
+        short charWidth[256];
+        sf::Texture fontTexture;
+        QVector<std::shared_ptr<sf::Sprite>> characterMap;
+        short firstCharCode;
 };
 
 class BitmapString {
     public:
-        BitmapString(std::shared_ptr<BitmapFont> font, const QString& init_str = "", FontAlign init_align = FONT_ALIGN_LEFT);
+        BitmapString(std::shared_ptr<BitmapFont> font, const QString& initString = "", FontAlign initAlign = FONT_ALIGN_LEFT);
         void drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x, int y);
-        void setAnimation(bool set_anim = false, double x_var = 0.0, double y_var = 0.0,
-                          double a_speed = 0.0, double a_angle = 0.0);
+        void setAnimation(bool setAnimated = false, double varianceX = 0.0, double varianceY = 0.0,
+                          double animationSpeed = 0.0, double animationAngle = 0.0);
         void removeAnimation();
         void setText(QString text);
         void setColoured(bool state);
@@ -38,18 +38,19 @@ class BitmapString {
 
     private:
         unsigned updateWidth();
-        QString str_text;
+        QString stringText;
         enum FontAlign align;
-        std::shared_ptr<BitmapFont> inner_font;
-        bool animate;
-        bool coloured;
-        double xvariance;
-        double yvariance;
+        std::shared_ptr<BitmapFont> textFont;
+        bool isAnimated;
+        bool isColoured;
+        double varianceX;
+        double varianceY;
         double phase;
-        double anim_speed;
-        double angle_offset;
+        double animationSpeed;
+        double angleOffset;
         char spacing;
         unsigned width;
-        sf::Color Colour[7];
         static unsigned getStaticWidth(QString text, std::shared_ptr<BitmapFont> font);
+
+        static const sf::Color colouredFontColours[7];
 };

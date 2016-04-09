@@ -1,42 +1,42 @@
 #include "NormalTurtle.h"
 
-Enemy_NormalTurtle::Enemy_NormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
+EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
     : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
     loadResources("Enemy/Turtle");
     setAnimation(AnimState::WALK);
-    speed_h = 1;
+    speedX = 1;
 }
 
-Enemy_NormalTurtle::~Enemy_NormalTurtle() {
+EnemyNormalTurtle::~EnemyNormalTurtle() {
 
 }
 
-void Enemy_NormalTurtle::tickEvent() {
+void EnemyNormalTurtle::tickEvent() {
     Enemy::tickEvent();
     
-    if (!canMoveToPosition(speed_h,0)) {
-        setTransition(AnimState::TRANSITION_WITHDRAW,false);
+    if (!canMoveToPosition(speedX, 0)) {
+        setTransition(AnimState::TRANSITION_WITHDRAW, false);
         isTurning = true;
         hurtPlayer = false;
-        speed_h = 0;
+        speedX = 0;
     }
 }
 
-Hitbox Enemy_NormalTurtle::getHitbox() {
+Hitbox EnemyNormalTurtle::getHitbox() {
     return CommonActor::getHitbox(30u, 30u);
 }
 
-void Enemy_NormalTurtle::onTransitionEndHook() {
+void EnemyNormalTurtle::onTransitionEndHook() {
     if (isTurning) {
         if (!isWithdrawn) {
-            facingLeft = !(facingLeft);
-            setTransition(AnimState::TRANSITION_WITHDRAW_END,false);
+            isFacingLeft = !(isFacingLeft);
+            setTransition(AnimState::TRANSITION_WITHDRAW_END, false);
             isWithdrawn = true;
         } else {
             hurtPlayer = true;
             isWithdrawn = false;
             isTurning = false;
-            speed_h = (facingLeft ? -1 : 1) * 1;
+            speedX = (isFacingLeft ? -1 : 1) * 1;
         }
     }
 }

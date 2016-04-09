@@ -11,19 +11,20 @@
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
 
-Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), weapon_cooldown(0), character(CHAR_JAZZ),
-    controllable(true), damaging_move(false), gem_sfx_idx(0), gem_sfx_idx_ctr(0), camera_shift(0), copter_time(0), fastfires(0),
-    transition_end_function(nullptr), pole_spins(0), pole_positive(false), toaster_ammo_ticks(10), score(0) {
-    unsigned anim_idx;
-    max_health = 5;
+Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
+    weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
+    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), transitionEndFunction(nullptr),
+    poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
+    loadResources("Interactive/PlayerJazz");
+
+    maxHealth = 5;
     health = 5;
     lives = 3;
     currentWeapon = WEAPON_BLASTER;
-    std::fill_n(ammo,9,0);
-    std::fill_n(collected_coins,2,0);
-    std::fill_n(collected_gems,4,0);
+    std::fill_n(ammo, 9, 0);
+    std::fill_n(collectedCoins, 2, 0);
+    std::fill_n(collectedGems, 4, 0);
 
-    loadResources("Interactive/PlayerJazz");
     setAnimation(AnimState::FALL);
 
     controls = {
@@ -40,7 +41,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     // Get a brief invincibility at the start of the level
     isInvulnerable = true;
     isBlinking = true;
-    addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
+    addTimer(210u, false, static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
 }
 
 Player::~Player() {
@@ -58,7 +59,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
     }
 
     if (control == controls.upButton) {
-        if (controllable && canJump && std::abs(speed_h < 1e-6)) {
+        if (controllable && canJump && std::abs(speedX < 1e-6)) {
             setAnimation(AnimState::LOOKUP);
         }
         return;
@@ -73,20 +74,20 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.downButton) {
         if (controllable) {
-            if (canJump && std::abs(speed_h < 1e-6)) {
+            if (canJump && std::abs(speedX < 1e-6)) {
                 setAnimation(AnimState::CROUCH);
             } else {
                 if (isSuspended) {
-                    pos_y += 10;
+                    posY += 10;
                     isSuspended = false;
                 } else {
                     controllable = false;
-                    speed_h = 0;
-                    speed_v = 0;
+                    speedX = 0;
+                    speedY = 0;
                     internalForceY = 0;
                     externalForceY = 0;
                     isGravityAffected = false;
-                    damaging_move = true;
+                    isUsingDamagingMove = true;
                     setAnimation(AnimState::BUTTSTOMP);
                     setTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, &Player::delayedButtstompStart);
                 }
@@ -126,13 +127,13 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                     setAnimation(AnimState::UPPERCUT);
                     setTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, &Player::delayedUppercutStart);
                 } else {
-                    if (speed_v > 0 && !canJump) {
+                    if (speedY > 0 && !canJump) {
                         isGravityAffected = false;
-                        speed_v = 1.5;
+                        speedY = 1.5;
                         if ((currentState & AnimState::COPTER) == 0) {
                             setAnimation(AnimState::COPTER);
                         }
-                        copter_time = 50;
+                        copterFramesLeft = 50;
                     }
                 }
                 break;
@@ -156,7 +157,7 @@ void Player::processControlUpEvent(const ControlEvent& e) {
 
         if (control == controls.jumpButton) {
                 setAnimation(currentState & ~AnimState::SHOOT);
-                weapon_cooldown = 0;
+                weaponCooldown = 0;
                 return;
         }
 
@@ -167,7 +168,7 @@ void Player::processControlUpEvent(const ControlEvent& e) {
     }
 
     if (control == controls.fireButton) {
-        weapon_cooldown = std::min(2u, weapon_cooldown);
+        weaponCooldown = std::min(2u, weaponCooldown);
     }
 }
 
@@ -177,26 +178,26 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
     }
 
     if (e.contains(controls.leftButton) || e.contains(controls.rightButton)) {
-        facingLeft = !e.contains(controls.rightButton);
+        isFacingLeft = !e.contains(controls.rightButton);
 
         if (!isSuspended && (e.contains(controls.dashButton))) {
-            speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1), 9.0), -9.0);
+            speedX = std::max(std::min(speedX + 0.2 * (isFacingLeft ? -1 : 1), 9.0), -9.0);
         } else {
-            speed_h = std::max(std::min(speed_h + 0.2 * (facingLeft ? -1 : 1), 3.0), -3.0);
+            speedX = std::max(std::min(speedX + 0.2 * (isFacingLeft ? -1 : 1), 3.0), -3.0);
         }
 
     } else {
-        speed_h = std::max((abs(speed_h) - 0.25), 0.0) * (speed_h < -1e-6 ? -1 : 1);
+        speedX = std::max((abs(speedX) - 0.25), 0.0) * (speedX < -1e-6 ? -1 : 1);
     }
 
     if (e.contains(controls.jumpButton)) {
         if (isSuspended) {
-            pos_y -= 5;
+            posY -= 5;
             canJump = true;
         }
         if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
             internalForceY = 1.2;
-            speed_v = -3 - std::max(0.0, (std::abs(speed_h) - 4.0) * 0.3);
+            speedY = -3 - std::max(0.0, (std::abs(speedX) - 4.0) * 0.3);
             canJump = false;
             setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
             playSound("COMMON_JUMP");
@@ -213,25 +214,25 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
 void Player::processControlHeldEvent(const ControlEvent& e) {
     if (e.first == controls.fireButton) {
         setAnimation(currentState | AnimState::SHOOT);
-        if (weapon_cooldown == 0) {
+        if (weaponCooldown == 0) {
             switch (currentWeapon) {
                 case WEAPON_BLASTER:
                 {
-                    auto newAmmo = fireWeapon<Ammo_Blaster>();
-                    weapon_cooldown = std::max(0, 40 - 3 * fastfires);
+                    auto newAmmo = fireWeapon<AmmoBlaster>();
+                    weaponCooldown = std::max(0, 40 - 3 * fastfires);
                     playSound("WEAPON_BLASTER_JAZZ");
                     break;
                 }
                 case WEAPON_BOUNCER:
                 {
-                    auto newAmmo = fireWeapon<Ammo_Bouncer>();
-                    weapon_cooldown = 25;
+                    auto newAmmo = fireWeapon<AmmoBouncer>();
+                    weaponCooldown = 25;
                     break;
                 }
                 case WEAPON_TOASTER:
                 {
-                    auto newAmmo = fireWeapon<Ammo_Toaster>();
-                    weapon_cooldown = 3;
+                    auto newAmmo = fireWeapon<AmmoToaster>();
+                    weaponCooldown = 3;
                     break;
                 }
                 case WEAPON_TNT:
@@ -247,20 +248,20 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
             }
             if (currentWeapon != WEAPON_BLASTER) {
                 if (currentWeapon == WEAPON_TOASTER) {
-                    --toaster_ammo_ticks;
-                    if (toaster_ammo_ticks == 0) {
+                    --toasterAmmoSubticks;
+                    if (toasterAmmoSubticks == 0) {
                         ammo[currentWeapon] -= 1;
-                        toaster_ammo_ticks = 10;
+                        toasterAmmoSubticks = 10;
                     }
                 } else {
                     ammo[currentWeapon] -= 1;
                 }
 
                 if (ammo[currentWeapon] == 0) {
-                    int new_type = (currentWeapon + 1) % 9;
+                    int newType = (currentWeapon + 1) % 9;
                     // Iterate through weapons to pick the next usable when running out of ammo
-                    while (!selectWeapon(static_cast< WeaponType >(new_type))) {
-                        new_type = (new_type + 1) % 9;
+                    while (!selectWeapon(static_cast<WeaponType>(newType))) {
+                        newType = (newType + 1) % 9;
                     }
                 }
             }
@@ -272,7 +273,7 @@ void Player::tickEvent() {
     // Initialize these ASAP
     if (osd == nullptr) {
         osd = std::make_unique<PlayerOSD>(root, std::dynamic_pointer_cast<Player>(shared_from_this()), root->getCanvas());
-        osd->setWeaponType(currentWeapon, ammo_powered[currentWeapon]);
+        osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
         osd->setAmmo(ammo[currentWeapon]);
         osd->setLives(lives);
         osd->setScore(score);
@@ -284,11 +285,11 @@ void Player::tickEvent() {
     // Check for pushing
     if (canJump && controllable) {
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, 0), false, shared_from_this(), object))) {
+        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speedX, 0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
 
             if (objectPtr != nullptr) {
-                objectPtr->push(speed_h < 0);
+                objectPtr->push(speedX < 0);
                 setAnimation(currentState | AnimState::PUSH);
             } else {
                 setAnimation(currentState & ~AnimState::PUSH);
@@ -299,25 +300,25 @@ void Player::tickEvent() {
     }
 
     CommonActor::tickEvent();
-    short sign = ((speed_h + externalForceX) > 1e-6) ? 1 : (((speed_h + externalForceX) < -1e-6) ? -1 : 0);
+    short sign = ((speedX + externalForceX) > 1e-6) ? 1 : (((speedX + externalForceX) < -1e-6) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
 
 
     // Check if hitting a vine
-    if (tiles != nullptr && tiles->isPosVine(pos_x,pos_y - 5)) {
+    if (tiles != nullptr && tiles->isPosVine(posX, posY - 5)) {
         isSuspended = true;
         isGravityAffected = false;
-        speed_v = 0;
+        speedY = 0;
         externalForceY = 0;
 
         // move downwards until we're on the standard height
-        while (tiles->isPosVine(pos_x,pos_y - 5)) {
-            pos_y += 1;
+        while (tiles->isPosVine(posX, posY - 5)) {
+            posY += 1;
         }
-        pos_y -= 1;
+        posY -= 1;
     } else {
         isSuspended = false;
-        if (((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (pole_spins == 0)) {
+        if (((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (poleSpinCount == 0)) {
             isGravityAffected = true;
         }
     }
@@ -325,16 +326,16 @@ void Player::tickEvent() {
     // Buttstomp/etc. tiles checking
     if (tiles != nullptr && (currentState & (AnimState::BUTTSTOMP | AnimState::UPPERCUT | AnimState::SIDEKICK)) > 0) {
         // check all corners of hitbox
-        tiles->checkSpecialDestructible(pos_x - 14 + speed_h, pos_y - 6 + speed_v);
-        tiles->checkSpecialDestructible(pos_x + 14 + speed_h, pos_y - 6 + speed_v);
-        tiles->checkSpecialDestructible(pos_x - 14 + speed_h, pos_y + 22 + speed_v);
-        tiles->checkSpecialDestructible(pos_x + 14 + speed_h, pos_y + 22 + speed_v);
+        tiles->checkSpecialDestructible(posX - 14 + speedX, posY - 6 + speedY);
+        tiles->checkSpecialDestructible(posX + 14 + speedX, posY - 6 + speedY);
+        tiles->checkSpecialDestructible(posX - 14 + speedX, posY + 22 + speedY);
+        tiles->checkSpecialDestructible(posX + 14 + speedX, posY + 22 + speedY);
 
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, speed_v), false, shared_from_this(), object))) {
-            auto trcrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
-            if (trcrate != nullptr) {
-                trcrate->decreaseHealth(1);
+        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speedX, speedY), false, shared_from_this(), object))) {
+            auto triggerCrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
+            if (triggerCrate != nullptr) {
+                triggerCrate->decreaseHealth(1);
             }
         }
     }
@@ -342,32 +343,32 @@ void Player::tickEvent() {
     // check if buttstomp ended
     if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || isSuspended) {
         setAnimation(currentState & ~AnimState::BUTTSTOMP);
-        damaging_move = false;
+        isUsingDamagingMove = false;
         controllable = true;
     }
 
     // check if copter ears ended
     if ((currentState & (AnimState::COPTER)) > 0) {
-        if (canJump || copter_time == 0) {
+        if (canJump || copterFramesLeft == 0) {
             isGravityAffected = true;
             setAnimation(currentState & ~AnimState::COPTER);
         } else {
-            if (copter_time > 0) {
-                copter_time--;
+            if (copterFramesLeft > 0) {
+                copterFramesLeft--;
             }
         }
     }
 
     // check if uppercut ended
-    if (((currentState & (AnimState::UPPERCUT)) > 0) && speed_v > -2 && !canJump) {
+    if (((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
         endDamagingMove();
     }
     
     auto events = root->getGameEvents().lock();
     if (events != nullptr) {
-        PCEvent e = events->getPositionEvent(pos_x, pos_y);
+        PCEvent e = events->getPositionEvent(posX, posY);
         quint16 p[8];
-        events->getPositionParams(pos_x, pos_y, p);
+        events->getPositionParams(posX, posY, p);
         switch (e) {
             case PC_LIGHT_SET:
                 root->setLighting(p[0], false);
@@ -380,8 +381,8 @@ void Player::tickEvent() {
                         setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
                         isInvulnerable = true;
                         isGravityAffected = false;
-                        speed_h = 0;
-                        speed_v = 0;
+                        speedX = 0;
+                        speedY = 0;
                         externalForceX = 0;
                         externalForceY = 0;
                         internalForceY = 0;
@@ -391,14 +392,14 @@ void Player::tickEvent() {
             }
             break;
             case PC_MODIFIER_H_POLE:
-                if (pole_spins == 0) {
-                    pos_y = (qRound(pos_y - 15) / 32) * 32 + 16;
+                if (poleSpinCount == 0) {
+                    posY = (qRound(posY - 15) / 32) * 32 + 16;
                     setTransition(AnimState::TRANSITION_POLE_H_SLOW, false, true, false, &Player::endHPoleTransition);
-                    pole_positive = (speed_h > 0);
-                    pos_x = (qRound(pos_x) / 32) * 32 + 16;
-                    pole_spins = 3;
-                    speed_h = 0;
-                    speed_v = 0;
+                    poleSpinDirectionPositive = (speedX > 0);
+                    posX = (qRound(posX) / 32) * 32 + 16;
+                    poleSpinCount = 3;
+                    speedX = 0;
+                    speedY = 0;
                     externalForceX = 0;
                     externalForceY = 0;
                     internalForceY = 0;
@@ -407,14 +408,14 @@ void Player::tickEvent() {
                 }
                 break;
             case PC_MODIFIER_V_POLE:
-                if (pole_spins == 0) {
-                    pos_y = (qRound(pos_y) / 32) * 32 + 16;
+                if (poleSpinCount == 0) {
+                    posY = (qRound(posY) / 32) * 32 + 16;
                     setTransition(AnimState::TRANSITION_POLE_V_SLOW, false, true, false, &Player::endVPoleTransition);
-                    pole_positive = (speed_v > 0);
-                    pos_x = (qRound(pos_x) / 32) * 32 + 16;
-                    pole_spins = 3;
-                    speed_h = 0;
-                    speed_v = 0;
+                    poleSpinDirectionPositive = (speedY > 0);
+                    posX = (qRound(posX) / 32) * 32 + 16;
+                    poleSpinCount = 3;
+                    speedX = 0;
+                    speedY = 0;
                     externalForceX = 0;
                     externalForceY = 0;
                     internalForceY = 0;
@@ -434,31 +435,20 @@ void Player::tickEvent() {
     
     // reduce player timers for certain things:
     // Weapon cooldown
-    if (weapon_cooldown > 0) {
-        weapon_cooldown--;
-    }
-
-    // Gem sound counter (we want to go from lowest to highest pitch, but reset to lowest if
-    // no gems are collected for a while)
-    // TODO: delete and replace with a HUD version
-    if (gem_sfx_idx_ctr > 0) {
-        gem_sfx_idx_ctr--;
-
-        if (gem_sfx_idx_ctr == 0) {
-            gem_sfx_idx = 0;
-        }
+    if (weaponCooldown > 0) {
+        weaponCooldown--;
     }
     
     // Move camera if up or down held
     if ((currentState & AnimState::CROUCH) > 0) {
         // Down is being held, move camera one unit down
-        camera_shift = std::min(128,camera_shift + 1);
+        cameraShiftFramesCount = std::min(128, cameraShiftFramesCount + 1);
     } else if ((currentState & AnimState::LOOKUP) > 0) {
         // Up is being held, move camera one unit up
-        camera_shift = std::max(-128,camera_shift - 1);
+        cameraShiftFramesCount = std::max(-128, cameraShiftFramesCount - 1);
     } else {
         // Neither is being held, move camera up to 10 units back to equilibrium
-        camera_shift = (camera_shift > 0 ? 1 : -1) * std::max(0, abs(camera_shift) - 10);
+        cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, abs(cameraShiftFramesCount) - 10);
     }
 
     auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
@@ -470,17 +460,17 @@ void Player::tickEvent() {
         {
             auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
             if (enemy != nullptr) {
-                if (damaging_move) {
+                if (isUsingDamagingMove) {
                     enemy->decreaseHealth(1);
                     if ((currentState & AnimState::BUTTSTOMP) > 0) {
                         setAnimation(currentState & ~AnimState::BUTTSTOMP);
-                        damaging_move = false;
+                        isUsingDamagingMove = false;
                         controllable = true;
-                        speed_v *= -.5;
+                        speedY *= -.5;
                     }
                 } else {
                     if (enemy->hurtsPlayer()) {
-                        takeDamage(4 * (pos_x > enemy->getPosition().x ? 1 : -1));
+                        takeDamage(4 * (posX > enemy->getPosition().x ? 1 : -1));
                     }
                 }
                 continue;
@@ -496,16 +486,16 @@ void Player::tickEvent() {
         }
 
         {
-            auto spr = std::dynamic_pointer_cast<Spring>(collisionPtr);
-            if (spr != nullptr) {
-                sf::Vector2f params = spr->activate();
+            auto spring = std::dynamic_pointer_cast<Spring>(collisionPtr);
+            if (spring != nullptr) {
+                sf::Vector2f params = spring->activate();
                 short sign = ((params.x + params.y) > 1e-6 ? 1 : -1);
                 if (abs(params.x) > 1e-6) {
-                    speed_h = (4 + abs(params.x)) * sign;
+                    speedX = (4 + abs(params.x)) * sign;
                     externalForceX = params.x;
                     setTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
                 } else {
-                    speed_v = (4 + abs(params.y)) * sign;
+                    speedY = (4 + abs(params.y)) * sign;
                     externalForceY = -params.y;
                     setTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
                 }
@@ -514,9 +504,9 @@ void Player::tickEvent() {
             }
         }
 
-        auto coll = std::dynamic_pointer_cast<Collectible>(collisionPtr);
-        if (coll != nullptr) {
-            switch(coll->type) {
+        auto collectible = std::dynamic_pointer_cast<Collectible>(collisionPtr);
+        if (collectible != nullptr) {
+            switch (collectible->type) {
                 case COLLTYPE_FAST_FIRE:
                     fastfires = std::min(fastfires + 1, 10);
                     playSound("PLAYER_PICKUP_AMMO");
@@ -565,37 +555,31 @@ void Player::tickEvent() {
                 case COLLTYPE_GEM_RED:
                     addScore(100);
                     playSound("PLAYER_PICKUP_GEM");
-                    gem_sfx_idx = (gem_sfx_idx + 1) % 6;
-                    gem_sfx_idx_ctr = 180;
-                    collected_gems[0]++;
+                    collectedGems[0]++;
                     setupOSD(OSD_GEM_RED);
                     break;
                 case COLLTYPE_GEM_GREEN:
                     addScore(500);
                     playSound("PLAYER_PICKUP_GEM");
-                    gem_sfx_idx = (gem_sfx_idx + 1) % 6;
-                    gem_sfx_idx_ctr = 180;
-                    collected_gems[1]++;
+                    collectedGems[1]++;
                     setupOSD(OSD_GEM_GREEN);
                     break;
                 case COLLTYPE_GEM_BLUE:
                     addScore(1000);
                     playSound("PLAYER_PICKUP_GEM");
-                    gem_sfx_idx = (gem_sfx_idx + 1) % 6;
-                    gem_sfx_idx_ctr = 180;
-                    collected_gems[2]++;
+                    collectedGems[2]++;
                     setupOSD(OSD_GEM_BLUE);
                     break;
                 case COLLTYPE_COIN_GOLD:
                     addScore(1000);
                     playSound("PLAYER_PICKUP_COIN");
-                    collected_coins[1]++;
+                    collectedCoins[1]++;
                     setupOSD(OSD_COIN_GOLD);
                     break;
                 case COLLTYPE_COIN_SILVER:
                     addScore(500);
                     playSound("PLAYER_PICKUP_COIN");
-                    collected_coins[0]++;
+                    collectedCoins[0]++;
                     setupOSD(OSD_COIN_SILVER);
                     break;
             }
@@ -617,9 +601,9 @@ void Player::drawUIOverlay() {
         return;
     }
 
-    BitmapString::drawString(canvas, root->getFont(), "P1: " + QString::number(pos_x) + "," + QString::number(pos_y), 6, 86);
-    BitmapString::drawString(canvas, root->getFont(), "  Hsp " + QString::number(speed_h), 6, 116);
-    BitmapString::drawString(canvas, root->getFont(), "  Vsp " + QString::number(speed_v), 6, 146);
+    BitmapString::drawString(canvas, root->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
+    BitmapString::drawString(canvas, root->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
+    BitmapString::drawString(canvas, root->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
 }
 
 bool Player::selectWeapon(enum WeaponType new_type) {
@@ -634,7 +618,7 @@ bool Player::selectWeapon(enum WeaponType new_type) {
     }
 
     currentWeapon = new_type;
-    osd->setWeaponType(new_type, ammo_powered[new_type]);
+    osd->setWeaponType(new_type, isWeaponPoweredUp[new_type]);
     osd->setAmmo(ammo[currentWeapon]);
 
     return true;
@@ -645,7 +629,7 @@ void Player::debugHealth() {
 }
 
 void Player::debugAmmo() {
-    std::fill_n(ammo,9,999);
+    std::fill_n(ammo, 9, 999);
 }
 
 void Player::addAmmo(enum WeaponType type, unsigned amount) {
@@ -666,9 +650,9 @@ void Player::addAmmo(enum WeaponType type, unsigned amount) {
 
 bool Player::perish() {
     // handle death here
-    if (health == 0 && (transition_end_function != &Player::deathRecovery)) {
+    if (health == 0 && (transitionEndFunction != &Player::deathRecovery)) {
         cancellableTransition = false;
-        setTransition(AnimState::TRANSITION_DEATH,false,true,false,&Player::deathRecovery);
+        setTransition(AnimState::TRANSITION_DEATH, false, true, false, &Player::deathRecovery);
     }
     return false;
 }
@@ -681,9 +665,9 @@ void Player::deathRecovery() {
         root->loadSavePoint();
 
         // Reset health and remove one life
-        health = max_health;
+        health = maxHealth;
         osd->setLives(lives);
-        osd->setHealth(max_health);
+        osd->setHealth(maxHealth);
 
         // Negate all possible movement effects etc.
         onTransitionEndHook();
@@ -691,8 +675,8 @@ void Player::deathRecovery() {
         externalForceX = 0;
         externalForceY = 0;
         internalForceY = 0;
-        speed_h = 0;
-        speed_v = 0;
+        speedX = 0;
+        speedY = 0;
         controllable = true;
         
         // remove fast fires
@@ -711,20 +695,20 @@ Hitbox Player::getHitbox() {
     // It is absolutely important that the position of the hitbox stays constant
     // to the hotspot, though; otherwise getting stuck at walls happens all the time.
     Hitbox box = {
-        pos_x - 12,
-        pos_y - 4,
-        pos_x + 12,
-        pos_y + 20
+        posX - 12,
+        posY - 4,
+        posX + 12,
+        posY + 20
     };
 
     return box;
 }
 
 void Player::endDamagingMove() {
-    damaging_move = false;
+    isUsingDamagingMove = false;
     controllable = true;
     setAnimation(currentState & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
-    setTransition(AnimState::TRANSITION_END_UPPERCUT,false);
+    setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
 }
 
 void Player::returnControl() {
@@ -733,25 +717,25 @@ void Player::returnControl() {
 
 void Player::delayedUppercutStart() {
     externalForceY = 1.5;
-    speed_v = -2;
+    speedY = -2;
     canJump = false;
-    setTransition(AnimState::TRANSITION_UPPERCUT_B,true,true,true);
+    setTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
 }
 
 void Player::delayedButtstompStart() {
     isGravityAffected = true;
-    speed_v = 7;
+    speedY = 7;
     setAnimation(AnimState::BUTTSTOMP);
 }
 
 bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, void(Player::*callback)()) {
-    transition_end_function = callback;
+    transitionEndFunction = callback;
     bool result = CommonActor::setTransition(state, cancellable);
     if (remove_control) {
         controllable = false;
     }
     if (set_special) {
-        damaging_move = true;
+        isUsingDamagingMove = true;
     }
     return result;
 }
@@ -762,8 +746,8 @@ void Player::onHitFloorHook() {
         return;
     }
 
-    if (events->isPosHurting(pos_x, pos_y + 24)) {
-        takeDamage(speed_h / 4);
+    if (events->isPosHurting(posX, posY + 24)) {
+        takeDamage(speedX / 4);
     } else {
         if (!canJump) {
             playSound("COMMON_LAND");
@@ -777,8 +761,8 @@ void Player::onHitCeilingHook() {
         return;
     }
 
-    if (events->isPosHurting(pos_x, pos_y - 4)) {
-        takeDamage(speed_h / 4);
+    if (events->isPosHurting(posX, posY - 4)) {
+        takeDamage(speedX / 4);
     }
 }
 
@@ -788,23 +772,23 @@ void Player::onHitWallHook() {
         return;
     }
 
-    if (events->isPosHurting(pos_x + (speed_h > 0 ? 1 : -1) * 16, pos_y)) {
-        takeDamage(speed_h / 4);
+    if (events->isPosHurting(posX + (speedX > 0 ? 1 : -1) * 16, posY)) {
+        takeDamage(speedX / 4);
     }
 }
 
-void Player::takeDamage(double npush) {
+void Player::takeDamage(double pushForce) {
     if (!isInvulnerable) {
         health = static_cast<unsigned>(std::max(static_cast<int>(health - 1), 0));
-        externalForceX = npush;
+        externalForceX = pushForce;
         internalForceY = 0;
-        speed_v = -6.5;
-        speed_h = 0;
+        speedY = -6.5;
+        speedX = 0;
         canJump = false;
         setTransition(AnimState::HURT, false, true, false, &Player::endHurtTransition);
         isInvulnerable = true;
         isBlinking = true;
-        addTimer(210u,false,static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
+        addTimer(210u, false, static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
         playSound("PLAYER_JAZZ_HURT");
         osd->setHealth(health);
     }
@@ -812,12 +796,16 @@ void Player::takeDamage(double npush) {
 
 void Player::setToViewCenter() {
     int shift_offset = 0;
-    if (abs(camera_shift) > 48) {
-        shift_offset = (abs(camera_shift) - 48) * (camera_shift > 0 ? 1 : -1);
+    if (abs(cameraShiftFramesCount) > 48) {
+        shift_offset = (abs(cameraShiftFramesCount) - 48) * (cameraShiftFramesCount > 0 ? 1 : -1);
     }
+
     root->centerView(
-        std::max(root->getViewWidth() / 2.0,std::min(32.0 * (root->getLevelWidth()+1)  - root->getViewWidth()  / 2.0, (double)qRound(pos_x))),
-        std::max(root->getViewHeight()/ 2.0,std::min(32.0 * (root->getLevelHeight()+1) - root->getViewHeight() / 2.0, (double)qRound(pos_y + shift_offset - 15)))
+        std::max(root->getViewWidth()  / 2.0, 
+            std::min(32.0 * (root->getLevelWidth()  + 1) - root->getViewWidth()  / 2.0, (double)qRound(posX))),
+        std::max(root->getViewHeight() / 2.0, 
+            std::min(32.0 * (root->getLevelHeight() + 1) - root->getViewHeight() / 2.0, (double)qRound(posY + shift_offset - 15))
+        )
     );
 }
 
@@ -832,13 +820,13 @@ unsigned Player::getLives() {
 
 void Player::onTransitionEndHook() {
     // Execute the defined transition ending function if defined
-    if (transition_end_function != nullptr) {
+    if (transitionEndFunction != nullptr) {
         // Set transition to null before running the function (transition hook may itself invoke a new transition with a callback,
         // but otherwise we want to clear the callback)
-        void (Player::*f)() = transition_end_function;
-        transition_end_function = nullptr;
+        void (Player::*functionToCall)() = transitionEndFunction;
+        transitionEndFunction = nullptr;
 
-        (this->*f)();
+        (this->*functionToCall)();
     }
 }
 
@@ -847,27 +835,27 @@ void Player::endHurtTransition() {
 }
 
 void Player::endHPoleTransition() {
-    --pole_spins;
-    if (pole_spins > 0) {
-        setTransition(AnimState::TRANSITION_POLE_H,false,true,false,&Player::endHPoleTransition);
+    --poleSpinCount;
+    if (poleSpinCount > 0) {
+        setTransition(AnimState::TRANSITION_POLE_H, false, true, false, &Player::endHPoleTransition);
     } else {
-        int mp = pole_positive ? 1 : -1;
-        speed_h = 10 * mp;
+        int mp = poleSpinDirectionPositive ? 1 : -1;
+        speedX = 10 * mp;
         externalForceX = 10 * mp;
         controllable = true;
         isGravityAffected = true;
-        facingLeft = !pole_positive;
+        isFacingLeft = !poleSpinDirectionPositive;
     }
 }
 
 void Player::endVPoleTransition() {
-    --pole_spins;
-    if (pole_spins > 0) {
-        setTransition(AnimState::TRANSITION_POLE_V,false,true,false,&Player::endVPoleTransition);
+    --poleSpinCount;
+    if (poleSpinCount > 0) {
+        setTransition(AnimState::TRANSITION_POLE_V, false, true, false, &Player::endVPoleTransition);
     } else {
-        int mp = pole_positive ? 1 : -1;
-        pos_y += mp * 32;
-        speed_v = 10 * mp;
+        int mp = poleSpinDirectionPositive ? 1 : -1;
+        posY += mp * 32;
+        speedY = 10 * mp;
         externalForceY = -1 * mp;
         controllable = true;
         isGravityAffected = true;
@@ -882,10 +870,10 @@ void Player::endWarpTransition() {
 
     if (currentTransitionState == AnimState::TRANSITION_WARP) {
         quint16 p[8];
-        events->getPositionParams(pos_x, pos_y-15, p);
+        events->getPositionParams(posX, posY-15, p);
         CoordinatePair c = events->getWarpTarget(p[0]);
         moveInstantly(c); // validity checked when warping started
-        setTransition(AnimState::TRANSITION_WARP_END,false,true,false,&Player::endWarpTransition);
+        setTransition(AnimState::TRANSITION_WARP_END, false, true, false, &Player::endWarpTransition);
         playSound("COMMON_WARP_OUT");
     } else {
         isInvulnerable = false;
@@ -920,19 +908,19 @@ void Player::addScore(unsigned points) {
 void Player::setupOSD(OSDMessageType type, int param) {
     switch (type) {
         case OSD_GEM_RED: 
-            osd->setMessage(OSD_GEM_RED, collected_gems[0] + 5 * collected_gems[1] + 10 * collected_gems[2]);
+            osd->setMessage(OSD_GEM_RED, collectedGems[0] + 5 * collectedGems[1] + 10 * collectedGems[2]);
             break;
         case OSD_GEM_GREEN:
-            osd->setMessage(OSD_GEM_GREEN, collected_gems[1]);
+            osd->setMessage(OSD_GEM_GREEN, collectedGems[1]);
             break;
         case OSD_GEM_BLUE:
-            osd->setMessage(OSD_GEM_BLUE, collected_gems[2]);
+            osd->setMessage(OSD_GEM_BLUE, collectedGems[2]);
             break;
         case OSD_COIN_SILVER: 
-            osd->setMessage(OSD_COIN_SILVER, collected_coins[0] + 5 * collected_coins[1]);
+            osd->setMessage(OSD_COIN_SILVER, collectedCoins[0] + 5 * collectedCoins[1]);
             break;
         case OSD_COIN_GOLD: 
-            osd->setMessage(OSD_COIN_GOLD, collected_coins[1]);
+            osd->setMessage(OSD_COIN_GOLD, collectedCoins[1]);
             break;
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS: 
             osd->setMessage(OSD_BONUS_WARP_NOT_ENOUGH_COINS, param);
@@ -943,10 +931,10 @@ void Player::setupOSD(OSDMessageType type, int param) {
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
     bool lookup = ((currentState & AnimState::LOOKUP) > 0);
-    int fire_x = (currentAnimation->hotspot.x - currentAnimation->gunspot.x) * (facingLeft ? 1 : -1);
+    int fire_x = (currentAnimation->hotspot.x - currentAnimation->gunspot.x) * (isFacingLeft ? 1 : -1);
     int fire_y =  currentAnimation->hotspot.y - currentAnimation->gunspot.y;
 
-    auto newAmmo = std::make_shared<T>(root, weakPtr, pos_x + fire_x, pos_y - fire_y, facingLeft, lookup);
+    auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, isFacingLeft, lookup);
     root->addActor(newAmmo);
     osd->setAmmo(ammo[currentWeapon]);
     return newAmmo;

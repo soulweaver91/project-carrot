@@ -12,7 +12,7 @@ SoundSystem::SoundSystem() : initialized(false) {
 }
 
 SoundSystem::~SoundSystem() {
-    QList< HSAMPLE > samples = effect_bank.values();
+    QList< HSAMPLE > samples = effectBank.values();
     for (HSAMPLE sample : samples) {
         BASS_SampleFree(sample);
     }
@@ -26,12 +26,12 @@ void SoundSystem::playSFX(HSAMPLE sample) {
 }
 
 HSAMPLE SoundSystem::addSFX(const QString& id, const QString& path) {
-    HSAMPLE nsample = BASS_SampleLoad(false, ("Data/Assets/" + path).toUtf8().data(), false, 0, 5, 0);
-    if (nsample != 0) {
-        effect_bank.insert(id, nsample);
+    HSAMPLE sampleID = BASS_SampleLoad(false, ("Data/Assets/" + path).toUtf8().data(), false, 0, 5, 0);
+    if (sampleID != 0) {
+        effectBank.insert(id, sampleID);
     }
 
-    return nsample;
+    return sampleID;
 }
 
 void SoundSystem::fadeMusicOut(uint ms) {

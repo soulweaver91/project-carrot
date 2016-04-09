@@ -14,15 +14,15 @@
 #include "../actor/Spring.h"
 #include "../struct/WeaponTypes.h"
 
-EventMap::EventMap(std::shared_ptr<CarrotQt5> game_root, unsigned int width, unsigned int height)
-    : root(game_root) {
+EventMap::EventMap(std::shared_ptr<CarrotQt5> gameRoot, unsigned int width, unsigned int height)
+    : root(gameRoot) {
     for (unsigned int y = 0; y <= height; ++y) {
         QVector<std::shared_ptr<EventTile>> n;
         for (unsigned int x = 0; x <= width; ++x) {
             // std::fill_n doesn't seem to work here
             n << nullptr;
         }
-        event_layout << n;
+        eventLayout << n;
     }
 }
 
@@ -45,42 +45,42 @@ unsigned short EventMap::isPosPole(double x, double y) {
 }
 
 void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QVector<quint16>& params) {
-    if (e == PC_NONE && (x < 0 || y < 0 || y >= event_layout.size() ||
-        x >= event_layout[0].size() || event_layout.at(y).at(x) == nullptr)) {
+    if (e == PC_NONE && (x < 0 || y < 0 || y >= eventLayout.size() ||
+        x >= eventLayout[0].size() || eventLayout.at(y).at(x) == nullptr)) {
         return;
     }
 
     auto tile = std::make_shared<EventTile>();
-    tile->stored_event = e;
-    tile->event_active = false;
+    tile->storedEvent = e;
+    tile->isEventActive = false;
 
     // Store event parameters
     int i = 0;
     for (; i < std::min(params.size(), 8); ++i) {
-        tile->event_params[i] = params.at(i);
+        tile->eventParams[i] = params.at(i);
     }
     for (; i < 8; ++i) {
-        tile->event_params[i] = 0;
+        tile->eventParams[i] = 0;
     }
 
-    event_layout[y][x] = tile;
+    eventLayout[y][x] = tile;
 }
 
-void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
-    int x1 = std::max(0, static_cast<int>(center.getCenter().x) / 32 - dist_tiles);
-    int x2 = std::min(static_cast<int>(root->getLevelWidth()) - 1, static_cast<int>(center.getCenter().x) / 32 + dist_tiles);
-    int y1 = std::max(0, static_cast<int>(center.getCenter().y) / 32 - dist_tiles);
-    int y2 = std::min(static_cast<int>(root->getLevelHeight()) - 1, static_cast<int>(center.getCenter().y) / 32 + dist_tiles);
+void EventMap::activateEvents(const sf::View& center, int tileDistance) {
+    int x1 = std::max(0, static_cast<int>(center.getCenter().x) / 32 - tileDistance);
+    int x2 = std::min(static_cast<int>(root->getLevelWidth()) - 1, static_cast<int>(center.getCenter().x) / 32 + tileDistance);
+    int y1 = std::max(0, static_cast<int>(center.getCenter().y) / 32 - tileDistance);
+    int y2 = std::min(static_cast<int>(root->getLevelHeight()) - 1, static_cast<int>(center.getCenter().y) / 32 + tileDistance);
 
     for (unsigned x = x1; x <= x2; ++x) {
         for (unsigned y = y1; y <= y2; ++y) {
-            auto tile = event_layout.at(y).at(x);
+            auto tile = eventLayout.at(y).at(x);
             if (tile == nullptr) {
                 continue;
             }
 
-            if (!tile->event_active && tile->stored_event != PC_EMPTY) {
-                switch (tile->stored_event) {
+            if (!tile->isEventActive && tile->storedEvent != PC_EMPTY) {
+                switch (tile->storedEvent) {
                     case PC_FAST_FIRE:
                     case PC_GEM_RED:
                     case PC_GEM_GREEN:
@@ -96,19 +96,20 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                     case PC_COIN_SILVER:
                     case PC_COIN_GOLD:
                         {
-                            auto c = std::make_shared<Collectible>(root,static_cast< CollectibleType >(tile->stored_event), 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto c = std::make_shared<Collectible>(root, static_cast<CollectibleType>(tile->storedEvent), 
+                                32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(c);
                         }
                         break;
                     case PC_ENEMY_TURTLE_NORMAL:
                         {
-                            auto e = std::make_shared<Enemy_NormalTurtle>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<EnemyNormalTurtle>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(e);
                         }
                         break;
                     case PC_ENEMY_LIZARD:
                         {
-                            auto e = std::make_shared<Enemy_Lizard>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<EnemyLizard>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(e);
                         }
                         break;
@@ -126,14 +127,14 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                         break;
                     case PC_TRIGGER_CRATE:
                         {
-                            auto e = std::make_shared<TriggerCrate>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile->event_params[0]);
+                            auto e = std::make_shared<TriggerCrate>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile->eventParams[0]);
                             root->addActor(e);
                         }
                         break;
                     case PC_BRIDGE:
                         {
                             auto e = std::make_shared<DynamicBridge>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
-                                tile->event_params[0], static_cast< DynamicBridgeType >(tile->event_params[1]), tile->event_params[2]);
+                                tile->eventParams[0], static_cast<DynamicBridgeType>(tile->eventParams[1]), tile->eventParams[2]);
                             root->addActor(e);
                         }
                         break;
@@ -141,12 +142,13 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
                     case PC_SPRING_GREEN:
                     case PC_SPRING_BLUE:
                         {
-                            auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, (SpringType)(1 + (tile->stored_event - PC_SPRING_RED)), (byte)tile->event_params[0]);
+                            auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, 
+                                (SpringType)(1 + (tile->storedEvent - PC_SPRING_RED)), (byte)tile->eventParams[0]);
                             root->addActor(e);
                         }
                         break;
                 }
-                tile->event_active = true;
+                tile->isEventActive = true;
             }
         }
     }
@@ -154,14 +156,14 @@ void EventMap::activateEvents(const sf::View& center, int dist_tiles) {
 
 void EventMap::deactivate(int x, int y) {
     if (positionHasEvent(x, y)) {
-        event_layout[y][x]->event_active = false;
+        eventLayout[y][x]->isEventActive = false;
     }
 }
 
 void EventMap::deactivateAll() {
-    for (int i = 0; i < event_layout.size(); ++i) {
-        for (int j = 0; j < event_layout[i].size(); ++j) {
-            deactivate(j,i);
+    for (int i = 0; i < eventLayout.size(); ++i) {
+        for (int j = 0; j < eventLayout[i].size(); ++j) {
+            deactivate(j, i);
         }
     }
 }
@@ -171,7 +173,7 @@ int EventMap::getPositionWarp(double x, double y) {
     int ty = static_cast<int>(y) / 32;
     if (getPositionEvent(tx, ty) == PC_WARP_ORIGIN) {
         // .get() should not fail here, as getPositionEvent() only returns PC_EVENT if coordinates had nullptr
-        return event_layout.at(ty).at(tx).get()->event_params[0];
+        return eventLayout.at(ty).at(tx).get()->eventParams[0];
     } else {
         return -1;
     }
@@ -185,7 +187,7 @@ PCEvent EventMap::getPositionEvent(double x, double y) {
 
 PCEvent EventMap::getPositionEvent(int x, int y) {
     if (positionHasEvent(x, y)) {
-        return event_layout.at(y).at(x)->stored_event;
+        return eventLayout.at(y).at(x)->storedEvent;
     }
     return PC_EMPTY;
 }
@@ -199,7 +201,7 @@ void EventMap::getPositionParams(double x, double y, quint16 (&params)[8]) {
 void EventMap::getPositionParams(int x, int y, quint16 (&params)[8]) {
     if (positionHasEvent(x, y)) {
         for (int i = 0; i < 8; ++i) {
-            params[i] = event_layout.at(y).at(x)->event_params[i];
+            params[i] = eventLayout.at(y).at(x)->eventParams[i];
         }
         return;
     }
@@ -211,45 +213,43 @@ void EventMap::setTileParam(int x, int y, unsigned char idx, quint16 value) {
     if (idx >= 8 || !positionHasEvent(x, y)) {
         return;
     }
-    event_layout[y][x]->event_params[idx] = value;
+    eventLayout[y][x]->eventParams[idx] = value;
 }
 
-void EventMap::readEvents(const QString& filename, unsigned layout_version) {
-
-
-    QFile handle(filename);
-    if (handle.open(QIODevice::ReadOnly)) {
-        QByteArray event_map = qUncompress(handle.readAll());
-        if (event_map.size() > 0) {
-            QDataStream outstr(event_map);
+void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
+    QFile eventMapHandle(filename);
+    if (eventMapHandle.open(QIODevice::ReadOnly)) {
+        QByteArray eventMapData = qUncompress(eventMapHandle.readAll());
+        if (eventMapData.size() > 0) {
+            QDataStream eventMapStream(eventMapData);
             unsigned y = 0;
-            while (!outstr.atEnd()) {
+            while (!eventMapStream.atEnd()) {
                 unsigned x = 0;
-                while (!outstr.atEnd()) {
+                while (!eventMapStream.atEnd()) {
                     // Read byte pairs associated with this tile
-                    quint16 ev;
-                    outstr >> ev;
-                    if (ev == 0xFFFF) {
+                    quint16 eventID;
+                    eventMapStream >> eventID;
+                    if (eventID == 0xFFFF) {
                         break;
                     }
-                    quint8 ev_flags = 0;
-                    QVector<quint16> ev_params(8);
+                    quint8 eventFlags = 0;
+                    QVector<quint16> eventParams(8);
 
-                    if (layout_version > 3) {
-                        outstr >> ev_flags;
+                    if (layoutVersion > 3) {
+                        eventMapStream >> eventFlags;
                         for (int i = 0; i < 8; ++i) {
                             quint16 j;
-                            outstr >> j;
-                            ev_params[i] = j;
+                            eventMapStream >> j;
+                            eventParams[i] = j;
                         }
                     }
 
-                    switch (ev) {
+                    switch (eventID) {
                         case PC_EMPTY:
                             break;
                         case PC_JAZZ_LEVEL_START:
                             if (root->getPlayer(0).lock() == nullptr) {
-                                auto defaultplayer = std::make_shared<Player>(root,32.0 * x + 16.0, 32.0 * y + 16.0);
+                                auto defaultplayer = std::make_shared<Player>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                                 root->addPlayer(defaultplayer, 0);
                             }
                             break;
@@ -262,24 +262,23 @@ void EventMap::readEvents(const QString& filename, unsigned layout_version) {
                         case PC_MODIFIER_H_POLE:
                         case PC_MODIFIER_V_POLE:
                             {
-                                storeTileEvent(x,y,static_cast<PCEvent>(ev), ev_flags, ev_params);
+                                storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
                                 auto tiles = root->getGameTiles().lock();
                                 if (tiles != nullptr) {
-                                    tiles->setTileEventFlag(x, y, static_cast<PCEvent>(ev));
+                                    tiles->setTileEventFlag(x, y, static_cast<PCEvent>(eventID));
                                 }
                             }
                             break;
                         case PC_WARP_TARGET:
-                            addWarpTarget(ev_params.at(0),x,y);
+                            addWarpTarget(eventParams.at(0), x, y);
                             break;
                         case PC_LIGHT_RESET:
-                            ev_params[0] = root->getLightingLevel();
-                            storeTileEvent(x,y,PC_LIGHT_SET, ev_flags, ev_params);
+                            eventParams[0] = root->getLightingLevel();
+                            storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
                         default:
-                            storeTileEvent(x,y,static_cast<PCEvent>(ev), ev_flags, ev_params);
+                            storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
                             break;
                     }
-
                     x++;
                 }
                 y++;
@@ -290,7 +289,7 @@ void EventMap::readEvents(const QString& filename, unsigned layout_version) {
     } else {
         // TODO: opening failed for some reason
     }
-    handle.close();
+    eventMapHandle.close();
 }
 
 void EventMap::addWarpTarget(unsigned id, unsigned x, unsigned y) {
@@ -299,7 +298,7 @@ void EventMap::addWarpTarget(unsigned id, unsigned x, unsigned y) {
 }
 
 bool EventMap::positionHasEvent(int x, int y) {
-    return (x >= 0 && y >= 0 && y < event_layout.size() && x < event_layout[0].size() && event_layout.at(y).at(x) != nullptr);
+    return (x >= 0 && y >= 0 && y < eventLayout.size() && x < eventLayout[0].size() && eventLayout.at(y).at(x) != nullptr);
 }
 
 CoordinatePair EventMap::getWarpTarget(unsigned id) {
@@ -307,8 +306,7 @@ CoordinatePair EventMap::getWarpTarget(unsigned id) {
     if (targets.size() > 0) {
         return targets.at(qrand() % targets.size());
     } else {
-        CoordinatePair c = {-1.0, -1.0};
-        return c;
+        return { -1.0, -1.0 };
     }
 }
 

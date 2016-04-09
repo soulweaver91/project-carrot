@@ -41,9 +41,10 @@ public:
     unsigned getHealth();
     unsigned getLives();
     bool perish();
-    Hitbox getHitbox();
-    bool setTransition(AnimStateT state, bool cancellable, bool remove_control = false, bool set_special = false, void(Player::*callback)() = nullptr);
-    void takeDamage(double push);
+    Hitbox getHitbox() override;
+    bool setTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
+        bool setSpecial = false, void(Player::*callback)() = nullptr);
+    void takeDamage(double pushForce);
     void setToViewCenter();
     bool deactivate(int x, int y, int dist) override;
     LevelCarryOver prepareLevelCarryOver();
@@ -58,7 +59,7 @@ private:
     void onHitFloorHook();
     void onHitCeilingHook();
     void onHitWallHook();
-    bool selectWeapon(enum WeaponType new_type);
+    bool selectWeapon(enum WeaponType newType);
     void addAmmo(enum WeaponType type, unsigned amount);
     void setupOSD(OSDMessageType type, int param = 0);
     template<typename T> std::shared_ptr<T> fireWeapon();
@@ -69,31 +70,29 @@ private:
 
     unsigned lives;
     unsigned ammo[9];
-    bool ammo_powered[9];
+    bool isWeaponPoweredUp[9];
     int fastfires;
     unsigned long score;
-    unsigned collected_gems[4];
-    unsigned collected_coins[4];
+    unsigned collectedGems[4];
+    unsigned collectedCoins[2];
 
     enum WeaponType currentWeapon;
-    unsigned weapon_cooldown;
+    unsigned weaponCooldown;
 
-    bool damaging_move;
+    bool isUsingDamagingMove;
     bool controllable;
-    int camera_shift;
-    int gem_sfx_idx;        // to be removed
-    int gem_sfx_idx_ctr;
-    int copter_time;
+    int cameraShiftFramesCount;
+    int copterFramesLeft;
 
     // Variables for spinning poles: counter to have three loops, boolean value to know which direction the pole is supposed to move you to
-    unsigned short pole_spins;
-    bool pole_positive;
+    unsigned short poleSpinCount;
+    bool poleSpinDirectionPositive;
 
     // Counter for Toaster ammo subticks
-    unsigned short toaster_ammo_ticks;
+    unsigned short toasterAmmoSubticks;
 
     void onTransitionEndHook();
-    void(Player::*transition_end_function)();
+    void(Player::*transitionEndFunction)();
 
     void endHurtTransition();
     void endHPoleTransition();

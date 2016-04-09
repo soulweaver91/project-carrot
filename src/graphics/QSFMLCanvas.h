@@ -15,8 +15,8 @@ class QSFMLCanvas : public QWidget, public sf::RenderWindow {
         virtual ~QSFMLCanvas();
 
     private:
-        virtual void OnInit();
-        virtual void OnUpdate();
+        virtual void onInit();
+        virtual void onUpdate();
         virtual QPaintEngine* paintEngine() const;
         virtual void showEvent(QShowEvent*);
         virtual void paintEvent(QPaintEvent*);

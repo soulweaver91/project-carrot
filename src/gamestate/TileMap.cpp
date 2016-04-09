@@ -6,48 +6,48 @@
 
 
 
-TileMap::TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file) :
-    level_width(1), level_height(1), root(game_root), spr_layer(0) {
+TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename,
+    const QString& sprLayerFilename) : levelWidth(1), levelHeight(1), root(gameRoot), sprLayerIdx(0) {
     // Reserve textures for tileset and its mask counterpart
-    level_tileset.tiles = std::make_shared<sf::Texture>();
+    levelTileset.tiles = std::make_shared<sf::Texture>();
     
     // Read the tileset
-    readTileset(tileset_file,mask_file);
+    readTileset(tilesetFilename, maskFilename);
 
     // initialize the trigger store
     for (int i = 0; i < 256; ++i) {
-        trigger_state[i] = false;
+        triggerState[i] = false;
     }
 
     // initialize the render texture and fade vertices for textured background
-    int w = root->getViewWidth() / 2;
+    int width = root->getViewWidth() / 2;
 
-    tex_back = std::make_unique<sf::RenderTexture>();
-    tex_back->create(256,256);
-    tex_back->setRepeated(true);
+    texturedBackgroundTexture = std::make_unique<sf::RenderTexture>();
+    texturedBackgroundTexture->create(256, 256);
+    texturedBackgroundTexture->setRepeated(true);
 
-    tex_fade = std::make_unique<sf::VertexArray>();
-    tex_fade->resize(12);
-    tex_fade->setPrimitiveType(sf::PrimitiveType::Quads);
+    texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
+    texturedBackgroundFadeArray->resize(12);
+    texturedBackgroundFadeArray->setPrimitiveType(sf::PrimitiveType::Quads);
     // top part of fade
-    (*tex_fade)[0].position = sf::Vector2f(-w,-200);
-    (*tex_fade)[1].position = sf::Vector2f( w,-200);
-    (*tex_fade)[2].position = sf::Vector2f( w, -25);
-    (*tex_fade)[3].position = sf::Vector2f(-w, -25);
+    (*texturedBackgroundFadeArray)[0].position  = sf::Vector2f(-width, -200);
+    (*texturedBackgroundFadeArray)[1].position  = sf::Vector2f( width, -200);
+    (*texturedBackgroundFadeArray)[2].position  = sf::Vector2f( width,  -25);
+    (*texturedBackgroundFadeArray)[3].position  = sf::Vector2f(-width,  -25);
     // bottom part of fade
-    (*tex_fade)[4].position = sf::Vector2f(-w,  25);
-    (*tex_fade)[5].position = sf::Vector2f( w,  25);
-    (*tex_fade)[6].position = sf::Vector2f( w, 200);
-    (*tex_fade)[7].position = sf::Vector2f(-w, 200);
+    (*texturedBackgroundFadeArray)[4].position  = sf::Vector2f(-width,   25);
+    (*texturedBackgroundFadeArray)[5].position  = sf::Vector2f( width,   25);
+    (*texturedBackgroundFadeArray)[6].position  = sf::Vector2f( width,  200);
+    (*texturedBackgroundFadeArray)[7].position  = sf::Vector2f(-width,  200);
     // middle solid color part
-    (*tex_fade)[8].position = sf::Vector2f(-w, -25);
-    (*tex_fade)[9].position = sf::Vector2f( w, -25);
-    (*tex_fade)[10].position = sf::Vector2f( w, 25);
-    (*tex_fade)[11].position = sf::Vector2f(-w, 25);
+    (*texturedBackgroundFadeArray)[8].position  = sf::Vector2f(-width,  -25);
+    (*texturedBackgroundFadeArray)[9].position  = sf::Vector2f( width,  -25);
+    (*texturedBackgroundFadeArray)[10].position = sf::Vector2f( width,   25);
+    (*texturedBackgroundFadeArray)[11].position = sf::Vector2f(-width,   25);
 
-    readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, spr_layer_file);
-    level_height = level_layout.at(0).tile_layout.size() - 1;
-    level_width = level_layout.at(0).tile_layout.at(0).size() - 1;
+    readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, sprLayerFilename);
+    levelHeight = levelLayout.at(0).tileLayout.size() - 1;
+    levelWidth = levelLayout.at(0).tileLayout.at(0).size() - 1;
 
     sceneryResources = root->loadActorTypeResources("Common/Scenery");
 }
@@ -56,68 +56,68 @@ TileMap::~TileMap() {
 
 }
 
-void TileMap::readTileset(const QString& file_tiles, const QString& file_mask) {
-    level_tileset.tiles->loadFromFile(file_tiles.toUtf8().data());
+void TileMap::readTileset(const QString& tilesFilename, const QString& maskFilename) {
+    levelTileset.tiles->loadFromFile(tilesFilename.toUtf8().data());
     
     sf::Image maskfile;
-    maskfile.loadFromFile(file_mask.toUtf8().data());
-    if (level_tileset.tiles->getSize() != maskfile.getSize()) {
+    maskfile.loadFromFile(maskFilename.toUtf8().data());
+    if (levelTileset.tiles->getSize() != maskfile.getSize()) {
         // mask doesn't match the tiles in size
         return;
     }
-    /*if (level_tileset.tiles->getSize().x == 0) {
+    /*if (levelTileset.tiles->getSize().x == 0) {
         // TODO: loading the tileset failed for some reason, texture is empty
         throw -1;
     }*/
-    int width  = level_tileset.tiles->getSize().x / 32;
-    int height = level_tileset.tiles->getSize().y / 32;
-    level_tileset.tiles_col = width;
-    level_tileset.tile_amount = width * height;
+    int width  = levelTileset.tiles->getSize().x / 32;
+    int height = levelTileset.tiles->getSize().y / 32;
+    levelTileset.tilesPerRow = width;
+    levelTileset.tileCount = width * height;
 
     // define colors to compare pixels against
-    sf::Color white_alpha(255,255,255,0);
-    sf::Color white(255,255,255,255);
+    sf::Color white_alpha(255, 255, 255, 0);
+    sf::Color white(255, 255, 255, 255);
     for (unsigned i = 0; i < height; i++) {
         for (unsigned j = 0; j < width; j++) {
-            QBitArray tilemask(1024);
-            bool maskempty = true;
-            bool maskfull = true;
+            QBitArray tileMask(1024);
+            bool maskEmpty = true;
+            bool maskFilled = true;
             for (unsigned x = 0; x < 32; ++x) {
                 for (unsigned y = 0; y < 32; ++y) {
                     sf::Color px = maskfile.getPixel(j*32 + x,i*32 + y);
                     // Consider any fully white or fully transparent pixel in the masks as non-solid and all others as solid
                     bool masked = ((px != white) && (px.a > 0));
-                    tilemask.setBit(x + 32*y, masked);
-                    maskempty &= !masked;
-                    maskfull  &=  masked;
+                    tileMask.setBit(x + 32*y, masked);
+                    maskEmpty  &= !masked;
+                    maskFilled &=  masked;
                 }
             }
-            level_tileset.masks << tilemask;
-            level_tileset.mask_empty << maskempty;
-            level_tileset.mask_full << maskfull;
+            levelTileset.masks << tileMask;
+            levelTileset.isMaskEmpty << maskEmpty;
+            levelTileset.isMaskFilled << maskFilled;
 
             auto sprite = std::make_shared<sf::Sprite>();
-            sprite->setTexture(*(level_tileset.tiles));
+            sprite->setTexture(*(levelTileset.tiles));
             sprite->setPosition(0, 0);
             sprite->setTextureRect(
-                sf::IntRect(32 * ((i * width + j) % level_tileset.tiles_col),
-                            32 * ((i * width + j) / level_tileset.tiles_col),
+                sf::IntRect(32 * ((i * width + j) % levelTileset.tilesPerRow),
+                            32 * ((i * width + j) / levelTileset.tilesPerRow),
                             32, 32));
 
             auto defaultLayerTile = std::make_shared<LayerTile>();
             defaultLayerTile->tilesetDefault = true;
-            defaultLayerTile->animated = false;
-            defaultLayerTile->dtype = TileDestructType::DESTRUCT_NONE;
-            defaultLayerTile->d_animation = 0;
-            defaultLayerTile->extra_byte = 0;
-            defaultLayerTile->flipped_x = false;
-            defaultLayerTile->flipped_y = false;
-            defaultLayerTile->oneway = false;
-            defaultLayerTile->scenery_frame_idx = 0;
+            defaultLayerTile->isAnimated = false;
+            defaultLayerTile->destructType = TileDestructType::DESTRUCT_NONE;
+            defaultLayerTile->destructAnimation = 0;
+            defaultLayerTile->extraByte = 0;
+            defaultLayerTile->isFlippedX = false;
+            defaultLayerTile->isFlippedY = false;
+            defaultLayerTile->isOneWay = false;
+            defaultLayerTile->destructFrameIndex = 0;
             defaultLayerTile->sprite = sprite;
             defaultLayerTile->texture = getTilesetTexture();
-            defaultLayerTile->tile_id = i * width + j;
-            defaultLayerTile->vine = false;
+            defaultLayerTile->tileId = i * width + j;
+            defaultLayerTile->isVine = false;
 
             defaultLayerTiles.append(defaultLayerTile);
         }
@@ -131,9 +131,9 @@ void TileMap::drawLowerLevels() {
     }
 
     // lower levels is everything below the sprite layer and the sprite layer itself
-    for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
-        if (level_layout.at(layer).type == LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(level_layout[layer], canvas);
+    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
+        if (levelLayout.at(layer).type == LAYER_FOREGROUND_LAYER) { continue; }
+        drawLayer(levelLayout[layer], canvas);
     }
 }
 
@@ -144,9 +144,9 @@ void TileMap::drawHigherLevels() {
     }
 
     // higher levels is only the foreground layers
-    for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
-        if (level_layout.at(layer).type != LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(level_layout[layer], canvas);
+    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
+        if (levelLayout.at(layer).type != LAYER_FOREGROUND_LAYER) { continue; }
+        drawLayer(levelLayout[layer], canvas);
     }
 }
 
@@ -154,21 +154,21 @@ void TileMap::initializeBackgroundTexture(TileMapLayer& background) {
     // basically just draw all tiles onto the background texture once
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
-            int idx = background.tile_layout.at(j).at(i)->tile_id;
-            bool ani = background.tile_layout.at(j).at(i)->animated;
+            int idx = background.tileLayout.at(j).at(i)->tileId;
+            bool ani = background.tileLayout.at(j).at(i)->isAnimated;
 
-            std::shared_ptr<sf::Sprite> spr = nullptr;
+            std::shared_ptr<sf::Sprite> sprite = nullptr;
             if (ani) {
-                if (idx < animated_tiles.size()) {
-                    auto anim = animated_tiles.at(idx);
-                    spr = anim->getCurrentTile()->sprite;
+                if (idx < animatedTiles.size()) {
+                    auto anim = animatedTiles.at(idx);
+                    sprite = anim->getCurrentTile()->sprite;
                 }
             } else {
-                spr = background.tile_layout[j][i]->sprite;
+                sprite = background.tileLayout[j][i]->sprite;
             }
                 
-            spr->setPosition(i * 32,j * 32);
-            tex_back->draw(*spr);
+            sprite->setPosition(i * 32,j * 32);
+            texturedBackgroundTexture->draw(*sprite);
         }
     }
 }
@@ -177,15 +177,15 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     // update animated tiles on the cache texture
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
-            int idx = layer.tile_layout.at(j).at(i)->tile_id;
-            bool ani = layer.tile_layout.at(j).at(i)->animated;
+            int idx = layer.tileLayout.at(j).at(i)->tileId;
+            bool animated = layer.tileLayout.at(j).at(i)->isAnimated;
 
-            if (ani) {
-                if (idx < animated_tiles.size()) {
-                    auto anim = animated_tiles.at(idx);
-                    auto spr = anim->getCurrentTile()->sprite;
-                    spr->setPosition(i * 32,j * 32);
-                    tex_back->draw(*spr);
+            if (animated) {
+                if (idx < animatedTiles.size()) {
+                    auto anim = animatedTiles.at(idx);
+                    auto sprite = anim->getCurrentTile()->sprite;
+                    sprite->setPosition(i * 32,j * 32);
+                    texturedBackgroundTexture->draw(*sprite);
                 }
             }
         }
@@ -199,31 +199,31 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     // initialize 550 lines that we're going to texturize and draw on the screen
     // from (400, 300), first 25 lines up and down are obscured by the fade effect,
     // but the 275 other lines are at least partially visible
-    sf::VertexArray prim(sf::PrimitiveType::Lines,1100);
+    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines,1100);
     for (int iy = 0; iy < 275; ++iy) {
         // line drawing y offset from the middle of the screen, up and down
         int ly = 25 + iy;
 
         // line drawing x offset from the middle of the screen on the given y distance,
         // altered by both far and near layer factors
-        int lx = (root->getViewWidth() / 2) + (ly / 300.0) * 800.0 * (root->mod_temp[2] - root->mod_temp[1]);
+        int lx = (root->getViewWidth() / 2) + (ly / 300.0) * 800.0 * (root->tempModifier[2] - root->tempModifier[1]);
 
         // texture y coordinates for above and below draw areas,
         // altered by sky copy count in the depth and perspective correction multiplier
-        int ty2 = pow(300 - iy,root->mod_temp[0] / 10.0) * root->mod_temp[4] * 256.0/pow(300.0,root->mod_temp[0] / 10.0);
-        int ty = 256 * root->mod_temp[4] - ty2;
+        int ty2 = pow(300 - iy,root->tempModifier[0] / 10.0) * root->tempModifier[4] * 256.0 / pow(300.0,root->tempModifier[0] / 10.0);
+        int ty = 256 * root->tempModifier[4] - ty2;
             
         // set upper half line
-        prim[4*iy].position    = sf::Vector2f(-lx, -ly);
-        prim[4*iy].texCoords   = sf::Vector2f(0 + x,  ty2 + y);
-        prim[4*iy+1].position  = sf::Vector2f(lx, -ly);
-        prim[4*iy+1].texCoords = sf::Vector2f(root->mod_temp[2] * 256 + x, ty2 + y);
+        primitiveLines[4 * iy].position      = sf::Vector2f(-lx, -ly);
+        primitiveLines[4 * iy].texCoords     = sf::Vector2f(0 + x, ty2 + y);
+        primitiveLines[4 * iy + 1].position  = sf::Vector2f(lx, -ly);
+        primitiveLines[4 * iy + 1].texCoords = sf::Vector2f(root->tempModifier[2] * 256 + x, ty2 + y);
             
         // set lower half line
-        prim[4*iy+2].position  = sf::Vector2f(-lx, ly);
-        prim[4*iy+2].texCoords = sf::Vector2f(0 + x,  ty + y);
-        prim[4*iy+3].position  = sf::Vector2f(lx, ly);
-        prim[4*iy+3].texCoords = sf::Vector2f(root->mod_temp[2] * 256 + x, ty + y);
+        primitiveLines[4 * iy + 2].position  = sf::Vector2f(-lx, ly);
+        primitiveLines[4 * iy + 2].texCoords = sf::Vector2f(0 + x, ty + y);
+        primitiveLines[4 * iy + 3].position  = sf::Vector2f(lx, ly);
+        primitiveLines[4 * iy + 3].texCoords = sf::Vector2f(root->tempModifier[2] * 256 + x, ty + y);
     }
 
     // translation to the center of the screen
@@ -233,25 +233,25 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
 
     // combine translation to texture binding
     sf::RenderStates states;
-    states.texture = &tex_back->getTexture();
+    states.texture = &texturedBackgroundTexture->getTexture();
     states.transform = transform;
 
     // draw background and the fade effect
-    target->draw(prim,states);
-    target->draw(*tex_fade.get(), transform);
+    target->draw(primitiveLines, states);
+    target->draw(*texturedBackgroundFadeArray.get(), transform);
 }
 
 std::shared_ptr<LayerTile> TileMap::cloneDefaultLayerTile(int x, int y) {
-    auto tile = level_layout[spr_layer].tile_layout[y][x];
+    auto tile = levelLayout[sprLayerIdx].tileLayout[y][x];
     if (tile->tilesetDefault) {
         tile = std::make_shared<LayerTile>(*tile);
         tile->tilesetDefault = false;
-        level_layout[spr_layer].tile_layout[y][x] = tile;
+        levelLayout[sprLayerIdx].tileLayout[y][x] = tile;
     }
     return tile;
 }
 
-double TileMap::translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& is_y) const {
+double TileMap::translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY) const {
     // Coordinate: the "vanilla" coordinate of the tile on the layer if the layer was fixed to the sprite layer with same
     // speed and no other options. Think of its position in JCS.
     // Speed: the set layer speed; 1 for anything that moves the same speed as the sprite layer (where the objects live),
@@ -260,7 +260,7 @@ double TileMap::translateCoordinate(const double& coordinate, const double& spee
 
     // Literal 70 is the same as in drawLayer, it's the offscreen offset of the first tile to draw.
     // Don't touch unless absolutely necessary.
-    return ((coordinate * speed + offset + (70 + (is_y ? (root->getViewHeight() - 200) : (root->getViewWidth() - 320)) / 2) * (speed - 1)));
+    return ((coordinate * speed + offset + (70 + (isY ? (root->getViewHeight() - 200) : (root->getViewWidth() - 320)) / 2) * (speed - 1)));
 }
 
 void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target) {
@@ -270,28 +270,28 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     }
 
     // Layer dimensions
-    int lh = layer.tile_layout.size();
-    int lw = layer.tile_layout.at(0).size();
+    int lh = layer.tileLayout.size();
+    int lw = layer.tileLayout.at(0).size();
     
     // Update offsets for moving layers
-    if (layer.auto_xspeed > 1e-10) {
-        layer.xoffset += layer.auto_xspeed * 2;
-        while (layer.xrepeat && (std::abs(layer.xoffset) > (lw * 32))) {
-            layer.xoffset -= (lw * 32);
+    if (layer.autoSpeedX > 1e-10) {
+        layer.offsetX += layer.autoSpeedX * 2;
+        while (layer.repeatX && (std::abs(layer.offsetX) > (lw * 32))) {
+            layer.offsetX -= (lw * 32);
         }
     }
-    if (layer.auto_yspeed > 1e-10) {
-        layer.yoffset += layer.auto_yspeed * 2;
-        while (layer.yrepeat && (std::abs(layer.yoffset) > (lh * 32))) {
-            layer.yoffset -= (lh * 32);
+    if (layer.autoSpeedY > 1e-10) {
+        layer.offsetY += layer.autoSpeedY * 2;
+        while (layer.repeatY && (std::abs(layer.offsetY) > (lh * 32))) {
+            layer.offsetY -= (lh * 32);
         }
     }
 
     // Get current layer offsets and speeds
-    double lox = layer.xoffset;
-    double loy = layer.yoffset - (layer.inherent_offset ? (root->getViewHeight() - 200) / 2 : 0);
-    double sx = layer.xspeed;
-    double sy = layer.yspeed;
+    double lox = layer.offsetX;
+    double loy = layer.offsetY - (layer.useInherentOffset ? (root->getViewHeight() - 200) / 2 : 0);
+    double sx = layer.speedX;
+    double sy = layer.speedY;
     
     // Find out coordinates for a tile from outside the boundaries from topleft corner of the screen 
     auto viewCenter = root->getViewCenter();
@@ -300,8 +300,8 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     
     // Figure out the floating point offset from the calculated coordinates and the actual tile
     // corner coordinates
-    double rem_x = fmod(translateCoordinate(x1,sx,lox,false), 32);
-    double rem_y = fmod(translateCoordinate(y1,sy,loy,true), 32);
+    double rem_x = fmod(translateCoordinate(x1, sx, lox, false), 32);
+    double rem_y = fmod(translateCoordinate(y1, sy, loy, true), 32);
     
     // Calculate the index (on the layer map) of the first tile that needs to be drawn to the
     // position determined earlier
@@ -309,8 +309,8 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     int tile_y = 0;
 
     // Determine the actual drawing location on screen
-    double xinter = translateCoordinate(x1,sx,lox,false) / 32.0;
-    double yinter = translateCoordinate(y1,sy,loy,true) / 32.0;
+    double xinter = translateCoordinate(x1, sx, lox, false) / 32.0;
+    double yinter = translateCoordinate(y1, sy, loy, true) / 32.0;
 
     int tile_absx = 0;
     int tile_absy = 0;
@@ -353,16 +353,16 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     double x3 = x1 + 100 + root->getViewWidth();
     double y3 = y1 + 100 + root->getViewHeight();
 
-    if (layer.textured && (lh == 8) && (lw == 8)) {
+    if (layer.isTextured && (lh == 8) && (lw == 8)) {
         drawTexturedBackground(layer,
-                fmod((x1 + rem_x) * (root->mod_temp[3] / 10.0) + lox, 256.0),
-                fmod((y1 + rem_y) * (root->mod_temp[3] / 10.0) + loy, 256.0), target);
+                fmod((x1 + rem_x) * (root->tempModifier[3] / 10.0) + lox, 256.0),
+                fmod((y1 + rem_y) * (root->tempModifier[3] / 10.0) + loy, 256.0), target);
     } else {
         int tile_xo = -1;
         for (double x2 = x1; x2 < x3; x2 += 32) {
             tile_x = (tile_x + 1) % lw;
             tile_xo++;
-            if (!layer.xrepeat) {
+            if (!layer.repeatX) {
                 // If the current tile isn't in the first iteration of the layer horizontally, don't draw this column
                 if (tile_absx + tile_xo + 1 < 0 || tile_absx + tile_xo + 1 >= lw) {
                     continue;
@@ -374,10 +374,10 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
                 tile_y = (tile_y + 1) % lh;
                 tile_yo++;
 
-                int idx = layer.tile_layout.at(tile_y).at(tile_x)->tile_id;
-                bool ani = layer.tile_layout.at(tile_y).at(tile_x)->animated;
+                int idx = layer.tileLayout.at(tile_y).at(tile_x)->tileId;
+                bool ani = layer.tileLayout.at(tile_y).at(tile_x)->isAnimated;
 
-                if (!layer.yrepeat) {
+                if (!layer.repeatY) {
                     // If the current tile isn't in the first iteration of the layer vertically, don't draw it
                     if (tile_absy + tile_yo + 1 < 0 || tile_absy + tile_yo + 1 >= lh) {
                         continue;
@@ -389,170 +389,174 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
                 if (root->dbgShowMasked) {
                     // debug code for masks
                     sf::RectangleShape b(sf::Vector2f(32, 32));
-                    b.setPosition(x2,y2);
+                    b.setPosition(x2, y2);
                     if (ani) {
-                        idx = animated_tiles.at(idx)->getCurrentTile()->tile_id;
+                        idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
                     }
-                    if (level_tileset.mask_full.at(idx)) {
+                    if (levelTileset.isMaskFilled.at(idx)) {
                         b.setFillColor(sf::Color::White);
                         target->draw(b);
                     } else {
-                        if (!level_tileset.mask_empty.at(idx)) {
-                            b.setFillColor(sf::Color(255,255,255,128));
+                        if (!levelTileset.isMaskEmpty.at(idx)) {
+                            b.setFillColor(sf::Color(255, 255, 255, 128));
                             target->draw(b);
                         }
                     }
-                    if (ani || layer.tile_layout.at(tile_y).at(tile_x)->dtype != TileDestructType::DESTRUCT_NONE) {
+                    if (ani || layer.tileLayout.at(tile_y).at(tile_x)->destructType != TileDestructType::DESTRUCT_NONE) {
                         b.setFillColor(sf::Color::Transparent);
                         b.setOutlineThickness(-3);
-                        b.setOutlineColor(sf::Color(255,0,128,255));
+                        b.setOutlineColor(sf::Color(255, 0, 128, 255));
                         target->draw(b);
                     }
                     continue;
                 }
 
-                std::shared_ptr<sf::Sprite> spr = nullptr;
+                std::shared_ptr<sf::Sprite> sprite = nullptr;
                 if (ani) {
-                    if (idx < animated_tiles.size()) {
-                        auto anim = animated_tiles.at(idx);
-                        spr = anim->getCurrentTile()->sprite;
+                    if (idx < animatedTiles.size()) {
+                        auto anim = animatedTiles.at(idx);
+                        sprite = anim->getCurrentTile()->sprite;
                     }
                 } else {
-                    spr = layer.tile_layout[tile_y][tile_x]->sprite;
+                    sprite = layer.tileLayout[tile_y][tile_x]->sprite;
                 }
 
                 // rounding to nearest integer is necessary because otherwise there will be tearing
-                if (spr != nullptr) {
-                    spr->setPosition((float)qRound(x2), (float)qRound(y2));
-                    target->draw(*spr);
+                if (sprite != nullptr) {
+                    sprite->setPosition((float)qRound(x2), (float)qRound(y2));
+                    target->draw(*sprite);
                 }
             }
         }
     }
 }
 
-void TileMap::readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layer_idx, QSettings& config) {
+void TileMap::readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layerIdx, QSettings& config) {
     // Build a new layer
-    TileMapLayer new_layer;
+    TileMapLayer newLayer;
 
     // Layer index and type are given as parameters
-    new_layer.idx = layer_idx;
-    new_layer.type = type;
+    newLayer.idx = layerIdx;
+    newLayer.type = type;
 
     // Open the layer file
-    QFile handle(filename);
-    if (handle.open(QIODevice::ReadOnly)) {
+    QFile layerHandle(filename);
+    if (layerHandle.open(QIODevice::ReadOnly)) {
         // Uncompress the compressed data
-        QByteArray layer_data = qUncompress(handle.readAll());
+        QByteArray layerData = qUncompress(layerHandle.readAll());
 
-        if (layer_data.size() > 0) {
+        if (layerData.size() > 0) {
             // Create a data stream of the data
-            QDataStream outstr(layer_data);
+            QDataStream layerStream(layerData);
 
             int row = 0;
             // Read data until no more data available
-            while (!outstr.atEnd()) {
-                QVector<std::shared_ptr<LayerTile>> new_row;
+            while (!layerStream.atEnd()) {
+                QVector<std::shared_ptr<LayerTile>> newTileRow;
                 int col = 0;
 
-                while (!outstr.atEnd()) {
+                while (!layerStream.atEnd()) {
                     std::shared_ptr<LayerTile> tile;
 
                     // Read type short from the stream
                     quint16 type;
-                    outstr >> type;
+                    layerStream >> type;
                     if (type == 0xFFFF) {
                         // 0xFFFF means a line break
                         break;
                     }
                     // Otherwise it was a tile; read tile flags next
                     quint8 flags;
-                    outstr >> flags;
+                    layerStream >> flags;
 
                     if (flags == 0) {
                         tile = defaultLayerTiles.at(type);
-                        new_row.push_back(tile);
+                        newTileRow << tile;
                         col++;
                         continue;
                     }
 
-                    bool flipped_x = (flags & 0x01) > 0;
-                    bool flipped_y = (flags & 0x02) > 0;
-                    bool animated  = (flags & 0x04) > 0;
+                    bool isFlippedX = (flags & 0x01) > 0;
+                    bool isFlippedY = (flags & 0x02) > 0;
+                    bool isAnimated = (flags & 0x04) > 0;
 
                     // Invalid tile numbers (higher than tileset tile amount) are silently changed to empty tiles
-                    if (type > level_tileset.tile_amount && !animated) {
+                    if (type > levelTileset.tileCount && !isAnimated) {
                         type = 0;
                     }
 
                     // Copy the default tile and do stuff with it
-                    if (!animated) {
+                    if (!isAnimated) {
                         tile = std::make_shared<LayerTile>(*defaultLayerTiles.at(type));
                     } else {
-                        // Copy the template for animated tiles from the first tile, then fix the tile ID.
-                        // Cannot rely on copying the same tile as its own animated tile ID, because it is
-                        // possible that there are more animated tiles than regular ones.
+                        // Copy the template for isAnimated tiles from the first tile, then fix the tile ID.
+                        // Cannot rely on copying the same tile as its own isAnimated tile ID, because it is
+                        // possible that there are more isAnimated tiles than regular ones.
                         tile = std::make_shared<LayerTile>(*defaultLayerTiles.at(0));
-                        tile->tile_id = type;
+                        tile->tileId = type;
                     }
 
-                    tile->flipped_x = flipped_x;
-                    tile->flipped_y = flipped_y;
-                    tile->animated = animated;
+                    tile->isFlippedX = isFlippedX;
+                    tile->isFlippedY = isFlippedY;
+                    tile->isAnimated = isAnimated;
 
-                    if (tile->flipped_x || tile->animated) {
+                    if (tile->isFlippedX || tile->isAnimated) {
                         tile->sprite = std::make_shared<sf::Sprite>(*tile->sprite);
                     }
 
                     // Set tile texture according to the given tile number, to the tile coordinates
-                    if (tile->flipped_x) {
+                    if (tile->isFlippedX) {
                         tile->sprite = std::make_shared<sf::Sprite>(*tile->sprite);
-                        tile->sprite->setScale(-1.0,1.0);
-                        tile->sprite->setOrigin(32.0,0.0);
+                        tile->sprite->setScale(-1.0, 1.0);
+                        tile->sprite->setOrigin(32.0, 0.0);
                     }
 
-                    new_row.push_back(tile);
+                    newTileRow.push_back(tile);
                     col++;
                 }
-                new_layer.tile_layout.push_back(new_row);
+                newLayer.tileLayout.push_back(newTileRow);
                 row++;
             }
             
             config.beginGroup(filename.section('/', -1));
-            new_layer.xspeed = config.value("XSpeed",1.0).toDouble();
-            new_layer.yspeed = config.value("YSpeed",1.0).toDouble();
-            new_layer.xrepeat = config.value("XRepeat",false).toBool();
-            new_layer.yrepeat = config.value("YRepeat",false).toBool();
-            new_layer.auto_xspeed = config.value("XAutoSpeed",0.0).toDouble();
-            new_layer.auto_yspeed = config.value("YAutoSpeed",0.0).toDouble();
-            new_layer.inherent_offset = config.value("InherentOffset",false).toBool();
-            new_layer.textured = config.value("TexturedModeEnabled",false).toBool();
-            new_layer.textured_stars = config.value("ParallaxStarsEnabled",false).toBool();
-            QString color = config.value("TexturedModeColor","#000000").toString();
+            newLayer.speedX = config.value("XSpeed", 1.0).toDouble();
+            newLayer.speedY = config.value("YSpeed", 1.0).toDouble();
+            newLayer.repeatX = config.value("XRepeat", false).toBool();
+            newLayer.repeatY = config.value("YRepeat", false).toBool();
+            newLayer.autoSpeedX = config.value("XAutoSpeed", 0.0).toDouble();
+            newLayer.autoSpeedY = config.value("YAutoSpeed", 0.0).toDouble();
+            newLayer.useInherentOffset = config.value("InherentOffset", false).toBool();
+            newLayer.isTextured = config.value("TexturedModeEnabled", false).toBool();
+            newLayer.useStarsTextured = config.value("ParallaxStarsEnabled", false).toBool();
+            QString color = config.value("TexturedModeColor", "#000000").toString();
             if (color.length() == 7) {
                 bool foo; // we won't care about invalid data too much here, unrecognized input will be converted to 0
-                new_layer.textured_color = sf::Color(color.mid(1,2).toInt(&foo,16),color.mid(3,2).toInt(&foo,16),color.mid(5,2).toInt(&foo,16));
+                newLayer.texturedBackgroundColor = sf::Color(
+                    color.mid(1, 2).toInt(&foo, 16),
+                    color.mid(3, 2).toInt(&foo, 16),
+                    color.mid(5, 2).toInt(&foo, 16)
+                );
             } else {
-                new_layer.textured_color = sf::Color::Black;
+                newLayer.texturedBackgroundColor = sf::Color::Black;
             }
             config.endGroup();
 
-            new_layer.xoffset = 0.0;
-            new_layer.yoffset = 0.0;
+            newLayer.offsetX = 0.0;
+            newLayer.offsetY = 0.0;
 
-            level_layout.push_back(new_layer);
+            levelLayout << newLayer;
 
             // Sort the layers by their layer type and number
-            std::sort(level_layout.begin(),level_layout.end());
+            std::sort(levelLayout.begin(),levelLayout.end());
             updateSprLayerIdx();
 
-            if (type == LAYER_SKY_LAYER && new_layer.textured) {
-                initializeBackgroundTexture(new_layer);
+            if (type == LAYER_SKY_LAYER && newLayer.isTextured) {
+                initializeBackgroundTexture(newLayer);
 
                 for (int i = 0; i < 12; ++i) {
-                    (*tex_fade)[i].color = new_layer.textured_color;
+                    (*texturedBackgroundFadeArray)[i].color = newLayer.texturedBackgroundColor;
                     if (i < 2 || (i > 5 && i < 8)) {
-                        (*tex_fade)[i].color.a = 0;
+                        (*texturedBackgroundFadeArray)[i].color.a = 0;
                     }
                 }
             }
@@ -566,20 +570,20 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
 
 bool TileMap::isTileEmpty(unsigned x, unsigned y) {
     // Consider out-of-level coordinates as solid walls
-    if ((x >= level_width * 32) || (y >= level_height * 32)) {
+    if ((x >= levelWidth * 32) || (y >= levelHeight * 32)) {
         return false;
     }
 
-    for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
+    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
         // We need to find the sprite layer, only collisions in that layer matter
-        if (!(level_layout.at(layer).type == LAYER_SPRITE_LAYER)) { continue; }
+        if (!(levelLayout.at(layer).type == LAYER_SPRITE_LAYER)) { continue; }
 
-        int idx = level_layout.at(layer).tile_layout.at(y).at(x)->tile_id;
-        if (level_layout.at(layer).tile_layout.at(y).at(x)->animated) {
-            idx = animated_tiles.at(idx)->getCurrentTile()->tile_id;
+        int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
+        if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
+            idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
         }
 
-        if (level_tileset.mask_empty.at(idx)) {
+        if (levelTileset.isMaskEmpty.at(idx)) {
             return true;
         } else {
             // TODO: Pixel perfect collision wanted here? probably, so do that later
@@ -591,23 +595,23 @@ bool TileMap::isTileEmpty(unsigned x, unsigned y) {
     return true;
 }
 
-bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
+bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     // Consider out-of-level coordinates as solid walls
-    if ((hbox.right >= level_width * 32) || (hbox.bottom >= level_height * 32)
-     || (hbox.left <= 0) || (hbox.top <= 0)) {
+    if ((hitbox.right >= levelWidth * 32) || (hitbox.bottom >= levelHeight * 32)
+     || (hitbox.left <= 0) || (hitbox.top <= 0)) {
         return false;
     }
 
-    for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
+    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
         // We need to find the sprite layer, only collisions in that layer matter
-        if (!(level_layout.at(layer).type == LAYER_SPRITE_LAYER)) { continue; }
+        if (!(levelLayout.at(layer).type == LAYER_SPRITE_LAYER)) { continue; }
 
         // check all covered tiles for collisions; if all are empty, no need to do pixel level collision checking
         bool all_empty = true;
-        int hx1 = floor(hbox.left);
-        int hx2 = ceil(hbox.right);
-        int hy1 = floor(hbox.top);
-        int hy2 = ceil(hbox.bottom);
+        int hx1 = floor(hitbox.left);
+        int hx2 = ceil(hitbox.right);
+        int hy1 = floor(hitbox.top);
+        int hy2 = ceil(hitbox.bottom);
         if (root->dbgShowMasked) {
             auto target = root->getCanvas().lock();
             if (target != nullptr) {
@@ -617,26 +621,26 @@ bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
                 b.setFillColor(sf::Color::Green);
                 target->draw(b);
             
-                sf::RectangleShape a(sf::Vector2f(hbox.right-hbox.left, hbox.bottom-hbox.top));
-                a.setPosition(hbox.left,hbox.top);
+                sf::RectangleShape a(sf::Vector2f(hitbox.right-hitbox.left, hitbox.bottom-hitbox.top));
+                a.setPosition(hitbox.left,hitbox.top);
                 a.setFillColor(sf::Color::Blue);
                 target->draw(a);
             }
         }
         for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
             for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
-                int idx = level_layout.at(layer).tile_layout.at(y).at(x)->tile_id;
-                if (level_layout.at(layer).tile_layout.at(y).at(x)->animated) {
-                    idx = animated_tiles.at(idx)->getCurrentTile()->tile_id;
+                int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
+                if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
+                    idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
                 }
 
-                if (!level_tileset.mask_empty.at(idx) &&
-                    !(level_layout.at(layer).tile_layout.at(y).at(x)->oneway && !downwards) &&
-                    !(level_layout.at(layer).tile_layout.at(y).at(x)->vine)) {
+                if (!levelTileset.isMaskEmpty.at(idx) &&
+                    !(levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay && !downwards) &&
+                    !(levelLayout.at(layer).tileLayout.at(y).at(x)->isVine)) {
                     all_empty = false;
                     if (root->dbgShowMasked) {
-                        sf::RectangleShape a(sf::Vector2f(32,32));
-                        a.setPosition(x*32,y*32);
+                        sf::RectangleShape a(sf::Vector2f(32, 32));
+                        a.setPosition(x*32, y*32);
                         a.setFillColor(sf::Color::Red);
                         auto target = root->getCanvas().lock();
                         if (target != nullptr) {
@@ -658,19 +662,19 @@ bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
         // check each tile pixel perfectly for collisions
         for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
             for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
-                bool fx = level_layout.at(layer).tile_layout.at(y).at(x)->flipped_x;
-                bool fy = level_layout.at(layer).tile_layout.at(y).at(x)->flipped_y;
-                int idx = level_layout.at(layer).tile_layout.at(y).at(x)->tile_id;
-                if (level_layout.at(layer).tile_layout.at(y).at(x)->animated) {
-                    idx = animated_tiles.at(idx)->getCurrentTile()->tile_id;
+                bool fx = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedX;
+                bool fy = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedY;
+                int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
+                if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
+                    idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
                 }
 
-                if ((level_layout.at(layer).tile_layout.at(y).at(x)->oneway
+                if ((levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay
                     && !downwards && (hy2 < ((y + 1) * 32)))
-                    || level_layout.at(layer).tile_layout.at(y).at(x)->vine) {
+                    || levelLayout.at(layer).tileLayout.at(y).at(x)->isVine) {
                     continue;
                 }
-                QBitArray mask = level_tileset.masks.at(idx);
+                QBitArray mask = levelTileset.masks.at(idx);
                 for (int i = 0; i < 1024; ++i) {
                     int nowx = (32 * x + i % 32);
                     int nowy = (32 * y + i / 32);
@@ -684,7 +688,9 @@ bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
                     if (fx) { px_idx =      (i / 32)  * 32 + (31 - (i % 32)); }
                     //if (fy) { px_idx = (31 -(i / 32)) * 32 +        i % 32  ; }
                     // TODO: fix so that both flags work simultaneously
-                    if (mask[px_idx]) { return false; }
+                    if (mask[px_idx]) {
+                        return false;
+                    }
                 }
             }
         }
@@ -696,46 +702,46 @@ bool TileMap::isTileEmpty(const Hitbox& hbox, bool downwards) {
 }
 
 void TileMap::updateSprLayerIdx() {
-    for (unsigned layer = 0; layer < level_layout.size(); ++layer) {
-        if (!(level_layout.at(layer).type == LAYER_SPRITE_LAYER)) {
+    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
+        if (!(levelLayout.at(layer).type == LAYER_SPRITE_LAYER)) {
             continue;
         }
-        spr_layer = layer;
+        sprLayerIdx = layer;
         return;
     }
 }
 
 void TileMap::readAnimatedTiles(const QString& filename) {
     // Open the given file
-    QFile handle(filename);
-    if (handle.open(QIODevice::ReadOnly)) {
+    QFile animHandle(filename);
+    if (animHandle.open(QIODevice::ReadOnly)) {
         // Uncompress the compressed data
-        QByteArray layer_data = qUncompress(handle.readAll());
+        QByteArray animData = qUncompress(animHandle.readAll());
 
-        if (layer_data.size() > 0) {
+        if (animData.size() > 0) {
             // Create a data stream of the data
-            QDataStream outstr(layer_data);
+            QDataStream animStream(animData);
 
             // Read data until no more data available
-            while (!outstr.atEnd()) {
+            while (!animStream.atEnd()) {
                 QVector<unsigned short> frames;
                 // Read type short from the stream
                 for (int i = 0; i < 64; ++i) {
                     quint16 tile;
-                    outstr >> tile;
+                    animStream >> tile;
                     if (tile != 0xFFFF) {
                         frames << tile;
                     }
                 }
 
-                quint16 delay, delay_jitter, reverse_delay;
-                quint8 speed, reverse;
-                outstr >> speed >> delay >> delay_jitter >> reverse >> reverse_delay;
+                quint16 delay, delayJitter, pingPongDelay;
+                quint8 speed, pingPong;
+                animStream >> speed >> delay >> delayJitter >> pingPong >> pingPongDelay;
 
                 if (frames.size() > 0) {
                     auto ani = std::make_shared<AnimatedTile>(getTilesetTexture(), frames, speed, 
-                        delay, delay_jitter, (reverse > 0), reverse_delay);
-                    animated_tiles.push_back(ani);
+                        delay, delayJitter, (pingPong > 0), pingPongDelay);
+                    animatedTiles << ani;
                 }
             }
             
@@ -748,7 +754,7 @@ void TileMap::readAnimatedTiles(const QString& filename) {
 }
 
 const std::shared_ptr<sf::Texture> TileMap::getTilesetTexture() {
-    return level_tileset.tiles;
+    return levelTileset.tiles;
 }
 
 
@@ -756,44 +762,46 @@ QVector<QVector<std::shared_ptr<LayerTile>>> TileMap::prepareSavePointLayer() {
     /*
     TODO: make use of this improved algorithm as an option
 
-    std::vector< std::vector< LayerTile > > layer = level_layout.at(spr_layer).tile_layout;
+    std::vector< std::vector< LayerTile > > layer = level_layout.at(sprLayerIdx).tileLayout;
     for (int i = 0; i < layer.size(); ++i) {
         for (int j = 0; j < layer.at(i).size(); ++j) {
-            layer.at(i).at(j).event_active = false;
+            layer.at(i).at(j).isEventActive = false;
         }
     }
     return layer;*/
-    return initial_spr_layer_copy;
+    return spriteLayerAtLevelStart;
 }
 
 void TileMap::loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer) {
-    level_layout[spr_layer].tile_layout = layer;
+    levelLayout[sprLayerIdx].tileLayout = layer;
 }
 
 bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
 
-    if (ty >= level_height || tx >= level_width) {
+    if (ty >= levelHeight || tx >= levelWidth) {
         return false;
     }
-    auto tile = level_layout[spr_layer].tile_layout[ty][tx];
-    if (tile->dtype == DESTRUCT_WEAPON && (tile->extra_byte == 0 || tile->extra_byte == (weapon + 1))) {
-        if ((animated_tiles.at(tile->d_animation)->getAnimationLength() - 2) > tile->scenery_frame_idx) {
+    auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
+    if (tile->destructType == DESTRUCT_WEAPON && (tile->extraByte == 0 || tile->extraByte == (weapon + 1))) {
+        if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
             // tile not destroyed yet, advance counter by one
-            tile->scenery_frame_idx++;
-            tile->tile_id = animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(tile->scenery_frame_idx);
+            tile->destructFrameIndex++;
+            tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
             tile->sprite->setTextureRect(
-                sf::IntRect(32 * (tile->tile_id % level_tileset.tiles_col),
-                            32 * (tile->tile_id / level_tileset.tiles_col),
-                            32,32));
-            if (!((animated_tiles.at(tile->d_animation)->getAnimationLength() - 2) > tile->scenery_frame_idx)) {
+                sf::IntRect(32 * (tile->tileId % levelTileset.tilesPerRow),
+                            32 * (tile->tileId / levelTileset.tilesPerRow),
+                            32, 32));
+            if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
                 // the tile was destroyed, create debris
                 auto soundSystem = root->getSoundSystem().lock();
                 if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
                     soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
                 }
-                root->createDebris(animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(animated_tiles.at(tile->d_animation)->getAnimationLength() - 1),tx,ty);
+                root->createDebris(animatedTiles.at(tile->destructAnimation)
+                    ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),
+                    tx, ty);
             }
             return true;
         }
@@ -805,26 +813,28 @@ bool TileMap::checkSpecialDestructible(double x, double y) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
 
-    if (ty >= level_height || tx >= level_width) {
+    if (ty >= levelHeight || tx >= levelWidth) {
         return false;
     }
-    auto tile = level_layout[spr_layer].tile_layout[ty][tx];
-    if (tile->dtype == DESTRUCT_SPECIAL) {
-        if ((animated_tiles.at(tile->d_animation)->getAnimationLength() - 2) > tile->scenery_frame_idx) {
+    auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
+    if (tile->destructType == DESTRUCT_SPECIAL) {
+        if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
             // tile not destroyed yet, advance counter by one
-            tile->scenery_frame_idx++;
-            tile->tile_id = animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(tile->scenery_frame_idx);
+            tile->destructFrameIndex++;
+            tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
             tile->sprite->setTextureRect(
-                sf::IntRect(32 * (tile->tile_id % level_tileset.tiles_col),
-                            32 * (tile->tile_id / level_tileset.tiles_col),
-                            32,32));
-            if (!((animated_tiles.at(tile->d_animation)->getAnimationLength() - 2) > tile->scenery_frame_idx)) {
+                sf::IntRect(32 * (tile->tileId % levelTileset.tilesPerRow),
+                            32 * (tile->tileId / levelTileset.tilesPerRow),
+                            32, 32));
+            if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
                 // the tile was destroyed, create debris
                 auto soundSystem = root->getSoundSystem().lock();
                 if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
                     soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
                 }
-                root->createDebris(animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(animated_tiles.at(tile->d_animation)->getAnimationLength() - 1),tx,ty);
+                root->createDebris(animatedTiles.at(tile->destructAnimation)
+                    ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),
+                    tx, ty);
             }
             return true;
         }
@@ -833,48 +843,48 @@ bool TileMap::checkSpecialDestructible(double x, double y) {
 }
 
 void TileMap::saveInitialSpriteLayer() {
-    initial_spr_layer_copy = level_layout.at(spr_layer).tile_layout;
+    spriteLayerAtLevelStart = levelLayout.at(sprLayerIdx).tileLayout;
 }
 
-void TileMap::setTrigger(unsigned char trigger_id, bool new_state) {
-    if (trigger_state[trigger_id] == new_state) {
+void TileMap::setTrigger(unsigned char triggerID, bool newState) {
+    if (triggerState[triggerID] == newState) {
         return;
     }
 
-    trigger_state[trigger_id] = new_state;
+    triggerState[triggerID] = newState;
 
     // go through all tiles and update any that are influenced by this trigger
-    for (int tx = 0; tx < level_width; ++tx) {
-        for (int ty = 0; ty < level_height; ++ty) {
-            auto tile = level_layout[spr_layer].tile_layout[ty][tx];
-            if (tile->dtype == DESTRUCT_TRIGGER) {
-                if (tile->extra_byte == trigger_id) {
-                if (animated_tiles.at(tile->d_animation)->getAnimationLength() > 1) {
-                    tile->scenery_frame_idx = (new_state ? 1 : 0);
-                    tile->tile_id = animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(tile->scenery_frame_idx);
+    for (int tx = 0; tx < levelWidth; ++tx) {
+        for (int ty = 0; ty < levelHeight; ++ty) {
+            auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
+            if (tile->destructType == DESTRUCT_TRIGGER) {
+                if (tile->extraByte == triggerID) {
+                if (animatedTiles.at(tile->destructAnimation)->getAnimationLength() > 1) {
+                    tile->destructFrameIndex = (newState ? 1 : 0);
+                    tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
                     tile->sprite->setTextureRect(
-                        sf::IntRect(32 * (tile->tile_id % level_tileset.tiles_col),
-                                    32 * (tile->tile_id / level_tileset.tiles_col),
-                                    32,32));
+                        sf::IntRect(32 * (tile->tileId % levelTileset.tilesPerRow),
+                                    32 * (tile->tileId / levelTileset.tilesPerRow),
+                                    32, 32));
                 }
             }}
         }
     }
 }
 
-bool TileMap::getTrigger(unsigned char trigger_id) {
-    return trigger_state[trigger_id];
+bool TileMap::getTrigger(unsigned char triggerID) {
+    return triggerState[triggerID];
 }
 
 unsigned TileMap::getLevelWidth() {
-    return level_width;
+    return levelWidth;
 }
 unsigned TileMap::getLevelHeight() {
-    return level_height;
+    return levelHeight;
 }
 
 void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
-    auto tile = level_layout[spr_layer].tile_layout[y][x];
+    auto tile = levelLayout[sprLayerIdx].tileLayout[y][x];
     quint16 p[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     auto tiles = root->getGameEvents().lock();
     if (tiles != nullptr) {
@@ -884,55 +894,55 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
     switch (e) {
         case PC_MODIFIER_ONE_WAY:
             tile = cloneDefaultLayerTile(x, y);
-            tile->oneway = true;
+            tile->isOneWay = true;
             break;
         case PC_MODIFIER_VINE:
             tile = cloneDefaultLayerTile(x, y);
-            tile->vine = true;
+            tile->isVine = true;
             break;
         case PC_SCENERY_DESTRUCT:
-            if (tile->animated) {
+            if (tile->isAnimated) {
                 tile = cloneDefaultLayerTile(x, y);
-                tile->dtype = DESTRUCT_WEAPON;
-                tile->animated = false;
-                tile->d_animation = tile->tile_id;
-                tile->tile_id = animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(0);
-                tile->scenery_frame_idx = 0;
+                tile->destructType = DESTRUCT_WEAPON;
+                tile->isAnimated = false;
+                tile->destructAnimation = tile->tileId;
+                tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
+                tile->destructFrameIndex = 0;
                 tile->sprite->setTextureRect(
-                    sf::IntRect(32 * (tile->tile_id % level_tileset.tiles_col),
-                                32 * (tile->tile_id / level_tileset.tiles_col),
-                                32,32));
-                tile->extra_byte = p[0];
+                    sf::IntRect(32 * (tile->tileId % levelTileset.tilesPerRow),
+                                32 * (tile->tileId / levelTileset.tilesPerRow),
+                                32, 32));
+                tile->extraByte = p[0];
             }
             break;
         case PC_SCENERY_BUTTSTOMP:
-            if (tile->animated) {
+            if (tile->isAnimated) {
                 tile = cloneDefaultLayerTile(x, y);
-                tile->dtype = DESTRUCT_SPECIAL;
-                tile->animated = false;
-                tile->d_animation = tile->tile_id;
-                tile->tile_id = animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(0);
-                tile->scenery_frame_idx = 0;
+                tile->destructType = DESTRUCT_SPECIAL;
+                tile->isAnimated = false;
+                tile->destructAnimation = tile->tileId;
+                tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
+                tile->destructFrameIndex = 0;
                 tile->sprite->setTextureRect(
-                    sf::IntRect(32 * (tile->tile_id % level_tileset.tiles_col),
-                                32 * (tile->tile_id / level_tileset.tiles_col),
-                                32,32));
-                tile->extra_byte = p[0];
+                    sf::IntRect(32 * (tile->tileId % levelTileset.tilesPerRow),
+                                32 * (tile->tileId / levelTileset.tilesPerRow),
+                                32, 32));
+                tile->extraByte = p[0];
             }
             break;
         case PC_TRIGGER_AREA:
-            if (tile->animated) {
+            if (tile->isAnimated) {
                 tile = cloneDefaultLayerTile(x, y);
-                tile->dtype = DESTRUCT_TRIGGER;
-                tile->animated = false;
-                tile->d_animation = tile->tile_id;
-                tile->tile_id = animated_tiles.at(tile->d_animation)->getFrameCanonicalIndex(0);
-                tile->scenery_frame_idx = 0;
+                tile->destructType = DESTRUCT_TRIGGER;
+                tile->isAnimated = false;
+                tile->destructAnimation = tile->tileId;
+                tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
+                tile->destructFrameIndex = 0;
                 tile->sprite->setTextureRect(
-                    sf::IntRect(32 * (tile->tile_id % level_tileset.tiles_col),
-                                32 * (tile->tile_id / level_tileset.tiles_col),
-                                32,32));
-                tile->extra_byte = p[0];
+                    sf::IntRect(32 * (tile->tileId % levelTileset.tilesPerRow),
+                                32 * (tile->tileId / levelTileset.tilesPerRow),
+                                32, 32));
+                tile->extraByte = p[0];
             }
             break;
     }
@@ -944,21 +954,21 @@ bool TileMap::isPosVine(double x, double y) {
     int rx = static_cast<int>(x) - 32 * ax;
     int ry = static_cast<int>(y) - 32 * ay;
 
-    auto tile = level_layout[spr_layer].tile_layout[ay][ax];
+    auto tile = levelLayout[sprLayerIdx].tileLayout[ay][ax];
 
-    bool fx = tile->flipped_x;
-    bool fy = tile->flipped_y;
-    if (!tile->vine) {
+    bool fx = tile->isFlippedX;
+    bool fy = tile->isFlippedY;
+    if (!tile->isVine) {
         return false;
     }
 
     QBitArray mask(1024, false);
-    if (tile->animated) {
-        if (tile->tile_id < animated_tiles.size()) {
-            mask = level_tileset.masks.at(animated_tiles.at(tile->tile_id)->getCurrentTile()->tile_id);
+    if (tile->isAnimated) {
+        if (tile->tileId < animatedTiles.size()) {
+            mask = levelTileset.masks.at(animatedTiles.at(tile->tileId)->getCurrentTile()->tileId);
         }
     } else {
-        mask = level_tileset.masks.at(tile->tile_id);
+        mask = levelTileset.masks.at(tile->tileId);
     }
     for (int ty = ry - 4; ty < ry + 4; ty++) {
         if (ty < 0 || ty >= 32) {
@@ -974,41 +984,42 @@ bool TileMap::isPosVine(double x, double y) {
 }
 
 void TileMap::advanceAnimatedTileTimers() {
-    for (int i = 0; i < animated_tiles.size(); ++i) {
-        animated_tiles.at(i)->advanceTimer();
+    for (int i = 0; i < animatedTiles.size(); ++i) {
+        animatedTiles.at(i)->advanceTimer();
     }
 }
 
-DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> tex, std::weak_ptr<sf::RenderTarget> win,
-    int x, int y, unsigned tx, unsigned ty, unsigned short quarter)
-    : pos_x(x * 32 + (quarter % 2) * 16), pos_y(y * 32 + (quarter / 2) * 16), h_speed(0), v_speed(0), wint(win) {
-    // different quarters of the debris fly out with different x speeds
-    int speed_multi[4] = {-2, 2, -1, 1};
+// different quarters of the debris fly out with different x speeds
+const int DestructibleDebris::speedMultiplier[4] = { -2, 2, -1, 1 };
 
-    spr = std::make_unique<sf::Sprite>(*tex);
-    spr->setTextureRect(sf::IntRect(tx * 32 + (quarter % 2) * 16, ty * 32 + (quarter / 2) * 16,16,16));
-    h_speed = speed_multi[quarter];
+DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> texture, std::weak_ptr<sf::RenderTarget> window,
+    int x, int y, unsigned tx, unsigned ty, unsigned short quarter)
+    : posX(x * 32 + (quarter % 2) * 16), posY(y * 32 + (quarter / 2) * 16), speedX(0), speedY(0), window(window) {
+
+    sprite = std::make_unique<sf::Sprite>(*texture);
+    sprite->setTextureRect(sf::IntRect(tx * 32 + (quarter % 2) * 16, ty * 32 + (quarter / 2) * 16, 16, 16));
+    speedX = speedMultiplier[quarter];
 }
 
 DestructibleDebris::~DestructibleDebris() {
 
 }
 
-void DestructibleDebris::TickUpdate() {
-    pos_x += h_speed;
-    pos_y += v_speed;
-    v_speed += 0.2;
-    v_speed = std::min(5.0,v_speed);
+void DestructibleDebris::tickUpdate() {
+    posX += speedX;
+    posY += speedY;
+    speedY += 0.2;
+    speedY = std::min(5.0, speedY);
 
-    spr->setPosition(pos_x,pos_y);
+    sprite->setPosition(posX, posY);
 
-    auto canvas = wint.lock();
+    auto canvas = window.lock();
     if (canvas != nullptr) {
-        canvas->draw(*spr);
+        canvas->draw(*sprite);
     }
 }
 
-double DestructibleDebris::GetY() {
-    return pos_y;
+double DestructibleDebris::getY() {
+    return posY;
 }
 

@@ -1,21 +1,21 @@
 #include "Lizard.h"
 
-Enemy_Lizard::Enemy_Lizard(std::shared_ptr<CarrotQt5> root, double x, double y) : Enemy(root, x, y) {
+EnemyLizard::EnemyLizard(std::shared_ptr<CarrotQt5> root, double x, double y) : Enemy(root, x, y) {
     loadResources("Enemy/Lizard");
     setAnimation(AnimState::WALK);
-    speed_h = 1;
+    speedX = 1;
 }
 
-Enemy_Lizard::~Enemy_Lizard() {
+EnemyLizard::~EnemyLizard() {
 
 }
 
-void Enemy_Lizard::tickEvent() {
+void EnemyLizard::tickEvent() {
     Enemy::tickEvent();
     
-    if (!canMoveToPosition(speed_h,0)) {
-        facingLeft = !(facingLeft);
-        speed_h = (facingLeft ? -1 : 1) * 1;
+    if (!canMoveToPosition(speedX,0)) {
+        isFacingLeft = !(isFacingLeft);
+        speedX = (isFacingLeft ? -1 : 1) * 1;
     }
 
     if (qrand() % 10000 < 4) {
@@ -23,6 +23,6 @@ void Enemy_Lizard::tickEvent() {
     }
 }
 
-Hitbox Enemy_Lizard::getHitbox() {
+Hitbox EnemyLizard::getHitbox() {
     return CommonActor::getHitbox(30u, 30u);
 }

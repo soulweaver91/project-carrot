@@ -7,13 +7,13 @@
 
 class CarrotQt5;
 
-class Ammo_Toaster : public Ammo {
+class AmmoToaster : public Ammo {
 public:
-    Ammo_Toaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy = std::weak_ptr<Player>(),
+    AmmoToaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy = std::weak_ptr<Player>(),
         double x = 0.0, double y = 0.0, bool firedLeft = false, bool firedUp = false);
-    ~Ammo_Toaster();
+    ~AmmoToaster();
     void tickEvent();
 
 private:
-    void Ammo_Toaster::ricochet();
+    void ricochet() override;
 };

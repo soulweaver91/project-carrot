@@ -4,7 +4,7 @@
 #define PI 3.1415926535
 
 Collectible::Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType type, double x, double y, bool fromEventMap)
-    : CommonActor(root, x, y, fromEventMap), type(type), intact(true) {
+    : CommonActor(root, x, y, fromEventMap), type(type), untouched(true) {
     phase = ((x / 100.0) + (y / 100.0));
     elasticity = 0.6;
 
@@ -44,25 +44,28 @@ Collectible::~Collectible() {
 }
 
 void Collectible::tickEvent() {
-    if (!intact) {
+    if (!untouched) {
         // Do not apply default movement if we haven't been shot yet
         CommonActor::tickEvent();
     }
 }
 
-void Collectible::impact(double force_h, double force_v) {
-    if (intact) {
-        externalForceX += force_h * (0.9 + (qrand() % 2000) / 10000.0);
-        externalForceY += force_v * (0.9 + (qrand() % 2000) / 10000.0);
+void Collectible::impact(double forceX, double forceY) {
+    if (untouched) {
+        externalForceX += forceX * (0.9 + (qrand() % 2000) / 10000.0);
+        externalForceY += forceY * (0.9 + (qrand() % 2000) / 10000.0);
     }
-    intact = false;
+    untouched = false;
 }
 
-void Collectible::DrawUpdate() {
-    double wave_offset = 2.4 * cos((phase * 0.3) * PI);
-    pos_y += wave_offset;
-    CommonActor::DrawUpdate();
-    pos_y -= wave_offset;
+void Collectible::drawUpdate() {
+    double waveOffset = 2.4 * cos((phase * 0.3) * PI);
+
+    // The position of the actor is altered for the draw event.
+    // We want to keep the actual position of the actor constant, though.
+    posY += waveOffset;
+    CommonActor::drawUpdate();
+    posY -= waveOffset;
     phase += 0.1;
 }
 
@@ -74,8 +77,8 @@ void Collectible::setFacingDirection() {
         case COLLTYPE_AMMO_SEEKER:
             return;
         default:
-            if ((qRound(pos_x + pos_y) / 32) % 2 == 1) {
-                facingLeft = true;
+            if ((qRound(posX + posY) / 32) % 2 == 1) {
+                isFacingLeft = true;
             }
     }
 }

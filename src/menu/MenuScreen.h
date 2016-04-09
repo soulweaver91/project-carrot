@@ -30,10 +30,10 @@ enum MenuEntryPoint {
 
 struct MenuItem {
     union {
-        InvokableRootFunction remote_function;
-        InvokableMenuFunction local_function;
+        InvokableRootFunction remoteFunction;
+        InvokableMenuFunction localFunction;
     };
-    bool is_local;
+    bool isLocal;
     std::unique_ptr<BitmapString> text;
     QVariant param;
 };
@@ -46,11 +46,12 @@ public:
     void processControlDownEvent(const ControlEvent& e);
     void processControlHeldEvent(const ControlEvent& e);
     void processControlUpEvent(const ControlEvent& e);
+
 private:
     void clearMenuList();
     void setMenuItemSelected(int idx = 0, bool relative = false);
-    std::shared_ptr<MenuItem> buildMenuItem(InvokableMenuFunction local_func, QVariant param, const QString& label);
-    std::shared_ptr<MenuItem> buildMenuItem(InvokableRootFunction remote_func, QVariant param, const QString& label);
+    std::shared_ptr<MenuItem> buildMenuItem(InvokableMenuFunction localFunction, QVariant param, const QString& label);
+    std::shared_ptr<MenuItem> buildMenuItem(InvokableRootFunction remoteFunction, QVariant param, const QString& label);
 
     // valid pointers in menu options
     void loadLevelList(QVariant param);
@@ -59,16 +60,16 @@ private:
     void placeholderOption(QVariant param);
 
     std::shared_ptr<CarrotQt5> root;
-    sf::Texture glow_a_tex;
-    sf::Sprite glow_a;
-    sf::Texture glow_b_tex;
-    sf::Sprite glow_b[4];
-    sf::Texture logo_tex;
-    sf::Sprite logo;
-    QVector<std::shared_ptr<MenuItem>> menu_options;
-    std::shared_ptr<MenuItem> cancel_item;
-    int selected_item;
-    BitmapString attraction_text;
-    MenuLayout current_type;
+    sf::Texture mainMenuCircularGlowTexture;
+    sf::Sprite mainMenuCircularGlowSprite;
+    sf::Texture mainMenuConicGlowTexture;
+    sf::Sprite mainMenuConicGlowSprite[4];
+    sf::Texture projectCarrotLogoTexture;
+    sf::Sprite projectCarrotLogoSprite;
+    QVector<std::shared_ptr<MenuItem>> menuOptions;
+    std::shared_ptr<MenuItem> cancelItem;
+    int selectedItemIdx;
+    BitmapString attractionText;
+    MenuLayout currentMenuType;
 
 };

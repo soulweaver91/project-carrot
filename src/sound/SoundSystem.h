@@ -11,16 +11,17 @@ struct SFXBinding {
 };
 
 class SoundSystem {
-    public:
-        SoundSystem();
-        ~SoundSystem();
-        void playSFX(HSAMPLE sample);
-        HSAMPLE addSFX(const QString& id, const QString& path);
-        bool setMusic(const QString& filename);
-        void fadeMusicOut(uint ms);
-        void fadeMusicIn(uint ms);
-    private:
-        QMultiMap<QString, HSAMPLE> effect_bank;
-        bool initialized;
-        HMUSIC currentMusic;
+public:
+    SoundSystem();
+    ~SoundSystem();
+    void playSFX(HSAMPLE sample);
+    HSAMPLE addSFX(const QString& id, const QString& path);
+    bool setMusic(const QString& filename);
+    void fadeMusicOut(uint ms);
+    void fadeMusicIn(uint ms);
+
+private:
+    QMultiMap<QString, HSAMPLE> effectBank;
+    bool initialized;
+    HMUSIC currentMusic;
 };

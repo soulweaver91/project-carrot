@@ -20,7 +20,7 @@ class CommonActor : public QObject, public std::enable_shared_from_this<CommonAc
 public:
     CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();
-    virtual void DrawUpdate();
+    virtual void drawUpdate();
     virtual void tickEvent();
     virtual void processControlDownEvent(const ControlEvent& e);
     virtual void processControlUpEvent(const ControlEvent& e);
@@ -31,7 +31,7 @@ public:
     virtual Hitbox getHitbox();
     virtual Hitbox getHitbox(const uint& w, const uint& h);
     virtual bool perish();
-    virtual bool deactivate(int x, int y, int dist);
+    virtual bool deactivate(int x, int y, int tileDistance);
     void moveInstantly(CoordinatePair location);
     void deleteFromEventMap();
         
@@ -46,17 +46,17 @@ protected:
     bool loadResources(const QString& classId);
     bool playSound(const QString& id);
     std::shared_ptr<CarrotQt5> root;
-    unsigned max_health;
+    unsigned maxHealth;
     unsigned health;
-    double pos_x;
-    double pos_y;
-    double speed_h;
-    double speed_v;
+    double posX;
+    double posY;
+    double speedX;
+    double speedY;
     double externalForceY;
     double externalForceX;
     double internalForceY;
     bool canJump;
-    bool facingLeft;
+    bool isFacingLeft;
     bool isGravityAffected;
     bool isClippingAffected;
     double elasticity;
@@ -64,8 +64,8 @@ protected:
     bool isInvulnerable;
     bool isBlinking;
     bool isSuspended;
-    bool createdFromEventMap;
-    int origin_x;
-    int origin_y;
+    bool isCreatedFromEventMap;
+    int originTileX;
+    int originTileY;
     std::shared_ptr<ResourceSet> resources;
 };

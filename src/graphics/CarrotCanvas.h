@@ -8,13 +8,12 @@
 
 #include "QSFMLCanvas.h"
 
-class CarrotCanvas : public QSFMLCanvas
-{
-    public:
-        CarrotCanvas(QWidget* Parent, const QPoint& Position, const QSize& Size);
-        void updateContents();
+class CarrotCanvas : public QSFMLCanvas {
+public:
+    CarrotCanvas(QWidget* parent, const QPoint& position, const QSize& size);
+    void updateContents();
     
-    private:
-        void OnInit();
-        void OnUpdate();
+private:
+    void onInit();
+    void onUpdate();
 };

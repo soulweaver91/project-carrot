@@ -32,7 +32,7 @@ Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType t
             moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 });
             orientationBit = 1;
             isGravityAffected = false;
-            facingLeft = true;
+            isFacingLeft = true;
             break;
     }
 
@@ -66,15 +66,15 @@ Spring::~Spring() {
 Hitbox Spring::getHitbox() {
     switch (orientation) {
         case 1:
-            return { pos_x - 8, pos_y - 15, pos_x, pos_y + 15 };
+            return { posX - 8, posY - 15, posX, posY + 15 };
             break;
         case 3:
-            return { pos_x + 8, pos_y - 15, pos_x + 16, pos_y + 15 };
+            return { posX + 8, posY - 15, posX + 16, posY + 15 };
             break;
         case 0:
         case 2:
         default:
-            return { pos_x - 15, pos_y, pos_x + 15, pos_y + 8};
+            return { posX - 15, posY, posX + 15, posY + 8};
     }
 }
 

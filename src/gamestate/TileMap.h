@@ -32,55 +32,54 @@ enum TileDestructType {
 };
 
 struct LayerTile {
-    unsigned long tile_id;
+    unsigned long tileId;
     // Held by the layer tile; conceptually related to the sprite,
     // but the sprite only takes its texture by reference
     std::shared_ptr<sf::Texture> texture;
     std::shared_ptr<sf::Sprite> sprite;
-    bool flipped_x;
-    bool flipped_y;
-    bool animated;
+    bool isFlippedX;
+    bool isFlippedY;
+    bool isAnimated;
     // collision affecting modifiers
-    bool oneway;
-    bool vine;
-    TileDestructType dtype;
-    unsigned long d_animation; // animation index for a destructible tile that uses an animation but doesn't animate normally
-    int scenery_frame_idx; // denotes the specific frame from the above animation that is currently active
+    bool isOneWay;
+    bool isVine;
+    TileDestructType destructType;
+    unsigned long destructAnimation; // animation index for a destructible tile that uses an animation but doesn't animate normally
+    int destructFrameIndex; // denotes the specific frame from the above animation that is currently active
     // Collapsible: delay ("wait" parameter); trigger: trigger id
-    unsigned extra_byte;
+    unsigned extraByte;
     bool tilesetDefault;
 };
 
 struct Tileset {
-    QString unique_id;
     QString name;
-    unsigned long tile_amount;
-    unsigned tiles_col; // number of tiles next to each other
+    unsigned long tileCount;
+    unsigned tilesPerRow; // number of tiles next to each other
     std::shared_ptr<sf::Texture> tiles;
-    QVector< QBitArray > masks;
-    QVector< bool > mask_empty; // to speed up collision checking so that not every tile needs to be pixel perfect checked
-    QVector< bool > mask_full;  // same with this one
+    QVector<QBitArray> masks;
+    QVector<bool> isMaskEmpty; // to speed up collision checking so that not every tile needs to be pixel perfect checked
+    QVector<bool> isMaskFilled;  // same with this one
 };
 
 struct TileMapLayer {
     enum LayerType type;
     unsigned idx;
-    QVector<QVector<std::shared_ptr<LayerTile>>> tile_layout;
-    double xspeed;
-    double yspeed;
-    double auto_xspeed;
-    double auto_yspeed;
-    bool xrepeat;
-    bool yrepeat;
-    double xoffset;
-    double yoffset;
+    QVector<QVector<std::shared_ptr<LayerTile>>> tileLayout;
+    double speedX;
+    double speedY;
+    double autoSpeedX;
+    double autoSpeedY;
+    bool repeatX;
+    bool repeatY;
+    double offsetX;
+    double offsetY;
     // JJ2's "limit visible area" flag
-    bool inherent_offset;
+    bool useInherentOffset;
 
     // textured background, only useful for sky layer
-    bool textured;
-    bool textured_stars;
-    sf::Color textured_color;
+    bool isTextured;
+    bool useStarsTextured;
+    sf::Color texturedBackgroundColor;
 
     bool TileMapLayer::operator< (TileMapLayer layer) {
         if (type != layer.type) {
@@ -91,68 +90,71 @@ struct TileMapLayer {
 };
 
 class DestructibleDebris {
-    public:
-        DestructibleDebris(std::shared_ptr<sf::Texture> tex, std::weak_ptr<sf::RenderTarget> win, 
-            int x, int y, unsigned tx, unsigned ty, unsigned short quarter);
-        ~DestructibleDebris();
-        void TickUpdate();
-        double GetY();
-    private:
-        std::unique_ptr<sf::Sprite> spr;
-        std::weak_ptr<sf::RenderTarget> wint;
-        double pos_x;
-        double pos_y;
-        double h_speed;
-        double v_speed;
+public:
+    DestructibleDebris(std::shared_ptr<sf::Texture> texture, std::weak_ptr<sf::RenderTarget> window, 
+        int x, int y, unsigned textureX, unsigned textureY, unsigned short quarter);
+    ~DestructibleDebris();
+    void tickUpdate();
+    double getY();
+
+private:
+    std::unique_ptr<sf::Sprite> sprite;
+    std::weak_ptr<sf::RenderTarget> window;
+    double posX;
+    double posY;
+    double speedX;
+    double speedY;
+    static const int speedMultiplier[4];
 };
 
 class TileMap : public std::enable_shared_from_this<TileMap> {
-    public:
-        TileMap(std::shared_ptr<CarrotQt5> game_root, const QString& tileset_file, const QString& mask_file, const QString& spr_layer_file);
-        ~TileMap();
+public:
+    TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename, const QString& sprLayerFilename);
+    ~TileMap();
         
-        // level related
-        void readLevelConfiguration(const QString& filename);
-        void readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layer_idx = 0, QSettings& config = QSettings());
-        void readAnimatedTiles(const QString& filename);
-        void drawLowerLevels();
-        void drawHigherLevels();
-        unsigned getLevelWidth();
-        unsigned getLevelHeight();
-        void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
-        bool isPosVine(double x, double y);
-        QVector<QVector<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
-        void loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer);
-        bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);
-        bool checkSpecialDestructible(double x, double y);
-        void saveInitialSpriteLayer();
-        void setTrigger(unsigned char trigger_id,bool new_state);
-        bool getTrigger(unsigned char trigger_id);
-        void advanceAnimatedTileTimers();
+    // level related
+    void readLevelConfiguration(const QString& filename);
+    void readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layerIdx = 0, QSettings& config = QSettings());
+    void readAnimatedTiles(const QString& filename);
+    void drawLowerLevels();
+    void drawHigherLevels();
+    unsigned getLevelWidth();
+    unsigned getLevelHeight();
+    void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
+    bool isPosVine(double x, double y);
+    QVector<QVector<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
+    void loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer);
+    bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);
+    bool checkSpecialDestructible(double x, double y);
+    void saveInitialSpriteLayer();
+    void setTrigger(unsigned char triggerID, bool newState);
+    bool getTrigger(unsigned char triggerID);
+    void advanceAnimatedTileTimers();
 
-        // assigned tileset related
-        const std::shared_ptr<sf::Texture> getTilesetTexture();
-        void readTileset(const QString& file_tiles, const QString& file_mask);
-        bool isTileEmpty(unsigned x, unsigned y);
-        bool isTileEmpty(const Hitbox& hbox, bool downwards = false);
-    private:
-        std::shared_ptr<CarrotQt5> root;
-        void drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target);
-        double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& is_y) const;
-        void updateSprLayerIdx();
-        void initializeBackgroundTexture(TileMapLayer& background);
-        void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target);
-        Tileset level_tileset;
-        QVector< TileMapLayer > level_layout;
-        unsigned spr_layer;
-        QVector<QVector<std::shared_ptr<LayerTile>>> initial_spr_layer_copy;
-        QVector<std::shared_ptr<AnimatedTile>> animated_tiles;
-        bool trigger_state[256];
-        std::unique_ptr<sf::RenderTexture> tex_back;
-        std::unique_ptr<sf::VertexArray> tex_fade;
-        unsigned level_width;
-        unsigned level_height;
-        std::shared_ptr<ResourceSet> sceneryResources;
-        QVector<std::shared_ptr<LayerTile>> defaultLayerTiles;
-        std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
+    // assigned tileset related
+    const std::shared_ptr<sf::Texture> getTilesetTexture();
+    void readTileset(const QString& tilesFilename, const QString& maskFilename);
+    bool isTileEmpty(unsigned x, unsigned y);
+    bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
+
+private:
+    std::shared_ptr<CarrotQt5> root;
+    void drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target);
+    double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY) const;
+    void updateSprLayerIdx();
+    void initializeBackgroundTexture(TileMapLayer& background);
+    void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target);
+    Tileset levelTileset;
+    QVector<TileMapLayer> levelLayout;
+    unsigned sprLayerIdx;
+    QVector<QVector<std::shared_ptr<LayerTile>>> spriteLayerAtLevelStart;
+    QVector<std::shared_ptr<AnimatedTile>> animatedTiles;
+    bool triggerState[256];
+    std::unique_ptr<sf::RenderTexture> texturedBackgroundTexture;
+    std::unique_ptr<sf::VertexArray> texturedBackgroundFadeArray;
+    unsigned levelWidth;
+    unsigned levelHeight;
+    std::shared_ptr<ResourceSet> sceneryResources;
+    QVector<std::shared_ptr<LayerTile>> defaultLayerTiles;
+    std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
 };

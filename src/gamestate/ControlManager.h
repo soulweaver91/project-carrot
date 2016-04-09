@@ -13,6 +13,7 @@ public:
     void setControlReleased(const int& key);
     void processFrame();
     ControlEventList getPendingEvents();
+
 private:
     QMap<Control, ControlState> controlStates;
     static const ControlState stateTemplate;

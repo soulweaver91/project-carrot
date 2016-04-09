@@ -11,6 +11,7 @@ public:
     ~GraphicsCache();
     std::shared_ptr<GraphicResource> request(const QString& filename);
     bool flush();
+
 private:
     bool loadGraphics(const QString& filename);
     QMap<QString, std::shared_ptr<GraphicResource>> cache;

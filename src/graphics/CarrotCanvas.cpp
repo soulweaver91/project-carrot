@@ -1,14 +1,14 @@
 #include "CarrotCanvas.h"
 
-CarrotCanvas::CarrotCanvas(QWidget* Parent, const QPoint& Position, const QSize& Size) :
-        QSFMLCanvas(Parent, Position, Size) {
+CarrotCanvas::CarrotCanvas(QWidget* parent, const QPoint& position, const QSize& size) :
+        QSFMLCanvas(parent, position, size) {
 
 }
 
-void CarrotCanvas::OnInit() {
+void CarrotCanvas::onInit() {
 }
 
-void CarrotCanvas::OnUpdate() {
+void CarrotCanvas::onUpdate() {
 }
 
 void CarrotCanvas::updateContents() {

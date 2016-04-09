@@ -5,20 +5,20 @@
 #include "../gamestate/ResourceManager.h"
 #include "../struct/PCEvent.h"
 
-CommonActor::CommonActor(std::shared_ptr<CarrotQt5> game_root, double x, double y, bool fromEventMap)
-    : AnimationUser(game_root), root(game_root), speed_h(0), speed_v(0), externalForceY(0), externalForceX(0), 
-    canJump(false), facingLeft(false), max_health(1), health(1), isGravityAffected(true), internalForceY(0),
-    isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity/3),
-    isBlinking(false), isSuspended(false), pos_x(x), pos_y(y), createdFromEventMap(fromEventMap) {
-    origin_x = static_cast<int>(x) / 32;
-    origin_y = static_cast<int>(y) / 32;
+CommonActor::CommonActor(std::shared_ptr<CarrotQt5> gameRoot, double x, double y, bool fromEventMap)
+    : AnimationUser(gameRoot), root(gameRoot), speedX(0), speedY(0), externalForceX(0), externalForceY(0), 
+    canJump(false), isFacingLeft(false), maxHealth(1), health(1), isGravityAffected(true), internalForceY(0),
+    isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity / 3),
+    isBlinking(false), isSuspended(false), posX(x), posY(y), isCreatedFromEventMap(fromEventMap) {
+    originTileX = static_cast<int>(x) / 32;
+    originTileY = static_cast<int>(y) / 32;
 }
 
 CommonActor::~CommonActor() {
 
 }
 
-void CommonActor::DrawUpdate() {
+void CommonActor::drawUpdate() {
     auto canvas = root->getCanvas().lock();
     if (canvas == nullptr) {
         return;
@@ -26,20 +26,20 @@ void CommonActor::DrawUpdate() {
 
     // Don't draw anything if we aren't in the vicinity of the view
     sf::Vector2f view = canvas->getView().getCenter();
-    if ((std::abs(view.x - pos_x) > (root->getViewWidth() / 2) + 50)
-     || (std::abs(view.y - pos_y) > (root->getViewHeight() / 2) + 50)) {
+    if ((std::abs(view.x - posX) > (root->getViewWidth() / 2) + 50)
+     || (std::abs(view.y - posY) > (root->getViewHeight() / 2) + 50)) {
         return;
     }
 
     if (root->dbgShowMasked) {
-        double len = sqrt(speed_h*speed_h + speed_v*speed_v);
+        double len = sqrt(speedX * speedX + speedY * speedY);
         if (len > 0) {
             sf::RectangleShape line(sf::Vector2f(len * 4 + 5, 5));
-            line.setPosition(pos_x,pos_y);
+            line.setPosition(posX, posY);
             line.setOrigin(2, 2);
-            double ang = atan2(speed_v,speed_h);
+            double ang = atan2(speedY, speedX);
             line.setRotation(180 + ang * 180 / 3.1415926535);
-            line.setFillColor(sf::Color(255,255,0));
+            line.setFillColor(sf::Color(255, 255, 0));
             canvas->draw(line);
         }
     }
@@ -48,8 +48,8 @@ void CommonActor::DrawUpdate() {
         // Pick the appropriate animation depending on if we are in the midst of a transition
         auto source = (inTransition ? transition : currentAnimation);
     
-        sprite.setScale((facingLeft ? -1 : 1),1);
-        sprite.setPosition(pos_x,pos_y);
+        sprite.setScale((isFacingLeft ? -1 : 1),1);
+        sprite.setPosition(posX, posY);
 
         drawCurrentFrame();
     }
@@ -87,30 +87,30 @@ void CommonActor::processAllControlHeldEventsDefaultHandler(const QMap<Control, 
 
 void CommonActor::tickEvent() {
     // Sign of the speed: either -1, 0 or 1
-    short sign = ((speed_h + externalForceX) > 1e-6) ? 1 : (((speed_h + externalForceX) < -1e-6) ? -1 : 0);
+    short sign = ((speedX + externalForceX) > 1e-6) ? 1 : (((speedX + externalForceX) < -1e-6) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
    
-    speed_h = std::min(std::max(speed_h, -16.0), 16.0);
-    speed_v = std::min(std::max(speed_v + gravity - internalForceY - externalForceY, -16.0), 16.0);
+    speedX = std::min(std::max(speedX, -16.0), 16.0);
+    speedY = std::min(std::max(speedY + gravity - internalForceY - externalForceY, -16.0), 16.0);
 
     auto thisPtr = shared_from_this();
 
-    Hitbox here = getHitbox();
-    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + externalForceX,speed_v), speed_v > 0, thisPtr)) {
-        if (abs(speed_h + externalForceX) > 1e-6) {
+    Hitbox currentHitbox = getHitbox();
+    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, speedX + externalForceX,speedY), speedY > 0, thisPtr)) {
+        if (abs(speedX + externalForceX) > 1e-6) {
             // We are walking, thus having both vertical and horizontal speed
-            if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + externalForceX,0), speed_v > 0, thisPtr)) {
+            if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, speedX + externalForceX,0), speedY > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
                 // Chances are we're just casually strolling and gravity tries to pull us through,
                 // or we are falling diagonally and hit a floor
-                if (speed_v > 0) {
+                if (speedY > 0) {
                     // Yep, that's it; just negate the gravity effect
-                    speed_v = -(elasticity * speed_v);
+                    speedY = -(elasticity * speedY);
                     onHitFloorHook();
                     canJump = true;
                 } else {
                     // Nope, hit a wall from below diagonally then. Let's bump back a bit
-                    speed_v = 1;
+                    speedY = 1;
                     externalForceY = 0;
                     internalForceY = 0;
                     canJump = false;
@@ -119,33 +119,35 @@ void CommonActor::tickEvent() {
             } else {
                 // Nope, there's also some obstacle horizontally
                 // Let's figure out if we are going against an upward slope
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, speed_h + externalForceX, -abs(speed_h + externalForceX) - 5), false, thisPtr)) {
+                if (root->isPositionEmpty(CarrotQt5::calcHitbox(
+                    currentHitbox, speedX + externalForceX, -abs(speedX + externalForceX) - 5
+                ), false, thisPtr)) {
                     // Yes, we indeed are
-                    speed_v = -(elasticity * speed_v);
+                    speedY = -(elasticity * speedY);
                     canJump = true;
-                    pos_y -= abs(speed_h + externalForceX)+1;
-                    /*while (root->game_tiles->isTileEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h,speed_v-abs(speed_h)-2))) {
-                        pos_y += 0.5;
+                    posY -= abs(speedX + externalForceX) + 1;
+                    /*while (root->game_tiles->isTileEmpty(CarrotQt5::calcHitbox(getHitbox(),speedX,speedY-abs(speedX)-2))) {
+                        posY += 0.5;
                     }
-                    pos_y -= 1;*/
+                    posY -= 1;*/
                     
                     // TODO: position us vertically to a suitable position so that we won't raise up to the air needlessly
                     // (applicable if the slope isn't exactly at 45 degrees)
                 } else {
                     // Nope. Cannot move horizontally at all. Can we just go vertically then?
-                    speed_h = -(elasticity * speed_h);
+                    speedX = -(elasticity * speedX);
                     externalForceX *= -1;
-                    if (root->isPositionEmpty(CarrotQt5::calcHitbox(here, 0, speed_v), speed_v > 0, thisPtr)) {
+                    if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, speedY), speedY > 0, thisPtr)) {
                         // Yeah
                         canJump = false;
                         onHitWallHook();
                     } else {
                         // Nope
-                        if (speed_v > 0) {
+                        if (speedY > 0) {
                             canJump = true;
                         }
 
-                        speed_v = -(elasticity * speed_v);
+                        speedY = -(elasticity * speedY);
                         externalForceY = 0;
                         internalForceY = 0;
                         // TODO: fix a problem with hurt getting player stuck in a wall here
@@ -156,44 +158,48 @@ void CommonActor::tickEvent() {
             }
         } else {
             // We are going directly vertically
-            if (speed_v > 0) {
+            if (speedY > 0) {
                 // We are falling, or we are on solid ground and gravity tries to push us through the floor
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(here,0,0), true, shared_from_this())) {
+                if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, 0), true, shared_from_this())) {
                     // Let's just nullify that effect
-                    speed_v = -(elasticity * speed_v);
-                    while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speed_h, speed_v), true, thisPtr)) {
-                        pos_y += 0.5;
+                    speedY = -(elasticity * speedY);
+                    while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speedX, speedY), true, thisPtr)) {
+                        posY += 0.5;
                     }
-                    pos_y -= 0.5;
+                    posY -= 0.5;
                     
                     onHitFloorHook();
                     canJump = true;
                 } else {
                     // Nope, nothing else is going on
-                    speed_v = -(elasticity * speed_v);
+                    speedY = -(elasticity * speedY);
                     canJump = true;
                 }
             } else {
                 // We are jumping
-                if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here, 0, speed_v), false, thisPtr)) {
-                    speed_v = -(elasticity * speed_v);
+                if (!root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, speedY), false, thisPtr)) {
+                    speedY = -(elasticity * speedY);
                     externalForceY = 0;
                     internalForceY = 0;
                     onHitCeilingHook();
                 } else {
                     // we can go vertically anyway
-                    //speed_v = -(elasticity * speed_v);
+                    //speedY = -(elasticity * speedY);
                 }
             }
         }
     } else {
         if (canJump) {
             // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
-            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(here,speed_h + externalForceX,speed_v+abs(speed_h + externalForceX)+5), false, thisPtr)) {
-                while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(),speed_h + externalForceX,speed_v+abs(speed_h + externalForceX)), false, thisPtr)) {
-                    pos_y += 0.1;
+            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(
+                currentHitbox, speedX + externalForceX, speedY + abs(speedX + externalForceX) + 5
+            ), false, thisPtr)) {
+                while (root->isPositionEmpty(CarrotQt5::calcHitbox(
+                    getHitbox(), speedX + externalForceX, speedY + abs(speedX + externalForceX)
+                ), false, thisPtr)) {
+                    posY += 0.1;
                 }
-                pos_y -= 0.1;
+                posY -= 0.1;
             } else {
                 // That wasn't the case so forget about that
                 canJump = false;
@@ -204,17 +210,17 @@ void CommonActor::tickEvent() {
     if (std::abs(externalForceX) > 1e-6) {
         // Reduce remaining push
         if (externalForceX > 0) {
-            externalForceX = std::max(externalForceX - friction,0.0);
+            externalForceX = std::max(externalForceX - friction, 0.0);
         } else {
-            externalForceX = std::min(externalForceX + friction,0.0);
+            externalForceX = std::min(externalForceX + friction, 0.0);
         }
     }
     externalForceY = std::max(externalForceY - gravity / 3, 0.0);
     internalForceY = std::max(internalForceY - gravity / 3, 0.0);
-    //speed_h = sign * std::max((sign * speed_h) - friction, 0.0);
+    //speedX = sign * std::max((sign * speedX) - friction, 0.0);
 
-    pos_x += speed_h + externalForceX;
-    pos_y += speed_v;
+    posX += speedX + externalForceX;
+    posY += speedY;
 
     // determine current animation last bits from speeds
     // it's okay to call setAnimation on every tick because it doesn't do
@@ -223,13 +229,13 @@ void CommonActor::tickEvent() {
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
     if (currentAnimation != nullptr) {
         int composite = currentState & 0xFFFFFFE0;
-        if (abs(speed_h) > 3) {
+        if (abs(speedX) > 3) {
             // shift-running, speed is more than 3px/frame
             composite += 3;
-        } else if (abs(speed_h) > 1) {
+        } else if (abs(speedX) > 1) {
             // running, speed is between 1px and 3px/frame
             composite += 2;
-        } else if (abs(speed_h) > 1e-6) {
+        } else if (abs(speedX) > 1e-6) {
             // walking, speed is less than 1px/frame (mostly a transition zone)
             composite += 1;
         }
@@ -239,34 +245,33 @@ void CommonActor::tickEvent() {
         } else {
             if (canJump) {
                 // grounded, no vertical speed
-            } else if (speed_v > 1e-6) {
+            } else if (speedY > 1e-6) {
                 // falling, ver. speed is positive
                 composite += 8;
-            } else if (speed_v < -1e-6) {
+            } else if (speedY < -1e-6) {
                 // jumping, ver. speed is negative
                 composite += 4;
             }
         }
     
-        AnimStateT newstate = AnimStateT(composite);
-        setAnimation(newstate);
+        AnimStateT newState = AnimStateT(composite);
+        setAnimation(newState);
     }
 
     // Make sure we stay within the level boundaries
-    pos_x = std::min(std::max(pos_x,0.0),root->getLevelWidth()*32.0);
-    pos_y = std::min(std::max(pos_y,0.0),root->getLevelHeight()*32.0);
+    posX = std::min(std::max(posX, 0.0), root->getLevelWidth() * 32.0);
+    posY = std::min(std::max(posY, 0.0), root->getLevelHeight() * 32.0);
 } 
 
 void CommonActor::setToViewCenter(sf::View* view) {
     view->setCenter(
-        std::max(400.0,std::min(32.0 * (root->getLevelWidth()+1)  - 400.0, (double)qRound(pos_x))),
-        std::max(300.0,std::min(32.0 * (root->getLevelHeight()+1) - 300.0, (double)qRound(pos_y)))
+        std::max(400.0, std::min(32.0 * (root->getLevelWidth() + 1)  - 400.0, (double)qRound(posX))),
+        std::max(300.0, std::min(32.0 * (root->getLevelHeight() + 1) - 300.0, (double)qRound(posY)))
     );
 }
 
 CoordinatePair CommonActor::getPosition() {
-    CoordinatePair pos_now = {pos_x, pos_y};
-    return pos_now;
+    return { posX, posY };
 }
 
 Hitbox CommonActor::getHitbox() {
@@ -281,19 +286,19 @@ Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
     if (currentAnimation != nullptr) {
         if (currentAnimation->hasColdspot) {
             return {
-                pos_x - currentAnimation->hotspot.x + currentAnimation->coldspot.x - (w / 2),
-                pos_y - currentAnimation->hotspot.y + currentAnimation->coldspot.y - h,
-                pos_x - currentAnimation->hotspot.x + currentAnimation->coldspot.x + (w / 2),
-                pos_y - currentAnimation->hotspot.y + currentAnimation->coldspot.y
+                posX - currentAnimation->hotspot.x + currentAnimation->coldspot.x - (w / 2),
+                posY - currentAnimation->hotspot.y + currentAnimation->coldspot.y - h,
+                posX - currentAnimation->hotspot.x + currentAnimation->coldspot.x + (w / 2),
+                posY - currentAnimation->hotspot.y + currentAnimation->coldspot.y
             };
         } else {
             // Collision base set to the bottom of the sprite.
             // This is probably still not the correct way to do it, but at least it works for now.
             return {
-                pos_x - (w / 2),
-                pos_y - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y - h,
-                pos_x + (w / 2),
-                pos_y - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y
+                posX - (w / 2),
+                posY - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y - h,
+                posX + (w / 2),
+                posY - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y
             };
         }
     }
@@ -367,8 +372,8 @@ bool CommonActor::perish() {
     auto events = root->getGameEvents().lock();
     if (health == 0) {
         if (events != nullptr) {
-            events->deactivate(origin_x, origin_y);
-            events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
+            events->deactivate(originTileX, originTileY);
+            events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
         }
 
         root->removeActor(shared_from_this());
@@ -419,12 +424,12 @@ bool CommonActor::playSound(const QString& id) {
     return false;
 }
 
-bool CommonActor::deactivate(int x, int y, int dist) {
+bool CommonActor::deactivate(int x, int y, int tileDistance) {
     auto events = root->getGameEvents().lock();
 
-    if ((std::abs(x - origin_x) > dist) || (std::abs(y - origin_y) > dist)) {
+    if ((std::abs(x - originTileX) > tileDistance) || (std::abs(y - originTileY) > tileDistance)) {
         if (events != nullptr) {
-            events->deactivate(origin_x,origin_y);
+            events->deactivate(originTileX, originTileY);
         }
 
         root->removeActor(shared_from_this());
@@ -434,14 +439,14 @@ bool CommonActor::deactivate(int x, int y, int dist) {
 }
 
 void CommonActor::moveInstantly(CoordinatePair location) {
-    pos_x = location.x;
-    pos_y = location.y;
+    posX = location.x;
+    posY = location.y;
 }
 
 void CommonActor::deleteFromEventMap() {
     auto events = root->getGameEvents().lock();
     if (events != nullptr) {
-        events->storeTileEvent(origin_x, origin_y, PC_EMPTY);
+        events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
     }
 }
 

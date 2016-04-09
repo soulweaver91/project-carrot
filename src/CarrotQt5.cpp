@@ -26,7 +26,7 @@
 #include <bass.h>
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), levelName(""), frame(0),
-    gravity(0.3), dbgShowMasked(false), lightingLevel(80), isMenu(false), mod_current(0), menuObject(nullptr), fps(0) {
+    gravity(0.3), dbgShowMasked(false), lightingLevel(80), isMenu(false), currentTempModifier(0), menuObject(nullptr), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -36,13 +36,13 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     ui.setupUi(this);
     //setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    connect(ui.action_About_Project_Carrot,SIGNAL(triggered()),this,SLOT(openAboutCarrot()));
-    connect(ui.action_About_Qt_5,SIGNAL(triggered()),qApp,SLOT(aboutQt()));
-    connect(ui.action_Home_Page,SIGNAL(triggered()),this,SLOT(openHomePage()));
-    connect(ui.debug_music,SIGNAL(triggered()),this,SLOT(debugLoadMusic()));
-    connect(ui.debug_gravity,SIGNAL(triggered()),this,SLOT(debugSetGravity()));
-    connect(ui.debug_lighting,SIGNAL(triggered()),this,SLOT(debugSetLighting()));
-    connect(ui.debug_masks,SIGNAL(triggered(bool)),this,SLOT(debugShowMasks(bool)));
+    connect(ui.action_About_Project_Carrot, SIGNAL(triggered()), this, SLOT(openAboutCarrot()));
+    connect(ui.action_About_Qt_5, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(ui.action_Home_Page, SIGNAL(triggered()), this, SLOT(openHomePage()));
+    connect(ui.debug_music, SIGNAL(triggered()), this, SLOT(debugLoadMusic()));
+    connect(ui.debug_gravity, SIGNAL(triggered()), this, SLOT(debugSetGravity()));
+    connect(ui.debug_lighting, SIGNAL(triggered()), this, SLOT(debugSetLighting()));
+    connect(ui.debug_masks, SIGNAL(triggered(bool)), this, SLOT(debugShowMasks(bool)));
 
     // Initialize the paint surface
     windowCanvas = std::make_shared<CarrotCanvas>(ui.mainFrame, QPoint(0, 0), QSize(800, 600));
@@ -52,11 +52,11 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     std::fill_n(players, 32, nullptr);
 
     // Read the main font
-    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png",29,31,1,224,32,256);
+    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 1, 224, 32, 256);
     
     // Define the game view which we'll use for following the player
-    gameView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
-    uiView = std::make_unique<sf::View>(sf::FloatRect(0.0,0.0,800.0,600.0));
+    gameView = std::make_unique<sf::View>(sf::FloatRect(0.0, 0.0, 800.0, 600.0));
+    uiView = std::make_unique<sf::View>(sf::FloatRect(0.0, 0.0, 800.0, 600.0));
 
     resourceManager = std::make_unique<ResourceManager>();
     shaderSource = std::make_unique<ShaderSource>();
@@ -66,46 +66,46 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
 
     // Define pause screen resources
     pausedScreenshot = std::make_unique<sf::Texture>();
-    pausedScreenshot->create(800,600);
+    pausedScreenshot->create(800, 600);
     pausedScreenshot->update(*windowCanvas);
 
     pausedScreenshotSprite = std::make_unique<sf::Sprite>();
     pausedScreenshotSprite->setTexture(*pausedScreenshot);
 
     // Define the pause text and add vertical bounce animation to it
-    pausedText = std::make_unique<BitmapString>(mainFont,"Pause",FONT_ALIGN_CENTER);
-    pausedText->setAnimation(true,0.0,6.0,0.015,1.25);
+    pausedText = std::make_unique<BitmapString>(mainFont, "Pause", FONT_ALIGN_CENTER);
+    pausedText->setAnimation(true, 0.0, 6.0, 0.015, 1.25);
 
     // Create the light overlay texture
     lightTexture = std::make_unique<sf::RenderTexture>();
-    lightTexture->create(1600,1200);
+    lightTexture->create(1600, 1200);
 
     // Fill the light overlay texture with black
-    sf::RectangleShape orect(sf::Vector2f(1600,1200));
-    orect.setFillColor(sf::Color::Black);
-    lightTexture->draw(orect);
+    sf::RectangleShape tempOverlayRectangle(sf::Vector2f(1600, 1200));
+    tempOverlayRectangle.setFillColor(sf::Color::Black);
+    lightTexture->draw(tempOverlayRectangle);
 
     // Create a hole in the middle
-    sf::CircleShape ocirc(96);
-    ocirc.setFillColor(sf::Color(0,0,0,0));
-    ocirc.setOrigin(96,96);
-    ocirc.setPosition(800, 600);
-    lightTexture->draw(ocirc, sf::RenderStates(sf::BlendNone));
+    sf::CircleShape tempOverlayCircle(96);
+    tempOverlayCircle.setFillColor(sf::Color(0,0,0,0));
+    tempOverlayCircle.setOrigin(96,96);
+    tempOverlayCircle.setPosition(800, 600);
+    lightTexture->draw(tempOverlayCircle, sf::RenderStates(sf::BlendNone));
 
     // TODO: create a feather effect
     // check the shader stuff and apply them to the texture here
     
     for (int i = 0; i < 32; ++i) {
-        mod_name[i] = "(UNSET)";
-        mod_temp[i] = 0;
+        tempModifierName[i] = "(UNSET)";
+        tempModifier[i] = 0;
     }
-    mod_name[0] = "PerspCurve";      mod_temp[0] = 20;
-    mod_name[1] = "PerspMultipNear"; mod_temp[1] = 1;
-    mod_name[2] = "PerspMultipFar";  mod_temp[2] = 3;
-    mod_name[3] = "PerspSpeed";      mod_temp[3] = 4;
-    mod_name[4] = "SkyDepth";        mod_temp[4] = 1;
+    tempModifierName[0] = "PerspCurve";      tempModifier[0] = 20;
+    tempModifierName[1] = "PerspMultipNear"; tempModifier[1] = 1;
+    tempModifierName[2] = "PerspMultipFar";  tempModifier[2] = 3;
+    tempModifierName[3] = "PerspSpeed";      tempModifier[3] = 4;
+    tempModifierName[4] = "SkyDepth";        tempModifier[4] = 1;
 
-    last_timestamp = QTime::currentTime();
+    lastTimestamp = QTime::currentTime();
 }
 
 CarrotQt5::~CarrotQt5() {
@@ -118,8 +118,8 @@ void CarrotQt5::parseCommandLine() {
     QStringList param = QCoreApplication::arguments();
     QString level = "";
     if (param.size() > 1) {
-        QDir d(QDir::currentPath());
-        if (d.exists(param.at(param.size() - 1))) {
+        QDir dir(QDir::currentPath());
+        if (dir.exists(param.at(param.size() - 1))) {
             level = param.at(param.size() - 1);
         }
     }
@@ -144,7 +144,7 @@ void CarrotQt5::startGame(QVariant filename) {
     if (filename.canConvert<QString>()) {
         if (loadLevel(filename.toString())) {
             myTimer.setInterval(1000 / 70);
-            myTimer.disconnect(this,SLOT(mainMenuTick()));
+            myTimer.disconnect(this, SLOT(mainMenuTick()));
             connect(&myTimer, SIGNAL(timeout()), this, SLOT(gameTick()));
             menuObject = nullptr;
 
@@ -158,7 +158,7 @@ void CarrotQt5::startGame(QVariant filename) {
 
 void CarrotQt5::startMainMenu() {
     myTimer.setInterval(1000 / 70);
-    myTimer.disconnect(this,SLOT(gameTick()));
+    myTimer.disconnect(this, SLOT(gameTick()));
     connect(&myTimer, SIGNAL(timeout()), this, SLOT(mainMenuTick()));
     myTimer.start();
     isMenu = true;
@@ -170,7 +170,7 @@ void CarrotQt5::startMainMenu() {
 }
 
 void CarrotQt5::openAboutCarrot() {
-    QDialog* dialog = new QDialog(this,0);
+    QDialog* dialog = new QDialog(this, 0);
     Ui_AboutCarrot ui;
     ui.setupUi(dialog);
 
@@ -199,7 +199,7 @@ void CarrotQt5::closeEvent(QCloseEvent *event) {
 }
 
 bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
-    // Catch focus events to mute the music when the window doesn't have it
+    // Catch focus events to mute the music when the window doesn'loadingScreenTexture have it
     if (e->type() == QEvent::WindowActivate) {
         resourceManager->getSoundSystem()->fadeMusicIn(1000);
         paused = false;
@@ -212,13 +212,13 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
 
-        gameView->setSize(w,h);
-        uiView->setSize(w,h);
-        uiView->setCenter(w/2.0,h/2.0);
+        gameView->setSize(w, h);
+        uiView->setSize(w, h);
+        uiView->setCenter(w / 2.0, h / 2.0);
         ui.mainFrame->resize(ui.centralWidget->size());
-        windowCanvas->setSize(sf::Vector2u(w,h));
+        windowCanvas->setSize(sf::Vector2u(w, h));
         windowCanvas->setView(*uiView);
-        pausedScreenshot->create(w,h);
+        pausedScreenshot->create(w, h);
     }
     return FALSE;  // dispatch normally
 }
@@ -277,16 +277,16 @@ void CarrotQt5::keyPressEvent(QKeyEvent* event) {
         }
         
         if (event->key() == Qt::Key::Key_Insert) {
-            mod_temp[mod_current] += 1;
+            tempModifier[currentTempModifier] += 1;
         }
         if (event->key() == Qt::Key::Key_Delete) {
-            mod_temp[mod_current] -= 1;
+            tempModifier[currentTempModifier] -= 1;
         }
         if (event->key() == Qt::Key::Key_PageUp) {
-            mod_current = (mod_current + 1) % 32;
+            currentTempModifier = (currentTempModifier + 1) % 32;
         }
         if (event->key() == Qt::Key::Key_PageDown) {
-            mod_current = (mod_current + 31) % 32;
+            currentTempModifier = (currentTempModifier + 31) % 32;
         }
     }
 
@@ -320,14 +320,14 @@ void CarrotQt5::gameTick() {
     frame++;
     if (frame % 20 == 0) {
         QTime now = QTime::currentTime();
-        fps = (1000.0 / (last_timestamp.msecsTo(now) / 20.0));
-        last_timestamp = now;
+        fps = (1000.0 / (lastTimestamp.msecsTo(now) / 20.0));
+        lastTimestamp = now;
     }
 
     if (paused) {
         // Set up a partially translucent black overlay
-        sf::RectangleShape overlay(sf::Vector2f(800.0,600.0));
-        overlay.setFillColor(sf::Color(0,0,0,120));
+        sf::RectangleShape overlay(sf::Vector2f(800.0, 600.0));
+        overlay.setFillColor(sf::Color(0, 0, 0, 120));
         
         windowCanvas->draw(*pausedScreenshotSprite);
         windowCanvas->draw(overlay);
@@ -340,7 +340,7 @@ void CarrotQt5::gameTick() {
         return;
     }
 
-    // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
+    // Clear the drawing surface; we don'loadingScreenTexture want to do this if we emulate the JJ2 behavior
     windowCanvas->clear();
 
     // Set player to the center of the view
@@ -351,13 +351,13 @@ void CarrotQt5::gameTick() {
     int view_x = static_cast<unsigned>(windowCanvas->getView().getCenter().x) / 32;
     int view_y = static_cast<unsigned>(windowCanvas->getView().getCenter().y) / 32;
     for(unsigned i = 0; i < actors.size(); i++) {
-        if (actors.at(i)->deactivate(view_x,view_y,32)) {
+        if (actors.at(i)->deactivate(view_x, view_y, 32)) {
             --i;
         }
     }
     gameEvents->activateEvents(windowCanvas->getView());
 
-    // Run animated tiles' timers
+    // Run isAnimated tiles' timers
     gameTiles->advanceAnimatedTileTimers();
     // Run all actors' timers
     for(unsigned i = 0; i < actors.size(); i++) {
@@ -378,12 +378,12 @@ void CarrotQt5::gameTick() {
     gameTiles->drawLowerLevels();
     // ...then draw all the actors...
     for(unsigned i = 0; i < actors.size(); i++) {
-        actors.at(i)->DrawUpdate();
+        actors.at(i)->drawUpdate();
     }
     // ...then all the debris elements...
     for (unsigned i = 0; i < debris.size(); i++) {
-        debris.at(i)->TickUpdate();
-        if (debris.at(i)->GetY() - windowCanvas->getView().getCenter().y > 400) {
+        debris.at(i)->tickUpdate();
+        if (debris.at(i)->getY() - windowCanvas->getView().getCenter().y > 400) {
             debris.erase(debris.begin() + i);
             --i;
         }
@@ -393,8 +393,8 @@ void CarrotQt5::gameTick() {
 
     // Draw the lighting overlay
     sf::Sprite s(lightTexture->getTexture());
-    s.setColor(sf::Color(255,255,255,(255 * (100 - lightingLevel) / 100)));
-    s.setOrigin(800,600);
+    s.setColor(sf::Color(255, 255, 255, (255 * (100 - lightingLevel) / 100)));
+    s.setOrigin(800, 600);
     s.setPosition(players[0]->getPosition().x,players[0]->getPosition().y - 15); // middle of the sprite vertically
     windowCanvas->draw(s);
 
@@ -405,9 +405,11 @@ void CarrotQt5::gameTick() {
     players[0]->drawUIOverlay();
     
     //BitmapString::drawString(window,mainFont,"Frame: " + QString::number(frame),6,56);
-    BitmapString::drawString(getCanvas(), getFont(), "Actors: " + QString::number(actors.size()),6,176);
-    BitmapString::drawString(getCanvas(), getFont(), "FPS: " + QString::number(fps,'f',2) + " at " + QString::number(1000 / fps) + "ms/f",6,56);
-    BitmapString::drawString(getCanvas(), getFont(), "Mod-" + QString::number(mod_current) + " " + mod_name[mod_current] + ": " + QString::number(mod_temp[mod_current]),6,540);
+    BitmapString::drawString(getCanvas(), getFont(), "Actors: " + QString::number(actors.size()), 6, 176);
+    BitmapString::drawString(getCanvas(), getFont(), "FPS: " + QString::number(fps, 'f', 2) + " at " +
+        QString::number(1000 / fps) + "ms/f", 6, 56);
+    BitmapString::drawString(getCanvas(), getFont(), "Mod-" + QString::number(currentTempModifier) + " " +
+        tempModifierName[currentTempModifier] + ": " + QString::number(tempModifier[currentTempModifier]), 6, 540);
 
     // Update the drawn surface to the screen and set the view back to the player
     //windowCanvas->display();
@@ -429,31 +431,31 @@ bool CarrotQt5::addActor(std::shared_ptr<CommonActor> actor) {
     return true;
 }
 
-bool CarrotQt5::addPlayer(std::shared_ptr<Player> actor, short player_id) {
+bool CarrotQt5::addPlayer(std::shared_ptr<Player> actor, short playerID) {
     // If player ID is defined and is between 0 and 31 (inclusive),
     // try to add the player to the player array
-    if ((player_id > -1) && (player_id < 32)) {
-        if (players[player_id] != nullptr) {
+    if ((playerID > -1) && (playerID < 32)) {
+        if (players[playerID] != nullptr) {
             // A player with that number already existed
             return false;
         }
         // all OK, add to the player 
-        players[player_id] = actor;
+        players[playerID] = actor;
     }
     actors.push_back(actor);
     return true;
 }
 
 bool CarrotQt5::loadLevel(const QString& name) {
-    QDir level_dir(name);
-    if (level_dir.exists()) {
-        QStringList level_files = level_dir.entryList(QStringList("*.layer") << "config.ini");
-        if (level_files.contains("spr.layer") && level_files.contains("config.ini")) {
+    QDir levelDir(name);
+    if (levelDir.exists()) {
+        QStringList levelFiles = levelDir.entryList(QStringList("*.layer") << "config.ini");
+        if (levelFiles.contains("spr.layer") && levelFiles.contains("config.ini")) {
             // Required files found
 
-            QSettings level_config(level_dir.absoluteFilePath("config.ini"),QSettings::IniFormat);
+            QSettings level_config(levelDir.absoluteFilePath("config.ini"),QSettings::IniFormat);
 
-            if (level_config.value("Version/LayerFormat",1).toUInt() > LAYERFORMATVERSION) {
+            if (level_config.value("Version/LayerFormat", 1).toUInt() > LAYERFORMATVERSION) {
                 QMessageBox msg;
                 msg.setWindowTitle("Error loading level");
                 msg.setText("The level is using a too recent layer format. You might need to update to a newer game version.");
@@ -464,23 +466,23 @@ bool CarrotQt5::loadLevel(const QString& name) {
                 return false;
             }
             
-            setLevelName(level_config.value("Level/FormalName","Unnamed level").toString());
+            setLevelName(level_config.value("Level/FormalName", "Unnamed level").toString());
 
             // Clear the window contents
             windowCanvas->clear();
 
             // Show loading screen
-            sf::Texture t;
-            t.loadFromFile("Data/Assets/screen_loading.png");
-            sf::Sprite s(t);
-            s.setPosition(80,60);
-            windowCanvas->draw(s);
-            BitmapString::drawString(getCanvas(),getFont(), levelName, 400, 360, FONT_ALIGN_CENTER);
+            sf::Texture loadingScreenTexture;
+            loadingScreenTexture.loadFromFile("Data/Assets/screen_loading.png");
+            sf::Sprite loadingScreenSprite(loadingScreenTexture);
+            loadingScreenSprite.setPosition(80, 60);
+            windowCanvas->draw(loadingScreenSprite);
+            BitmapString::drawString(getCanvas(), getFont(), levelName, 400, 360, FONT_ALIGN_CENTER);
             windowCanvas->updateContents();
             
-            QString tileset = level_config.value("Level/Tileset","").toString();
+            QString tileset = level_config.value("Level/Tileset", "").toString();
             
-            nextLevel = level_config.value("Level/Next","").toString();
+            nextLevel = level_config.value("Level/Next", "").toString();
                 
             
             QDir tileset_dir(QDir::currentPath() + QString::fromStdString("/Tilesets/") + tileset);
@@ -489,46 +491,46 @@ bool CarrotQt5::loadLevel(const QString& name) {
                 gameTiles = std::make_shared<TileMap>(shared_from_this(),
                                          tileset_dir.absoluteFilePath("tiles.png"),
                                          tileset_dir.absoluteFilePath("mask.png"),
-                                         level_dir.absoluteFilePath("spr.layer"));
+                                         levelDir.absoluteFilePath("spr.layer"));
             
                 // Read the sky layer if it exists
-                if (level_files.contains("sky.layer")) {
-                    gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, level_dir.absoluteFilePath("sky.layer"), 0, level_config);
+                if (levelFiles.contains("sky.layer")) {
+                    gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), 0, level_config);
                 }
             
                 // Read the background layers
-                QStringList bglayers = level_files.filter(".bg.layer");
-                for (unsigned i = 0; i < bglayers.size(); ++i) {
-                    gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, level_dir.absoluteFilePath(bglayers.at(i)), i, level_config);
+                QStringList bgLayers = levelFiles.filter(".bg.layer");
+                for (unsigned i = 0; i < bgLayers.size(); ++i) {
+                    gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), i, level_config);
                 }
 
                 // Read the foreground layers
-                QStringList fglayers = level_files.filter(".fg.layer");
-                for (unsigned i = 0; i < fglayers.size(); ++i) {
-                    gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, level_dir.absoluteFilePath(fglayers.at(i)), i, level_config);
+                QStringList fgLayers = levelFiles.filter(".fg.layer");
+                for (unsigned i = 0; i < fgLayers.size(); ++i) {
+                    gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), i, level_config);
                 }
 
-                if (level_dir.entryList().contains("animtiles.dat")) {
-                    gameTiles->readAnimatedTiles(level_dir.absoluteFilePath("animtiles.dat"));
+                if (levelDir.entryList().contains("animtiles.dat")) {
+                    gameTiles->readAnimatedTiles(levelDir.absoluteFilePath("animtiles.dat"));
                 }
                 
                 gameEvents = std::make_shared<EventMap>(shared_from_this(), getLevelWidth(), getLevelHeight());
-                if (level_files.contains("event.layer")) {
-                    gameEvents->readEvents(level_dir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat",1).toUInt());
+                if (levelFiles.contains("event.layer")) {
+                    gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat", 1).toUInt());
                 }
 
                 gameTiles->saveInitialSpriteLayer();
                 
                 if (players[0] == nullptr) {
                     auto defaultplayer = std::make_shared<Player>(shared_from_this(), 320.0, 32.0);
-                    addPlayer(defaultplayer,0);
+                    addPlayer(defaultplayer, 0);
                 }
                 
-                resourceManager->getSoundSystem()->setMusic(("Music/" + level_config.value("Level/MusicDefault","").toString().toUtf8()).data());
-                setLighting(level_config.value("Level/LightInit",100).toInt(),true);
+                resourceManager->getSoundSystem()->setMusic(("Music/" + level_config.value("Level/MusicDefault", "").toString().toUtf8()).data());
+                setLighting(level_config.value("Level/LightInit", 100).toInt(),true);
                 
-                connect(ui.debug_health,SIGNAL(triggered()),players[0].get(),SLOT(debugHealth()));
-                connect(ui.debug_ammo,SIGNAL(triggered()),players[0].get(),SLOT(debugAmmo()));
+                connect(ui.debug_health, SIGNAL(triggered()), players[0].get(), SLOT(debugHealth()));
+                connect(ui.debug_ammo, SIGNAL(triggered()), players[0].get(), SLOT(debugAmmo()));
 
                 setSavePoint();
             } else {
@@ -565,7 +567,8 @@ bool CarrotQt5::loadLevel(const QString& name) {
 }
 
 void CarrotQt5::debugLoadMusic() {
-    QString filename = QFileDialog::getOpenFileName(this, "Load which file?", qApp->applicationDirPath(), "Module files (*.it *.s3m *.xm *.mod *.mo3 *.mtm *.umx);;All files (*.*)");
+    QString filename = QFileDialog::getOpenFileName(this, "Load which file?", qApp->applicationDirPath(),
+        "Module files (*.it *.s3m *.xm *.mod *.mo3 *.mtm *.umx);;All files (*.*)");
     if (filename.endsWith(".j2b")) {
         filename = JJ2Format::convertJ2B(filename);
     }
@@ -603,15 +606,15 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(CoordinatePai
     return res;
 }
 
-QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hbox, std::shared_ptr<CommonActor> me) {
+QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hitbox, std::shared_ptr<CommonActor> me) {
     QVector<std::weak_ptr<CommonActor>> res;
     for (int i = 0; i < actors.size(); ++i) {
         if (me == actors.at(i)) {
             continue;
         }
         Hitbox hbox2 = actors.at(i)->getHitbox();
-        if ((hbox.left < hbox2.right && hbox.right > hbox2.left) &&
-            (hbox.top < hbox2.bottom && hbox.bottom > hbox2.top)) {
+        if ((hitbox.left < hbox2.right && hitbox.right > hbox2.left) &&
+            (hitbox.top < hbox2.bottom && hitbox.bottom > hbox2.top)) {
             res << actors.at(i);
         }
     }
@@ -619,43 +622,43 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hbox, 
 }
 
 void CarrotQt5::debugSetGravity() {
-    gravity = QInputDialog::getDouble(this,"Set new gravity","Gravity:",gravity,-3.0,3.0,4);
+    gravity = QInputDialog::getDouble(this, "Set new gravity", "Gravity:", gravity, -3.0, 3.0, 4);
 }
 
 void CarrotQt5::debugSetLighting() {
-    lightingLevel = QInputDialog::getInt(this,"Set new lighting","Lighting:",lightingLevel,0,100);
+    lightingLevel = QInputDialog::getInt(this, "Set new lighting", "Lighting:", lightingLevel, 0, 100);
 }
 
-Hitbox CarrotQt5::calcHitbox(const Hitbox& hbox, double hor, double ver) {
-    Hitbox nbox(hbox);
-    nbox.left += hor;
-    nbox.right += hor;
-    nbox.top += ver;
-    nbox.bottom += ver;
-    return nbox;
+Hitbox CarrotQt5::calcHitbox(const Hitbox& hitbox, double diffX, double diffY) {
+    Hitbox newBox(hitbox);
+    newBox.left += diffX;
+    newBox.right += diffX;
+    newBox.top += diffY;
+    newBox.bottom += diffY;
+    return newBox;
 }
 
 // check if this is used anywhere
 Hitbox CarrotQt5::calcHitbox(int x, int y, int w, int h) {
-    Hitbox nbox;
-    nbox.left = x - w/2;
-    nbox.right = x + w/2;
-    nbox.top = y - h/2;
-    nbox.bottom = y + h/2;
-    return nbox;
+    Hitbox newBox;
+    newBox.left = x - w/2;
+    newBox.right = x + w/2;
+    newBox.top = y - h/2;
+    newBox.bottom = y + h/2;
+    return newBox;
 }
 
 void CarrotQt5::setSavePoint() {
-    lastSavePoint.player_lives = players[0]->getLives() - 1;
-    lastSavePoint.player_pos = players[0]->getPosition();
-    lastSavePoint.spr_layer_copy = gameTiles->prepareSavePointLayer();
+    lastSavePoint.playerLives = players[0]->getLives() - 1;
+    lastSavePoint.playerPosition = players[0]->getPosition();
+    lastSavePoint.spriteLayerState = gameTiles->prepareSavePointLayer();
 }
 
 void CarrotQt5::loadSavePoint() {
     clearActors();
     gameEvents->deactivateAll();
-    players[0]->moveInstantly(lastSavePoint.player_pos);
-    gameTiles->loadSavePointLayer(lastSavePoint.spr_layer_copy);
+    players[0]->moveInstantly(lastSavePoint.playerPosition);
+    gameTiles->loadSavePointLayer(lastSavePoint.spriteLayerState);
 }
 
 void CarrotQt5::clearActors() {
@@ -671,10 +674,10 @@ unsigned long CarrotQt5::getFrame() {
     return frame;
 }
 
-void CarrotQt5::createDebris(unsigned tile_id, int x, int y) {
+void CarrotQt5::createDebris(unsigned tileId, int x, int y) {
     for (int i = 0; i < 4; ++i) {
-        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), getCanvas(), x, y, tile_id % 10, tile_id / 10,i);
-        debris.push_back(d);
+        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), getCanvas(), x, y, tileId % 10, tileId / 10, i);
+        debris << d;
     }
 }
 
@@ -686,7 +689,8 @@ void CarrotQt5::setLighting(int target, bool immediate) {
     if (immediate) {
         lightingLevel = target;
     } else {
-        QTimer::singleShot(50,this,SLOT(setLightingStep()));
+        // TODO: Bind to frames somehow
+        QTimer::singleShot(50, this, SLOT(setLightingStep()));
     }
 }
 
@@ -696,17 +700,21 @@ void CarrotQt5::setLightingStep() {
     }
     short dir = (targetLightingLevel < lightingLevel) ? -1 : 1;
     lightingLevel += dir;
-    QTimer::singleShot(50,this,SLOT(setLightingStep()));
+
+    // TODO: Bind to frames somehow
+    QTimer::singleShot(50, this, SLOT(setLightingStep()));
 }
 
 void CarrotQt5::initLevelChange(ExitType e) {
-    last_exit = e;
+    lastExit = e;
     resourceManager->getSoundSystem()->setMusic("");
-    QTimer::singleShot(6000,this,SLOT(delayedLevelChange()));
+
+    // TODO: Bind to frames somehow
+    QTimer::singleShot(6000, this, SLOT(delayedLevelChange()));
 }
 
 void CarrotQt5::delayedLevelChange() {
-    if (last_exit == NEXT_NORMAL) {
+    if (lastExit == NEXT_NORMAL) {
         LevelCarryOver o = players[0]->prepareLevelCarryOver();
         // TODO handle in a better way
         // The principal QTimer is likely to fire during this process.
@@ -716,7 +724,7 @@ void CarrotQt5::delayedLevelChange() {
         cleanUpLevel();
         if (loadLevel("Levels/" + nextLevel)) {
             players[0]->receiveLevelCarryOver(o);
-            last_exit = NEXT_NONE;
+            lastExit = NEXT_NONE;
             paused = false;
         } else {
             startMainMenu();
@@ -724,14 +732,15 @@ void CarrotQt5::delayedLevelChange() {
     }
 }
 
-bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collided) {
-    collided = std::weak_ptr<SolidObject>();
-    if (!gameTiles->isTileEmpty(hbox,downwards)) {
+bool CarrotQt5::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me,
+    std::weak_ptr<SolidObject>& collisionActor) {
+    collisionActor = std::weak_ptr<SolidObject>();
+    if (!gameTiles->isTileEmpty(hitbox, downwards)) {
         return false;
     }
 
     // check for solid objects
-    QVector<std::weak_ptr<CommonActor>> collision = findCollisionActors(hbox, me);
+    QVector<std::weak_ptr<CommonActor>> collision = findCollisionActors(hitbox, me);
     for (int i = 0; i < collision.size(); ++i) {
         auto collisionPtr = collision.at(i).lock();
         if (collisionPtr == nullptr) {
@@ -743,18 +752,18 @@ bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_
             continue;
         }
 
-        if (!object->isOneWay() || downwards) {
-            collided = object;
+        if (!object->getIsOneWay() || downwards) {
+            collisionActor = object;
             return false;
         }
     }
     return true;
 }
 
-// alternate version to be used if we don't care what solid object we collided with
-bool CarrotQt5::isPositionEmpty(const Hitbox& hbox, bool downwards, std::shared_ptr<CommonActor> me) {
+// alternate version to be used if we don'loadingScreenTexture care what solid object we collided with
+bool CarrotQt5::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me) {
     std::weak_ptr<SolidObject> placeholder;
-    return isPositionEmpty(hbox, downwards, me, placeholder);
+    return isPositionEmpty(hitbox, downwards, me, placeholder);
 }
 
 unsigned CarrotQt5::getViewHeight() {
@@ -763,19 +772,18 @@ unsigned CarrotQt5::getViewHeight() {
 
 CoordinatePair CarrotQt5::getViewCenter() {
     auto center = gameView->getCenter();
-    CoordinatePair pair = { center.x, center.y };
-    return pair;
+    return { center.x, center.y };
 }
 
 unsigned CarrotQt5::getViewWidth() {
     return gameView->getSize().x;
 }
 
-std::weak_ptr<Player> CarrotQt5::getPlayer(unsigned no) {
-    if (no > 32) {
+std::weak_ptr<Player> CarrotQt5::getPlayer(unsigned number) {
+    if (number > 32) {
         return std::weak_ptr<Player>();
     } else {
-        return players[no];
+        return players[number];
     }
 }
 

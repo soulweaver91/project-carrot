@@ -8,32 +8,33 @@
 #include "../gamestate/TileMap.h"
 
 class AnimatedTile {
-    public:
-        AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tile_refs,
-            int fps = 10, int delay = 0, int delay_jitter = 0, bool ping_pong = false, 
-            int ping_pong_delay = 0);
-        ~AnimatedTile();
-        std::shared_ptr<LayerTile> getCurrentTile();
-        unsigned getFrameCanonicalIndex(unsigned idx);
-        unsigned getAnimationLength();
-        void advanceTimer();
+public:
+    AnimatedTile(std::shared_ptr<sf::Texture> tilesTexture, const QVector<unsigned short>& tileIDs,
+        int fps = 10, int delay = 0, int delayJitter = 0, bool pingPong = false, 
+        int pingPongDelay = 0);
+    ~AnimatedTile();
+    std::shared_ptr<LayerTile> getCurrentTile();
+    unsigned getFrameCanonicalIndex(unsigned idx);
+    unsigned getAnimationLength();
+    void advanceTimer();
 
-    private:
-        void scheduleUpdate(double frames_to_next);
-        void updateTile();
+private:
+    void scheduleUpdate(double framesToNext);
+    void updateTile();
 
-        QVector<std::shared_ptr<LayerTile>> animation_tiles;
-        int fps;
-        int delay;
-        int delay_jitter;
-        bool ping_pong;
-        int ping_pong_delay;
-        unsigned curr_idx;
-        bool forwards;
+    QVector<std::shared_ptr<LayerTile>> animationTiles;
+    int fps;
+    int delay;
+    int delayJitter;
+    bool pingPong;
+    int pingPongDelay;
+    unsigned currentTileIdx;
+    bool forwards;
         
-        // current state
-        unsigned long frames_left;
-        double frames_remainder;
-        // initial state
-        double frames_original;
+    // current state
+    unsigned long framesLeft;
+    double framesRemainder;
+    // initial state
+
+    double frameDuration;
 };

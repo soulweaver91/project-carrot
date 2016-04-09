@@ -19,25 +19,25 @@ enum DynamicBridgeType {
 };
 
 class DynamicBridgePiece : public SolidObject {
-    public:
-        DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
-        ~DynamicBridgePiece();
-        bool deactivate(int x, int y, int dist) override;
-        Hitbox getCollHitbox();
+public:
+    DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
+    ~DynamicBridgePiece();
+    bool deactivate(int x, int y, int dist) override;
+    Hitbox getHitboxForParent();
 };
 
 class DynamicBridge : public CommonActor {
-    public:
-        DynamicBridge(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, unsigned int width = 1, 
-            DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
-        ~DynamicBridge();
-        Hitbox getHitbox() override;
-        void tickEvent() override;
+public:
+    DynamicBridge(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, unsigned int width = 1, 
+        DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
+    ~DynamicBridge();
+    Hitbox getHitbox() override;
+    void tickEvent() override;
 
-    private:
-        double original_y;
-        unsigned short toughness;
-        DynamicBridgeType bridge_type;
-        unsigned int bridge_width;
-        QVector<std::shared_ptr<DynamicBridgePiece>> bridge_objs;
+private:
+    double originalY;
+    unsigned short toughness;
+    DynamicBridgeType bridgeType;
+    unsigned int bridgeWidth;
+    QVector<std::shared_ptr<DynamicBridgePiece>> bridgePieces;
 };
