@@ -12,10 +12,7 @@ SoundSystem::SoundSystem() : initialized(false) {
 }
 
 SoundSystem::~SoundSystem() {
-    QList< HSAMPLE > samples = effectBank.values();
-    for (HSAMPLE sample : samples) {
-        BASS_SampleFree(sample);
-    }
+    BASS_Free();
 }
 
 void SoundSystem::playSFX(HSAMPLE sample) {
