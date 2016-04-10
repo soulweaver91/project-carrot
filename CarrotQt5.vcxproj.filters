@@ -230,6 +230,9 @@
     <ClCompile Include="src\gamestate\ControlManager.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\Tileset.cpp">
+      <Filter>Source Files\Graphics system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -376,6 +379,12 @@
       <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
     <ClInclude Include="src\struct\Controls.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\Tileset.h">
+      <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\Layers.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
   </ItemGroup>

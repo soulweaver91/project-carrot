@@ -208,6 +208,7 @@
     <ClCompile Include="src\graphics\ShaderSource.cpp" />
     <ClCompile Include="src\graphics\GraphicsCache.cpp" />
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
+    <ClCompile Include="src\graphics\Tileset.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
     <ClCompile Include="src\sound\SoundSystem.cpp" />
@@ -244,10 +245,12 @@
     <ClInclude Include="src\gamestate\TileMap.h" />
     <ClInclude Include="src\gamestate\TimerUser.h" />
     <ClInclude Include="src\graphics\ShaderSource.h" />
+    <ClInclude Include="src\graphics\Tileset.h" />
     <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\Controls.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
+    <ClInclude Include="src\struct\Layers.h" />
     <ClInclude Include="src\struct\PCEvent.h" />
     <ClInclude Include="src\struct\Resources.h" />
     <ClInclude Include="src\struct\WeaponTypes.h" />

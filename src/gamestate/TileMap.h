@@ -6,88 +6,16 @@
 #include <QSettings>
 #include <SFML/Graphics.hpp>
 
+#include "../graphics/Tileset.h"
 #include "../struct/WeaponTypes.h"
 #include "../struct/PCEvent.h"
 #include "../struct/Hitbox.h"
 #include "../struct/AnimState.h"
 #include "../struct/Resources.h"
+#include "../struct/Layers.h"
 
 class CarrotQt5;
 class AnimatedTile;
-
-enum LayerType {
-    LAYER_SKY_LAYER = 0,
-    LAYER_BACKGROUND_LAYER = 1,
-    LAYER_SPRITE_LAYER = 2,
-    LAYER_FOREGROUND_LAYER = 3
-};
-
-enum TileDestructType {
-    DESTRUCT_NONE,
-    DESTRUCT_WEAPON,
-    DESTRUCT_SPEED, // not implemented yet
-    DESTRUCT_COLLAPSE, // not implemented yet
-    DESTRUCT_SPECIAL, // buttstomp, sidekick, uppercut
-    DESTRUCT_TRIGGER
-};
-
-struct LayerTile {
-    unsigned long tileId;
-    // Held by the layer tile; conceptually related to the sprite,
-    // but the sprite only takes its texture by reference
-    std::shared_ptr<sf::Texture> texture;
-    std::shared_ptr<sf::Sprite> sprite;
-    bool isFlippedX;
-    bool isFlippedY;
-    bool isAnimated;
-    // collision affecting modifiers
-    bool isOneWay;
-    bool isVine;
-    TileDestructType destructType;
-    unsigned long destructAnimation; // animation index for a destructible tile that uses an animation but doesn't animate normally
-    int destructFrameIndex; // denotes the specific frame from the above animation that is currently active
-    // Collapsible: delay ("wait" parameter); trigger: trigger id
-    unsigned extraByte;
-    bool tilesetDefault;
-};
-
-struct Tileset {
-    QString name;
-    unsigned long tileCount;
-    unsigned tilesPerRow; // number of tiles next to each other
-    std::shared_ptr<sf::Texture> tiles;
-    QVector<QBitArray> masks;
-    QVector<bool> isMaskEmpty; // to speed up collision checking so that not every tile needs to be pixel perfect checked
-    QVector<bool> isMaskFilled;  // same with this one
-};
-
-struct TileMapLayer {
-    enum LayerType type;
-    unsigned idx;
-    QVector<QVector<std::shared_ptr<LayerTile>>> tileLayout;
-    double speedX;
-    double speedY;
-    double autoSpeedX;
-    double autoSpeedY;
-    bool repeatX;
-    bool repeatY;
-    double offsetX;
-    double offsetY;
-    // JJ2's "limit visible area" flag
-    bool useInherentOffset;
-
-    // textured background, only useful for sky layer
-    bool isTextured;
-    bool useStarsTextured;
-    sf::Color texturedBackgroundColor;
-
-    bool TileMapLayer::operator< (TileMapLayer layer) {
-        if (type != layer.type) {
-            return (type < layer.type);
-        }
-        return (idx < layer.idx);
-    };
-};
 
 class DestructibleDebris {
 public:
@@ -130,10 +58,7 @@ public:
     void setTrigger(unsigned char triggerID, bool newState);
     bool getTrigger(unsigned char triggerID);
     void advanceAnimatedTileTimers();
-
-    // assigned tileset related
     const std::shared_ptr<sf::Texture> getTilesetTexture();
-    void readTileset(const QString& tilesFilename, const QString& maskFilename);
     bool isTileEmpty(unsigned x, unsigned y);
     bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
 
@@ -144,7 +69,8 @@ private:
     void updateSprLayerIdx();
     void initializeBackgroundTexture(TileMapLayer& background);
     void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target);
-    Tileset levelTileset;
+    std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
+    std::unique_ptr<Tileset> levelTileset;
     QVector<TileMapLayer> levelLayout;
     unsigned sprLayerIdx;
     QVector<QVector<std::shared_ptr<LayerTile>>> spriteLayerAtLevelStart;
@@ -155,6 +81,4 @@ private:
     unsigned levelWidth;
     unsigned levelHeight;
     std::shared_ptr<ResourceSet> sceneryResources;
-    QVector<std::shared_ptr<LayerTile>> defaultLayerTiles;
-    std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
 };
