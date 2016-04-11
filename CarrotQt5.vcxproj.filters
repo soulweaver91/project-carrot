@@ -238,14 +238,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="carrotqt5.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="carrotqt5.qrc">
       <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AboutCarrotDialog.ui">
-      <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="src\actor\Collectible.h">
       <Filter>Header Files\Actor headers</Filter>
@@ -256,11 +250,14 @@
     <CustomBuild Include="src\CarrotQt5.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="src\ui\AboutCarrotDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\ui\CarrotQt5.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_carrotqt5.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -395,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="src\struct\Constants.h">
       <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_CarrotQt5.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

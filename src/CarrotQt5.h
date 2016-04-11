@@ -23,7 +23,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "ui_carrotqt5.h"
+#include "ui_CarrotQt5.h"
 #include "graphics/BitmapFont.h"
 #include "graphics/CarrotCanvas.h"
 #include "graphics/ShaderSource.h"
