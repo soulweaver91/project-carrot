@@ -10,6 +10,7 @@
 #include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
 #include "../struct/WeaponTypes.h"
+#include "MovingPlatform.h"
 
 enum PlayerCharacter {
     CHAR_JAZZ       = 0x00,
@@ -50,6 +51,7 @@ public:
     LevelCarryOver prepareLevelCarryOver();
     void receiveLevelCarryOver(LevelCarryOver o);
     void addScore(unsigned points);
+    void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
 
 public slots:
     void debugHealth();
@@ -67,6 +69,8 @@ private:
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
     ControlScheme controls;
+
+    std::weak_ptr<MovingPlatform> carryingObject;
 
     unsigned lives;
     unsigned ammo[9];

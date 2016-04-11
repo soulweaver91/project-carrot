@@ -233,6 +233,9 @@
     <ClCompile Include="src\graphics\Tileset.cpp">
       <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\MovingPlatform.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="carrotqt5.ui">
@@ -387,6 +390,12 @@
     <ClInclude Include="src\struct\Layers.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\MovingPlatform.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\Constants.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -451,6 +460,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Data\Manifests\Object\Spring.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\MovingPlatform.json">
       <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>

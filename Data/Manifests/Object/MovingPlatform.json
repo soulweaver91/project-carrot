@@ -1,0 +1,79 @@
+{
+  "graphics": {
+    "OBJECT_MOVING_PLATFORM_CARROTUS_FRUIT": {
+      "filename": "platform/carrotus_fruit.png",
+      "states": [
+        "1024"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_CARROTUS_FRUIT_CHAIN": {
+      "filename": "platform/carrotus_fruit_chain.png",
+      "states": [
+        "1040"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_BALL": {
+      "filename": "platform/ball.png",
+      "states": [
+        "2048"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_BALL_CHAIN": {
+      "filename": "platform/ball_chain.png",
+      "states": [
+        "2064"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_CARROTUS_GRASS": {
+      "filename": "platform/carrotus_grass.png",
+      "states": [
+        "3072"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_CARROTUS_GRASS_CHAIN": {
+      "filename": "platform/carrotus_grass_chain.png",
+      "states": [
+        "3088"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_LAB": {
+      "filename": "platform/lab.png",
+      "states": [
+        "4096"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_LAB_CHAIN": {
+      "filename": "platform/lab_chain.png",
+      "states": [
+        "4112"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_SONIC": {
+      "filename": "platform/sonic.png",
+      "states": [
+        "5120"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_SONIC_CHAIN": {
+      "filename": "platform/sonic_chain.png",
+      "states": [
+        "5136"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_SPIKE": {
+      "filename": "platform/spike.png",
+      "states": [
+        "6144"
+      ]
+    },
+    "OBJECT_MOVING_PLATFORM_SPIKE_CHAIN": {
+      "filename": "platform/spike_chain.png",
+      "states": [
+        "6160"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_CarrotQt5.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -234,6 +235,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="GeneratedFiles\ui_carrotqt5.h" />
@@ -247,6 +249,7 @@
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
     <ClInclude Include="src\struct\AnimState.h" />
+    <ClInclude Include="src\struct\Constants.h" />
     <ClInclude Include="src\struct\Controls.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
@@ -396,6 +399,7 @@
     <None Include="Data\Manifests\Interactive\PlayerJazz.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />
+    <None Include="Data\Manifests\Object\MovingPlatform.json" />
     <None Include="Data\Manifests\Object\PushBox.json" />
     <None Include="Data\Manifests\Object\SavePoint.json" />
     <None Include="Data\Manifests\Object\Spring.json" />

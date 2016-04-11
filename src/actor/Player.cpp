@@ -201,6 +201,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
             canJump = false;
             setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
             playSound("COMMON_JUMP");
+            carryingObject = std::weak_ptr<MovingPlatform>();
         }
     } else {
         if (internalForceY > 0) {
@@ -297,6 +298,26 @@ void Player::tickEvent() {
         } else {
             setAnimation(currentState & ~AnimState::PUSH);
         }
+    }
+
+    if (!carryingObject.expired()) {
+        if (speedY > 1e-6) {
+            carryingObject = std::weak_ptr<MovingPlatform>();
+        } else {
+            auto platform = carryingObject.lock();
+            CoordinatePair delta = platform->getLocationDelta();
+            Hitbox currentHitbox = getHitbox();
+
+            if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, delta.x, delta.y), false, shared_from_this())) {
+                posX += delta.x;
+                posY += delta.y;
+            } else if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, delta.y), false, shared_from_this())) {
+                posY += delta.y;
+            } else {
+                carryingObject = std::weak_ptr<MovingPlatform>();
+            }
+        }
+
     }
 
     CommonActor::tickEvent();
@@ -903,6 +924,17 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
 void Player::addScore(unsigned points) {
     score = std::min(99999999ul, score + points);
     osd->setScore(score);
+}
+
+void Player::setCarryingPlatform(std::weak_ptr<MovingPlatform> platform) {
+    if (speedY < -1e-6) {
+        return;
+    }
+
+    carryingObject = platform;
+    canJump = true;
+    internalForceY = 0;
+    speedY = 0;
 }
 
 void Player::setupOSD(OSDMessageType type, int param) {
