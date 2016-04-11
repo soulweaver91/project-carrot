@@ -138,7 +138,7 @@ unsigned BitmapString::updateWidth() {
     for(unsigned i = 0; i < stringText.length(); ++i) {
         sum += textFont->getCharacterWidth(stringText.at(i));
     }
-    width = sum;
+    width = sum + (stringText.length() - 1) * spacing;
     return sum;
 }
 
@@ -177,7 +177,7 @@ unsigned BitmapString::getStaticWidth(QString text, std::shared_ptr<BitmapFont> 
     for(unsigned i = 0; i < text.length(); ++i) {
         sum += font->getCharacterWidth(text.at(i));
     }
-    return sum;
+    return sum - (text.length() - 1);
 }
 
 void BitmapString::setColoured(bool state) {
