@@ -345,6 +345,14 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
                     if (idx < animatedTiles.size()) {
                         auto anim = animatedTiles.at(idx);
                         sprite = anim->getCurrentTile()->sprite;
+                        sprite->setScale(
+                            layer.tileLayout[tile_y][tile_x]->isFlippedX ? -1.0 : 1.0,
+                            layer.tileLayout[tile_y][tile_x]->isFlippedY ? -1.0 : 1.0
+                        );
+                        sprite->setOrigin(
+                            layer.tileLayout[tile_y][tile_x]->isFlippedX ? 32.0 : 0.0,
+                            layer.tileLayout[tile_y][tile_x]->isFlippedY ? 32.0 : 0.0
+                        );
                     }
                 } else {
                     sprite = layer.tileLayout[tile_y][tile_x]->sprite;
