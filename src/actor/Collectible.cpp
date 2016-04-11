@@ -1,7 +1,6 @@
 #include <memory>
 #include "Collectible.h"
-
-#define PI 3.1415926535
+#include "../struct/Constants.h"
 
 Collectible::Collectible(std::shared_ptr<CarrotQt5> root, enum CollectibleType type, double x, double y, bool fromEventMap)
     : CommonActor(root, x, y, fromEventMap), type(type), untouched(true) {

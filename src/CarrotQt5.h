@@ -92,6 +92,7 @@ public:
     void initLevelChange(ExitType e = NEXT_NORMAL);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collisionActor);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me);
+    QVector<std::weak_ptr<Player>> getCollidingPlayer(const Hitbox& hitbox);
     std::weak_ptr<CarrotCanvas> getCanvas();
     std::shared_ptr<BitmapFont> getFont();
     std::weak_ptr<SoundSystem> getSoundSystem();

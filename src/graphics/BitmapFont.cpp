@@ -1,7 +1,6 @@
 #include "BitmapFont.h"
 #include <QFile>
-
-#define PI 3.1415926535
+#include "../struct/Constants.h"
 
 BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned rows, 
     unsigned cols, unsigned first, unsigned last) {

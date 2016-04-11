@@ -6,13 +6,13 @@ enum PCEvent {
     PC_EMPTY                = 0x0000,
     PC_FAST_FIRE            = 0x0001,
     PC_AMMO_BOUNCER         = 0x0002,
-    PC_AMMO_FREEZER         = 0x0003, // not implemented
+    PC_AMMO_FREEZER         = 0x0003,
     PC_AMMO_SEEKER          = 0x0004,
-    PC_AMMO_RF              = 0x0005, // not implemented
+    PC_AMMO_RF              = 0x0005,
     PC_AMMO_TOASTER         = 0x0006,
-    PC_AMMO_TNT             = 0x0007, // not implemented
-    PC_AMMO_PEPPER          = 0x0008, // not implemented
-    PC_AMMO_ELECTRO         = 0x0009, // not implemented
+    PC_AMMO_TNT             = 0x0007,
+    PC_AMMO_PEPPER          = 0x0008,
+    PC_AMMO_ELECTRO         = 0x0009,
     PC_POWERUP_BLASTER      = 0x0011, // not implemented
     PC_POWERUP_BOUNCER      = 0x0012, // not implemented
     PC_POWERUP_FREEZER      = 0x0013, // not implemented
@@ -51,8 +51,9 @@ enum PCEvent {
     PC_TRIGGER_CRATE        = 0x005B,
     PC_TRIGGER_AREA         = 0x0119,
     PC_MODIFIER_RICOCHET    = 0x011A,
-    PC_BRIDGE               = 0xF000, // temp. assignment
-    PC_AREA_STOP_ENEMY      = 0xF001, // temp. assignment
-    PC_COIN_SILVER          = 0xF002, // temp. assignment
-    PC_COIN_GOLD            = 0xF003 // temp. assignment
+    PC_BRIDGE               = 0x00C3,
+    PC_AREA_STOP_ENEMY      = 0x0143,
+    PC_COIN_SILVER          = 0x0048,
+    PC_COIN_GOLD            = 0x0049,
+    PC_MOVING_PLATFORM      = 0x00C4
 };

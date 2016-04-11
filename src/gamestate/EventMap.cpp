@@ -12,6 +12,7 @@
 #include "../actor/enemy/Lizard.h"
 #include "../actor/SavePoint.h"
 #include "../actor/Spring.h"
+#include "../actor/MovingPlatform.h"
 #include "../struct/WeaponTypes.h"
 
 EventMap::EventMap(std::shared_ptr<CarrotQt5> gameRoot, unsigned int width, unsigned int height)
@@ -144,6 +145,15 @@ void EventMap::activateEvents(const sf::View& center, int tileDistance) {
                         {
                             auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, 
                                 (SpringType)(1 + (tile->storedEvent - PC_SPRING_RED)), (byte)tile->eventParams[0]);
+                            root->addActor(e);
+                        }
+                        break;
+                    case PC_MOVING_PLATFORM:
+                        {
+                            auto e = std::make_shared<MovingPlatform>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
+                                static_cast<PlatformType>(tile->eventParams[0]),
+                                tile->eventParams[3], (qint16)tile->eventParams[2], tile->eventParams[1],
+                                tile->eventParams[4] != 0);
                             root->addActor(e);
                         }
                         break;

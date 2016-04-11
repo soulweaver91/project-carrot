@@ -21,8 +21,8 @@ enum CollectibleType {
     COLLTYPE_GEM_RED        = 0x0040,
     COLLTYPE_GEM_GREEN      = 0x0041,
     COLLTYPE_GEM_BLUE       = 0x0042,
-    COLLTYPE_COIN_SILVER    = 0xF002, // temp. assignment
-    COLLTYPE_COIN_GOLD      = 0xF003, // temp. assignment
+    COLLTYPE_COIN_SILVER    = 0x0048,
+    COLLTYPE_COIN_GOLD      = 0x0049,
     COLLTYPE_OTHER          = 0xFFFF
 };
 

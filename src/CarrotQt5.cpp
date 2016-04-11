@@ -766,6 +766,26 @@ bool CarrotQt5::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::share
     return isPositionEmpty(hitbox, downwards, me, placeholder);
 }
 
+QVector<std::weak_ptr<Player>> CarrotQt5::getCollidingPlayer(const Hitbox& hitbox) {
+    QVector<std::weak_ptr<Player>> result;
+
+    for (auto p : players) {
+        if (p == nullptr) {
+            continue;
+        }
+
+        Hitbox pHitbox = p->getHitbox();
+        if (!(
+            pHitbox.right < hitbox.left || pHitbox.left > hitbox.right ||
+            pHitbox.bottom < hitbox.top || pHitbox.top > hitbox.bottom
+        )) {
+            result << p;
+        }
+    }
+
+    return result;
+}
+
 unsigned CarrotQt5::getViewHeight() {
     return gameView->getSize().y;
 }
