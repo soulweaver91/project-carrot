@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/CarrotQt5">
+        <file>Data/PCIconLowRes.png</file>
+    </qresource>
+</RCC>

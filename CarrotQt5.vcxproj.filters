@@ -113,9 +113,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GeneratedFiles\qrc_carrotqt5.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -236,11 +233,11 @@
     <ClCompile Include="src\actor\MovingPlatform.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_CarrotQt5.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="carrotqt5.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="src\actor\Collectible.h">
       <Filter>Header Files\Actor headers</Filter>
     </CustomBuild>
@@ -255,6 +252,9 @@
     </CustomBuild>
     <CustomBuild Include="src\ui\CarrotQt5.ui">
       <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CarrotQt5.qrc">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +399,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Data\PCIconLowRes.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

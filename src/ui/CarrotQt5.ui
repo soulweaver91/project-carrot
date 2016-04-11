@@ -38,8 +38,8 @@
    <string>Project Carrot</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>Data/Assets/carrot.gif</normaloff>Data/Assets/carrot.gif</iconset>
+   <iconset resource="../../CarrotQt5.qrc">
+    <normaloff>:/CarrotQt5/Data/PCIconLowRes.png</normaloff>:/CarrotQt5/Data/PCIconLowRes.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="minimumSize">
@@ -91,7 +91,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -232,7 +232,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="carrotqt5.qrc"/>
+  <include location="../../CarrotQt5.qrc"/>
  </resources>
  <connections>
   <connection>
