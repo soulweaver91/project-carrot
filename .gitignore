@@ -166,8 +166,5 @@ Music/*
 RunTimeConverted/*
 *.sln
 
-# Photoshop files
-*.psd
-
 # Qt intermediate files
 GeneratedFiles/*

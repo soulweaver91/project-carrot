@@ -18,7 +18,7 @@ MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : 
         mainMenuConicGlowSprite[i].setRotation(i * 90);
     }
     
-    projectCarrotLogoTexture.loadFromFile("Data/logo-300px.png");
+    projectCarrotLogoTexture.loadFromFile("Data/PCLogo-300px.png");
     projectCarrotLogoSprite.setTexture(projectCarrotLogoTexture);
     projectCarrotLogoSprite.setPosition(400, 10);
     projectCarrotLogoSprite.setOrigin(150, 0);
