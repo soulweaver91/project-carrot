@@ -4,7 +4,7 @@
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player, std::weak_ptr<sf::RenderWindow> canvas)
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), canvas(canvas), health(0), score(0),
-    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0) {
+    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0) {
 
     addTimer(7u, true, static_cast<TimerCallbackFunc>(&PlayerOSD::advanceCharIconFrame));
 
@@ -14,6 +14,7 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     auto loadedResources = root->loadActorTypeResources("UI/PlayerOSD");
     if (loadedResources != nullptr) {
         loadAnimationSet(loadedResources->graphics);
+        gemSound = loadedResources->sounds.value("PLAYER_PICKUP_GEM", SoundResource()).sound;
     }
 
     std::fill_n(weaponIconIdx, 9, nullptr);
@@ -45,6 +46,8 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     livesString       = std::make_unique<BitmapString>(root->getFont(), "x3", FONT_ALIGN_LEFT);
     scoreString       = std::make_unique<BitmapString>(root->getFont(), "00000000", FONT_ALIGN_LEFT);
     ammoString        = std::make_unique<BitmapString>(root->getFont(), "x^", FONT_ALIGN_LEFT);
+
+    collectibleSprite = std::make_unique<sf::Sprite>();
 }
 
 PlayerOSD::~PlayerOSD() {
@@ -88,6 +91,27 @@ void PlayerOSD::drawOSD() {
     }
     if (messageOffsetAmount > 0) {
         collectionMessage->drawString(canvas, vw / 2 + 30 - messageOffsetAmount / 2, vh - messageOffsetAmount / 2);
+        if (collectibleGraphics != nullptr) {
+            sf::RenderStates state;
+            if (color != sf::Vector3i(0, 0, 0)) {
+                auto shaderSource = root->getShaderSource();
+                if (shaderSource != nullptr) {
+                    auto shader = shaderSource->getShader("ColorizeShader").get();
+                    if (shader != nullptr) {
+                        shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+                        state.shader = shader;
+                    }
+                }
+            }
+            // TODO: Move the sprite from the player's position to the UI instead of from below with the count
+            collectibleSprite->setPosition(
+                vw / 2 - collectionMessage->getWidth() / 2 + 20 - messageOffsetAmount / 2,
+                vh - messageOffsetAmount / 2
+            );
+
+            canvasPtr->draw(*collectibleSprite, state);
+        }
+
         switch (collectionMessageType) {
             case OSD_GEM_RED:
 
@@ -100,6 +124,7 @@ void PlayerOSD::drawOSD() {
 
 void PlayerOSD::clearMessage() {
     collectionMessageType = OSD_NONE;
+    gemCounter = 0;
 }
 
 void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
@@ -107,22 +132,32 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     messageOffsetAmount = 0;
     messageTimer = addTimer(350u, false, static_cast<TimerCallbackFunc>(&PlayerOSD::clearMessage));
     collectionMessageType = type;
+    color = { 0, 0, 0 };
+    collectibleFrame = 0;
 
     switch (type) {
         case OSD_GEM_RED:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
+            color = { 511, 0, 0 };
+            collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_GREEN:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
+            color = { 0, 511, 0 };
+            collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_BLUE:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
+            color = { 0, 0, 511 };
+            collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_COIN_SILVER:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
+            collectibleGraphics = animationBank.value("PICKUP_COIN_SILVER", nullptr);
             break;
         case OSD_COIN_GOLD:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
+            collectibleGraphics = animationBank.value("PICKUP_COIN_GOLD", nullptr);
             break;
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS:
             collectionMessage->setText("need   x" + QString::number(param.toInt()) + " more");
@@ -130,6 +165,19 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
         case OSD_CUSTOM_TEXT:
             collectionMessage->setText(param.toString());
             break;
+    }
+
+    if (collectibleGraphics != nullptr) {
+        collectibleSprite->setTexture(*collectibleGraphics->texture);
+        collectibleSprite->setTextureRect(sf::IntRect(
+            0, 0,
+            collectibleGraphics->frameDimensions.x,
+            collectibleGraphics->frameDimensions.y));
+    }
+
+    if (type == OSD_GEM_BLUE || type == OSD_GEM_GREEN || type == OSD_GEM_RED || type == OSD_GEM_PURPLE) {
+        root->getSoundSystem().lock()->playSFX(gemSound, 1.0, 4.25 - abs(gemCounter % 16 - 8.25));
+        gemCounter++;
     }
 }
 
@@ -180,5 +228,14 @@ void PlayerOSD::advanceCharIconFrame() {
             weaponIconFrame * weaponIconIdx[currentWeapon]->frameDimensions.x, 0,
             weaponIconIdx[currentWeapon]->frameDimensions.x,
             weaponIconIdx[currentWeapon]->frameDimensions.y));
+    }
+
+    if (collectibleGraphics != nullptr) {
+        collectibleFrame = (collectibleFrame + 1) % collectibleGraphics->frameCount;
+
+        collectibleSprite->setTextureRect(sf::IntRect(
+            collectibleFrame * collectibleGraphics->frameDimensions.x, 0,
+            collectibleGraphics->frameDimensions.x,
+            collectibleGraphics->frameDimensions.y));
     }
 }

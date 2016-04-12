@@ -271,9 +271,6 @@
     "PLAYER_PICKUP_AMMO": {
       "filename": "pickup/ammo.wav"
     },
-    "PLAYER_PICKUP_GEM": {
-      "filename": "pickup/gem.wav"
-    },
     "PLAYER_PICKUP_COIN": {
       "filename": "pickup/coin.wav"
     },
