@@ -62,4 +62,11 @@ private:
     size_t currentWeapon;
     unsigned long score;
     unsigned health;
+
+    unsigned gemCounter;
+    HSAMPLE gemSound;
+
+    std::shared_ptr<GraphicResource> collectibleGraphics;
+    std::unique_ptr<sf::Sprite> collectibleSprite;
+    unsigned collectibleFrame;
 };

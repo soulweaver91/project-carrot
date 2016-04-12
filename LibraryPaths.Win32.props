@@ -4,6 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <SFML_DIR>K:\SFML\msvc2015_32</SFML_DIR>
     <BASS_DIR>K:\Project Carrot\Bass</BASS_DIR>
+    <BASS_FX_DIR>K:\Project Carrot\BassFx</BASS_FX_DIR>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -13,6 +14,9 @@
     </BuildMacro>
     <BuildMacro Include="BASS_DIR">
       <Value>$(BASS_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BASS_FX_DIR">
+      <Value>$(BASS_FX_DIR)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

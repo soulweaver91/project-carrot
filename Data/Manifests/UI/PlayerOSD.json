@@ -59,9 +59,29 @@
       "states": [
         "0"
       ]
+    },
+    "PICKUP_GEM": {
+      "filename": "pickup/gem.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_COIN_GOLD": {
+      "filename": "pickup/coin_gold.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_COIN_SILVER": {
+      "filename": "pickup/coin_silver.png",
+      "states": [
+        "0"
+      ]
     }
   },
   "sounds": {
-
+    "PLAYER_PICKUP_GEM": {
+      "filename": "pickup/gem.wav"
+    }
   }
 }

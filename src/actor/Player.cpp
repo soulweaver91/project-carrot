@@ -586,21 +586,19 @@ void Player::tickEvent() {
                     playSound("PLAYER_PICKUP_AMMO");
                     addScore(100);
                     break;
+                // Gem sounds are managed by the OSD
                 case COLLTYPE_GEM_RED:
                     addScore(100);
-                    playSound("PLAYER_PICKUP_GEM");
                     collectedGems[0]++;
                     setupOSD(OSD_GEM_RED);
                     break;
                 case COLLTYPE_GEM_GREEN:
                     addScore(500);
-                    playSound("PLAYER_PICKUP_GEM");
                     collectedGems[1]++;
                     setupOSD(OSD_GEM_GREEN);
                     break;
                 case COLLTYPE_GEM_BLUE:
                     addScore(1000);
-                    playSound("PLAYER_PICKUP_GEM");
                     collectedGems[2]++;
                     setupOSD(OSD_GEM_BLUE);
                     break;
