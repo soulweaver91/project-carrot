@@ -65,7 +65,7 @@ Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : is
             defaultLayerTile->sprite = sprite;
             defaultLayerTile->texture = texture;
             defaultLayerTile->tileId = i * width + j;
-            defaultLayerTile->isVine = false;
+            defaultLayerTile->suspendType = SuspendType::SUSPEND_NONE;
 
             defaultLayerTiles.append(defaultLayerTile);
         }

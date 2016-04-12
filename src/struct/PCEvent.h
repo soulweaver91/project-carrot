@@ -37,7 +37,7 @@ enum PCEvent {
     PC_WARP_TARGET          = 0x010F,
     PC_MODIFIER_VINE        = 0x0110,
     PC_MODIFIER_ONE_WAY     = 0x0111,
-    PC_MODIFIER_HOOK        = 0x0112, // not implemented
+    PC_MODIFIER_HOOK        = 0x0112,
     PC_MODIFIER_H_POLE      = 0x0113,
     PC_MODIFIER_V_POLE      = 0x0114,
     PC_SCENERY_DESTRUCT     = 0x0115,

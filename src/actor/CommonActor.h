@@ -12,6 +12,7 @@
 #include "../struct/CoordinatePair.h"
 #include "../struct/Hitbox.h"
 #include "../struct/Resources.h"
+#include "../struct/Layers.h"
 
 class CarrotQt5;
 class TileMap;
@@ -63,7 +64,7 @@ protected:
     double friction;
     bool isInvulnerable;
     bool isBlinking;
-    bool isSuspended;
+    SuspendType suspendType;
     bool isCreatedFromEventMap;
     int originTileX;
     int originTileY;

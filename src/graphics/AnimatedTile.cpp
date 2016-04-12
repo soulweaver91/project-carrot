@@ -15,7 +15,7 @@ AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector
         auto sprite = std::make_shared<sf::Sprite>(*tiles_tex);
         sprite->setTextureRect(sf::IntRect((tidx % 10) * 32, (tidx / 10) * 32, 32, 32));
         pseudotile->sprite = sprite;
-        pseudotile->isVine = false;
+        pseudotile->suspendType = SuspendType::SUSPEND_NONE;
         pseudotile->tileId = tidx;
         animationTiles << pseudotile;
     }

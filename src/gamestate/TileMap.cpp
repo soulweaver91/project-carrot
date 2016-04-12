@@ -573,7 +573,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
 
                 if (!levelTileset->isTileMaskEmpty(idx) &&
                     !(levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay && !downwards) &&
-                    !(levelLayout.at(layer).tileLayout.at(y).at(x)->isVine)) {
+                    !(levelLayout.at(layer).tileLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE)) {
                     all_empty = false;
                     if (root->dbgShowMasked) {
                         sf::RectangleShape a(sf::Vector2f(32, 32));
@@ -608,7 +608,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
 
                 if ((levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay
                     && !downwards && (hy2 < ((y + 1) * 32)))
-                    || levelLayout.at(layer).tileLayout.at(y).at(x)->isVine) {
+                    || levelLayout.at(layer).tileLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE) {
                     continue;
                 }
                 QBitArray mask = levelTileset->getTileMask(idx);
@@ -826,7 +826,11 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
             break;
         case PC_MODIFIER_VINE:
             tile = cloneDefaultLayerTile(x, y);
-            tile->isVine = true;
+            tile->suspendType = SuspendType::SUSPEND_VINE;
+            break;
+        case PC_MODIFIER_HOOK:
+            tile = cloneDefaultLayerTile(x, y);
+            tile->suspendType = SuspendType::SUSPEND_HOOK;
             break;
         case PC_SCENERY_DESTRUCT:
             if (tile->isAnimated) {
@@ -867,7 +871,7 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
     }
 }
 
-bool TileMap::isPosVine(double x, double y) {
+SuspendType TileMap::getPosSuspendState(double x, double y) {
     int ax = static_cast<int>(x) / 32;
     int ay = static_cast<int>(y) / 32;
     int rx = static_cast<int>(x) - 32 * ax;
@@ -877,8 +881,8 @@ bool TileMap::isPosVine(double x, double y) {
 
     bool fx = tile->isFlippedX;
     bool fy = tile->isFlippedY;
-    if (!tile->isVine) {
-        return false;
+    if (tile->suspendType == SuspendType::SUSPEND_NONE) {
+        return SuspendType::SUSPEND_NONE;
     }
 
     QBitArray mask(1024, false);
@@ -897,9 +901,9 @@ bool TileMap::isPosVine(double x, double y) {
         int idx = i;
         if (fx) { idx =      (i / 32)  * 32 + (31 - (i % 32)); }
         //if (fy) { idx = (31 -(i / 32)) * 32 +        i % 32  ; }
-        if (mask[idx]) { return true; }
+        if (mask[idx]) { return tile->suspendType; }
     }
-    return false;
+    return SuspendType::SUSPEND_NONE;
 }
 
 void TileMap::advanceAnimatedTileTimers() {

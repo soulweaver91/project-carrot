@@ -9,7 +9,7 @@ CommonActor::CommonActor(std::shared_ptr<CarrotQt5> gameRoot, double x, double y
     : AnimationUser(gameRoot), root(gameRoot), speedX(0), speedY(0), externalForceX(0), externalForceY(0), 
     canJump(false), isFacingLeft(false), maxHealth(1), health(1), isGravityAffected(true), internalForceY(0),
     isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity / 3),
-    isBlinking(false), isSuspended(false), posX(x), posY(y), isCreatedFromEventMap(fromEventMap) {
+    isBlinking(false), suspendType(SuspendType::SUSPEND_NONE), posX(x), posY(y), isCreatedFromEventMap(fromEventMap) {
     originTileX = static_cast<int>(x) / 32;
     originTileY = static_cast<int>(y) / 32;
 }
@@ -240,7 +240,7 @@ void CommonActor::tickEvent() {
             composite += 1;
         }
     
-        if (isSuspended) {
+        if (suspendType != SuspendType::SUSPEND_NONE) {
             composite += 12;
         } else {
             if (canJump) {

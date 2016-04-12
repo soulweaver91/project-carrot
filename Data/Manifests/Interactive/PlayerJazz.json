@@ -130,6 +130,12 @@
         "20", "21", "22", "23", "24", "25", "26", "27"
       ]
     },
+    "PLAYER_JAZZ_VINE_SHOOT": {
+      "filename": "jazz/vine_shoot.png",
+      "states": [
+        "28", "29", "30", "31"
+      ]
+    },
     "PLAYER_JAZZ_RUN_TO_IDLE": {
       "filename": "jazz/run_stop.png",
       "states": [
@@ -273,6 +279,9 @@
     },
     "WEAPON_BLASTER_JAZZ": {
       "filename": "weapon/bullet_blaster_jazz_4.wav"
+    },
+    "PLAYER_VINE_ATTACH": {
+      "filename": "common/swish_9.wav"
     }
   },
   "children": [

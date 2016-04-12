@@ -49,7 +49,7 @@ public:
     unsigned getLevelWidth();
     unsigned getLevelHeight();
     void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
-    bool isPosVine(double x, double y);
+    SuspendType getPosSuspendState(double x, double y);
     QVector<QVector<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
     void loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer);
     bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);

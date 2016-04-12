@@ -20,6 +20,12 @@ enum TileDestructType {
     DESTRUCT_TRIGGER
 };
 
+enum SuspendType {
+    SUSPEND_NONE,
+    SUSPEND_VINE,
+    SUSPEND_HOOK
+};
+
 struct LayerTile {
     uint tileId;
     // Held by the layer tile; conceptually related to the sprite,
@@ -31,7 +37,7 @@ struct LayerTile {
     bool isAnimated;
     // collision affecting modifiers
     bool isOneWay;
-    bool isVine;
+    SuspendType suspendType;
     TileDestructType destructType;
     unsigned long destructAnimation; // animation index for a destructible tile that uses an animation but doesn't animate normally
     int destructFrameIndex; // denotes the specific frame from the above animation that is currently active

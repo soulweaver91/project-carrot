@@ -265,6 +265,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                             break;
                         case PC_MODIFIER_ONE_WAY:
                         case PC_MODIFIER_VINE:
+                        case PC_MODIFIER_HOOK:
                         case PC_MODIFIER_HURT:
                         case PC_SCENERY_DESTRUCT:
                         case PC_SCENERY_BUTTSTOMP:

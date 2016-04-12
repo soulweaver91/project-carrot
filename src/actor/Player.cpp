@@ -77,9 +77,9 @@ void Player::processControlDownEvent(const ControlEvent& e) {
             if (canJump && std::abs(speedX < 1e-6)) {
                 setAnimation(AnimState::CROUCH);
             } else {
-                if (isSuspended) {
+                if (suspendType != SuspendType::SUSPEND_NONE) {
                     posY += 10;
-                    isSuspended = false;
+                    suspendType = SuspendType::SUSPEND_NONE;
                 } else {
                     controllable = false;
                     speedX = 0;
@@ -180,9 +180,9 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
     if (e.contains(controls.leftButton) || e.contains(controls.rightButton)) {
         isFacingLeft = !e.contains(controls.rightButton);
 
-        if (!isSuspended && (e.contains(controls.dashButton))) {
+        if (suspendType == SuspendType::SUSPEND_NONE && (e.contains(controls.dashButton))) {
             speedX = std::max(std::min(speedX + 0.2 * (isFacingLeft ? -1 : 1), 9.0), -9.0);
-        } else {
+        } else if (suspendType != SuspendType::SUSPEND_HOOK) {
             speedX = std::max(std::min(speedX + 0.2 * (isFacingLeft ? -1 : 1), 3.0), -3.0);
         }
 
@@ -191,7 +191,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
     }
 
     if (e.contains(controls.jumpButton)) {
-        if (isSuspended) {
+        if (suspendType != SuspendType::SUSPEND_NONE) {
             posY -= 5;
             canJump = true;
         }
@@ -326,21 +326,34 @@ void Player::tickEvent() {
 
 
     // Check if hitting a vine
-    if (tiles != nullptr && tiles->isPosVine(posX, posY - 5)) {
-        isSuspended = true;
-        isGravityAffected = false;
-        speedY = 0;
-        externalForceY = 0;
+    if (tiles != nullptr) {
+        SuspendType state = tiles->getPosSuspendState(posX, posY - 5);
 
-        // move downwards until we're on the standard height
-        while (tiles->isPosVine(posX, posY - 5)) {
-            posY += 1;
-        }
-        posY -= 1;
-    } else {
-        isSuspended = false;
-        if (((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (poleSpinCount == 0)) {
-            isGravityAffected = true;
+        if (state != SuspendType::SUSPEND_NONE) {
+            suspendType = state;
+            isGravityAffected = false;
+
+            if (speedY > 0 && state == SuspendType::SUSPEND_VINE) {
+                playSound("PLAYER_VINE_ATTACH");
+            }
+
+            speedY = 0;
+            externalForceY = 0;
+
+            if (state == SuspendType::SUSPEND_HOOK) {
+                speedX = 0;
+            }
+
+            // move downwards until we're on the standard height
+            while (tiles->getPosSuspendState(posX, posY - 5) != SuspendType::SUSPEND_NONE) {
+                posY += 1;
+            }
+            posY -= 1;
+        } else {
+            suspendType = SuspendType::SUSPEND_NONE;
+            if (((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (poleSpinCount == 0)) {
+                isGravityAffected = true;
+            }
         }
     }
 
@@ -362,7 +375,7 @@ void Player::tickEvent() {
     }
 
     // check if buttstomp ended
-    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || isSuspended) {
+    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || suspendType != SuspendType::SUSPEND_NONE) {
         setAnimation(currentState & ~AnimState::BUTTSTOMP);
         isUsingDamagingMove = false;
         controllable = true;
