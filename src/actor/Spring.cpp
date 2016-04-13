@@ -16,7 +16,7 @@ Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType t
     int orientationBit = 0;
     switch (orientation) {
         case 0:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 24 });
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 });
             break;
         case 1:
             moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 });
