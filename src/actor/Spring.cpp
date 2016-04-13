@@ -69,7 +69,7 @@ Hitbox Spring::getHitbox() {
             return { posX - 8, posY - 15, posX, posY + 15 };
             break;
         case 3:
-            return { posX + 8, posY - 15, posX + 16, posY + 15 };
+            return { posX, posY - 15, posX + 8, posY + 15 };
             break;
         case 0:
         case 2:
