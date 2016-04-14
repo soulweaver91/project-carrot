@@ -1,5 +1,6 @@
 #include "AnimationUser.h"
 #include "../CarrotQt5.h"
+#include "../graphics/ShaderSource.h"
 
 AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
     : root(root), inTransition(false), cancellableTransition(false), currentAnimation(nullptr), transition(nullptr),
@@ -105,13 +106,10 @@ void AnimationUser::drawCurrentFrame() {
 
     sf::RenderStates state;
     if (color != sf::Vector3i(0, 0, 0)) {
-        auto shaderSource = root->getShaderSource();
-        if (shaderSource != nullptr) {
-            auto shader = shaderSource->getShader("ColorizeShader").get();
-            if (shader != nullptr) {
-                shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
-                state.shader = shader;
-            }
+        auto shader = ShaderSource::getShader("ColorizeShader").get();
+        if (shader != nullptr) {
+            shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+            state.shader = shader;
         }
     }
 

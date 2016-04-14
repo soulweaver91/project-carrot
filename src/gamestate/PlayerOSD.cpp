@@ -1,6 +1,7 @@
 #include "PlayerOSD.h"
 #include "../CarrotQt5.h"
 #include "../actor/Player.h"
+#include "../graphics/ShaderSource.h"
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player, std::weak_ptr<sf::RenderWindow> canvas)
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), canvas(canvas), health(0), score(0),
@@ -94,13 +95,10 @@ void PlayerOSD::drawOSD() {
         if (collectibleGraphics != nullptr) {
             sf::RenderStates state;
             if (color != sf::Vector3i(0, 0, 0)) {
-                auto shaderSource = root->getShaderSource();
-                if (shaderSource != nullptr) {
-                    auto shader = shaderSource->getShader("ColorizeShader").get();
-                    if (shader != nullptr) {
-                        shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
-                        state.shader = shader;
-                    }
+                auto shader = ShaderSource::getShader("ColorizeShader").get();
+                if (shader != nullptr) {
+                    shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+                    state.shader = shader;
                 }
             }
             // TODO: Move the sprite from the player's position to the UI instead of from below with the count

@@ -7,12 +7,14 @@
 
 class ShaderSource {
 public:
-    ShaderSource();
-    ~ShaderSource();
-    std::shared_ptr<sf::Shader> getShader(const QString& name);
+    ShaderSource() = delete;
+    ~ShaderSource() = delete;
+    static void initialize();
+    static void teardown();
+    static std::shared_ptr<sf::Shader> getShader(const QString& name);
 
 private:
-    bool loadShader(const QString& name);
-    QMap<QString, std::shared_ptr<sf::Shader>> shaders;
-    bool systemSupportsShaders;
+    static bool loadShader(const QString& name);
+    static QMap<QString, std::shared_ptr<sf::Shader>> shaders;
+    static bool systemSupportsShaders;
 };

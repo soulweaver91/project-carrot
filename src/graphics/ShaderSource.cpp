@@ -1,16 +1,19 @@
 #include "ShaderSource.h"
 #include <QDir>
-#include <cassert>
 
-ShaderSource::ShaderSource() {
+QMap<QString, std::shared_ptr<sf::Shader>> ShaderSource::shaders = QMap<QString, std::shared_ptr<sf::Shader>>();
+
+bool ShaderSource::systemSupportsShaders = false;
+
+void ShaderSource::initialize() {
     systemSupportsShaders = sf::Shader::isAvailable();
     if (systemSupportsShaders) {
         loadShader("ColorizeShader");
     }
 }
 
-ShaderSource::~ShaderSource() {
-
+void ShaderSource::teardown() {
+    shaders.clear();
 }
 
 std::shared_ptr<sf::Shader> ShaderSource::getShader(const QString& name) {
