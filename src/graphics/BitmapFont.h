@@ -52,5 +52,5 @@ class BitmapString {
         unsigned width;
         static unsigned getStaticWidth(QString text, std::shared_ptr<BitmapFont> font);
 
-        static const sf::Color colouredFontColours[7];
+        static const sf::Vector3i colouredFontColours[7];
 };

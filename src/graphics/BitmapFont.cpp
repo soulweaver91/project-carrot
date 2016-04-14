@@ -1,6 +1,7 @@
 #include "BitmapFont.h"
 #include <QFile>
 #include "../struct/Constants.h"
+#include "../graphics/ShaderSource.h"
 
 BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned rows, 
     unsigned cols, unsigned first, unsigned last) {
@@ -63,14 +64,14 @@ unsigned BitmapFont::getCharacterWidth(QChar code) {
     }
 }
 
-const sf::Color BitmapString::colouredFontColours[7] = {
-    sf::Color(192, 192, 255),
-    sf::Color(255, 192, 192),
-    sf::Color(255, 255, 192),
-    sf::Color( 24, 255, 115),
-    sf::Color(255, 192, 255),
-    sf::Color(180, 180, 240),
-    sf::Color(255, 255, 255)
+const sf::Vector3i BitmapString::colouredFontColours[7] = {
+    sf::Vector3i(-16, 0, 1536),
+    sf::Vector3i(256, -96, 64),
+    sf::Vector3i(256, 64, -64),
+    sf::Vector3i(-160, 32, -96),
+    sf::Vector3i(64, -48, 192),
+    sf::Vector3i(-32, -32, 64),
+    sf::Vector3i(192, 192, 192)
 };
 
 BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& initString, FontAlign initAlign) :
@@ -94,6 +95,7 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x,
     }
     double differenceX = 0.0;
     double differenceY = 0.0;
+    int c = 0;
     for (int i = 0; i < stringText.length(); ++i) {
         if (isAnimated) {
             differenceX = cos(((phase + i) * angleOffset) * PI) * varianceX;
@@ -101,14 +103,22 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x,
         }
         auto sprite = textFont->getCharacterSprite(stringText.at(i));
         if (sprite != nullptr) {
+            sf::RenderStates state;
+            auto shader = ShaderSource::getShader("ColorizeShader").get();
             if (isColoured) {
-                sprite->setColor(colouredFontColours[i % 7]);
+                auto color = colouredFontColours[c % 7];
+                shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+                state.shader = shader;
             } else {
                 sprite->setColor(sf::Color::White);
             }
             sprite->setPosition(currentX + differenceX, y + differenceY);
-            canvas->draw(*(sprite));
+            canvas->draw(*(sprite), state);
             currentX += sprite->getTextureRect().width + spacing;
+        }
+
+        if (stringText.at(i) != 0x20) {
+            c++;
         }
     }
     if (isAnimated) {
