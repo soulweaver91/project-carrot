@@ -902,7 +902,7 @@ void Player::endWarpTransition() {
 
     if (currentTransitionState == AnimState::TRANSITION_WARP) {
         quint16 p[8];
-        events->getPositionParams(posX, posY-15, p);
+        events->getPositionParams(posX, posY, p);
         CoordinatePair c = events->getWarpTarget(p[0]);
         moveInstantly(c); // validity checked when warping started
         setTransition(AnimState::TRANSITION_WARP_END, false, true, false, &Player::endWarpTransition);
