@@ -9,12 +9,15 @@
 
 class CarrotQt5;
 
-struct AnimationInstance {
+class AnimationInstance {
+public:
     std::shared_ptr<GraphicResource> animation;
     AnimStateT state;
     unsigned frame;
     sf::Sprite sprite;
     sf::Vector3i color;
+    void advanceAnimation();
+    void drawCurrentFrame(sf::RenderTarget& target);
 };
 
 class AnimationUser : public TimerUser {

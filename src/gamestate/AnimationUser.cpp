@@ -4,8 +4,8 @@
 
 AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
     : root(root), inTransition(false), cancellableTransition(false),
-    currentAnimation({ nullptr, AnimState::IDLE, 0, sf::Sprite(),{ 0, 0, 0 } }),
-    transition({ nullptr, AnimState::IDLE, 0, sf::Sprite(),{ 0, 0, 0 } }),
+    currentAnimation({ nullptr, AnimState::IDLE, 0, sf::Sprite(), { 0, 0, 0 } }),
+    transition({ nullptr, AnimState::IDLE, 0, sf::Sprite(), { 0, 0, 0 } }),
     animationTimer(-1l) {
 
 }
@@ -16,15 +16,8 @@ AnimationUser::~AnimationUser() {
 
 void AnimationUser::animationAdvance() {
     AnimationInstance& sourceAnim = (inTransition ? transition : currentAnimation);
-    auto& source = sourceAnim.animation;
 
-    int animationLength = source->frameCount;
-
-    if (animationLength == 0) {
-        setAnimation(AnimState::IDLE);
-        return; // shouldn't happen
-    }
-    sourceAnim.frame = (sourceAnim.frame + 1) % (animationLength);
+    sourceAnim.advanceAnimation();
     if (sourceAnim.frame == 0 && inTransition) {
         inTransition = false;
 
@@ -42,11 +35,6 @@ void AnimationUser::animationAdvance() {
         sourceAnim.sprite.setTexture(*(source->texture));
         sourceAnim.sprite.setOrigin(source->hotspot.x, source->hotspot.y);
     }
-
-    int frameLeft = (sourceAnim.frame + source->frameOffset) * source->frameDimensions.x;
-    int frameTop = (sourceAnim.frame / source->frameCount) * source->frameDimensions.y;
-
-    sourceAnim.sprite.setTextureRect(sf::IntRect(frameLeft, frameTop, source->frameDimensions.x, source->frameDimensions.y));
 }
 
 void AnimationUser::loadAnimationSet(QMap<QString, std::shared_ptr<GraphicResource>>& animations) {
@@ -110,17 +98,7 @@ void AnimationUser::drawCurrentFrame() {
     }
 
     AnimationInstance& sourceAnim = (inTransition ? transition : currentAnimation);
-
-    sf::RenderStates state;
-    if (sourceAnim.color != sf::Vector3i(0, 0, 0)) {
-        auto shader = ShaderSource::getShader("ColorizeShader").get();
-        if (shader != nullptr) {
-            shader->setParameter("color", sourceAnim.color.x / 255.0f, sourceAnim.color.y / 255.0f, sourceAnim.color.z / 255.0f);
-            state.shader = shader;
-        }
-    }
-
-    canvas->draw(sourceAnim.sprite, state);
+    sourceAnim.drawCurrentFrame(*canvas);
 }
 
 bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
@@ -170,4 +148,30 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable) {
 void AnimationUser::onTransitionEndHook() {
     // Called when a transition ends.
     // Objects should override this if they need to.
+}
+
+void AnimationInstance::advanceAnimation() {
+    int animationLength = animation->frameCount;
+
+    if (animationLength == 0) {
+        return;
+    }
+
+    frame = (frame + 1) % animationLength;
+
+    int frameLeft = (frame + animation->frameOffset) * animation->frameDimensions.x;
+    sprite.setTextureRect(sf::IntRect(frameLeft, 0, animation->frameDimensions.x, animation->frameDimensions.y));
+}
+
+void AnimationInstance::drawCurrentFrame(sf::RenderTarget& canvas) {
+    sf::RenderStates state;
+    if (color != sf::Vector3i(0, 0, 0)) {
+        auto shader = ShaderSource::getShader("ColorizeShader").get();
+        if (shader != nullptr) {
+            shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+            state.shader = shader;
+        }
+    }
+
+    canvas.draw(sprite, state);
 }
