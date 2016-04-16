@@ -46,10 +46,10 @@ void CommonActor::drawUpdate() {
     
     if (!((isBlinking) && ((root->getFrame() % 6) > 2))) {
         // Pick the appropriate animation depending on if we are in the midst of a transition
-        auto source = (inTransition ? transition : currentAnimation);
+        auto& source = (inTransition ? transition : currentAnimation);
     
-        sprite.setScale((isFacingLeft ? -1 : 1),1);
-        sprite.setPosition(posX, posY);
+        source.sprite.setScale((isFacingLeft ? -1 : 1),1);
+        source.sprite.setPosition(posX, posY);
 
         drawCurrentFrame();
     }
@@ -227,8 +227,8 @@ void CommonActor::tickEvent() {
     // anything if the animation is the same as it was earlier
 
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
-    if (currentAnimation != nullptr) {
-        int composite = currentState & 0xFFFFFFE0;
+    if (currentAnimation.animation != nullptr) {
+        int composite = currentAnimation.state & 0xFFFFFFE0;
         if (abs(speedX) > 3) {
             // shift-running, speed is more than 3px/frame
             composite += 3;
@@ -275,30 +275,30 @@ CoordinatePair CommonActor::getPosition() {
 }
 
 Hitbox CommonActor::getHitbox() {
-    if (currentAnimation != nullptr) {
-        return getHitbox(currentAnimation->frameDimensions.x, currentAnimation->frameDimensions.y);
+    if (currentAnimation.animation != nullptr) {
+        return getHitbox(currentAnimation.animation->frameDimensions.x, currentAnimation.animation->frameDimensions.y);
     } else {
         return { 0, 0, 0, 0 };
     }
 }
 
 Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
-    if (currentAnimation != nullptr) {
-        if (currentAnimation->hasColdspot) {
+    if (currentAnimation.animation != nullptr) {
+        if (currentAnimation.animation->hasColdspot) {
             return {
-                posX - currentAnimation->hotspot.x + currentAnimation->coldspot.x - (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->coldspot.y - h,
-                posX - currentAnimation->hotspot.x + currentAnimation->coldspot.x + (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->coldspot.y
+                posX - currentAnimation.animation->hotspot.x + currentAnimation.animation->coldspot.x - (w / 2),
+                posY - currentAnimation.animation->hotspot.y + currentAnimation.animation->coldspot.y - h,
+                posX - currentAnimation.animation->hotspot.x + currentAnimation.animation->coldspot.x + (w / 2),
+                posY - currentAnimation.animation->hotspot.y + currentAnimation.animation->coldspot.y
             };
         } else {
             // Collision base set to the bottom of the sprite.
             // This is probably still not the correct way to do it, but at least it works for now.
             return {
                 posX - (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y - h,
+                posY - currentAnimation.animation->hotspot.y + currentAnimation.animation->frameDimensions.y - h,
                 posX + (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y
+                posY - currentAnimation.animation->hotspot.y + currentAnimation.animation->frameDimensions.y
             };
         }
     }
@@ -307,11 +307,11 @@ Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
 
 bool CommonActor::setAnimation(AnimStateT state) {
     AnimStateT oldstate = AnimState::IDLE;
-    if (currentAnimation != nullptr) {
-        if ((currentState == state) || ((inTransition) && (!cancellableTransition))) {
+    if (currentAnimation.animation != nullptr) {
+        if ((currentAnimation.state == state) || ((inTransition) && (!cancellableTransition))) {
             return true;
         }
-        oldstate = currentState;
+        oldstate = currentAnimation.state;
     }
 
     bool changed = AnimationUser::setAnimation(state);

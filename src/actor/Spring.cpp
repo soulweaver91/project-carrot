@@ -79,7 +79,7 @@ Hitbox Spring::getHitbox() {
 }
 
 sf::Vector2f Spring::activate() {
-    setTransition(currentState | 0x200, false);
+    setTransition(currentAnimation.state | 0x200, false);
     switch (orientation) {
         case 0:
             playSound("OBJECT_SPRING_VERTICAL");

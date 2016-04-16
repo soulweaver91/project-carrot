@@ -94,10 +94,13 @@ void PlayerOSD::drawOSD() {
         collectionMessage->drawString(canvas, vw / 2 + 30 - messageOffsetAmount / 2, vh - messageOffsetAmount / 2);
         if (collectibleGraphics != nullptr) {
             sf::RenderStates state;
-            if (color != sf::Vector3i(0, 0, 0)) {
+            if (currentAnimation.color != sf::Vector3i(0, 0, 0)) {
                 auto shader = ShaderSource::getShader("ColorizeShader").get();
                 if (shader != nullptr) {
-                    shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+                    shader->setParameter("color", 
+                        currentAnimation.color.x / 255.0f, 
+                        currentAnimation.color.y / 255.0f, 
+                        currentAnimation.color.z / 255.0f);
                     state.shader = shader;
                 }
             }
@@ -130,23 +133,23 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     messageOffsetAmount = 0;
     messageTimer = addTimer(350u, false, static_cast<TimerCallbackFunc>(&PlayerOSD::clearMessage));
     collectionMessageType = type;
-    color = { 0, 0, 0 };
+    currentAnimation.color = { 0, 0, 0 };
     collectibleFrame = 0;
 
     switch (type) {
         case OSD_GEM_RED:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            color = { 511, 0, 0 };
+            currentAnimation.color = { 511, 0, 0 };
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_GREEN:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            color = { 0, 511, 0 };
+            currentAnimation.color = { 0, 511, 0 };
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_BLUE:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            color = { 0, 0, 511 };
+            currentAnimation.color = { 0, 0, 511 };
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_COIN_SILVER:

@@ -17,7 +17,7 @@ MovingPlatform::MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double
         BASE_CYCLE_FRAMES);
 
     setAnimation((int)(type << 10) + 16);
-    chainSprite = std::make_shared<sf::Sprite>(sprite);
+    chainSprite = std::make_shared<sf::Sprite>(currentAnimation.sprite);
 
     setAnimation((int)(type << 10));
 }

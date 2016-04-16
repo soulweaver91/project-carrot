@@ -53,7 +53,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.leftButton || control == controls.rightButton) {
         if (controllable) {
-            setAnimation(currentState & ~(AnimState::LOOKUP | AnimState::CROUCH));
+            setAnimation(currentAnimation.state & ~(AnimState::LOOKUP | AnimState::CROUCH));
         }
         return;
     }
@@ -122,7 +122,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
     if (control == controls.jumpButton) {
         switch (character) {
             case CHAR_JAZZ:
-                if ((currentState & AnimState::CROUCH) > 0) {
+                if ((currentAnimation.state & AnimState::CROUCH) > 0) {
                     controllable = false;
                     setAnimation(AnimState::UPPERCUT);
                     setTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, &Player::delayedUppercutStart);
@@ -130,7 +130,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                     if (speedY > 0 && !canJump) {
                         isGravityAffected = false;
                         speedY = 1.5;
-                        if ((currentState & AnimState::COPTER) == 0) {
+                        if ((currentAnimation.state & AnimState::COPTER) == 0) {
                             setAnimation(AnimState::COPTER);
                         }
                         copterFramesLeft = 50;
@@ -151,18 +151,18 @@ void Player::processControlUpEvent(const ControlEvent& e) {
 
     if (controllable) {
         if (control == controls.upButton) {
-                setAnimation(currentState & ~AnimState::LOOKUP);
+                setAnimation(currentAnimation.state & ~AnimState::LOOKUP);
                 return;
         }
 
         if (control == controls.jumpButton) {
-                setAnimation(currentState & ~AnimState::SHOOT);
+                setAnimation(currentAnimation.state & ~AnimState::SHOOT);
                 weaponCooldown = 0;
                 return;
         }
 
         if (control == controls.downButton) {
-                setAnimation(currentState & ~AnimState::CROUCH);
+                setAnimation(currentAnimation.state & ~AnimState::CROUCH);
                 return;
         }
     }
@@ -195,11 +195,11 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
             posY -= 5;
             canJump = true;
         }
-        if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
+        if (canJump && ((currentAnimation.state & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
             internalForceY = 1.2;
             speedY = -3 - std::max(0.0, (std::abs(speedX) - 4.0) * 0.3);
             canJump = false;
-            setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
+            setAnimation(currentAnimation.state & (~AnimState::LOOKUP & ~AnimState::CROUCH));
             playSound("COMMON_JUMP");
             carryingObject = std::weak_ptr<MovingPlatform>();
         }
@@ -214,7 +214,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
 
 void Player::processControlHeldEvent(const ControlEvent& e) {
     if (e.first == controls.fireButton) {
-        setAnimation(currentState | AnimState::SHOOT);
+        setAnimation(currentAnimation.state | AnimState::SHOOT);
         if (weaponCooldown == 0) {
             switch (currentWeapon) {
                 case WEAPON_BLASTER:
@@ -282,6 +282,7 @@ void Player::tickEvent() {
     }
 
     auto tiles = root->getGameTiles().lock();
+    auto& currentState = currentAnimation.state;
 
     // Check for pushing
     if (canJump && controllable) {
@@ -739,7 +740,7 @@ Hitbox Player::getHitbox() {
 void Player::endDamagingMove() {
     isUsingDamagingMove = false;
     controllable = true;
-    setAnimation(currentState & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
+    setAnimation(currentAnimation.state & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
     setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
 }
 
@@ -900,7 +901,7 @@ void Player::endWarpTransition() {
         return;
     }
 
-    if (currentTransitionState == AnimState::TRANSITION_WARP) {
+    if (transition.state == AnimState::TRANSITION_WARP) {
         quint16 p[8];
         events->getPositionParams(posX, posY, p);
         CoordinatePair c = events->getWarpTarget(p[0]);
@@ -973,9 +974,9 @@ void Player::setupOSD(OSDMessageType type, int param) {
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
-    bool lookup = ((currentState & AnimState::LOOKUP) > 0);
-    int fire_x = (currentAnimation->hotspot.x - currentAnimation->gunspot.x) * (isFacingLeft ? 1 : -1);
-    int fire_y =  currentAnimation->hotspot.y - currentAnimation->gunspot.y;
+    bool lookup = ((currentAnimation.state & AnimState::LOOKUP) > 0);
+    int fire_x = (currentAnimation.animation->hotspot.x - currentAnimation.animation->gunspot.x) * (isFacingLeft ? 1 : -1);
+    int fire_y =  currentAnimation.animation->hotspot.y - currentAnimation.animation->gunspot.y;
 
     auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, isFacingLeft, lookup);
     root->addActor(newAmmo);

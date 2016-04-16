@@ -9,6 +9,14 @@
 
 class CarrotQt5;
 
+struct AnimationInstance {
+    std::shared_ptr<GraphicResource> animation;
+    AnimStateT state;
+    unsigned frame;
+    sf::Sprite sprite;
+    sf::Vector3i color;
+};
+
 class AnimationUser : public TimerUser {
 public:
     AnimationUser(std::shared_ptr<CarrotQt5> root);
@@ -27,16 +35,11 @@ protected:
 
     QMap<QString, std::shared_ptr<GraphicResource>> animationBank;
 
-    std::shared_ptr<GraphicResource> currentAnimation;
-    AnimStateT currentState;
-    std::shared_ptr<GraphicResource> transition;
-    AnimStateT currentTransitionState;
+    AnimationInstance currentAnimation;
+    AnimationInstance transition;
 
     bool inTransition;
     bool cancellableTransition;
-    unsigned frame;
-    sf::Sprite sprite;
-    sf::Vector3i color;
     std::shared_ptr<CarrotQt5> root;
     unsigned long animationTimer;
 };
