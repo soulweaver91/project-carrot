@@ -15,11 +15,14 @@ public:
     std::shared_ptr<GraphicResource> animation;
     AnimStateT state;
     unsigned frame;
-    sf::Sprite sprite;
     sf::Vector3i color;
     void advanceAnimation();
     void drawCurrentFrame(sf::RenderTarget& target);
     void setAnimation(std::shared_ptr<GraphicResource> newAnimation);
+    void setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale = { 1.0, 1.0 });
+
+private:
+    sf::Sprite sprite;
 };
 
 class AnimationUser : public TimerUser {

@@ -48,9 +48,7 @@ void CommonActor::drawUpdate() {
         // Pick the appropriate animation depending on if we are in the midst of a transition
         auto& source = (inTransition ? transition : currentAnimation);
     
-        source.sprite.setScale((isFacingLeft ? -1 : 1),1);
-        source.sprite.setPosition(posX, posY);
-
+        source.setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
         drawCurrentFrame();
     }
 }

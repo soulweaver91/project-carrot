@@ -20,17 +20,6 @@ void AnimationUser::animationAdvance() {
 
         // Call the end hook; used e.g. for special move features for the player
         onTransitionEndHook();
-
-        // Figure out the new sprite to use
-        if (!inTransition) {
-            sourceAnim = currentAnimation;
-        } else {
-            sourceAnim = transition;
-        }
-        auto& source = sourceAnim.animation;
-
-        sourceAnim.sprite.setTexture(*(source->texture));
-        sourceAnim.sprite.setOrigin(source->hotspot.x, source->hotspot.y);
     }
 }
 
@@ -58,7 +47,6 @@ bool AnimationUser::setAnimation(AnimStateT state) {
         // get a random item later; uses first found for now
         currentAnimation.setAnimation(candidates.at(0));
         currentAnimation.state = state;
-        currentAnimation.sprite.setOrigin(currentAnimation.animation->hotspot.x, currentAnimation.animation->hotspot.y);
         inTransition = false;
         transition.animation = nullptr;
     }
@@ -95,7 +83,6 @@ void AnimationUser::drawCurrentFrame() {
 
 bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
     currentAnimation.setAnimation(animation);
-    currentAnimation.sprite.setOrigin(currentAnimation.animation->hotspot.x, currentAnimation.animation->hotspot.y);
 
     cancelTimer(animationTimer);
     animationTimer = addTimer(static_cast<unsigned>(currentAnimation.animation->frameDuration / 1000.0 * 70.0),
@@ -118,7 +105,6 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable) {
         cancellableTransition = cancellable;
         transition.setAnimation(candidates.at(0));
         transition.state = state;
-        transition.sprite.setOrigin(transition.animation->hotspot.x, transition.animation->hotspot.y);
     }
 
     cancelTimer(animationTimer);
@@ -169,4 +155,10 @@ void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimati
         newAnimation->frameDimensions.x,
         newAnimation->frameDimensions.y));
     sprite.setPosition(-1, -1);
+    sprite.setOrigin(newAnimation->hotspot.x, newAnimation->hotspot.y);
+}
+
+void AnimationInstance::setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale) {
+    sprite.setPosition(position);
+    sprite.setScale(scale);
 }

@@ -17,7 +17,7 @@ MovingPlatform::MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double
         BASE_CYCLE_FRAMES);
 
     setAnimation((int)(type << 10) + 16);
-    chainSprite = std::make_shared<sf::Sprite>(currentAnimation.sprite);
+    chainAnimation.setAnimation(currentAnimation.animation);
 
     setAnimation((int)(type << 10));
 }
@@ -68,9 +68,8 @@ void MovingPlatform::drawUpdate() {
 
     for (uint i = 0; i < length; ++i) {
         CoordinatePair pos = getPhasePosition(false, i);
-        chainSprite->setPosition(pos.x, pos.y);
-
-        canvas->draw(*chainSprite);
+        chainAnimation.setSpritePosition({ (float)pos.x, (float)pos.y });
+        chainAnimation.drawCurrentFrame(*canvas);
     }
 
     CommonActor::drawUpdate();

@@ -30,12 +30,14 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     weaponIconIdx[8] = animationBank.value("UI_WEAPON_ELECTRO");
 
     weaponIcon.setAnimation(weaponIconIdx[0]);
-    weaponIcon.sprite.setPosition(root->getViewWidth() - 85 - weaponIconIdx[0]->hotspot.x,
-        root->getViewHeight() - 15 - weaponIconIdx[0]->hotspot.y);
+    weaponIcon.setSpritePosition({
+        root->getViewWidth() - 80.0f,
+        root->getViewHeight() - 15.0f
+    });
 
     auto charIconGfx = animationBank.value("UI_CHARACTER_ICON_JAZZ");
     charIcon.setAnimation(charIconGfx);
-    charIcon.sprite.setPosition(5, root->getViewHeight() - 40);
+    charIcon.setSpritePosition({ 5.0f, (float)root->getViewHeight() });
 
     collectionMessage = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
     livesString       = std::make_unique<BitmapString>(root->getFont(), "x3", FONT_ALIGN_LEFT);
@@ -86,10 +88,10 @@ void PlayerOSD::drawOSD() {
         collectionMessage->drawString(canvas, vw / 2 + 30 - messageOffsetAmount / 2, vh - messageOffsetAmount / 2);
         if (collectibleGraphics != nullptr) {
             // TODO: Move the sprite from the player's position to the UI instead of from below with the count
-            collectibleIcon.sprite.setPosition(
-                vw / 2 - collectionMessage->getWidth() / 2 + 20 - messageOffsetAmount / 2,
-                vh - messageOffsetAmount / 2
-            );
+            collectibleIcon.setSpritePosition({
+                vw / 2.0f - collectionMessage->getWidth() / 2.0f + 32.0f - messageOffsetAmount / 2.0f,
+                vh - messageOffsetAmount / 2.0f + 12.0f
+            });
 
             collectibleIcon.drawCurrentFrame(*canvasPtr);
         }
@@ -156,8 +158,10 @@ void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
 
     if (weaponIconIdx[type] != nullptr) {
         weaponIcon.setAnimation(weaponIconIdx[type]);
-        weaponIcon.sprite.setPosition(root->getViewWidth() - 85 - weaponIconIdx[type]->hotspot.x,
-            root->getViewHeight() - 15 - weaponIconIdx[type]->hotspot.y);
+        weaponIcon.setSpritePosition({
+            root->getViewWidth() - 80.0f,
+            root->getViewHeight() - 15.0f
+        });
     }
 }
 
