@@ -226,7 +226,7 @@ void CommonActor::tickEvent() {
 
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
     if (currentAnimation.animation != nullptr) {
-        int composite = currentAnimation.state & 0xFFFFFFE0;
+        int composite = currentAnimation.getAnimationState() & 0xFFFFFFE0;
         if (abs(speedX) > 3) {
             // shift-running, speed is more than 3px/frame
             composite += 3;
@@ -306,10 +306,10 @@ Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
 bool CommonActor::setAnimation(AnimStateT state) {
     AnimStateT oldstate = AnimState::IDLE;
     if (currentAnimation.animation != nullptr) {
-        if ((currentAnimation.state == state) || ((inTransition) && (!cancellableTransition))) {
+        oldstate = currentAnimation.getAnimationState();
+        if ((oldstate == state) || ((inTransition) && (!cancellableTransition))) {
             return true;
         }
-        oldstate = currentAnimation.state;
     }
 
     bool changed = AnimationUser::setAnimation(state);

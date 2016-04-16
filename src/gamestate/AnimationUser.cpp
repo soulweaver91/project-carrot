@@ -45,8 +45,7 @@ bool AnimationUser::setAnimation(AnimStateT state) {
         return false;
     } else {
         // get a random item later; uses first found for now
-        currentAnimation.setAnimation(candidates.at(0));
-        currentAnimation.state = state;
+        currentAnimation.setAnimation(candidates.at(0), state);
         inTransition = false;
         transition.animation = nullptr;
     }
@@ -82,7 +81,12 @@ void AnimationUser::drawCurrentFrame() {
 }
 
 bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
-    currentAnimation.setAnimation(animation);
+
+    AnimStateT state = AnimState::IDLE;
+    if (animation->state.size() > 0) {
+        state = animation->state.values().at(0);
+    }
+    currentAnimation.setAnimation(animation, state);
 
     cancelTimer(animationTimer);
     animationTimer = addTimer(static_cast<unsigned>(currentAnimation.animation->frameDuration / 1000.0 * 70.0),
@@ -103,8 +107,7 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable) {
     } else {
         inTransition = true;
         cancellableTransition = cancellable;
-        transition.setAnimation(candidates.at(0));
-        transition.state = state;
+        transition.setAnimation(candidates.at(0), state);
     }
 
     cancelTimer(animationTimer);
@@ -147,9 +150,10 @@ void AnimationInstance::drawCurrentFrame(sf::RenderTarget& canvas) {
     canvas.draw(sprite, state);
 }
 
-void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimation) {
+void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState) {
     animation = newAnimation;
     frame = 0;
+    state = newState;
     sprite.setTexture(*(newAnimation->texture));
     sprite.setTextureRect(sf::IntRect(0, 0,
         newAnimation->frameDimensions.x,
@@ -161,4 +165,8 @@ void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimati
 void AnimationInstance::setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale) {
     sprite.setPosition(position);
     sprite.setScale(scale);
+}
+
+const AnimStateT AnimationInstance::getAnimationState() {
+    return state;
 }

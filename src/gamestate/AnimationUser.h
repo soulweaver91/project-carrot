@@ -13,16 +13,17 @@ class AnimationInstance {
 public:
     AnimationInstance();
     std::shared_ptr<GraphicResource> animation;
-    AnimStateT state;
     unsigned frame;
     sf::Vector3i color;
     void advanceAnimation();
     void drawCurrentFrame(sf::RenderTarget& target);
-    void setAnimation(std::shared_ptr<GraphicResource> newAnimation);
+    void setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState = AnimState::IDLE);
     void setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale = { 1.0, 1.0 });
+    const AnimStateT getAnimationState();
 
 private:
     sf::Sprite sprite;
+    AnimStateT state;
 };
 
 class AnimationUser : public TimerUser {
