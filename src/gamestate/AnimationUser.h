@@ -11,6 +11,7 @@ class CarrotQt5;
 
 class AnimationInstance {
 public:
+    AnimationInstance();
     std::shared_ptr<GraphicResource> animation;
     AnimStateT state;
     unsigned frame;
@@ -18,6 +19,7 @@ public:
     sf::Vector3i color;
     void advanceAnimation();
     void drawCurrentFrame(sf::RenderTarget& target);
+    void setAnimation(std::shared_ptr<GraphicResource> newAnimation);
 };
 
 class AnimationUser : public TimerUser {

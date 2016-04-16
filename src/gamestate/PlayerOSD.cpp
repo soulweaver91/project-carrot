@@ -5,10 +5,7 @@
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player, std::weak_ptr<sf::RenderWindow> canvas)
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), canvas(canvas), health(0), score(0),
-    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0),
-    weaponIcon({ nullptr, AnimState::IDLE, 0, sf::Sprite(), { 0, 0, 0 } }),
-    charIcon({ nullptr, AnimState::IDLE, 0, sf::Sprite(), { 0, 0, 0 } }),
-    collectibleIcon({ nullptr, AnimState::IDLE, 0, sf::Sprite(), { 0, 0, 0 } }) {
+    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0) {
 
     addTimer(7u, true, static_cast<TimerCallbackFunc>(&PlayerOSD::advanceIconFrames));
 
@@ -32,18 +29,12 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     weaponIconIdx[7] = animationBank.value("UI_WEAPON_PEPPER");
     weaponIconIdx[8] = animationBank.value("UI_WEAPON_ELECTRO");
 
-    weaponIcon.sprite.setTexture(*weaponIconIdx[0]->texture);
-    weaponIcon.sprite.setTextureRect(sf::IntRect(0, 0, weaponIconIdx[0]->frameDimensions.x,
-        weaponIconIdx[0]->frameDimensions.y));
+    weaponIcon.setAnimation(weaponIconIdx[0]);
     weaponIcon.sprite.setPosition(root->getViewWidth() - 85 - weaponIconIdx[0]->hotspot.x,
         root->getViewHeight() - 15 - weaponIconIdx[0]->hotspot.y);
-    weaponIcon.animation = weaponIconIdx[0];
 
     auto charIconGfx = animationBank.value("UI_CHARACTER_ICON_JAZZ");
-    charIcon.animation = charIconGfx;
-    charIcon.sprite.setTexture(*(charIconGfx->texture));
-    charIcon.sprite.setTextureRect(sf::IntRect(0, 0, charIconGfx->frameDimensions.x,
-        charIconGfx->frameDimensions.y));
+    charIcon.setAnimation(charIconGfx);
     charIcon.sprite.setPosition(5, root->getViewHeight() - 40);
 
     collectionMessage = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
@@ -151,12 +142,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     }
 
     if (collectibleGraphics != nullptr) {
-        collectibleIcon.animation = collectibleGraphics;
-        collectibleIcon.sprite.setTexture(*collectibleGraphics->texture);
-        collectibleIcon.sprite.setTextureRect(sf::IntRect(
-            0, 0,
-            collectibleGraphics->frameDimensions.x,
-            collectibleGraphics->frameDimensions.y));
+        collectibleIcon.setAnimation(collectibleGraphics);
     }
 
     if (type == OSD_GEM_BLUE || type == OSD_GEM_GREEN || type == OSD_GEM_RED || type == OSD_GEM_PURPLE) {
@@ -169,13 +155,9 @@ void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
     currentWeapon = type;
 
     if (weaponIconIdx[type] != nullptr) {
-        weaponIcon.animation = weaponIconIdx[type];
-        weaponIcon.sprite.setTexture(*(weaponIconIdx[type]->texture));
-        weaponIcon.sprite.setTextureRect(sf::IntRect(0, 0, weaponIconIdx[type]->frameDimensions.x,
-            weaponIconIdx[type]->frameDimensions.y));
+        weaponIcon.setAnimation(weaponIconIdx[type]);
         weaponIcon.sprite.setPosition(root->getViewWidth() - 85 - weaponIconIdx[type]->hotspot.x,
             root->getViewHeight() - 15 - weaponIconIdx[type]->hotspot.y);
-        weaponIcon.frame = 0;
     }
 }
 
