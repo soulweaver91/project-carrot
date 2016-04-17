@@ -43,6 +43,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     connect(ui.debug_gravity, SIGNAL(triggered()), this, SLOT(debugSetGravity()));
     connect(ui.debug_lighting, SIGNAL(triggered()), this, SLOT(debugSetLighting()));
     connect(ui.debug_masks, SIGNAL(triggered(bool)), this, SLOT(debugShowMasks(bool)));
+    connect(ui.debug_position, SIGNAL(triggered()), this, SLOT(debugSetPosition()));
 
     // Initialize the paint surface
     windowCanvas = std::make_shared<CarrotCanvas>(ui.mainFrame, QPoint(0, 0), QSize(800, 600));
@@ -631,6 +632,17 @@ void CarrotQt5::debugSetGravity() {
 
 void CarrotQt5::debugSetLighting() {
     lightingLevel = QInputDialog::getInt(this, "Set new lighting", "Lighting:", lightingLevel, 0, 100);
+}
+
+void CarrotQt5::debugSetPosition() {
+    auto player = getPlayer(0).lock();
+    if (player == nullptr) {
+        return;
+    }
+
+    int x = QInputDialog::getInt(this, "Move player", "X position", player->getPosition().x, 0, getLevelWidth() * 32);
+    int y = QInputDialog::getInt(this, "Move player", "Y position", player->getPosition().y, 0, getLevelHeight() * 32);
+    player->moveInstantly({ x * 1.0, y * 1.0 });
 }
 
 Hitbox CarrotQt5::calcHitbox(const Hitbox& hitbox, double diffX, double diffY) {

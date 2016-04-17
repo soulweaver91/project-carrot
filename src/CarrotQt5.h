@@ -164,6 +164,7 @@ private slots:
     void debugShowMasks(bool show);
     void debugSetGravity();
     void debugSetLighting();
+    void debugSetPosition();
     void setLightingStep();
     void delayedLevelChange();
 };

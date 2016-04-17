@@ -132,6 +132,7 @@
     <addaction name="debug_masks"/>
     <addaction name="debug_gravity"/>
     <addaction name="debug_lighting"/>
+    <addaction name="debug_position"/>
    </widget>
    <addaction name="menuGame"/>
    <addaction name="menu_Settings"/>
@@ -227,6 +228,11 @@
   <action name="debug_lighting">
    <property name="text">
     <string>Set Lighting...</string>
+   </property>
+  </action>
+  <action name="debug_position">
+   <property name="text">
+    <string>Move Player 1...</string>
    </property>
   </action>
  </widget>
