@@ -711,6 +711,7 @@ void Player::deathRecovery(std::shared_ptr<AnimationInstance> animation) {
 
         // Negate all possible movement effects etc.
         transition.clearCallback();
+        inTransition = false;
         canJump = false;
         externalForceX = 0;
         externalForceY = 0;
@@ -770,14 +771,14 @@ void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance> animation)
 
 bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, 
     void(Player::*callback)(std::shared_ptr<AnimationInstance> animation)) {
-    bool result = CommonActor::setTransition(state, cancellable, static_cast<AnimationCallbackFunc>(callback));
     if (remove_control) {
         controllable = false;
     }
     if (set_special) {
         isUsingDamagingMove = true;
     }
-    return result;
+
+    return CommonActor::setTransition(state, cancellable, static_cast<AnimationCallbackFunc>(callback));
 }
 
 void Player::onHitFloorHook() {

@@ -97,6 +97,10 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationC
     }
 
     if (candidates.size() == 0) {
+        if (callback != nullptr) {
+            (this->*(callback))(nullptr);
+        }
+
         return false;
     } else {
         inTransition = true;
@@ -115,6 +119,10 @@ void AnimationInstance::advanceAnimation() {
     int animationLength = animation->frameCount;
 
     if (animationLength == 0) {
+        owner->animationFinishedHook(nullptr);
+        if (callback != nullptr) {
+            doCallback();
+        }
         return;
     }
 
