@@ -25,8 +25,11 @@
 #include <QDebug>
 #include <bass.h>
 
-CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), levelName(""), frame(0),
-    gravity(0.3), dbgShowMasked(false), lightingLevel(80), isMenu(false), currentTempModifier(0), menuObject(nullptr), fps(0) {
+CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
+#ifdef CARROT_DEBUG
+    currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true),
+#endif
+    paused(false), levelName(""), frame(0), gravity(0.3), lightingLevel(80), isMenu(false), menuObject(nullptr), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -39,11 +42,28 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
     connect(ui.action_About_Project_Carrot, SIGNAL(triggered()), this, SLOT(openAboutCarrot()));
     connect(ui.action_About_Qt_5, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(ui.action_Home_Page, SIGNAL(triggered()), this, SLOT(openHomePage()));
+
+
+#ifdef CARROT_DEBUG
+    for (int i = 0; i < 32; ++i) {
+        tempModifierName[i] = "(UNSET)";
+        tempModifier[i] = 0;
+    }
+    tempModifierName[0] = "PerspCurve";      tempModifier[0] = 20;
+    tempModifierName[1] = "PerspMultipNear"; tempModifier[1] = 1;
+    tempModifierName[2] = "PerspMultipFar";  tempModifier[2] = 3;
+    tempModifierName[3] = "PerspSpeed";      tempModifier[3] = 4;
+    tempModifierName[4] = "SkyDepth";        tempModifier[4] = 1;
+
     connect(ui.debug_music, SIGNAL(triggered()), this, SLOT(debugLoadMusic()));
     connect(ui.debug_gravity, SIGNAL(triggered()), this, SLOT(debugSetGravity()));
     connect(ui.debug_lighting, SIGNAL(triggered()), this, SLOT(debugSetLighting()));
     connect(ui.debug_masks, SIGNAL(triggered(bool)), this, SLOT(debugShowMasks(bool)));
     connect(ui.debug_position, SIGNAL(triggered()), this, SLOT(debugSetPosition()));
+    connect(ui.debug_overlays, SIGNAL(triggered(bool)), this, SLOT(debugSetOverlaysActive(bool)));
+#else
+    ui.menuDebug->menuAction()->setVisible(false);
+#endif
 
     // Initialize the paint surface
     windowCanvas = std::make_shared<CarrotCanvas>(ui.mainFrame, QPoint(0, 0), QSize(800, 600));
@@ -96,16 +116,6 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), paused(false), leve
 
     // TODO: create a feather effect
     // check the shader stuff and apply them to the texture here
-    
-    for (int i = 0; i < 32; ++i) {
-        tempModifierName[i] = "(UNSET)";
-        tempModifier[i] = 0;
-    }
-    tempModifierName[0] = "PerspCurve";      tempModifier[0] = 20;
-    tempModifierName[1] = "PerspMultipNear"; tempModifier[1] = 1;
-    tempModifierName[2] = "PerspMultipFar";  tempModifier[2] = 3;
-    tempModifierName[3] = "PerspSpeed";      tempModifier[3] = 4;
-    tempModifierName[4] = "SkyDepth";        tempModifier[4] = 1;
 
     lastTimestamp = QTime::currentTime();
 }
@@ -279,7 +289,8 @@ void CarrotQt5::keyPressEvent(QKeyEvent* event) {
             cleanUpLevel();
             startMainMenu();
         }
-        
+
+#ifdef CARROT_DEBUG
         if (event->key() == Qt::Key::Key_Insert) {
             tempModifier[currentTempModifier] += 1;
         }
@@ -292,6 +303,7 @@ void CarrotQt5::keyPressEvent(QKeyEvent* event) {
         if (event->key() == Qt::Key::Key_PageDown) {
             currentTempModifier = (currentTempModifier + 31) % 32;
         }
+#endif
     }
 
     controlManager->setControlHeldDown(event->key());
@@ -332,7 +344,7 @@ void CarrotQt5::gameTick() {
         // Set up a partially translucent black overlay
         sf::RectangleShape overlay(sf::Vector2f(800.0, 600.0));
         overlay.setFillColor(sf::Color(0, 0, 0, 120));
-        
+
         windowCanvas->draw(*pausedScreenshotSprite);
         windowCanvas->draw(overlay);
 
@@ -354,7 +366,7 @@ void CarrotQt5::gameTick() {
     // Deactivate far away instances, create near instances
     int view_x = static_cast<unsigned>(windowCanvas->getView().getCenter().x) / 32;
     int view_y = static_cast<unsigned>(windowCanvas->getView().getCenter().y) / 32;
-    for(unsigned i = 0; i < actors.size(); i++) {
+    for (unsigned i = 0; i < actors.size(); i++) {
         if (actors.at(i)->deactivate(view_x, view_y, 32)) {
             --i;
         }
@@ -364,13 +376,13 @@ void CarrotQt5::gameTick() {
     // Run isAnimated tiles' timers
     gameTiles->advanceAnimatedTileTimers();
     // Run all actors' timers
-    for(unsigned i = 0; i < actors.size(); i++) {
+    for (unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->advanceAnimationTimers();
         actors.at(i)->advanceTimers();
     }
 
     // Run all actors' tick events
-    for(unsigned i = 0; i < actors.size(); i++) {
+    for (unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->tickEvent();
         if (actors.at(i)->perish()) {
             --i;
@@ -378,11 +390,11 @@ void CarrotQt5::gameTick() {
     }
 
     processControlEvents();
-    
+
     // Draw the layers: first lower (background and sprite) levels...
     gameTiles->drawLowerLevels();
     // ...then draw all the actors...
-    for(unsigned i = 0; i < actors.size(); i++) {
+    for (unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->drawUpdate();
     }
     // ...then all the debris elements...
@@ -400,21 +412,25 @@ void CarrotQt5::gameTick() {
     sf::Sprite s(lightTexture->getTexture());
     s.setColor(sf::Color(255, 255, 255, (255 * (100 - lightingLevel) / 100)));
     s.setOrigin(800, 600);
-    s.setPosition(players[0]->getPosition().x,players[0]->getPosition().y - 15); // middle of the sprite vertically
+    s.setPosition(players[0]->getPosition().x, players[0]->getPosition().y - 15); // middle of the sprite vertically
     windowCanvas->draw(s);
 
     // Draw the UI
     windowCanvas->setView(*uiView);
-    
+
     // Draw the character icon; managed by the player object
     players[0]->drawUIOverlay();
-    
-    //BitmapString::drawString(window,mainFont,"Frame: " + QString::number(frame),6,56);
-    BitmapString::drawString(getCanvas(), getFont(), "Actors: " + QString::number(actors.size()), 6, 176);
-    BitmapString::drawString(getCanvas(), getFont(), "FPS: " + QString::number(fps, 'f', 2) + " at " +
-        QString::number(1000 / fps) + "ms/f", 6, 56);
-    BitmapString::drawString(getCanvas(), getFont(), "Mod-" + QString::number(currentTempModifier) + " " +
-        tempModifierName[currentTempModifier] + ": " + QString::number(tempModifier[currentTempModifier]), 6, 540);
+
+#ifdef CARROT_DEBUG
+    if (dbgOverlaysActive) {
+        //BitmapString::drawString(window,mainFont,"Frame: " + QString::number(frame),6,56);
+        BitmapString::drawString(getCanvas(), getFont(), "Actors: " + QString::number(actors.size()), 6, 176);
+        BitmapString::drawString(getCanvas(), getFont(), "FPS: " + QString::number(fps, 'f', 2) + " at " +
+            QString::number(1000 / fps) + "ms/f", 6, 56);
+        BitmapString::drawString(getCanvas(), getFont(), "Mod-" + QString::number(currentTempModifier) + " " +
+            tempModifierName[currentTempModifier] + ": " + QString::number(tempModifier[currentTempModifier]), 6, 540);
+    }
+#endif
 
     // Update the drawn surface to the screen and set the view back to the player
     //windowCanvas->display();
@@ -571,21 +587,6 @@ bool CarrotQt5::loadLevel(const QString& name) {
     return true;
 }
 
-void CarrotQt5::debugLoadMusic() {
-    QString filename = QFileDialog::getOpenFileName(this, "Load which file?", qApp->applicationDirPath(),
-        "Module files (*.it *.s3m *.xm *.mod *.mo3 *.mtm *.umx);;All files (*.*)");
-    if (filename.endsWith(".j2b")) {
-        filename = JJ2Format::convertJ2B(filename);
-    }
-    if (filename != "") {
-        resourceManager->getSoundSystem()->setMusic(filename);
-    }
-}
-
-void CarrotQt5::debugShowMasks(bool show) {
-    dbgShowMasked = show;
-}
-
 void CarrotQt5::setLevelName(const QString& name) {
     levelName = name;
     setWindowTitle("Project Carrot - " + levelName);
@@ -626,6 +627,22 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hitbox
     return res;
 }
 
+#ifdef CARROT_DEBUG
+void CarrotQt5::debugShowMasks(bool show) {
+    dbgShowMasked = show;
+}
+
+void CarrotQt5::debugLoadMusic() {
+    QString filename = QFileDialog::getOpenFileName(this, "Load which file?", qApp->applicationDirPath(),
+        "Module files (*.it *.s3m *.xm *.mod *.mo3 *.mtm *.umx);;All files (*.*)");
+    if (filename.endsWith(".j2b")) {
+        filename = JJ2Format::convertJ2B(filename);
+    }
+    if (filename != "") {
+        resourceManager->getSoundSystem()->setMusic(filename);
+    }
+}
+
 void CarrotQt5::debugSetGravity() {
     gravity = QInputDialog::getDouble(this, "Set new gravity", "Gravity:", gravity, -3.0, 3.0, 4);
 }
@@ -644,6 +661,11 @@ void CarrotQt5::debugSetPosition() {
     int y = QInputDialog::getInt(this, "Move player", "Y position", player->getPosition().y, 0, getLevelHeight() * 32);
     player->moveInstantly({ x * 1.0, y * 1.0 });
 }
+
+void CarrotQt5::debugSetOverlaysActive(bool active) {
+    dbgOverlaysActive = active;
+}
+#endif
 
 Hitbox CarrotQt5::calcHitbox(const Hitbox& hitbox, double diffX, double diffY) {
     Hitbox newBox(hitbox);

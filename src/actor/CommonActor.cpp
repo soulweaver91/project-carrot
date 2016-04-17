@@ -31,6 +31,7 @@ void CommonActor::drawUpdate() {
         return;
     }
 
+#ifdef CARROT_DEBUG
     if (root->dbgShowMasked) {
         double len = sqrt(speedX * speedX + speedY * speedY);
         if (len > 0) {
@@ -43,6 +44,7 @@ void CommonActor::drawUpdate() {
             canvas->draw(line);
         }
     }
+#endif
     
     if (!((isBlinking) && ((root->getFrame() % 6) > 2))) {
         // Pick the appropriate animation depending on if we are in the midst of a transition

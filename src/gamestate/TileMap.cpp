@@ -128,31 +128,44 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     // initialize 550 lines that we're going to texturize and draw on the screen
     // from (400, 300), first 25 lines up and down are obscured by the fade effect,
     // but the 275 other lines are at least partially visible
-    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines,1100);
+    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, 1100);
+
+#ifdef CARROT_DEBUG
+    float perspectiveCurve        = root->tempModifier[0] / 10.0;
+    int perspectiveMultiplierNear = root->tempModifier[1];
+    int perspectiveMultiplierFar  = root->tempModifier[2];
+    int skyDepth                  = root->tempModifier[4];
+#else
+    float perspectiveCurve        = 2.0;
+    int perspectiveMultiplierNear = 1;
+    int perspectiveMultiplierFar  = 3;
+    int skyDepth                  = 1;
+#endif
+
     for (int iy = 0; iy < 275; ++iy) {
         // line drawing y offset from the middle of the screen, up and down
         int ly = 25 + iy;
 
         // line drawing x offset from the middle of the screen on the given y distance,
         // altered by both far and near layer factors
-        int lx = (root->getViewWidth() / 2) + (ly / 300.0) * 800.0 * (root->tempModifier[2] - root->tempModifier[1]);
+        int lx = (root->getViewWidth() / 2) + (ly / 300.0) * 800.0 * (perspectiveMultiplierFar - perspectiveMultiplierNear);
 
         // texture y coordinates for above and below draw areas,
         // altered by sky copy count in the depth and perspective correction multiplier
-        int ty2 = pow(300 - iy,root->tempModifier[0] / 10.0) * root->tempModifier[4] * 256.0 / pow(300.0,root->tempModifier[0] / 10.0);
-        int ty = 256 * root->tempModifier[4] - ty2;
+        int ty2 = pow(300 - iy, perspectiveCurve) * skyDepth * 256.0 / pow(300.0, perspectiveCurve);
+        int ty = 256 * skyDepth - ty2;
             
         // set upper half line
         primitiveLines[4 * iy].position      = sf::Vector2f(-lx, -ly);
         primitiveLines[4 * iy].texCoords     = sf::Vector2f(0 + x, ty2 + y);
         primitiveLines[4 * iy + 1].position  = sf::Vector2f(lx, -ly);
-        primitiveLines[4 * iy + 1].texCoords = sf::Vector2f(root->tempModifier[2] * 256 + x, ty2 + y);
+        primitiveLines[4 * iy + 1].texCoords = sf::Vector2f(perspectiveMultiplierFar * 256 + x, ty2 + y);
             
         // set lower half line
         primitiveLines[4 * iy + 2].position  = sf::Vector2f(-lx, ly);
         primitiveLines[4 * iy + 2].texCoords = sf::Vector2f(0 + x, ty + y);
         primitiveLines[4 * iy + 3].position  = sf::Vector2f(lx, ly);
-        primitiveLines[4 * iy + 3].texCoords = sf::Vector2f(root->tempModifier[2] * 256 + x, ty + y);
+        primitiveLines[4 * iy + 3].texCoords = sf::Vector2f(perspectiveMultiplierFar * 256 + x, ty + y);
     }
 
     // translation to the center of the screen
@@ -193,10 +206,12 @@ double TileMap::translateCoordinate(const double& coordinate, const double& spee
 }
 
 void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target) {
+#ifdef CARROT_DEBUG
     if (root->dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
         // only draw sprite layer in collision debug mode
         return;
     }
+#endif
 
     // Layer dimensions
     int lh = layer.tileLayout.size();
@@ -283,9 +298,14 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     double y3 = y1 + 100 + root->getViewHeight();
 
     if (layer.isTextured && (lh == 8) && (lw == 8)) {
+#ifdef CARROT_DEBUG
+        float perspectiveSpeed = root->tempModifier[3] / 10.0;
+#else
+        float perspectiveSpeed = 0.4;
+#endif
         drawTexturedBackground(layer,
-                fmod((x1 + rem_x) * (root->tempModifier[3] / 10.0) + lox, 256.0),
-                fmod((y1 + rem_y) * (root->tempModifier[3] / 10.0) + loy, 256.0), target);
+                fmod((x1 + rem_x) * perspectiveSpeed + lox, 256.0),
+                fmod((y1 + rem_y) * perspectiveSpeed + loy, 256.0), target);
     } else {
         int tile_xo = -1;
         for (double x2 = x1; x2 < x3; x2 += 32) {
@@ -314,7 +334,8 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
                 }
 
                 if (idx == 0 & !ani) { continue; }
-            
+
+#ifdef CARROT_DEBUG
                 if (root->dbgShowMasked) {
                     // debug code for masks
                     sf::RectangleShape b(sf::Vector2f(32, 32));
@@ -339,6 +360,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
                     }
                     continue;
                 }
+#endif
 
                 std::shared_ptr<sf::Sprite> sprite = nullptr;
                 if (ani) {
@@ -549,6 +571,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
         int hx2 = ceil(hitbox.right);
         int hy1 = floor(hitbox.top);
         int hy2 = ceil(hitbox.bottom);
+#ifdef CARROT_DEBUG
         if (root->dbgShowMasked) {
             auto target = root->getCanvas().lock();
             if (target != nullptr) {
@@ -564,6 +587,8 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                 target->draw(a);
             }
         }
+#endif
+
         for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
             for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
                 int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
@@ -575,6 +600,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                     !(levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay && !downwards) &&
                     !(levelLayout.at(layer).tileLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE)) {
                     all_empty = false;
+#ifdef CARROT_DEBUG
                     if (root->dbgShowMasked) {
                         sf::RectangleShape a(sf::Vector2f(32, 32));
                         a.setPosition(x*32, y*32);
@@ -584,12 +610,19 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                             target->draw(a);
                         }
                     }
+#endif
                     break;
                 }
             }
+#ifdef CARROT_DEBUG
             if (!all_empty && !root->dbgShowMasked) {
                 break;
             }
+#else
+            if (!all_empty) {
+                break;
+            }
+#endif
         }
 
         if (all_empty) {

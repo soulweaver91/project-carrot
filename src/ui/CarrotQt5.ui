@@ -123,6 +123,9 @@
     <addaction name="action_About_Project_Carrot"/>
    </widget>
    <widget class="QMenu" name="menuDebug">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="title">
      <string>Debug</string>
     </property>
@@ -133,6 +136,7 @@
     <addaction name="debug_gravity"/>
     <addaction name="debug_lighting"/>
     <addaction name="debug_position"/>
+    <addaction name="debug_overlays"/>
    </widget>
    <addaction name="menuGame"/>
    <addaction name="menu_Settings"/>
@@ -201,6 +205,9 @@
    <property name="text">
     <string>Load Music...</string>
    </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="debug_ammo">
    <property name="text">
@@ -233,6 +240,17 @@
   <action name="debug_position">
    <property name="text">
     <string>Move Player 1...</string>
+   </property>
+  </action>
+  <action name="debug_overlays">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Debug Overlays Active</string>
    </property>
   </action>
  </widget>

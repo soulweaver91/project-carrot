@@ -102,10 +102,13 @@ public:
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
     int getLightingLevel();
     double gravity;
+#ifdef CARROT_DEBUG
+    bool dbgOverlaysActive;
     bool dbgShowMasked;
     int tempModifier[32]; // temporary variables for testing new features
     QString tempModifierName[32];
     unsigned char currentTempModifier;
+#endif
 
     // remote function evoke
     void invokeFunction(InvokableRootFunction func, QVariant param);
@@ -160,11 +163,14 @@ private slots:
     void mainMenuTick();
     void openAboutCarrot();
     void openHomePage();
+    void setLightingStep();
+    void delayedLevelChange();
+#ifdef CARROT_DEBUG
     void debugLoadMusic();
     void debugShowMasks(bool show);
     void debugSetGravity();
     void debugSetLighting();
     void debugSetPosition();
-    void setLightingStep();
-    void delayedLevelChange();
+    void debugSetOverlaysActive(bool active);
+#endif
 };

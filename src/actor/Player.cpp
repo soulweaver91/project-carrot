@@ -660,9 +660,13 @@ void Player::drawUIOverlay() {
         return;
     }
 
-    BitmapString::drawString(canvas, root->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
-    BitmapString::drawString(canvas, root->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
-    BitmapString::drawString(canvas, root->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
+#ifdef CARROT_DEBUG
+    if (root->dbgOverlaysActive) {
+        BitmapString::drawString(canvas, root->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
+        BitmapString::drawString(canvas, root->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
+        BitmapString::drawString(canvas, root->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
+    }
+#endif
 }
 
 bool Player::selectWeapon(enum WeaponType new_type) {
