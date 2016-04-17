@@ -186,6 +186,10 @@ void AnimationInstance::resetFrame() {
         animation->frameDimensions.y));
 }
 
+void AnimationInstance::setColor(const sf::Vector3i & newColor) {
+    color = newColor;
+}
+
 void AnimationInstance::doCallback() {
     (owner->*(callback))(nullptr);
 }
