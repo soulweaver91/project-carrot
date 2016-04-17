@@ -7,8 +7,6 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), canvas(canvas), health(0), score(0),
     currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0) {
 
-    addTimer(7u, true, static_cast<TimerCallbackFunc>(&PlayerOSD::advanceCharIconFrame));
-
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
 
@@ -17,6 +15,10 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
         loadAnimationSet(loadedResources->graphics);
         gemSound = loadedResources->sounds.value("PLAYER_PICKUP_GEM", SoundResource()).sound;
     }
+
+    charIcon = std::make_shared<AnimationInstance>(this);
+    weaponIcon = std::make_shared<AnimationInstance>(this);
+    collectibleIcon = std::make_shared<AnimationInstance>(this);
 
     std::fill_n(weaponIconIdx, 9, nullptr);
     weaponIconIdx[0] = animationBank.value("UI_WEAPON_BLASTER_JAZZ");
@@ -29,26 +31,20 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     weaponIconIdx[7] = animationBank.value("UI_WEAPON_PEPPER");
     weaponIconIdx[8] = animationBank.value("UI_WEAPON_ELECTRO");
 
-    weaponIconSprite = std::make_unique<sf::Sprite>();
-    weaponIconSprite->setTexture(*weaponIconIdx[0]->texture);
-    weaponIconSprite->setTextureRect(sf::IntRect(0, 0, weaponIconIdx[0]->frameDimensions.x,
-        weaponIconIdx[0]->frameDimensions.y));
-    weaponIconSprite->setPosition(root->getViewWidth() - 85 - weaponIconIdx[0]->hotspot.x,
-        root->getViewHeight() - 15 - weaponIconIdx[0]->hotspot.y);
+    weaponIcon->setAnimation(weaponIconIdx[0]);
+    weaponIcon->setSpritePosition({
+        root->getViewWidth() - 80.0f,
+        root->getViewHeight() - 15.0f
+    });
 
-    auto charIcon = animationBank.value("UI_CHARACTER_ICON_JAZZ");
-    charIconSprite = std::make_unique<sf::Sprite>();
-    charIconSprite->setTexture(*(charIcon->texture));
-    charIconSprite->setTextureRect(sf::IntRect(0, 0, charIcon->frameDimensions.x,
-        charIcon->frameDimensions.y));
-    charIconSprite->setPosition(5, root->getViewHeight() - 40);
+    auto charIconGfx = animationBank.value("UI_CHARACTER_ICON_JAZZ");
+    charIcon->setAnimation(charIconGfx);
+    charIcon->setSpritePosition({ 5.0f, (float)root->getViewHeight() });
 
     collectionMessage = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
     livesString       = std::make_unique<BitmapString>(root->getFont(), "x3", FONT_ALIGN_LEFT);
     scoreString       = std::make_unique<BitmapString>(root->getFont(), "00000000", FONT_ALIGN_LEFT);
     ammoString        = std::make_unique<BitmapString>(root->getFont(), "x^", FONT_ALIGN_LEFT);
-
-    collectibleSprite = std::make_unique<sf::Sprite>();
 }
 
 PlayerOSD::~PlayerOSD() {
@@ -57,6 +53,12 @@ PlayerOSD::~PlayerOSD() {
 
 void PlayerOSD::drawOSD() {
     advanceTimers();
+    charIcon->advanceTimers();
+    weaponIcon->advanceTimers();
+
+    if (collectibleGraphics != nullptr) {
+        collectibleIcon->advanceTimers();
+    }
 
     auto canvasPtr = canvas.lock();
     if (canvasPtr == nullptr) {
@@ -65,8 +67,8 @@ void PlayerOSD::drawOSD() {
 
     unsigned vw = root->getViewWidth();
     unsigned vh = root->getViewHeight();
-    canvasPtr->draw(*charIconSprite);
-    canvasPtr->draw(*weaponIconSprite);
+    charIcon->drawCurrentFrame(*canvasPtr);
+    weaponIcon->drawCurrentFrame(*canvasPtr);
 
     livesString->drawString(root->getCanvas(), 40, vh - 25);
 
@@ -93,29 +95,13 @@ void PlayerOSD::drawOSD() {
     if (messageOffsetAmount > 0) {
         collectionMessage->drawString(canvas, vw / 2 + 30 - messageOffsetAmount / 2, vh - messageOffsetAmount / 2);
         if (collectibleGraphics != nullptr) {
-            sf::RenderStates state;
-            if (color != sf::Vector3i(0, 0, 0)) {
-                auto shader = ShaderSource::getShader("ColorizeShader").get();
-                if (shader != nullptr) {
-                    shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
-                    state.shader = shader;
-                }
-            }
             // TODO: Move the sprite from the player's position to the UI instead of from below with the count
-            collectibleSprite->setPosition(
-                vw / 2 - collectionMessage->getWidth() / 2 + 20 - messageOffsetAmount / 2,
-                vh - messageOffsetAmount / 2
-            );
+            collectibleIcon->setSpritePosition({
+                vw / 2.0f - collectionMessage->getWidth() / 2.0f + 32.0f - messageOffsetAmount / 2.0f,
+                vh - messageOffsetAmount / 2.0f + 12.0f
+            });
 
-            canvasPtr->draw(*collectibleSprite, state);
-        }
-
-        switch (collectionMessageType) {
-            case OSD_GEM_RED:
-
-            case OSD_NONE:
-            default:
-                break;
+            collectibleIcon->drawCurrentFrame(*canvasPtr);
         }
     }
 }
@@ -130,23 +116,22 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     messageOffsetAmount = 0;
     messageTimer = addTimer(350u, false, static_cast<TimerCallbackFunc>(&PlayerOSD::clearMessage));
     collectionMessageType = type;
-    color = { 0, 0, 0 };
-    collectibleFrame = 0;
+    collectibleIcon->setColor({ 0, 0, 0 });
 
     switch (type) {
         case OSD_GEM_RED:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            color = { 511, 0, 0 };
+            collectibleIcon->setColor({ 511, 0, 0 });
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_GREEN:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            color = { 0, 511, 0 };
+            collectibleIcon->setColor({ 0, 511, 0 });
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_BLUE:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            color = { 0, 0, 511 };
+            collectibleIcon->setColor({ 0, 0, 511 });
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_COIN_SILVER:
@@ -166,11 +151,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     }
 
     if (collectibleGraphics != nullptr) {
-        collectibleSprite->setTexture(*collectibleGraphics->texture);
-        collectibleSprite->setTextureRect(sf::IntRect(
-            0, 0,
-            collectibleGraphics->frameDimensions.x,
-            collectibleGraphics->frameDimensions.y));
+        collectibleIcon->setAnimation(collectibleGraphics);
     }
 
     if (type == OSD_GEM_BLUE || type == OSD_GEM_GREEN || type == OSD_GEM_RED || type == OSD_GEM_PURPLE) {
@@ -183,12 +164,11 @@ void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
     currentWeapon = type;
 
     if (weaponIconIdx[type] != nullptr) {
-        weaponIconSprite->setTexture(*(weaponIconIdx[type]->texture));
-        weaponIconSprite->setTextureRect(sf::IntRect(0, 0, weaponIconIdx[type]->frameDimensions.x,
-            weaponIconIdx[type]->frameDimensions.y));
-        weaponIconSprite->setPosition(root->getViewWidth() - 85 - weaponIconIdx[type]->hotspot.x,
-            root->getViewHeight() - 15 - weaponIconIdx[type]->hotspot.y);
-        weaponIconFrame = 0;
+        weaponIcon->setAnimation(weaponIconIdx[type]);
+        weaponIcon->setSpritePosition({
+            root->getViewWidth() - 80.0f,
+            root->getViewHeight() - 15.0f
+        });
     }
 }
 
@@ -213,27 +193,3 @@ void PlayerOSD::setLives(unsigned lives) {
     livesString->setText(QString("x") + QString::number(lives));
 }
 
-// TODO: Get rid of this, this is a ridiculous hack.
-// Possibly break AnimationUser even further in the future to allow more than one animation at once.
-void PlayerOSD::advanceCharIconFrame() {
-    charIconFrame = (charIconFrame + 1) % 37;
-    charIconSprite->setTextureRect(sf::IntRect(charIconFrame * 39, 0, 39, 39));
-
-    if (weaponIconIdx[currentWeapon] != nullptr) {
-        weaponIconFrame = (weaponIconFrame + 1) % weaponIconIdx[currentWeapon]->frameCount;
-    
-        weaponIconSprite->setTextureRect(sf::IntRect(
-            weaponIconFrame * weaponIconIdx[currentWeapon]->frameDimensions.x, 0,
-            weaponIconIdx[currentWeapon]->frameDimensions.x,
-            weaponIconIdx[currentWeapon]->frameDimensions.y));
-    }
-
-    if (collectibleGraphics != nullptr) {
-        collectibleFrame = (collectibleFrame + 1) % collectibleGraphics->frameCount;
-
-        collectibleSprite->setTextureRect(sf::IntRect(
-            collectibleFrame * collectibleGraphics->frameDimensions.x, 0,
-            collectibleGraphics->frameDimensions.x,
-            collectibleGraphics->frameDimensions.y));
-    }
-}

@@ -13,7 +13,7 @@
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
-    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), transitionEndFunction(nullptr),
+    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0),
     poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
     loadResources("Interactive/PlayerJazz");
 
@@ -50,6 +50,7 @@ Player::~Player() {
 
 void Player::processControlDownEvent(const ControlEvent& e) {
     const Control& control = e.first;
+    const AnimStateT currentState = currentAnimation->getAnimationState();
 
     if (control == controls.leftButton || control == controls.rightButton) {
         if (controllable) {
@@ -148,6 +149,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
 void Player::processControlUpEvent(const ControlEvent& e) {
     const Control& control = e.first;
+    const AnimStateT currentState = currentAnimation->getAnimationState();
 
     if (controllable) {
         if (control == controls.upButton) {
@@ -176,6 +178,8 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
     if (!controllable) {
         return;
     }
+
+    const AnimStateT currentState = currentAnimation->getAnimationState();
 
     if (e.contains(controls.leftButton) || e.contains(controls.rightButton)) {
         isFacingLeft = !e.contains(controls.rightButton);
@@ -213,6 +217,8 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
 }
 
 void Player::processControlHeldEvent(const ControlEvent& e) {
+    const AnimStateT currentState = currentAnimation->getAnimationState();
+
     if (e.first == controls.fireButton) {
         setAnimation(currentState | AnimState::SHOOT);
         if (weaponCooldown == 0) {
@@ -282,6 +288,7 @@ void Player::tickEvent() {
     }
 
     auto tiles = root->getGameTiles().lock();
+    AnimStateT currentState = currentAnimation->getAnimationState();
 
     // Check for pushing
     if (canJump && controllable) {
@@ -321,6 +328,7 @@ void Player::tickEvent() {
     }
 
     CommonActor::tickEvent();
+    currentState = currentAnimation->getAnimationState();
     short sign = ((speedX + externalForceX) > 1e-6) ? 1 : (((speedX + externalForceX) < -1e-6) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
 
@@ -375,7 +383,7 @@ void Player::tickEvent() {
     }
 
     // check if buttstomp ended
-    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || suspendType != SuspendType::SUSPEND_NONE) {
+    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || (isUsingDamagingMove && suspendType != SuspendType::SUSPEND_NONE)) {
         setAnimation(currentState & ~AnimState::BUTTSTOMP);
         isUsingDamagingMove = false;
         controllable = true;
@@ -682,14 +690,14 @@ void Player::addAmmo(enum WeaponType type, unsigned amount) {
 
 bool Player::perish() {
     // handle death here
-    if (health == 0 && (transitionEndFunction != &Player::deathRecovery)) {
+    if (health == 0 && transition->getAnimationState() != AnimState::TRANSITION_DEATH) {
         cancellableTransition = false;
         setTransition(AnimState::TRANSITION_DEATH, false, true, false, &Player::deathRecovery);
     }
     return false;
 }
 
-void Player::deathRecovery() {
+void Player::deathRecovery(std::shared_ptr<AnimationInstance> animation) {
     if (lives > 0) {
         lives--;
 
@@ -702,7 +710,8 @@ void Player::deathRecovery() {
         osd->setHealth(maxHealth);
 
         // Negate all possible movement effects etc.
-        onTransitionEndHook();
+        transition->clearCallback();
+        inTransition = false;
         canJump = false;
         externalForceX = 0;
         externalForceY = 0;
@@ -739,7 +748,7 @@ Hitbox Player::getHitbox() {
 void Player::endDamagingMove() {
     isUsingDamagingMove = false;
     controllable = true;
-    setAnimation(currentState & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
+    setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
     setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
 }
 
@@ -747,29 +756,29 @@ void Player::returnControl() {
     controllable = true;
 }
 
-void Player::delayedUppercutStart() {
+void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance> animation) {
     externalForceY = 1.5;
     speedY = -2;
     canJump = false;
     setTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
 }
 
-void Player::delayedButtstompStart() {
+void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance> animation) {
     isGravityAffected = true;
     speedY = 7;
     setAnimation(AnimState::BUTTSTOMP);
 }
 
-bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, void(Player::*callback)()) {
-    transitionEndFunction = callback;
-    bool result = CommonActor::setTransition(state, cancellable);
+bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, 
+    void(Player::*callback)(std::shared_ptr<AnimationInstance> animation)) {
     if (remove_control) {
         controllable = false;
     }
     if (set_special) {
         isUsingDamagingMove = true;
     }
-    return result;
+
+    return CommonActor::setTransition(state, cancellable, static_cast<AnimationCallbackFunc>(callback));
 }
 
 void Player::onHitFloorHook() {
@@ -850,23 +859,11 @@ unsigned Player::getLives() {
     return lives;
 }
 
-void Player::onTransitionEndHook() {
-    // Execute the defined transition ending function if defined
-    if (transitionEndFunction != nullptr) {
-        // Set transition to null before running the function (transition hook may itself invoke a new transition with a callback,
-        // but otherwise we want to clear the callback)
-        void (Player::*functionToCall)() = transitionEndFunction;
-        transitionEndFunction = nullptr;
-
-        (this->*functionToCall)();
-    }
-}
-
-void Player::endHurtTransition() {
+void Player::endHurtTransition(std::shared_ptr<AnimationInstance> animation) {
     controllable = true;
 }
 
-void Player::endHPoleTransition() {
+void Player::endHPoleTransition(std::shared_ptr<AnimationInstance> animation) {
     --poleSpinCount;
     if (poleSpinCount > 0) {
         setTransition(AnimState::TRANSITION_POLE_H, false, true, false, &Player::endHPoleTransition);
@@ -880,7 +877,7 @@ void Player::endHPoleTransition() {
     }
 }
 
-void Player::endVPoleTransition() {
+void Player::endVPoleTransition(std::shared_ptr<AnimationInstance> animation) {
     --poleSpinCount;
     if (poleSpinCount > 0) {
         setTransition(AnimState::TRANSITION_POLE_V, false, true, false, &Player::endVPoleTransition);
@@ -894,13 +891,13 @@ void Player::endVPoleTransition() {
     }
 }
 
-void Player::endWarpTransition() {
+void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
     auto events = root->getGameEvents().lock();
     if (events == nullptr) {
         return;
     }
 
-    if (currentTransitionState == AnimState::TRANSITION_WARP) {
+    if (transition->getAnimationState() == AnimState::TRANSITION_WARP) {
         quint16 p[8];
         events->getPositionParams(posX, posY, p);
         CoordinatePair c = events->getWarpTarget(p[0]);
@@ -973,9 +970,10 @@ void Player::setupOSD(OSDMessageType type, int param) {
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
-    bool lookup = ((currentState & AnimState::LOOKUP) > 0);
-    int fire_x = (currentAnimation->hotspot.x - currentAnimation->gunspot.x) * (isFacingLeft ? 1 : -1);
-    int fire_y =  currentAnimation->hotspot.y - currentAnimation->gunspot.y;
+    bool lookup = ((currentAnimation->getAnimationState() & AnimState::LOOKUP) > 0);
+    auto animation = currentAnimation->getAnimation();
+    int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
+    int fire_y =  animation->hotspot.y - animation->gunspot.y;
 
     auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, isFacingLeft, lookup);
     root->addActor(newAmmo);

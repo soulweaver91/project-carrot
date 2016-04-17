@@ -38,8 +38,6 @@ public:
     void setLives(unsigned lives);
 
 private:
-    void advanceCharIconFrame();
-
     std::weak_ptr<Player> owner;
     std::weak_ptr<sf::RenderWindow> canvas;
     std::unique_ptr<BitmapString> collectionMessage;
@@ -51,11 +49,11 @@ private:
     unsigned long messageTimer;
     unsigned messageOffsetAmount;
     std::shared_ptr<GraphicResource> weaponIconIdx[9];
+    std::shared_ptr<GraphicResource> collectibleGraphics;
 
-    std::unique_ptr<sf::Sprite> charIconSprite;
-    unsigned charIconFrame;
-    std::unique_ptr<sf::Sprite> weaponIconSprite;
-    unsigned weaponIconFrame;
+    std::shared_ptr<AnimationInstance> charIcon;
+    std::shared_ptr<AnimationInstance> weaponIcon;
+    std::shared_ptr<AnimationInstance> collectibleIcon;
 
     sf::Texture heartTexture;
 
@@ -66,7 +64,4 @@ private:
     unsigned gemCounter;
     HSAMPLE gemSound;
 
-    std::shared_ptr<GraphicResource> collectibleGraphics;
-    std::unique_ptr<sf::Sprite> collectibleSprite;
-    unsigned collectibleFrame;
 };

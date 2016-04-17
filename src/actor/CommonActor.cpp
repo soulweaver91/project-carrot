@@ -46,11 +46,9 @@ void CommonActor::drawUpdate() {
     
     if (!((isBlinking) && ((root->getFrame() % 6) > 2))) {
         // Pick the appropriate animation depending on if we are in the midst of a transition
-        auto source = (inTransition ? transition : currentAnimation);
+        auto& source = (inTransition ? transition : currentAnimation);
     
-        sprite.setScale((isFacingLeft ? -1 : 1),1);
-        sprite.setPosition(posX, posY);
-
+        source->setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
         drawCurrentFrame();
     }
 }
@@ -227,36 +225,34 @@ void CommonActor::tickEvent() {
     // anything if the animation is the same as it was earlier
 
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
-    if (currentAnimation != nullptr) {
-        int composite = currentState & 0xFFFFFFE0;
-        if (abs(speedX) > 3) {
-            // shift-running, speed is more than 3px/frame
-            composite += 3;
-        } else if (abs(speedX) > 1) {
-            // running, speed is between 1px and 3px/frame
-            composite += 2;
-        } else if (abs(speedX) > 1e-6) {
-            // walking, speed is less than 1px/frame (mostly a transition zone)
-            composite += 1;
-        }
-    
-        if (suspendType != SuspendType::SUSPEND_NONE) {
-            composite += 12;
-        } else {
-            if (canJump) {
-                // grounded, no vertical speed
-            } else if (speedY > 1e-6) {
-                // falling, ver. speed is positive
-                composite += 8;
-            } else if (speedY < -1e-6) {
-                // jumping, ver. speed is negative
-                composite += 4;
-            }
-        }
-    
-        AnimStateT newState = AnimStateT(composite);
-        setAnimation(newState);
+    int composite = currentAnimation->getAnimationState() & 0xFFFFFFE0;
+    if (abs(speedX) > 3) {
+        // shift-running, speed is more than 3px/frame
+        composite += 3;
+    } else if (abs(speedX) > 1) {
+        // running, speed is between 1px and 3px/frame
+        composite += 2;
+    } else if (abs(speedX) > 1e-6) {
+        // walking, speed is less than 1px/frame (mostly a transition zone)
+        composite += 1;
     }
+    
+    if (suspendType != SuspendType::SUSPEND_NONE) {
+        composite += 12;
+    } else {
+        if (canJump) {
+            // grounded, no vertical speed
+        } else if (speedY > 1e-6) {
+            // falling, ver. speed is positive
+            composite += 8;
+        } else if (speedY < -1e-6) {
+            // jumping, ver. speed is negative
+            composite += 4;
+        }
+    }
+    
+    AnimStateT newState = AnimStateT(composite);
+    setAnimation(newState);
 
     // Make sure we stay within the level boundaries
     posX = std::min(std::max(posX, 0.0), root->getLevelWidth() * 32.0);
@@ -275,43 +271,35 @@ CoordinatePair CommonActor::getPosition() {
 }
 
 Hitbox CommonActor::getHitbox() {
-    if (currentAnimation != nullptr) {
-        return getHitbox(currentAnimation->frameDimensions.x, currentAnimation->frameDimensions.y);
-    } else {
-        return { 0, 0, 0, 0 };
-    }
+    auto animation = currentAnimation->getAnimation();
+    return getHitbox(animation->frameDimensions.x, animation->frameDimensions.y);
 }
 
 Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
-    if (currentAnimation != nullptr) {
-        if (currentAnimation->hasColdspot) {
-            return {
-                posX - currentAnimation->hotspot.x + currentAnimation->coldspot.x - (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->coldspot.y - h,
-                posX - currentAnimation->hotspot.x + currentAnimation->coldspot.x + (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->coldspot.y
-            };
-        } else {
-            // Collision base set to the bottom of the sprite.
-            // This is probably still not the correct way to do it, but at least it works for now.
-            return {
-                posX - (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y - h,
-                posX + (w / 2),
-                posY - currentAnimation->hotspot.y + currentAnimation->frameDimensions.y
-            };
-        }
+    auto animation = currentAnimation->getAnimation();
+    if (animation->hasColdspot) {
+        return {
+            posX - animation->hotspot.x + animation->coldspot.x - (w / 2),
+            posY - animation->hotspot.y + animation->coldspot.y - h,
+            posX - animation->hotspot.x + animation->coldspot.x + (w / 2),
+            posY - animation->hotspot.y + animation->coldspot.y
+        };
+    } else {
+        // Collision base set to the bottom of the sprite.
+        // This is probably still not the correct way to do it, but at least it works for now.
+        return {
+            posX - (w / 2),
+            posY - animation->hotspot.y + animation->frameDimensions.y - h,
+            posX + (w / 2),
+            posY - animation->hotspot.y + animation->frameDimensions.y
+        };
     }
-    return { 0, 0, 0, 0 };
 }
 
 bool CommonActor::setAnimation(AnimStateT state) {
-    AnimStateT oldstate = AnimState::IDLE;
-    if (currentAnimation != nullptr) {
-        if ((currentState == state) || ((inTransition) && (!cancellableTransition))) {
-            return true;
-        }
-        oldstate = currentState;
+    AnimStateT oldstate = currentAnimation->getAnimationState();
+    if ((oldstate == state) || ((inTransition) && (!cancellableTransition))) {
+        return true;
     }
 
     bool changed = AnimationUser::setAnimation(state);

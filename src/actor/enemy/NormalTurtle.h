@@ -14,7 +14,7 @@ public:
     void tickEvent() override;
     Hitbox getHitbox();
 private:
-    void onTransitionEndHook() override;
+    void handleTurn(std::shared_ptr<AnimationInstance> animation);
     bool isTurning;
     bool isWithdrawn;
 };

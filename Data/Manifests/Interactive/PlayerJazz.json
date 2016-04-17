@@ -213,7 +213,7 @@
       ]
     },
     "PLAYER_JAZZ_DEATH": {
-      "filename": "jazz/death.png",
+      "filename": "jazz/die.png",
       "states": [
         "1073741839"
       ]

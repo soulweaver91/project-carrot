@@ -44,7 +44,7 @@ public:
     bool perish();
     Hitbox getHitbox() override;
     bool setTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
-        bool setSpecial = false, void(Player::*callback)() = nullptr);
+        bool setSpecial = false, void(Player::*callback)(std::shared_ptr<AnimationInstance> animation) = nullptr);
     void takeDamage(double pushForce);
     void setToViewCenter();
     bool deactivate(int x, int y, int dist) override;
@@ -95,18 +95,15 @@ private:
     // Counter for Toaster ammo subticks
     unsigned short toasterAmmoSubticks;
 
-    void onTransitionEndHook();
-    void(Player::*transitionEndFunction)();
-
-    void endHurtTransition();
-    void endHPoleTransition();
-    void endVPoleTransition();
-    void endWarpTransition();
-    void deathRecovery();
+    void endHurtTransition(std::shared_ptr<AnimationInstance> animation);
+    void endHPoleTransition(std::shared_ptr<AnimationInstance> animation);
+    void endVPoleTransition(std::shared_ptr<AnimationInstance> animation);
+    void endWarpTransition(std::shared_ptr<AnimationInstance> animation);
+    void deathRecovery(std::shared_ptr<AnimationInstance> animation);
 
 private slots:
-    void delayedUppercutStart();
-    void delayedButtstompStart();
+    void delayedUppercutStart(std::shared_ptr<AnimationInstance> animation);
+    void delayedButtstompStart(std::shared_ptr<AnimationInstance> animation);
     void endDamagingMove();
     void returnControl();
 };
