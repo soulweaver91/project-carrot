@@ -3,8 +3,9 @@
 #include "../graphics/ShaderSource.h"
 
 AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
-    : root(root), inTransition(false), cancellableTransition(false), currentAnimation(this), transition(this) {
-
+    : root(root), inTransition(false), cancellableTransition(false) {
+    currentAnimation = std::make_shared<AnimationInstance>(this);
+    transition = std::make_shared<AnimationInstance>(this);
 }
 
 AnimationUser::~AnimationUser() {
@@ -16,19 +17,19 @@ void AnimationUser::loadAnimationSet(QMap<QString, std::shared_ptr<GraphicResour
 }
 
 void AnimationUser::advanceAnimationTimers() {
-    AnimationInstance& sourceAnim = (inTransition ? transition : currentAnimation);
-    sourceAnim.advanceTimers();
+    std::shared_ptr<AnimationInstance> sourceAnim = (inTransition ? transition : currentAnimation);
+    sourceAnim->advanceTimers();
 }
 
 void AnimationUser::animationFinishedHook(std::shared_ptr<AnimationInstance> animation) {
     if (inTransition) {
         inTransition = false;
-        currentAnimation.resetFrame();
+        currentAnimation->resetFrame();
     }
 }
 
 bool AnimationUser::setAnimation(AnimStateT state) {
-    if ((currentAnimation.getAnimation()->state.contains(state)) || ((inTransition) && (!cancellableTransition))) {
+    if ((currentAnimation->getAnimation()->state.contains(state)) || ((inTransition) && (!cancellableTransition))) {
         return false;
     }
 
@@ -36,10 +37,10 @@ bool AnimationUser::setAnimation(AnimStateT state) {
     if (candidates.size() == 0) {
         return false;
     } else {
-        currentAnimation.setAnimation(candidates.at(qrand() % candidates.size()), state);
+        currentAnimation->setAnimation(candidates.at(qrand() % candidates.size()), state);
         if (inTransition) {
             inTransition = false;
-            transition.resetAnimation();
+            transition->resetAnimation();
         }
     }
 
@@ -75,8 +76,8 @@ void AnimationUser::drawCurrentFrame() {
         return;
     }
 
-    AnimationInstance& sourceAnim = (inTransition ? transition : currentAnimation);
-    sourceAnim.drawCurrentFrame(*canvas);
+    std::shared_ptr<AnimationInstance> sourceAnim = (inTransition ? transition : currentAnimation);
+    sourceAnim->drawCurrentFrame(*canvas);
 }
 
 bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
@@ -85,7 +86,7 @@ bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
     if (animation->state.size() > 0) {
         state = animation->state.values().at(0);
     }
-    currentAnimation.setAnimation(animation, state);
+    currentAnimation->setAnimation(animation, state);
 
     return true;
 }
@@ -101,7 +102,7 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationC
     } else {
         inTransition = true;
         cancellableTransition = cancellable;
-        transition.setAnimation(candidates.at(0), state, callback);
+        transition->setAnimation(candidates.at(0), state, callback);
     }
 
     return true;
@@ -203,5 +204,5 @@ void AnimationInstance::setColor(const sf::Vector3i & newColor) {
 }
 
 void AnimationInstance::doCallback() {
-    (owner->*(callback))(nullptr);
+    (owner->*(callback))(shared_from_this());
 }

@@ -30,7 +30,7 @@ void AmmoBlaster::tickEvent() {
             health = 0;
             playSound("SFX_AMMO_HIT_WALL");
 
-            auto animation = currentAnimation.getAnimation();
+            auto animation = currentAnimation->getAnimation();
             double collisionX = posX + (speedY < -1e-6 ? 0 : speedX + (isFacingLeft ? -1 : 1) * animation->hotspot.x);
             double collisionY = posY + (speedY < -1e-6 ? speedY - animation->hotspot.y : 0);
             CoordinatePair c = {collisionX, collisionY};

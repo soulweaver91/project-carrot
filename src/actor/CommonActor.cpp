@@ -48,7 +48,7 @@ void CommonActor::drawUpdate() {
         // Pick the appropriate animation depending on if we are in the midst of a transition
         auto& source = (inTransition ? transition : currentAnimation);
     
-        source.setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
+        source->setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
         drawCurrentFrame();
     }
 }
@@ -225,7 +225,7 @@ void CommonActor::tickEvent() {
     // anything if the animation is the same as it was earlier
 
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
-    int composite = currentAnimation.getAnimationState() & 0xFFFFFFE0;
+    int composite = currentAnimation->getAnimationState() & 0xFFFFFFE0;
     if (abs(speedX) > 3) {
         // shift-running, speed is more than 3px/frame
         composite += 3;
@@ -271,12 +271,12 @@ CoordinatePair CommonActor::getPosition() {
 }
 
 Hitbox CommonActor::getHitbox() {
-    auto animation = currentAnimation.getAnimation();
+    auto animation = currentAnimation->getAnimation();
     return getHitbox(animation->frameDimensions.x, animation->frameDimensions.y);
 }
 
 Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
-    auto animation = currentAnimation.getAnimation();
+    auto animation = currentAnimation->getAnimation();
     if (animation->hasColdspot) {
         return {
             posX - animation->hotspot.x + animation->coldspot.x - (w / 2),
@@ -297,7 +297,7 @@ Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
 }
 
 bool CommonActor::setAnimation(AnimStateT state) {
-    AnimStateT oldstate = currentAnimation.getAnimationState();
+    AnimStateT oldstate = currentAnimation->getAnimationState();
     if ((oldstate == state) || ((inTransition) && (!cancellableTransition))) {
         return true;
     }

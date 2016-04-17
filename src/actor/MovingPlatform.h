@@ -33,5 +33,5 @@ private:
     double originX;
     double originY;
     bool isSwing;
-    AnimationInstance chainAnimation;
+    std::shared_ptr<AnimationInstance> chainAnimation;
 };

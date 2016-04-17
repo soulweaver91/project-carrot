@@ -59,8 +59,8 @@ protected:
 
     QMap<QString, std::shared_ptr<GraphicResource>> animationBank;
 
-    AnimationInstance currentAnimation;
-    AnimationInstance transition;
+    std::shared_ptr<AnimationInstance> currentAnimation;
+    std::shared_ptr<AnimationInstance> transition;
 
     bool inTransition;
     bool cancellableTransition;

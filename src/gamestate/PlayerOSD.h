@@ -51,9 +51,9 @@ private:
     std::shared_ptr<GraphicResource> weaponIconIdx[9];
     std::shared_ptr<GraphicResource> collectibleGraphics;
 
-    AnimationInstance charIcon;
-    AnimationInstance weaponIcon;
-    AnimationInstance collectibleIcon;
+    std::shared_ptr<AnimationInstance> charIcon;
+    std::shared_ptr<AnimationInstance> weaponIcon;
+    std::shared_ptr<AnimationInstance> collectibleIcon;
 
     sf::Texture heartTexture;
 
