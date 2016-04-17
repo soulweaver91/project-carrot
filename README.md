@@ -19,7 +19,7 @@ I'm afraid to say you're on your own, though.
 
 ##Running the game
 To be able to run Project Carrot, you are required to extract the Jazz Jackrabbit 2 assets from
-the `Anims2.j2a` file in its installation folder. A tool expressly targeting Project Carrot,
+the `Anims.j2a` file in its installation folder. A tool specifically targeting Project Carrot,
 [PCAE](https://github.com/soulweaver91/project-carrot-pcae), will automate this task for you,
 not only dumping the graphics and sounds but also assigning them an uniform name independent of
 their location inside the file itself. Those files should be moved to `Data\Assets` relative
