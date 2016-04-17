@@ -28,22 +28,15 @@ void AnimationUser::animationFinishedHook(std::shared_ptr<AnimationInstance> ani
 }
 
 bool AnimationUser::setAnimation(AnimStateT state) {
-        if ((currentAnimation.getAnimation()->state.contains(state)) || ((inTransition) && (!cancellableTransition))) {
-            return false;
-        }
-
-    QVector<std::shared_ptr<GraphicResource>> candidates;
-    foreach(auto a, animationBank) {
-        if (a->state.contains(state)) {
-            candidates << a;
-        }
+    if ((currentAnimation.getAnimation()->state.contains(state)) || ((inTransition) && (!cancellableTransition))) {
+        return false;
     }
 
+    auto candidates = findAnimationCandidates(state);
     if (candidates.size() == 0) {
         return false;
     } else {
-        // get a random item later; uses first found for now
-        currentAnimation.setAnimation(candidates.at(0), state);
+        currentAnimation.setAnimation(candidates.at(qrand() % candidates.size()), state);
         if (inTransition) {
             inTransition = false;
             transition.resetAnimation();
@@ -63,6 +56,17 @@ bool AnimationUser::setAnimation(const QString& animationId, const size_t& idx) 
     }
 
     return true;
+}
+
+QVector<std::shared_ptr<GraphicResource>> AnimationUser::findAnimationCandidates(const AnimStateT& state) {
+    QVector<std::shared_ptr<GraphicResource>> candidates;
+    foreach(auto a, animationBank) {
+        if (a->state.contains(state)) {
+            candidates << a;
+        }
+    }
+
+    return candidates;
 }
 
 void AnimationUser::drawCurrentFrame() {
@@ -87,13 +91,7 @@ bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
 }
 
 bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationCallbackFunc callback) {
-    QVector<std::shared_ptr<GraphicResource>> candidates;
-    foreach(auto a, animationBank) {
-        if (a->state.contains(state)) {
-            candidates << a;
-        }
-    }
-
+    auto candidates = findAnimationCandidates(state);
     if (candidates.size() == 0) {
         if (callback != nullptr) {
             (this->*(callback))(nullptr);

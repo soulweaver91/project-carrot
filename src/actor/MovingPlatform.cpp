@@ -16,8 +16,10 @@ MovingPlatform::MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double
     phase = fmod(BASE_CYCLE_FRAMES - (root->getFrame() % BASE_CYCLE_FRAMES + sync * 175) * speed,
         BASE_CYCLE_FRAMES);
 
-    setAnimation((int)(type << 10) + 16);
-    chainAnimation.setAnimation(std::const_pointer_cast<GraphicResource>(currentAnimation.getAnimation()), (int)(type << 10) + 16);
+    auto candidates = findAnimationCandidates((int)(type << 10) + 16);
+    if (candidates.size() > 0) {
+        chainAnimation.setAnimation(candidates.at(0), (int)(type << 10) + 16);
+    }
 
     setAnimation((int)(type << 10));
 }

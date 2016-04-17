@@ -54,6 +54,7 @@ public:
 protected:
     bool setAnimation(std::shared_ptr<GraphicResource> animation);
     bool setAnimation(const QString& animationID, const size_t& idx = 0);
+    QVector<std::shared_ptr<GraphicResource>> findAnimationCandidates(const AnimStateT& state);
     void drawCurrentFrame();
 
     QMap<QString, std::shared_ptr<GraphicResource>> animationBank;
