@@ -113,7 +113,6 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     messageTimer = addTimer(350u, false, static_cast<TimerCallbackFunc>(&PlayerOSD::clearMessage));
     collectionMessageType = type;
     collectibleIcon.color = { 0, 0, 0 };
-    collectibleIcon.frame = 0;
 
     switch (type) {
         case OSD_GEM_RED:

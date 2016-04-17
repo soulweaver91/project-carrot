@@ -17,7 +17,6 @@ class AnimationInstance : public TimerUser, public std::enable_shared_from_this<
 public:
     AnimationInstance(AnimationUser* const owner);
     std::shared_ptr<GraphicResource> animation;
-    unsigned frame;
     sf::Vector3i color;
     void drawCurrentFrame(sf::RenderTarget& target);
     void setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState = AnimState::IDLE,
@@ -30,6 +29,7 @@ public:
 private:
     void advanceAnimation();
     void doCallback();
+    unsigned frame;
     sf::Sprite sprite;
     AnimStateT state;
     unsigned long animationTimer;
