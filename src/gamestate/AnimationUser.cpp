@@ -28,11 +28,9 @@ void AnimationUser::animationFinishedHook(std::shared_ptr<AnimationInstance> ani
 }
 
 bool AnimationUser::setAnimation(AnimStateT state) {
-    if (currentAnimation.animation != nullptr) {
-        if ((currentAnimation.animation->state.contains(state)) || ((inTransition) && (!cancellableTransition))) {
+        if ((currentAnimation.getAnimation()->state.contains(state)) || ((inTransition) && (!cancellableTransition))) {
             return false;
         }
-    }
 
     QVector<std::shared_ptr<GraphicResource>> candidates;
     foreach(auto a, animationBank) {
@@ -46,18 +44,18 @@ bool AnimationUser::setAnimation(AnimStateT state) {
     } else {
         // get a random item later; uses first found for now
         currentAnimation.setAnimation(candidates.at(0), state);
-        inTransition = false;
-        transition.animation = nullptr;
+        if (inTransition) {
+            inTransition = false;
+            transition.resetAnimation();
+        }
     }
 
     return true;
 }
 
 bool AnimationUser::setAnimation(const QString& animationId, const size_t& idx) {
-    if (currentAnimation.animation != nullptr) {
-        if ((inTransition) && (!cancellableTransition)) {
-            return false;
-        }
+    if ((inTransition) && (!cancellableTransition)) {
+        return false;
     }
 
     if (animationBank.contains(animationId) && animationBank.count(animationId) > 0) {
@@ -111,8 +109,8 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationC
     return true;
 }
 
-AnimationInstance::AnimationInstance(AnimationUser* const owner) : animation(nullptr), state(AnimState::IDLE), frame(0), sprite(),
-    color(0, 0, 0), animationTimer(0), owner(owner) {
+AnimationInstance::AnimationInstance(AnimationUser* const owner) : animation(nullptr), state(AnimState::STATE_UNINITIALIZED),
+    frame(0), sprite(), color(0, 0, 0), animationTimer(0), owner(owner) {
 }
 
 void AnimationInstance::advanceAnimation() {
@@ -175,6 +173,14 @@ const AnimStateT AnimationInstance::getAnimationState() {
     return state;
 }
 
+std::shared_ptr<const GraphicResource> AnimationInstance::getAnimation() {
+    if (animation != nullptr) {
+        return animation;
+    }
+
+    return std::make_shared<GraphicResource>();
+}
+
 void AnimationInstance::clearCallback() {
     callback = nullptr;
 }
@@ -184,6 +190,14 @@ void AnimationInstance::resetFrame() {
     sprite.setTextureRect(sf::IntRect(frame * animation->frameDimensions.x, 0,
         animation->frameDimensions.x,
         animation->frameDimensions.y));
+}
+
+void AnimationInstance::resetAnimation() {
+    animation = nullptr;
+    cancelTimer(animationTimer);
+    if (callback != nullptr && owner != nullptr) {
+        doCallback();
+    }
 }
 
 void AnimationInstance::setColor(const sf::Vector3i & newColor) {

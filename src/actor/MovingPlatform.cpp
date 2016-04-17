@@ -17,7 +17,7 @@ MovingPlatform::MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double
         BASE_CYCLE_FRAMES);
 
     setAnimation((int)(type << 10) + 16);
-    chainAnimation.setAnimation(currentAnimation.animation, (int)(type << 10) + 16);
+    chainAnimation.setAnimation(std::const_pointer_cast<GraphicResource>(currentAnimation.getAnimation()), (int)(type << 10) + 16);
 
     setAnimation((int)(type << 10));
 }
