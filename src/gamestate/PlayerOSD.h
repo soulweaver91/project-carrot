@@ -38,8 +38,6 @@ public:
     void setLives(unsigned lives);
 
 private:
-    void advanceIconFrames();
-
     std::weak_ptr<Player> owner;
     std::weak_ptr<sf::RenderWindow> canvas;
     std::unique_ptr<BitmapString> collectionMessage;

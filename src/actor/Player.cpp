@@ -13,7 +13,7 @@
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
-    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), transitionEndFunction(nullptr),
+    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0),
     poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
     loadResources("Interactive/PlayerJazz");
 
@@ -383,7 +383,7 @@ void Player::tickEvent() {
     }
 
     // check if buttstomp ended
-    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || suspendType != SuspendType::SUSPEND_NONE) {
+    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || (isUsingDamagingMove && suspendType != SuspendType::SUSPEND_NONE)) {
         setAnimation(currentState & ~AnimState::BUTTSTOMP);
         isUsingDamagingMove = false;
         controllable = true;
@@ -690,14 +690,14 @@ void Player::addAmmo(enum WeaponType type, unsigned amount) {
 
 bool Player::perish() {
     // handle death here
-    if (health == 0 && (transitionEndFunction != &Player::deathRecovery)) {
+    if (health == 0 && transition.getAnimationState() != AnimState::TRANSITION_DEATH) {
         cancellableTransition = false;
         setTransition(AnimState::TRANSITION_DEATH, false, true, false, &Player::deathRecovery);
     }
     return false;
 }
 
-void Player::deathRecovery() {
+void Player::deathRecovery(std::shared_ptr<AnimationInstance> animation) {
     if (lives > 0) {
         lives--;
 
@@ -710,7 +710,7 @@ void Player::deathRecovery() {
         osd->setHealth(maxHealth);
 
         // Negate all possible movement effects etc.
-        onTransitionEndHook();
+        transition.clearCallback();
         canJump = false;
         externalForceX = 0;
         externalForceY = 0;
@@ -755,22 +755,22 @@ void Player::returnControl() {
     controllable = true;
 }
 
-void Player::delayedUppercutStart() {
+void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance> animation) {
     externalForceY = 1.5;
     speedY = -2;
     canJump = false;
     setTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
 }
 
-void Player::delayedButtstompStart() {
+void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance> animation) {
     isGravityAffected = true;
     speedY = 7;
     setAnimation(AnimState::BUTTSTOMP);
 }
 
-bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, void(Player::*callback)()) {
-    transitionEndFunction = callback;
-    bool result = CommonActor::setTransition(state, cancellable);
+bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, 
+    void(Player::*callback)(std::shared_ptr<AnimationInstance> animation)) {
+    bool result = CommonActor::setTransition(state, cancellable, static_cast<AnimationCallbackFunc>(callback));
     if (remove_control) {
         controllable = false;
     }
@@ -858,23 +858,11 @@ unsigned Player::getLives() {
     return lives;
 }
 
-void Player::onTransitionEndHook() {
-    // Execute the defined transition ending function if defined
-    if (transitionEndFunction != nullptr) {
-        // Set transition to null before running the function (transition hook may itself invoke a new transition with a callback,
-        // but otherwise we want to clear the callback)
-        void (Player::*functionToCall)() = transitionEndFunction;
-        transitionEndFunction = nullptr;
-
-        (this->*functionToCall)();
-    }
-}
-
-void Player::endHurtTransition() {
+void Player::endHurtTransition(std::shared_ptr<AnimationInstance> animation) {
     controllable = true;
 }
 
-void Player::endHPoleTransition() {
+void Player::endHPoleTransition(std::shared_ptr<AnimationInstance> animation) {
     --poleSpinCount;
     if (poleSpinCount > 0) {
         setTransition(AnimState::TRANSITION_POLE_H, false, true, false, &Player::endHPoleTransition);
@@ -888,7 +876,7 @@ void Player::endHPoleTransition() {
     }
 }
 
-void Player::endVPoleTransition() {
+void Player::endVPoleTransition(std::shared_ptr<AnimationInstance> animation) {
     --poleSpinCount;
     if (poleSpinCount > 0) {
         setTransition(AnimState::TRANSITION_POLE_V, false, true, false, &Player::endVPoleTransition);
@@ -902,7 +890,7 @@ void Player::endVPoleTransition() {
     }
 }
 
-void Player::endWarpTransition() {
+void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
     auto events = root->getGameEvents().lock();
     if (events == nullptr) {
         return;

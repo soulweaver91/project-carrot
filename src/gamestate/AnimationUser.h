@@ -8,22 +8,33 @@
 #include "../struct/Resources.h"
 
 class CarrotQt5;
+class AnimationInstance;
+class AnimationUser;
 
-class AnimationInstance {
+typedef void(AnimationUser::*AnimationCallbackFunc)(std::shared_ptr<AnimationInstance>);
+
+class AnimationInstance : public TimerUser, public std::enable_shared_from_this<AnimationInstance> {
 public:
-    AnimationInstance();
+    AnimationInstance(AnimationUser* const owner);
     std::shared_ptr<GraphicResource> animation;
     unsigned frame;
     sf::Vector3i color;
-    void advanceAnimation();
     void drawCurrentFrame(sf::RenderTarget& target);
-    void setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState = AnimState::IDLE);
+    void setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState = AnimState::IDLE,
+        AnimationCallbackFunc cb = nullptr);
     void setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale = { 1.0, 1.0 });
     const AnimStateT getAnimationState();
+    void clearCallback();
+    void resetFrame();
 
 private:
+    void advanceAnimation();
+    void doCallback();
     sf::Sprite sprite;
     AnimStateT state;
+    unsigned long animationTimer;
+    AnimationCallbackFunc callback;
+    AnimationUser* const owner;
 };
 
 class AnimationUser : public TimerUser {
@@ -32,12 +43,12 @@ public:
     ~AnimationUser();
 
     void loadAnimationSet(QMap<QString, std::shared_ptr<GraphicResource>>& animations);
+    void advanceAnimationTimers();
     virtual bool setAnimation(AnimStateT state);
-    virtual bool setTransition(AnimStateT state, bool cancellable);
+    virtual bool setTransition(AnimStateT state, bool cancellable, AnimationCallbackFunc callback = nullptr);
+    virtual void animationFinishedHook(std::shared_ptr<AnimationInstance> animation);
 
 protected:
-    void animationAdvance();
-    virtual void onTransitionEndHook();
     bool setAnimation(std::shared_ptr<GraphicResource> animation);
     bool setAnimation(const QString& animationID, const size_t& idx = 0);
     void drawCurrentFrame();
@@ -50,5 +61,4 @@ protected:
     bool inTransition;
     bool cancellableTransition;
     std::shared_ptr<CarrotQt5> root;
-    unsigned long animationTimer;
 };

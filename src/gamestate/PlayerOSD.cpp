@@ -5,9 +5,7 @@
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player, std::weak_ptr<sf::RenderWindow> canvas)
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), canvas(canvas), health(0), score(0),
-    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0) {
-
-    addTimer(7u, true, static_cast<TimerCallbackFunc>(&PlayerOSD::advanceIconFrames));
+    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0), charIcon(this), weaponIcon(this), collectibleIcon(this) {
 
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
@@ -51,6 +49,12 @@ PlayerOSD::~PlayerOSD() {
 
 void PlayerOSD::drawOSD() {
     advanceTimers();
+    charIcon.advanceTimers();
+    weaponIcon.advanceTimers();
+
+    if (collectibleGraphics != nullptr) {
+        collectibleIcon.advanceTimers();
+    }
 
     auto canvasPtr = canvas.lock();
     if (canvasPtr == nullptr) {
@@ -186,11 +190,3 @@ void PlayerOSD::setLives(unsigned lives) {
     livesString->setText(QString("x") + QString::number(lives));
 }
 
-void PlayerOSD::advanceIconFrames() {
-    charIcon.advanceAnimation();
-    weaponIcon.advanceAnimation();
-
-    if (collectibleGraphics != nullptr) {
-        collectibleIcon.advanceAnimation();
-    }
-}

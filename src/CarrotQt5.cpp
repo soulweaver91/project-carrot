@@ -343,7 +343,7 @@ void CarrotQt5::gameTick() {
         return;
     }
 
-    // Clear the drawing surface; we don'loadingScreenTexture want to do this if we emulate the JJ2 behavior
+    // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
     windowCanvas->clear();
 
     // Set player to the center of the view
@@ -364,6 +364,7 @@ void CarrotQt5::gameTick() {
     gameTiles->advanceAnimatedTileTimers();
     // Run all actors' timers
     for(unsigned i = 0; i < actors.size(); i++) {
+        actors.at(i)->advanceAnimationTimers();
         actors.at(i)->advanceTimers();
     }
 

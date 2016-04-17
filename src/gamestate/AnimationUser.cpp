@@ -3,7 +3,7 @@
 #include "../graphics/ShaderSource.h"
 
 AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
-    : root(root), inTransition(false), cancellableTransition(false), animationTimer(-1l) {
+    : root(root), inTransition(false), cancellableTransition(false), currentAnimation(this), transition(this) {
 
 }
 
@@ -11,20 +11,20 @@ AnimationUser::~AnimationUser() {
 
 }
 
-void AnimationUser::animationAdvance() {
-    AnimationInstance& sourceAnim = (inTransition ? transition : currentAnimation);
-
-    sourceAnim.advanceAnimation();
-    if (sourceAnim.frame == 0 && inTransition) {
-        inTransition = false;
-
-        // Call the end hook; used e.g. for special move features for the player
-        onTransitionEndHook();
-    }
-}
-
 void AnimationUser::loadAnimationSet(QMap<QString, std::shared_ptr<GraphicResource>>& animations) {
     animationBank = animations;
+}
+
+void AnimationUser::advanceAnimationTimers() {
+    AnimationInstance& sourceAnim = (inTransition ? transition : currentAnimation);
+    sourceAnim.advanceTimers();
+}
+
+void AnimationUser::animationFinishedHook(std::shared_ptr<AnimationInstance> animation) {
+    if (inTransition) {
+        inTransition = false;
+        currentAnimation.resetFrame();
+    }
 }
 
 bool AnimationUser::setAnimation(AnimStateT state) {
@@ -49,9 +49,6 @@ bool AnimationUser::setAnimation(AnimStateT state) {
         inTransition = false;
         transition.animation = nullptr;
     }
-    cancelTimer(animationTimer);
-    animationTimer = addTimer(static_cast<unsigned>(currentAnimation.animation->frameDuration / 1000.0 * 70.0),
-        true, static_cast<TimerCallbackFunc>(&AnimationUser::animationAdvance));
 
     return true;
 }
@@ -88,13 +85,10 @@ bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
     }
     currentAnimation.setAnimation(animation, state);
 
-    cancelTimer(animationTimer);
-    animationTimer = addTimer(static_cast<unsigned>(currentAnimation.animation->frameDuration / 1000.0 * 70.0),
-        true, static_cast<TimerCallbackFunc>(&AnimationUser::animationAdvance));
     return true;
 }
 
-bool AnimationUser::setTransition(AnimStateT state, bool cancellable) {
+bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationCallbackFunc callback) {
     QVector<std::shared_ptr<GraphicResource>> candidates;
     foreach(auto a, animationBank) {
         if (a->state.contains(state)) {
@@ -107,21 +101,14 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable) {
     } else {
         inTransition = true;
         cancellableTransition = cancellable;
-        transition.setAnimation(candidates.at(0), state);
+        transition.setAnimation(candidates.at(0), state, callback);
     }
 
-    cancelTimer(animationTimer);
-    animationTimer = addTimer(static_cast<unsigned>(transition.animation->frameDuration / 1000.0 * 70.0), 
-        true, static_cast<TimerCallbackFunc>(&AnimationUser::animationAdvance));
     return true;
 }
 
-void AnimationUser::onTransitionEndHook() {
-    // Called when a transition ends.
-    // Objects should override this if they need to.
-}
-
-AnimationInstance::AnimationInstance() : animation(nullptr), state(AnimState::IDLE), frame(0), sprite(), color(0, 0, 0) {
+AnimationInstance::AnimationInstance(AnimationUser* const owner) : animation(nullptr), state(AnimState::IDLE), frame(0), sprite(),
+    color(0, 0, 0), animationTimer(0), owner(owner) {
 }
 
 void AnimationInstance::advanceAnimation() {
@@ -135,6 +122,13 @@ void AnimationInstance::advanceAnimation() {
 
     int frameLeft = (frame + animation->frameOffset) * animation->frameDimensions.x;
     sprite.setTextureRect(sf::IntRect(frameLeft, 0, animation->frameDimensions.x, animation->frameDimensions.y));
+
+    if (frame == 0) {
+        owner->animationFinishedHook(nullptr);
+        if (callback != nullptr) {
+            doCallback();
+        }
+    }
 }
 
 void AnimationInstance::drawCurrentFrame(sf::RenderTarget& canvas) {
@@ -150,16 +144,18 @@ void AnimationInstance::drawCurrentFrame(sf::RenderTarget& canvas) {
     canvas.draw(sprite, state);
 }
 
-void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState) {
+void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimation,
+    const AnimStateT& newState, AnimationCallbackFunc cb) {
     animation = newAnimation;
-    frame = 0;
     state = newState;
+    callback = cb;
     sprite.setTexture(*(newAnimation->texture));
-    sprite.setTextureRect(sf::IntRect(0, 0,
-        newAnimation->frameDimensions.x,
-        newAnimation->frameDimensions.y));
+    resetFrame();
     sprite.setPosition(-1, -1);
     sprite.setOrigin(newAnimation->hotspot.x, newAnimation->hotspot.y);
+    cancelTimer(animationTimer);
+    animationTimer = addTimer(static_cast<unsigned>(animation->frameDuration / 1000.0 * 70.0),
+        true, static_cast<TimerCallbackFunc>(&AnimationInstance::advanceAnimation));
 }
 
 void AnimationInstance::setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale) {
@@ -169,4 +165,19 @@ void AnimationInstance::setSpritePosition(const sf::Vector2f& position, const sf
 
 const AnimStateT AnimationInstance::getAnimationState() {
     return state;
+}
+
+void AnimationInstance::clearCallback() {
+    callback = nullptr;
+}
+
+void AnimationInstance::resetFrame() {
+    frame = animation->frameOffset;
+    sprite.setTextureRect(sf::IntRect(frame * animation->frameDimensions.x, 0,
+        animation->frameDimensions.x,
+        animation->frameDimensions.y));
+}
+
+void AnimationInstance::doCallback() {
+    (owner->*(callback))(nullptr);
 }
