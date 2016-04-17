@@ -473,6 +473,25 @@ void Player::tickEvent() {
                 controllable = false;
                 break;
         }
+
+        // Check floating from each corner of an extended hitbox
+        // Player should not pass from a single tile wide gap if the columns left or right have
+        // float events, so checking for a wider box is necessary.
+        Hitbox hitbox = getHitbox();
+        if (
+            (events->getPositionEvent(posX,               posY               ) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(hitbox.left  - 5.0, hitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(hitbox.right + 5.0, hitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(hitbox.right + 5.0, hitbox.bottom + 5.0) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(hitbox.left  - 5.0, hitbox.bottom + 5.0) == PC_AREA_FLOAT_UP)
+            ) {
+            if (isGravityAffected) {
+                externalForceY = gravity * 2;
+                speedY = std::min(gravity, speedY);
+            } else {
+                speedY = std::min(root->gravity * 10, speedY);
+            }
+        }
     }
     
     // reduce player timers for certain things:
@@ -748,6 +767,7 @@ Hitbox Player::getHitbox() {
 void Player::endDamagingMove() {
     isUsingDamagingMove = false;
     controllable = true;
+    isGravityAffected = true;
     setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
     setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
 }
@@ -764,8 +784,7 @@ void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance> animation) 
 }
 
 void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance> animation) {
-    isGravityAffected = true;
-    speedY = 7;
+    speedY = 9;
     setAnimation(AnimState::BUTTSTOMP);
 }
 

@@ -55,5 +55,7 @@ enum PCEvent {
     PC_AREA_STOP_ENEMY      = 0x0143,
     PC_COIN_SILVER          = 0x0048,
     PC_COIN_GOLD            = 0x0049,
-    PC_MOVING_PLATFORM      = 0x00C4
+    PC_MOVING_PLATFORM      = 0x00C4,
+    PC_AREA_FLOAT_UP        = 0x0142,
+    PC_MODIFIER_TUBE        = 0x0144
 };
