@@ -31,3 +31,7 @@ this have been written, but they aren't available yet. I'm working on this later
 you can contact me on J2Online (follow the link above) to obtain Windows binaries for them.
 As for music, you should convert the J2B files manually for now to a more compatible format,
 such as .it, for example with ModPlug Tracker on Windows.
+
+## License
+This software is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+See the included `LICENSE` file for the licenses of the third-party libraries used.
