@@ -66,7 +66,7 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(BASS_DIR)\c;$(BASS_FX_DIR)\c;$(SFML_DIR)\include;$(IncludePath)</IncludePath>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <LibraryPath>$(BASS_DIR)\c;$(BASS_FX_DIR)\c;$(SFML_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(BASS_DIR)\c;$(BASS_FX_DIR)\c\safeseh;$(SFML_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(BASS_DIR)\c;$(BASS_FX_DIR)\c;$(SFML_DIR)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BASS_DIR)\c;$(BASS_FX_DIR)\c;$(SFML_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(BASS_DIR)\c;$(BASS_FX_DIR)\c\safeseh;$(SFML_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
