@@ -1,11 +1,17 @@
 param (
   [Parameter(Mandatory=$True,Position=1)]
   [string]$jazzDir,
-	
+
   [Parameter(Position=2)]
   [string]$jazzTSFDir,
-	
+
   [Parameter(Position=3)]
+  [string]$jazzHHDir,
+
+  [Parameter(Position=4)]
+  [string]$jazzCCDir,
+
+  [Parameter(Position=5)]
   [string]$pclcDir
 )
 
@@ -61,6 +67,13 @@ $levels = @(
     ('093_treasure3'                     , 'Treasur3'  , 39, 99), # 41
     ('010_castle3_rabbitintraining'      , 'Trainer'   , 0 , 99)  # 42
 )
+$hhcclevels = @(
+    ('01_xmas1_snowbunnies'              , 'Xmas1'     , 1 , 99), # 0
+    ('02_xmas2_dashingthruthesnow'       , 'Xmas2'     , 2 , 99), # 1
+    ('03_xmas3_tinseltown'               , 'Xmas3'     , 99, 99), # 2
+    ('11_battle1'                        , 'Xmbattle1' , 4 , 99), # 3
+    ('12_battle2'                        , 'Xmbattle2' , 3 , 99)  # 4
+)
 $tsflevels = @(                            
     ('201_easter1_easterbunny'           , 'Easter1'   , 1 , 99), # 0
     ('202_easter2_springchickens'        , 'Easter2'   , 2 , 99), # 1
@@ -71,9 +84,9 @@ $tsflevels = @(
     ('207_town1_turtletown'              , 'Town1'     , 7 , 99), # 6
     ('208_town2_suburbiacommando'        , 'Town2'     , 8 , 99), # 7
     ('209_town3_urbanbrawl'              , 'Town3'     , 99, 99), # 8
-    ('210_battle1'                       , 'Abattle1'  , 9 , 99), # 9
-    ('211_race1'                         , 'Arace1'    , 11, 99), # 10
-    ('212_race2'                         , 'Arace2'    , 10, 99), # 11
+    ('211_battle1'                       , 'Abattle1'  , 9 , 99), # 9
+    ('212_race1'                         , 'Arace1'    , 11, 99), # 10
+    ('213_race2'                         , 'Arace2'    , 10, 99), # 11
     ('299_queenofboard'                  , 'Ml_qob'    , 99, 99)  # 12
 )
 
@@ -89,11 +102,12 @@ If (!(Test-Path "$pclcDir\pclc.exe")) {
 function Convert-Game {
     param(
         $dir,
-        $dirlevels
+        $dirlevels,
+        $prefix
     )
     
     foreach ($level in $dirlevels) {
-        $targetname = $level[0]
+        $targetname = $prefix + $level[0]
         $sourcename = $level[1]
         $sourcefile = "$dir\$sourcename.j2l"
         
@@ -123,7 +137,13 @@ function Convert-Game {
     }
 }
 
-Convert-Game $jazzDir $levels
+Convert-Game $jazzDir $levels ''
+if ($jazzHHDir -ne '') {
+    Convert-Game $jazzHHDir $hhcclevels '1'
+}
+if ($jazzCCDir -ne '') {
+    Convert-Game $jazzCCDir $hhcclevels '3'
+}
 if ($jazzTSFDir -ne '') {
-    Convert-Game $jazzTSFDir $tsflevels
+    Convert-Game $jazzTSFDir $tsflevels ''
 }

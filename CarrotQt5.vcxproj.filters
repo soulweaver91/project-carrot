@@ -111,6 +111,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{eef99337-8b0a-4017-8d30-034b35bf1147}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{387c5db3-ab3f-4811-b614-45ca0d96acb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
@@ -467,6 +470,12 @@
     </None>
     <None Include="Data\Manifests\Object\MovingPlatform.json">
       <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Scripts\Convert-Levels.ps1">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="Scripts\Convert-Tilesets.ps1">
+      <Filter>Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

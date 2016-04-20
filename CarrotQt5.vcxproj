@@ -391,6 +391,8 @@
     <None Include="Data\Manifests\Weapon\Bouncer.json" />
     <None Include="Data\Manifests\Weapon\Toaster.json" />
     <None Include="README.md" />
+    <None Include="Scripts\Convert-Levels.ps1" />
+    <None Include="Scripts\Convert-Tilesets.ps1" />
     <None Include="Shaders\ColorizeShader.glsl" />
     <CustomBuild Include="src\ui\CarrotQt5.ui">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
