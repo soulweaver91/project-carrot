@@ -14,8 +14,12 @@ The suggested development environment and required libraries are as follows:
 * [BASS](http://www.un4seen.com/bass.html) 2.4 and a compatible version of BASS FX
 
 If using Visual Studio, configure the Qt paths with the MSVS plugin and set the appropriate
-values for the `SFML_DIR`, `BASS_DIR`, and `BASS_FX_DIR` user macros. For other environments,
-I'm afraid to say you're on your own, though.
+values for the `SFML_DIR`, `BASS_DIR`, and `BASS_FX_DIR` user macros in the user property
+sheets (`Microsoft.Cpp.Win32.user` and `Microsoft.Cpp.x64.user`). These are global to
+all projects you compile with Visual Studio, so if you are going to compile the related
+Project Carrot projects, you don't have to add these for them separately.
+
+For other environments, I'm afraid to say you're on your own, though.
 
 ##Running the game
 To be able to run Project Carrot, you are required to extract the Jazz Jackrabbit 2 assets from

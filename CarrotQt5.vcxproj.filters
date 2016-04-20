@@ -469,4 +469,9 @@
       <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENSE">
+      <Filter>Documents</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
