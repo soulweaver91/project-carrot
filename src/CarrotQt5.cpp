@@ -213,7 +213,7 @@ void CarrotQt5::closeEvent(QCloseEvent *event) {
 }
 
 bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
-    // Catch focus events to mute the music when the window doesn'loadingScreenTexture have it
+    // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
         resourceManager->getSoundSystem()->fadeMusicIn(1000);
         paused = false;
@@ -777,7 +777,7 @@ bool CarrotQt5::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::share
     return true;
 }
 
-// alternate version to be used if we don'loadingScreenTexture care what solid object we collided with
+// alternate version to be used if we don't care what solid object we collided with
 bool CarrotQt5::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me) {
     std::weak_ptr<SolidObject> placeholder;
     return isPositionEmpty(hitbox, downwards, me, placeholder);
