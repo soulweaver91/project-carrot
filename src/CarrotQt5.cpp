@@ -618,9 +618,7 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hitbox
         if (me == actors.at(i)) {
             continue;
         }
-        Hitbox hbox2 = actors.at(i)->getHitbox();
-        if ((hitbox.left < hbox2.right && hitbox.right > hbox2.left) &&
-            (hitbox.top < hbox2.bottom && hitbox.bottom > hbox2.top)) {
+        if (actors.at(i)->getHitbox().overlaps(hitbox)) {
             res << actors.at(i);
         }
     }
@@ -666,25 +664,6 @@ void CarrotQt5::debugSetOverlaysActive(bool active) {
     dbgOverlaysActive = active;
 }
 #endif
-
-Hitbox CarrotQt5::calcHitbox(const Hitbox& hitbox, double diffX, double diffY) {
-    Hitbox newBox(hitbox);
-    newBox.left += diffX;
-    newBox.right += diffX;
-    newBox.top += diffY;
-    newBox.bottom += diffY;
-    return newBox;
-}
-
-// check if this is used anywhere
-Hitbox CarrotQt5::calcHitbox(int x, int y, int w, int h) {
-    Hitbox newBox;
-    newBox.left = x - w/2;
-    newBox.right = x + w/2;
-    newBox.top = y - h/2;
-    newBox.bottom = y + h/2;
-    return newBox;
-}
 
 void CarrotQt5::setSavePoint() {
     lastSavePoint.playerLives = players[0]->getLives() - 1;

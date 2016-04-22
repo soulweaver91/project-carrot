@@ -11,7 +11,7 @@ SolidObject::~SolidObject() {
 
 void SolidObject::push(bool left) {
     if (movable) {
-        if (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), (left ? -1 : 1), 0), false, shared_from_this())) {
+        if (root->isPositionEmpty(getHitbox().add((left ? -1 : 1), 0), false, shared_from_this())) {
             posX += 0.6 * (left ? -1 : 1);
         }
     }

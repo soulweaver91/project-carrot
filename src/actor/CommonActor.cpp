@@ -96,10 +96,10 @@ void CommonActor::tickEvent() {
     auto thisPtr = shared_from_this();
 
     Hitbox currentHitbox = getHitbox();
-    if (!root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, speedX + externalForceX,speedY), speedY > 0, thisPtr)) {
+    if (!root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
         if (abs(speedX + externalForceX) > 1e-6) {
             // We are walking, thus having both vertical and horizontal speed
-            if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, speedX + externalForceX,0), speedY > 0, thisPtr)) {
+            if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, 0.0), speedY > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
                 // Chances are we're just casually strolling and gravity tries to pull us through,
                 // or we are falling diagonally and hit a floor
@@ -119,9 +119,7 @@ void CommonActor::tickEvent() {
             } else {
                 // Nope, there's also some obstacle horizontally
                 // Let's figure out if we are going against an upward slope
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(
-                    currentHitbox, speedX + externalForceX, -abs(speedX + externalForceX) - 5
-                ), false, thisPtr)) {
+                if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, -abs(speedX + externalForceX) - 5), false, thisPtr)) {
                     // Yes, we indeed are
                     speedY = -(elasticity * speedY);
                     canJump = true;
@@ -137,7 +135,7 @@ void CommonActor::tickEvent() {
                     // Nope. Cannot move horizontally at all. Can we just go vertically then?
                     speedX = -(elasticity * speedX);
                     externalForceX *= -1;
-                    if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, speedY), speedY > 0, thisPtr)) {
+                    if (root->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), speedY > 0, thisPtr)) {
                         // Yeah
                         canJump = false;
                         onHitWallHook();
@@ -160,10 +158,10 @@ void CommonActor::tickEvent() {
             // We are going directly vertically
             if (speedY > 0) {
                 // We are falling, or we are on solid ground and gravity tries to push us through the floor
-                if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, 0), true, shared_from_this())) {
+                if (root->isPositionEmpty(currentHitbox, true, shared_from_this())) {
                     // Let's just nullify that effect
                     speedY = -(elasticity * speedY);
-                    while (root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speedX, speedY), true, thisPtr)) {
+                    while (root->isPositionEmpty(getHitbox().add(speedX, speedY), true, thisPtr)) {
                         posY += 0.5;
                     }
                     posY -= 0.5;
@@ -177,7 +175,7 @@ void CommonActor::tickEvent() {
                 }
             } else {
                 // We are jumping
-                if (!root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, speedY), false, thisPtr)) {
+                if (!root->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), false, thisPtr)) {
                     speedY = -(elasticity * speedY);
                     externalForceY = 0;
                     internalForceY = 0;
@@ -191,12 +189,14 @@ void CommonActor::tickEvent() {
     } else {
         if (canJump) {
             // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
-            if (!root->isPositionEmpty(CarrotQt5::calcHitbox(
-                currentHitbox, speedX + externalForceX, speedY + abs(speedX + externalForceX) + 5
-            ), false, thisPtr)) {
-                while (root->isPositionEmpty(CarrotQt5::calcHitbox(
-                    getHitbox(), speedX + externalForceX, speedY + abs(speedX + externalForceX)
-                ), false, thisPtr)) {
+            if (!root->isPositionEmpty(
+                currentHitbox + CoordinatePair(speedX + externalForceX, speedY + abs(speedX + externalForceX) + 5),
+                false, thisPtr)
+            ) {
+                while (root->isPositionEmpty(
+                    getHitbox().add(speedX + externalForceX, speedY + abs(speedX + externalForceX)),
+                    false, thisPtr)
+                ) {
                     posY += 0.1;
                 }
                 posY -= 0.1;

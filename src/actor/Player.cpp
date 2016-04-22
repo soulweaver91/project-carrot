@@ -293,7 +293,7 @@ void Player::tickEvent() {
     // Check for pushing
     if (canJump && controllable) {
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speedX, 0), false, shared_from_this(), object))) {
+        if (!(root->isPositionEmpty(getHitbox() + CoordinatePair(speedX, 0.0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
 
             if (objectPtr != nullptr) {
@@ -315,10 +315,10 @@ void Player::tickEvent() {
             CoordinatePair delta = platform->getLocationDelta();
             Hitbox currentHitbox = getHitbox();
 
-            if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, delta.x, delta.y), false, shared_from_this())) {
+            if (root->isPositionEmpty(currentHitbox + CoordinatePair(delta.x, delta.y), false, shared_from_this())) {
                 posX += delta.x;
                 posY += delta.y;
-            } else if (root->isPositionEmpty(CarrotQt5::calcHitbox(currentHitbox, 0, delta.y), false, shared_from_this())) {
+            } else if (root->isPositionEmpty(currentHitbox + CoordinatePair(0.0, delta.y), false, shared_from_this())) {
                 posY += delta.y;
             } else {
                 carryingObject = std::weak_ptr<MovingPlatform>();
@@ -374,7 +374,7 @@ void Player::tickEvent() {
         tiles->checkSpecialDestructible(posX + 14 + speedX, posY + 22 + speedY);
 
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(CarrotQt5::calcHitbox(getHitbox(), speedX, speedY), false, shared_from_this(), object))) {
+        if (!(root->isPositionEmpty(getHitbox().add(speedX, speedY), false, shared_from_this(), object))) {
             auto triggerCrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
             if (triggerCrate != nullptr) {
                 triggerCrate->decreaseHealth(1);
@@ -758,14 +758,7 @@ Hitbox Player::getHitbox() {
     // but for falling sprites for some reason somewhere above the hotspot instead.
     // It is absolutely important that the position of the hitbox stays constant
     // to the hotspot, though; otherwise getting stuck at walls happens all the time.
-    Hitbox box = {
-        posX - 12,
-        posY - 4,
-        posX + 12,
-        posY + 20
-    };
-
-    return box;
+    return Hitbox(CoordinatePair(posX, posY + 8), 24, 24);
 }
 
 void Player::endDamagingMove() {

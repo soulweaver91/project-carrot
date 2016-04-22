@@ -49,7 +49,7 @@ DynamicBridge::~DynamicBridge() {
 }
 
 Hitbox DynamicBridge::getHitbox() {
-    return CarrotQt5::calcHitbox(posX + bridgeWidth * 8, posY - 2, bridgeWidth * 16, 16);
+    return Hitbox(posX, posY - 10.0, posX + bridgeWidth * 16.0, 16.0);
 }
 
 void DynamicBridge::tickEvent() {

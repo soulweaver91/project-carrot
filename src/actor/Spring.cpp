@@ -10,7 +10,7 @@ Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType t
     if (orientation == 5) {
         // JJ2 horizontal springs held no data about which way they were facing.
         // For compatibility, the level converter sets their orientation to 5, which is interpreted here.
-        orientation = !root->getGameTiles().lock()->isTileEmpty(root->calcHitbox(getHitbox(), 16, 0), false) ? 3 : 1;
+        orientation = !root->getGameTiles().lock()->isTileEmpty(getHitbox().add(16, 0), false) ? 3 : 1;
     }
 
     int orientationBit = 0;

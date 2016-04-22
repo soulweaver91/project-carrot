@@ -81,8 +81,6 @@ public:
     bool loadLevel(const QString& name);
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me = nullptr);
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(Hitbox hitbox, std::shared_ptr<CommonActor> me = nullptr);
-    static Hitbox calcHitbox(const Hitbox& hitbox, double diffX, double diffY);
-    static Hitbox calcHitbox(int x, int y, int w, int h);
     void setSavePoint();
     void loadSavePoint();
     void clearActors();
