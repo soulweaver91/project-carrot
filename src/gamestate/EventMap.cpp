@@ -122,7 +122,7 @@ void EventMap::activateEvents(const sf::View& center, int tileDistance) {
                         break;
                     case PC_PUSHABLE_ROCK:
                         {
-                            auto e = std::make_shared<PushBox>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            auto e = std::make_shared<PushBox>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile->eventParams[0]);
                             root->addActor(e);
                         }
                         break;
