@@ -22,10 +22,7 @@ bool DynamicBridgePiece::deactivate(int x, int y, int dist) {
 }
 
 Hitbox DynamicBridgePiece::getHitboxForParent() {
-    Hitbox h = getHitbox();
-    h.top -= 2;
-    h.bottom += 2;
-    return h;
+    return getHitbox().extend(0, 2);
 }
 
 DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y, unsigned int width,
@@ -49,7 +46,7 @@ DynamicBridge::~DynamicBridge() {
 }
 
 Hitbox DynamicBridge::getHitbox() {
-    return Hitbox(posX, posY - 10.0, posX + bridgeWidth * 16.0, 16.0);
+    return Hitbox(posX, posY - 10.0, posX + bridgeWidth * 16.0, posY + 16.0);
 }
 
 void DynamicBridge::tickEvent() {

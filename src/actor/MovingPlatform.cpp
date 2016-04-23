@@ -79,9 +79,7 @@ void MovingPlatform::drawUpdate() {
 }
 
 CoordinatePair MovingPlatform::getLocationDelta() {
-    CoordinatePair pos1 = getPhasePosition(false, length);
-    CoordinatePair pos2 = getPhasePosition(true, length);
-    return {pos2.x - pos1.x, pos2.y - pos1.y};
+    return getPhasePosition(true, length) - getPhasePosition(false, length);
 }
 
 CoordinatePair MovingPlatform::getPhasePosition(bool next, uint distance) {
