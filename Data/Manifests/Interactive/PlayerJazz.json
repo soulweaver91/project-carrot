@@ -235,6 +235,13 @@
       "states": [
         "1073741845"
       ]
+    },
+    "PLAYER_JAZZ_PUSH": {
+      "filename": "jazz/push.png",
+      "states": [
+        "16384", "16385"
+      ],
+      "fps": 7
     }
   },
   "sounds": {

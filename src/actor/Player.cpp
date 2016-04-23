@@ -291,9 +291,9 @@ void Player::tickEvent() {
     AnimStateT currentState = currentAnimation->getAnimationState();
 
     // Check for pushing
-    if (canJump && controllable) {
+    if (canJump && controllable && std::abs(speedX) > 1e-6) {
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(getHitbox() + CoordinatePair(speedX, 0.0), false, shared_from_this(), object))) {
+        if (!(root->isPositionEmpty(getHitbox() + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
 
             if (objectPtr != nullptr) {
@@ -305,6 +305,8 @@ void Player::tickEvent() {
         } else {
             setAnimation(currentState & ~AnimState::PUSH);
         }
+    } else {
+        setAnimation(currentState & ~AnimState::PUSH);
     }
 
     if (!carryingObject.expired()) {
