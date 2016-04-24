@@ -62,6 +62,7 @@ public:
     const std::shared_ptr<sf::Texture> getTilesetTexture();
     bool isTileEmpty(unsigned x, unsigned y);
     bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
+    void initializeTexturedBackgroundFade();
 
 private:
     std::shared_ptr<CarrotQt5> root;
@@ -82,5 +83,6 @@ private:
     std::unique_ptr<sf::VertexArray> texturedBackgroundFadeArray;
     unsigned levelWidth;
     unsigned levelHeight;
+    sf::Color texturedBackgroundColor;
     std::shared_ptr<ResourceSet> sceneryResources;
 };

@@ -21,6 +21,7 @@ public:
     void drawView(std::shared_ptr<sf::RenderTarget> windowCanvas);
     void drawUiElements();
     void centerToPlayer();
+    void setSize(const sf::Vector2f& dimensions);
 private:
     void setLightingStep();
 

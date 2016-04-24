@@ -104,6 +104,15 @@ void GameView::centerToPlayer() {
     player->setToViewCenter();
 }
 
+void GameView::setSize(const sf::Vector2f& dimensions) {
+    canvas->create(dimensions.x, dimensions.y);
+    playerView->setCenter(dimensions.x / 2, dimensions.y / 2);
+    playerView->setSize(dimensions);
+    uiView->setCenter(dimensions.x / 2, dimensions.y / 2);
+    uiView->setSize(dimensions);
+    viewSprite->setTextureRect(sf::IntRect(0, 0, std::ceil(dimensions.x), std::ceil(dimensions.y)));
+}
+
 void GameView::centerView(const double& x, const double& y) {
     playerView->setCenter(x, y);
     canvas->setView(*playerView.get());

@@ -204,7 +204,15 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
         ui.mainFrame->resize(ui.centralWidget->size());
         windowCanvas->setSize(sf::Vector2u(w, h));
         windowCanvas->setView(sf::View(sf::FloatRect(0, 0, w, h)));
+        if (gameTiles != nullptr) {
+            gameTiles->initializeTexturedBackgroundFade();
+        }
+        for (auto view : views) {
+            view->setSize(sf::Vector2f(w, h));
+        }
+
         pausedScreenshot->create(w, h);
+        pausedScreenshotSprite->setTextureRect(sf::IntRect(0, 0, w, h));
     }
     return FALSE;  // dispatch normally
 }
@@ -314,14 +322,16 @@ void CarrotQt5::gameTick() {
 
     if (paused) {
         // Set up a partially translucent black overlay
-        sf::RectangleShape overlay(sf::Vector2f(800.0, 600.0));
+        sf::Vector2u viewSize = windowCanvas->getSize();
+        sf::RectangleShape overlay;
+        overlay.setSize(sf::Vector2f(viewSize));
         overlay.setFillColor(sf::Color(0, 0, 0, 120));
 
         windowCanvas->draw(*pausedScreenshotSprite);
         windowCanvas->draw(overlay);
 
         // Draw the pause string
-        pausedText->drawString(getCanvas(), 400, 280);
+        pausedText->drawString(getCanvas(), viewSize.x / 2, viewSize.y / 2 - 20);
 
         // Update the display
         windowCanvas->updateContents();

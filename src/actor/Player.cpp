@@ -860,10 +860,18 @@ void Player::setToViewCenter() {
     }
     
     assignedView->centerView(
-        std::max(assignedView->getViewWidth()  / 2.0,
-            std::min(32.0 * (root->getLevelWidth()  + 1) - assignedView->getViewWidth()  / 2.0, (double)qRound(posX))),
-        std::max(assignedView->getViewHeight() / 2.0,
-            std::min(32.0 * (root->getLevelHeight() + 1) - assignedView->getViewHeight() / 2.0, (double)qRound(posY + shift_offset - 15))
+        std::max(
+            assignedView->getViewWidth() / 2.0,
+            std::min(
+                32.0 * (root->getLevelWidth()  + 1) - assignedView->getViewWidth()  / 2.0,
+                (double)qRound(posX) + (assignedView->getViewWidth() % 2 == 0 ? 0 : 0.5)
+            )
+        ), std::max(
+            assignedView->getViewHeight() / 2.0,
+            std::min(
+                32.0 * (root->getLevelHeight() + 1) - assignedView->getViewHeight() / 2.0,
+                (double)qRound(posY + shift_offset - 15) + (assignedView->getViewHeight() % 2 == 0 ? 0 : 0.5)
+            )
         )
     );
 }

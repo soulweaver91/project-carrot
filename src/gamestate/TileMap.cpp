@@ -17,36 +17,10 @@ TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFile
         triggerState[i] = false;
     }
 
-    // initialize the render texture and fade vertices for textured background
-    auto canvas = root->getCanvas().lock();
-    int width = 800;
-    if (canvas != nullptr) {
-        width = canvas->getView().getSize().x;
-    }
-
     texturedBackgroundTexture = std::make_unique<sf::RenderTexture>();
     texturedBackgroundTexture->create(256, 256);
     texturedBackgroundTexture->setRepeated(true);
-
-    texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
-    texturedBackgroundFadeArray->resize(12);
-    texturedBackgroundFadeArray->setPrimitiveType(sf::PrimitiveType::Quads);
-    // top part of fade
-    (*texturedBackgroundFadeArray)[0].position  = sf::Vector2f(-width, -200);
-    (*texturedBackgroundFadeArray)[1].position  = sf::Vector2f( width, -200);
-    (*texturedBackgroundFadeArray)[2].position  = sf::Vector2f( width,  -25);
-    (*texturedBackgroundFadeArray)[3].position  = sf::Vector2f(-width,  -25);
-    // bottom part of fade
-    (*texturedBackgroundFadeArray)[4].position  = sf::Vector2f(-width,   25);
-    (*texturedBackgroundFadeArray)[5].position  = sf::Vector2f( width,   25);
-    (*texturedBackgroundFadeArray)[6].position  = sf::Vector2f( width,  200);
-    (*texturedBackgroundFadeArray)[7].position  = sf::Vector2f(-width,  200);
-    // middle solid color part
-    (*texturedBackgroundFadeArray)[8].position  = sf::Vector2f(-width,  -25);
-    (*texturedBackgroundFadeArray)[9].position  = sf::Vector2f( width,  -25);
-    (*texturedBackgroundFadeArray)[10].position = sf::Vector2f( width,   25);
-    (*texturedBackgroundFadeArray)[11].position = sf::Vector2f(-width,   25);
-
+    
     readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, sprLayerFilename);
     levelHeight = levelLayout.at(0).tileLayout.size() - 1;
     levelWidth = levelLayout.at(0).tileLayout.at(0).size() - 1;
@@ -128,7 +102,9 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     // initialize 550 lines that we're going to texturize and draw on the screen
     // from (400, 300), first 25 lines up and down are obscured by the fade effect,
     // but the 275 other lines are at least partially visible
-    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, 1100);
+    double viewHeightHalf = view->getViewHeight() / 2;
+    double viewWidth = view->getViewWidth();
+    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, viewHeightHalf * 4 - 50);
 
 #ifdef CARROT_DEBUG
     float perspectiveCurve        = root->tempModifier[0] / 10.0;
@@ -142,17 +118,17 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     int skyDepth                  = 1;
 #endif
 
-    for (int iy = 0; iy < 275; ++iy) {
+    for (int iy = 0; iy < viewHeightHalf - 25; ++iy) {
         // line drawing y offset from the middle of the screen, up and down
         int ly = 25 + iy;
 
         // line drawing x offset from the middle of the screen on the given y distance,
         // altered by both far and near layer factors
-        int lx = (view->getViewWidth() / 2) + (ly / 300.0) * 800.0 * (perspectiveMultiplierFar - perspectiveMultiplierNear);
+        int lx = (viewWidth / 2) + (ly / viewHeightHalf) * 800.0 * (perspectiveMultiplierFar - perspectiveMultiplierNear);
 
         // texture y coordinates for above and below draw areas,
         // altered by sky copy count in the depth and perspective correction multiplier
-        int ty2 = pow(300 - iy, perspectiveCurve) * skyDepth * 256.0 / pow(300.0, perspectiveCurve);
+        int ty2 = pow(viewHeightHalf - iy, perspectiveCurve) * skyDepth * 256.0 / pow(viewHeightHalf, perspectiveCurve);
         int ty = 256 * skyDepth - ty2;
             
         // set upper half line
@@ -520,14 +496,10 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
             updateSprLayerIdx();
 
             if (type == LAYER_SKY_LAYER && newLayer.isTextured) {
-                initializeBackgroundTexture(newLayer);
+                texturedBackgroundColor = newLayer.texturedBackgroundColor;
 
-                for (int i = 0; i < 12; ++i) {
-                    (*texturedBackgroundFadeArray)[i].color = newLayer.texturedBackgroundColor;
-                    if (i < 2 || (i > 5 && i < 8)) {
-                        (*texturedBackgroundFadeArray)[i].color.a = 0;
-                    }
-                }
+                initializeBackgroundTexture(newLayer);
+                initializeTexturedBackgroundFade();
             }
         } else {
             // TODO: uncompress fail, what do?
@@ -679,6 +651,41 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
 
     // Safeguard return value; any valid tile should be caught earlier on already
     return true;
+}
+
+void TileMap::initializeTexturedBackgroundFade() {
+    // initialize the render texture and fade vertices for textured background
+    auto canvas = root->getCanvas().lock();
+    int width = 800;
+    if (canvas != nullptr) {
+        width = canvas->getView().getSize().x;
+    }
+
+    texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
+    texturedBackgroundFadeArray->resize(12);
+    texturedBackgroundFadeArray->setPrimitiveType(sf::PrimitiveType::Quads);
+    // top part of fade
+    (*texturedBackgroundFadeArray)[0].position  = sf::Vector2f(-width, -200);
+    (*texturedBackgroundFadeArray)[1].position  = sf::Vector2f( width, -200);
+    (*texturedBackgroundFadeArray)[2].position  = sf::Vector2f( width,  -25);
+    (*texturedBackgroundFadeArray)[3].position  = sf::Vector2f(-width,  -25);
+    // bottom part of fade
+    (*texturedBackgroundFadeArray)[4].position  = sf::Vector2f(-width,   25);
+    (*texturedBackgroundFadeArray)[5].position  = sf::Vector2f( width,   25);
+    (*texturedBackgroundFadeArray)[6].position  = sf::Vector2f( width,  200);
+    (*texturedBackgroundFadeArray)[7].position  = sf::Vector2f(-width,  200);
+    // middle solid color part
+    (*texturedBackgroundFadeArray)[8].position  = sf::Vector2f(-width,  -25);
+    (*texturedBackgroundFadeArray)[9].position  = sf::Vector2f( width,  -25);
+    (*texturedBackgroundFadeArray)[10].position = sf::Vector2f( width,   25);
+    (*texturedBackgroundFadeArray)[11].position = sf::Vector2f(-width,   25);
+
+    for (int i = 0; i < 12; ++i) {
+        (*texturedBackgroundFadeArray)[i].color = texturedBackgroundColor;
+        if (i < 2 || (i > 5 && i < 8)) {
+            (*texturedBackgroundFadeArray)[i].color.a = 0;
+        }
+    }
 }
 
 void TileMap::updateSprLayerIdx() {
