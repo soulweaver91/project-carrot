@@ -5,6 +5,7 @@
 #include "CommonActor.h"
 
 class CarrotQt5;
+class GameView;
 
 // These need to match the master event table (at CarrotQt5.h) where applicable
 // because created objects are directly cast from those values in the event spawner
@@ -33,7 +34,7 @@ public:
     void tickEvent();
     enum CollectibleType type;
     void impact(double forceX = 0.0, double forceY = 0.0);
-    void drawUpdate() override;
+    void drawUpdate(std::shared_ptr<GameView>& view) override;
 
 private:
     bool untouched;

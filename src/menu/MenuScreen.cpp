@@ -130,8 +130,8 @@ void MenuScreen::tickEvent() {
         return;
     }
 
-    unsigned int viewWidth = root->getViewWidth();
-    unsigned int viewHeight = root->getViewHeight();
+    unsigned int viewWidth = canvas->getView().getSize().x;
+    unsigned int viewHeight = canvas->getView().getSize().y;
 
     for (int i = 0; i < 4; ++i) {
         mainMenuConicGlowSprite[i].rotate(0.4);
@@ -151,12 +151,12 @@ void MenuScreen::tickEvent() {
         case MENU_PLAIN_LIST:
             if (menuOptions.size() < 10) {
                 for (int i = 0; i < menuOptions.size(); ++i) {
-                    menuOptions[i]->text->drawString(canvas,viewWidth / 2,200 + ((viewHeight - 280) / menuOptions.size()) * i);
+                    menuOptions[i]->text->drawString(canvas, viewWidth / 2,200 + ((viewHeight - 280) / menuOptions.size()) * i);
                 }
             } else {
                 int j = 0 - std::min(0, selectedItemIdx - 5);
                 for (int i = std::max(0, selectedItemIdx - 5); i < std::min(menuOptions.size(), selectedItemIdx + 6); ++i, ++j) {
-                    menuOptions[i]->text->drawString(canvas,viewWidth / 2, 226 + 26 * j);
+                    menuOptions[i]->text->drawString(canvas, viewWidth / 2, 226 + 26 * j);
                 }
                 if (selectedItemIdx > 5) {
                     BitmapString::drawString(canvas, root->getFont(), "-=...=-", viewWidth / 2 - 40, 200);

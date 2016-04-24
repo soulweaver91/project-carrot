@@ -15,19 +15,20 @@
 #include "../struct/Layers.h"
 
 class CarrotQt5;
+class GameView;
 class AnimatedTile;
 
 class DestructibleDebris {
 public:
-    DestructibleDebris(std::shared_ptr<sf::Texture> texture, std::weak_ptr<sf::RenderTarget> window, 
+    DestructibleDebris(std::shared_ptr<sf::Texture> texture, 
         int x, int y, unsigned textureX, unsigned textureY, unsigned short quarter);
     ~DestructibleDebris();
     void tickUpdate();
+    void drawUpdate(std::shared_ptr<GameView>& view);
     double getY();
 
 private:
     std::unique_ptr<sf::Sprite> sprite;
-    std::weak_ptr<sf::RenderTarget> window;
     double posX;
     double posY;
     double speedX;
@@ -44,8 +45,8 @@ public:
     void readLevelConfiguration(const QString& filename);
     void readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layerIdx = 0, QSettings& config = QSettings());
     void readAnimatedTiles(const QString& filename);
-    void drawLowerLevels();
-    void drawHigherLevels();
+    void drawLowerLevels(std::shared_ptr<GameView>& view);
+    void drawHigherLevels(std::shared_ptr<GameView>& view);
     unsigned getLevelWidth();
     unsigned getLevelHeight();
     void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
@@ -61,14 +62,16 @@ public:
     const std::shared_ptr<sf::Texture> getTilesetTexture();
     bool isTileEmpty(unsigned x, unsigned y);
     bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
+    void initializeTexturedBackgroundFade();
 
 private:
     std::shared_ptr<CarrotQt5> root;
-    void drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target);
-    double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY) const;
+    void drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view);
+    double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY,
+        const int& viewHeight, const int& viewWidth) const;
     void updateSprLayerIdx();
     void initializeBackgroundTexture(TileMapLayer& background);
-    void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target);
+    void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<GameView>& view);
     std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
     std::unique_ptr<Tileset> levelTileset;
     QVector<TileMapLayer> levelLayout;
@@ -80,5 +83,6 @@ private:
     std::unique_ptr<sf::VertexArray> texturedBackgroundFadeArray;
     unsigned levelWidth;
     unsigned levelHeight;
+    sf::Color texturedBackgroundColor;
     std::shared_ptr<ResourceSet> sceneryResources;
 };

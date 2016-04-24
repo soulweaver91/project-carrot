@@ -2,6 +2,7 @@
 
 #include "../CarrotQt5.h"
 #include "../gamestate/EventMap.h"
+#include "../gamestate/GameView.h"
 #include "../gamestate/ResourceManager.h"
 #include "../struct/PCEvent.h"
 
@@ -18,16 +19,16 @@ CommonActor::~CommonActor() {
 
 }
 
-void CommonActor::drawUpdate() {
-    auto canvas = root->getCanvas().lock();
+void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
+    auto canvas = view->getCanvas().lock();
     if (canvas == nullptr) {
         return;
     }
 
     // Don't draw anything if we aren't in the vicinity of the view
-    sf::Vector2f view = canvas->getView().getCenter();
-    if ((std::abs(view.x - posX) > (root->getViewWidth() / 2) + 50)
-     || (std::abs(view.y - posY) > (root->getViewHeight() / 2) + 50)) {
+    CoordinatePair viewPos = view->getViewCenter();
+    if ((std::abs(viewPos.x - posX) > (view->getViewWidth() / 2) + 50)
+     || (std::abs(viewPos.y - posY) > (view->getViewHeight() / 2) + 50)) {
         return;
     }
 
@@ -51,7 +52,7 @@ void CommonActor::drawUpdate() {
         auto& source = (inTransition ? transition : currentAnimation);
     
         source->setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
-        drawCurrentFrame();
+        drawCurrentFrame(view);
     }
 }
 
@@ -261,8 +262,8 @@ void CommonActor::tickEvent() {
     posY = std::min(std::max(posY, 0.0), root->getLevelHeight() * 32.0);
 } 
 
-void CommonActor::setToViewCenter(sf::View* view) {
-    view->setCenter(
+void CommonActor::setToViewCenter(std::shared_ptr<GameView> view) {
+    view->centerView(
         std::max(400.0, std::min(32.0 * (root->getLevelWidth() + 1)  - 400.0, (double)qRound(posX))),
         std::max(300.0, std::min(32.0 * (root->getLevelHeight() + 1) - 300.0, (double)qRound(posY)))
     );

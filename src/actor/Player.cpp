@@ -279,7 +279,7 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
 void Player::tickEvent() {
     // Initialize these ASAP
     if (osd == nullptr) {
-        osd = std::make_unique<PlayerOSD>(root, std::dynamic_pointer_cast<Player>(shared_from_this()), root->getCanvas());
+        osd = std::make_unique<PlayerOSD>(root, std::dynamic_pointer_cast<Player>(shared_from_this()));
         osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
         osd->setAmmo(ammo[currentWeapon]);
         osd->setLives(lives);
@@ -415,7 +415,7 @@ void Player::tickEvent() {
         events->getPositionParams(posX, posY, p);
         switch (e) {
             case PC_LIGHT_SET:
-                root->setLighting(p[0], false);
+                assignedView->setLighting(p[0], false);
                 break;
             case PC_WARP_ORIGIN:
             {
@@ -655,9 +655,9 @@ unsigned Player::getHealth() {
 }
 
 void Player::drawUIOverlay() {
-    osd->drawOSD();
+    osd->drawOSD(assignedView);
 
-    auto canvas = root->getCanvas().lock();
+    auto canvas = assignedView->getCanvas().lock();
     if (canvas == nullptr) {
         return;
     }
@@ -858,12 +858,20 @@ void Player::setToViewCenter() {
     if (abs(cameraShiftFramesCount) > 48) {
         shift_offset = (abs(cameraShiftFramesCount) - 48) * (cameraShiftFramesCount > 0 ? 1 : -1);
     }
-
-    root->centerView(
-        std::max(root->getViewWidth()  / 2.0, 
-            std::min(32.0 * (root->getLevelWidth()  + 1) - root->getViewWidth()  / 2.0, (double)qRound(posX))),
-        std::max(root->getViewHeight() / 2.0, 
-            std::min(32.0 * (root->getLevelHeight() + 1) - root->getViewHeight() / 2.0, (double)qRound(posY + shift_offset - 15))
+    
+    assignedView->centerView(
+        std::max(
+            assignedView->getViewWidth() / 2.0,
+            std::min(
+                32.0 * (root->getLevelWidth()  + 1) - assignedView->getViewWidth()  / 2.0,
+                (double)qRound(posX) + (assignedView->getViewWidth() % 2 == 0 ? 0 : 0.5)
+            )
+        ), std::max(
+            assignedView->getViewHeight() / 2.0,
+            std::min(
+                32.0 * (root->getLevelHeight() + 1) - assignedView->getViewHeight() / 2.0,
+                (double)qRound(posY + shift_offset - 15) + (assignedView->getViewHeight() % 2 == 0 ? 0 : 0.5)
+            )
         )
     );
 }
@@ -961,6 +969,10 @@ void Player::setCarryingPlatform(std::weak_ptr<MovingPlatform> platform) {
     canJump = true;
     internalForceY = 0;
     speedY = 0;
+}
+
+void Player::setView(std::shared_ptr<GameView> view) {
+    assignedView = view;
 }
 
 void Player::setupOSD(OSDMessageType type, int param) {

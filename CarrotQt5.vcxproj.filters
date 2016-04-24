@@ -239,6 +239,9 @@
     <ClCompile Include="GeneratedFiles\qrc_CarrotQt5.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\GameView.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Collectible.h">
@@ -398,6 +401,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_CarrotQt5.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\GameView.h">
+      <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

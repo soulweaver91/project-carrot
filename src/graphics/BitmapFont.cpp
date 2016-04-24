@@ -81,7 +81,7 @@ BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& init
     updateWidth();
 }
 
-void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, int x, int y) {
+void BitmapString::drawString(std::weak_ptr<sf::RenderTarget> destWindow, int x, int y) {
     auto canvas = destWindow.lock();
     if (canvas == nullptr) {
         return;
@@ -156,7 +156,7 @@ unsigned BitmapString::getWidth() {
     return width;
 }
 
-void BitmapString::drawString(std::weak_ptr<sf::RenderWindow> destWindow, std::shared_ptr<BitmapFont> font,
+void BitmapString::drawString(std::weak_ptr<sf::RenderTarget> destWindow, std::shared_ptr<BitmapFont> font,
     QString text, int x, int y, FontAlign align) {
     auto canvas = destWindow.lock();
     if (canvas == nullptr) {

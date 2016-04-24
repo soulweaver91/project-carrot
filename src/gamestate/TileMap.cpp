@@ -1,5 +1,6 @@
 #include "TileMap.h"
 #include "EventMap.h"
+#include "GameView.h"
 #include "../CarrotQt5.h"
 #include "../graphics/AnimatedTile.h"
 
@@ -16,32 +17,10 @@ TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFile
         triggerState[i] = false;
     }
 
-    // initialize the render texture and fade vertices for textured background
-    int width = root->getViewWidth() / 2;
-
     texturedBackgroundTexture = std::make_unique<sf::RenderTexture>();
     texturedBackgroundTexture->create(256, 256);
     texturedBackgroundTexture->setRepeated(true);
-
-    texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
-    texturedBackgroundFadeArray->resize(12);
-    texturedBackgroundFadeArray->setPrimitiveType(sf::PrimitiveType::Quads);
-    // top part of fade
-    (*texturedBackgroundFadeArray)[0].position  = sf::Vector2f(-width, -200);
-    (*texturedBackgroundFadeArray)[1].position  = sf::Vector2f( width, -200);
-    (*texturedBackgroundFadeArray)[2].position  = sf::Vector2f( width,  -25);
-    (*texturedBackgroundFadeArray)[3].position  = sf::Vector2f(-width,  -25);
-    // bottom part of fade
-    (*texturedBackgroundFadeArray)[4].position  = sf::Vector2f(-width,   25);
-    (*texturedBackgroundFadeArray)[5].position  = sf::Vector2f( width,   25);
-    (*texturedBackgroundFadeArray)[6].position  = sf::Vector2f( width,  200);
-    (*texturedBackgroundFadeArray)[7].position  = sf::Vector2f(-width,  200);
-    // middle solid color part
-    (*texturedBackgroundFadeArray)[8].position  = sf::Vector2f(-width,  -25);
-    (*texturedBackgroundFadeArray)[9].position  = sf::Vector2f( width,  -25);
-    (*texturedBackgroundFadeArray)[10].position = sf::Vector2f( width,   25);
-    (*texturedBackgroundFadeArray)[11].position = sf::Vector2f(-width,   25);
-
+    
     readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, sprLayerFilename);
     levelHeight = levelLayout.at(0).tileLayout.size() - 1;
     levelWidth = levelLayout.at(0).tileLayout.at(0).size() - 1;
@@ -53,29 +32,19 @@ TileMap::~TileMap() {
 
 }
 
-void TileMap::drawLowerLevels() {
-    auto canvas = root->getCanvas().lock();
-    if (canvas == nullptr) {
-        return;
-    }
-
+void TileMap::drawLowerLevels(std::shared_ptr<GameView>& view) {
     // lower levels is everything below the sprite layer and the sprite layer itself
     for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
         if (levelLayout.at(layer).type == LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(levelLayout[layer], canvas);
+        drawLayer(levelLayout[layer], view);
     }
 }
 
-void TileMap::drawHigherLevels() {
-    auto canvas = root->getCanvas().lock();
-    if (canvas == nullptr) {
-        return;
-    }
-
+void TileMap::drawHigherLevels(std::shared_ptr<GameView>& view) {
     // higher levels is only the foreground layers
     for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
         if (levelLayout.at(layer).type != LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(levelLayout[layer], canvas);
+        drawLayer(levelLayout[layer], view);
     }
 }
 
@@ -102,7 +71,12 @@ void TileMap::initializeBackgroundTexture(TileMapLayer& background) {
     }
 }
 
-void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<sf::RenderWindow> target) {
+void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<GameView>& view) {
+    auto target = view->getCanvas().lock();
+    if (target == nullptr) {
+        return;
+    }
+
     // update animated tiles on the cache texture
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
@@ -128,7 +102,9 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     // initialize 550 lines that we're going to texturize and draw on the screen
     // from (400, 300), first 25 lines up and down are obscured by the fade effect,
     // but the 275 other lines are at least partially visible
-    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, 1100);
+    double viewHeightHalf = view->getViewHeight() / 2;
+    double viewWidth = view->getViewWidth();
+    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, viewHeightHalf * 4 - 50);
 
 #ifdef CARROT_DEBUG
     float perspectiveCurve        = root->tempModifier[0] / 10.0;
@@ -142,17 +118,17 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     int skyDepth                  = 1;
 #endif
 
-    for (int iy = 0; iy < 275; ++iy) {
+    for (int iy = 0; iy < viewHeightHalf - 25; ++iy) {
         // line drawing y offset from the middle of the screen, up and down
         int ly = 25 + iy;
 
         // line drawing x offset from the middle of the screen on the given y distance,
         // altered by both far and near layer factors
-        int lx = (root->getViewWidth() / 2) + (ly / 300.0) * 800.0 * (perspectiveMultiplierFar - perspectiveMultiplierNear);
+        int lx = (viewWidth / 2) + (ly / viewHeightHalf) * 800.0 * (perspectiveMultiplierFar - perspectiveMultiplierNear);
 
         // texture y coordinates for above and below draw areas,
         // altered by sky copy count in the depth and perspective correction multiplier
-        int ty2 = pow(300 - iy, perspectiveCurve) * skyDepth * 256.0 / pow(300.0, perspectiveCurve);
+        int ty2 = pow(viewHeightHalf - iy, perspectiveCurve) * skyDepth * 256.0 / pow(viewHeightHalf, perspectiveCurve);
         int ty = 256 * skyDepth - ty2;
             
         // set upper half line
@@ -170,7 +146,7 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
 
     // translation to the center of the screen
     sf::Transform transform;
-    auto viewCenter = root->getViewCenter();
+    auto viewCenter = view->getViewCenter();
     transform.translate(viewCenter.x, viewCenter.y);
 
     // combine translation to texture binding
@@ -193,7 +169,8 @@ std::shared_ptr<LayerTile> TileMap::cloneDefaultLayerTile(int x, int y) {
     return tile;
 }
 
-double TileMap::translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY) const {
+double TileMap::translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY,
+    const int& viewHeight, const int& viewWidth) const {
     // Coordinate: the "vanilla" coordinate of the tile on the layer if the layer was fixed to the sprite layer with same
     // speed and no other options. Think of its position in JCS.
     // Speed: the set layer speed; 1 for anything that moves the same speed as the sprite layer (where the objects live),
@@ -202,10 +179,15 @@ double TileMap::translateCoordinate(const double& coordinate, const double& spee
 
     // Literal 70 is the same as in drawLayer, it's the offscreen offset of the first tile to draw.
     // Don't touch unless absolutely necessary.
-    return ((coordinate * speed + offset + (70 + (isY ? (root->getViewHeight() - 200) : (root->getViewWidth() - 320)) / 2) * (speed - 1)));
+    return ((coordinate * speed + offset + (70 + (isY ? (viewHeight - 200) : (viewWidth - 320)) / 2) * (speed - 1)));
 }
 
-void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> target) {
+void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
+    auto target = view->getCanvas().lock();
+    if (target == nullptr) {
+        return;
+    }
+
 #ifdef CARROT_DEBUG
     if (root->dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
         // only draw sprite layer in collision debug mode
@@ -233,19 +215,23 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
 
     // Get current layer offsets and speeds
     double lox = layer.offsetX;
-    double loy = layer.offsetY - (layer.useInherentOffset ? (root->getViewHeight() - 200) / 2 : 0);
+    double loy = layer.offsetY - (layer.useInherentOffset ? (view->getViewHeight() - 200) / 2 : 0);
     double sx = layer.speedX;
     double sy = layer.speedY;
     
     // Find out coordinates for a tile from outside the boundaries from topleft corner of the screen 
-    auto viewCenter = root->getViewCenter();
-    double x1 = viewCenter.x - 70.0 - (root->getViewWidth() / 2);
-    double y1 = viewCenter.y - 70.0 - (root->getViewHeight() / 2);
+    auto viewCenter = view->getViewCenter();
+    double x1 = viewCenter.x - 70.0 - (view->getViewWidth() / 2);
+    double y1 = viewCenter.y - 70.0 - (view->getViewHeight() / 2);
+
+    // Get view dimensions
+    uint viewHeight = view->getViewHeight();
+    uint viewWidth = view->getViewWidth();
     
     // Figure out the floating point offset from the calculated coordinates and the actual tile
     // corner coordinates
-    double rem_x = fmod(translateCoordinate(x1, sx, lox, false), 32);
-    double rem_y = fmod(translateCoordinate(y1, sy, loy, true), 32);
+    double rem_x = fmod(translateCoordinate(x1, sx, lox, false, viewHeight, viewWidth), 32);
+    double rem_y = fmod(translateCoordinate(y1, sy, loy, true, viewHeight, viewWidth), 32);
     
     // Calculate the index (on the layer map) of the first tile that needs to be drawn to the
     // position determined earlier
@@ -253,8 +239,8 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     int tile_y = 0;
 
     // Determine the actual drawing location on screen
-    double xinter = translateCoordinate(x1, sx, lox, false) / 32.0;
-    double yinter = translateCoordinate(y1, sy, loy, true) / 32.0;
+    double xinter = translateCoordinate(x1, sx, lox, false, viewHeight, viewWidth) / 32.0;
+    double yinter = translateCoordinate(y1, sy, loy, true, viewHeight, viewWidth) / 32.0;
 
     int tile_absx = 0;
     int tile_absy = 0;
@@ -294,8 +280,8 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
     double ystart = y1;
     
     // Calculate the last coordinates we want to draw to
-    double x3 = x1 + 100 + root->getViewWidth();
-    double y3 = y1 + 100 + root->getViewHeight();
+    double x3 = x1 + 100 + view->getViewWidth();
+    double y3 = y1 + 100 + view->getViewHeight();
 
     if (layer.isTextured && (lh == 8) && (lw == 8)) {
 #ifdef CARROT_DEBUG
@@ -305,7 +291,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<sf::RenderWindow> t
 #endif
         drawTexturedBackground(layer,
                 fmod((x1 + rem_x) * perspectiveSpeed + lox, 256.0),
-                fmod((y1 + rem_y) * perspectiveSpeed + loy, 256.0), target);
+                fmod((y1 + rem_y) * perspectiveSpeed + loy, 256.0), view);
     } else {
         int tile_xo = -1;
         for (double x2 = x1; x2 < x3; x2 += 32) {
@@ -510,14 +496,10 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
             updateSprLayerIdx();
 
             if (type == LAYER_SKY_LAYER && newLayer.isTextured) {
-                initializeBackgroundTexture(newLayer);
+                texturedBackgroundColor = newLayer.texturedBackgroundColor;
 
-                for (int i = 0; i < 12; ++i) {
-                    (*texturedBackgroundFadeArray)[i].color = newLayer.texturedBackgroundColor;
-                    if (i < 2 || (i > 5 && i < 8)) {
-                        (*texturedBackgroundFadeArray)[i].color.a = 0;
-                    }
-                }
+                initializeBackgroundTexture(newLayer);
+                initializeTexturedBackgroundFade();
             }
         } else {
             // TODO: uncompress fail, what do?
@@ -669,6 +651,41 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
 
     // Safeguard return value; any valid tile should be caught earlier on already
     return true;
+}
+
+void TileMap::initializeTexturedBackgroundFade() {
+    // initialize the render texture and fade vertices for textured background
+    auto canvas = root->getCanvas().lock();
+    int width = 800;
+    if (canvas != nullptr) {
+        width = canvas->getView().getSize().x;
+    }
+
+    texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
+    texturedBackgroundFadeArray->resize(12);
+    texturedBackgroundFadeArray->setPrimitiveType(sf::PrimitiveType::Quads);
+    // top part of fade
+    (*texturedBackgroundFadeArray)[0].position  = sf::Vector2f(-width, -200);
+    (*texturedBackgroundFadeArray)[1].position  = sf::Vector2f( width, -200);
+    (*texturedBackgroundFadeArray)[2].position  = sf::Vector2f( width,  -25);
+    (*texturedBackgroundFadeArray)[3].position  = sf::Vector2f(-width,  -25);
+    // bottom part of fade
+    (*texturedBackgroundFadeArray)[4].position  = sf::Vector2f(-width,   25);
+    (*texturedBackgroundFadeArray)[5].position  = sf::Vector2f( width,   25);
+    (*texturedBackgroundFadeArray)[6].position  = sf::Vector2f( width,  200);
+    (*texturedBackgroundFadeArray)[7].position  = sf::Vector2f(-width,  200);
+    // middle solid color part
+    (*texturedBackgroundFadeArray)[8].position  = sf::Vector2f(-width,  -25);
+    (*texturedBackgroundFadeArray)[9].position  = sf::Vector2f( width,  -25);
+    (*texturedBackgroundFadeArray)[10].position = sf::Vector2f( width,   25);
+    (*texturedBackgroundFadeArray)[11].position = sf::Vector2f(-width,   25);
+
+    for (int i = 0; i < 12; ++i) {
+        (*texturedBackgroundFadeArray)[i].color = texturedBackgroundColor;
+        if (i < 2 || (i > 5 && i < 8)) {
+            (*texturedBackgroundFadeArray)[i].color.a = 0;
+        }
+    }
 }
 
 void TileMap::updateSprLayerIdx() {
@@ -948,9 +965,9 @@ void TileMap::advanceAnimatedTileTimers() {
 // different quarters of the debris fly out with different x speeds
 const int DestructibleDebris::speedMultiplier[4] = { -2, 2, -1, 1 };
 
-DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> texture, std::weak_ptr<sf::RenderTarget> window,
+DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> texture,
     int x, int y, unsigned tx, unsigned ty, unsigned short quarter)
-    : posX(x * 32 + (quarter % 2) * 16), posY(y * 32 + (quarter / 2) * 16), speedX(0), speedY(0), window(window) {
+    : posX(x * 32 + (quarter % 2) * 16), posY(y * 32 + (quarter / 2) * 16), speedX(0), speedY(0) {
 
     sprite = std::make_unique<sf::Sprite>(*texture);
     sprite->setTextureRect(sf::IntRect(tx * 32 + (quarter % 2) * 16, ty * 32 + (quarter / 2) * 16, 16, 16));
@@ -969,10 +986,15 @@ void DestructibleDebris::tickUpdate() {
 
     sprite->setPosition(posX, posY);
 
-    auto canvas = window.lock();
-    if (canvas != nullptr) {
-        canvas->draw(*sprite);
+}
+
+void DestructibleDebris::drawUpdate(std::shared_ptr<GameView>& view) {
+    auto canvas = view->getCanvas().lock();
+    if (canvas == nullptr) {
+        return;
     }
+
+    canvas->draw(*sprite);
 }
 
 double DestructibleDebris::getY() {

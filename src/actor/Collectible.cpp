@@ -43,6 +43,8 @@ Collectible::~Collectible() {
 }
 
 void Collectible::tickEvent() {
+    phase += 0.1;
+
     if (!untouched) {
         // Do not apply default movement if we haven't been shot yet
         CommonActor::tickEvent();
@@ -57,15 +59,14 @@ void Collectible::impact(double forceX, double forceY) {
     untouched = false;
 }
 
-void Collectible::drawUpdate() {
+void Collectible::drawUpdate(std::shared_ptr<GameView>& view) {
     double waveOffset = 2.4 * cos((phase * 0.3) * PI);
 
     // The position of the actor is altered for the draw event.
     // We want to keep the actual position of the actor constant, though.
     posY += waveOffset;
-    CommonActor::drawUpdate();
+    CommonActor::drawUpdate(view);
     posY -= waveOffset;
-    phase += 0.1;
 }
 
 void Collectible::setFacingDirection() {
