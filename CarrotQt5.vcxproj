@@ -192,6 +192,7 @@
     <ClCompile Include="src\actor\weapon\AmmoBouncer.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoToaster.cpp" />
     <ClCompile Include="src\CarrotQt5.cpp" />
+    <ClCompile Include="src\gamestate\GameView.cpp" />
     <ClCompile Include="src\gamestate\ResourceManager.cpp" />
     <ClCompile Include="src\gamestate\AnimationUser.cpp" />
     <ClCompile Include="src\gamestate\EventMap.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="src\actor\Bridge.h" />
     <ClInclude Include="src\actor\Spring.h" />
+    <ClInclude Include="src\gamestate\GameView.h" />
     <ClInclude Include="src\gamestate\ResourceManager.h" />
     <ClInclude Include="src\gamestate\AnimationUser.h" />
     <ClInclude Include="src\gamestate\PlayerOSD.h" />

@@ -67,11 +67,11 @@ void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QVector<
     eventLayout[y][x] = tile;
 }
 
-void EventMap::activateEvents(const sf::View& center, int tileDistance) {
-    int x1 = std::max(0, static_cast<int>(center.getCenter().x) / 32 - tileDistance);
-    int x2 = std::min(static_cast<int>(root->getLevelWidth()) - 1, static_cast<int>(center.getCenter().x) / 32 + tileDistance);
-    int y1 = std::max(0, static_cast<int>(center.getCenter().y) / 32 - tileDistance);
-    int y2 = std::min(static_cast<int>(root->getLevelHeight()) - 1, static_cast<int>(center.getCenter().y) / 32 + tileDistance);
+void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
+    int x1 = std::max(0, static_cast<int>(center.x) / 32 - tileDistance);
+    int x2 = std::min(static_cast<int>(root->getLevelWidth()) - 1, static_cast<int>(center.x) / 32 + tileDistance);
+    int y1 = std::max(0, static_cast<int>(center.y) / 32 - tileDistance);
+    int y2 = std::min(static_cast<int>(root->getLevelHeight()) - 1, static_cast<int>(center.y) / 32 + tileDistance);
 
     for (unsigned x = x1; x <= x2; ++x) {
         for (unsigned y = y1; y <= y2; ++y) {
@@ -284,7 +284,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                             addWarpTarget(eventParams.at(0), x, y);
                             break;
                         case PC_LIGHT_RESET:
-                            eventParams[0] = root->getLightingLevel();
+                            eventParams[0] = root->getDefaultLightingLevel();
                             storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
                         default:
                             storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);

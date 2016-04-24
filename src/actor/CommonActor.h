@@ -16,18 +16,19 @@
 
 class CarrotQt5;
 class TileMap;
+class GameView;
 
 class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
     CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();
-    virtual void drawUpdate();
+    virtual void drawUpdate(std::shared_ptr<GameView>& view);
     virtual void tickEvent();
     virtual void processControlDownEvent(const ControlEvent& e);
     virtual void processControlUpEvent(const ControlEvent& e);
     virtual void processAllControlHeldEvents(const QMap<Control, ControlState>& e);
     void decreaseHealth(unsigned amount = 1);
-    virtual void setToViewCenter(sf::View* view);
+    virtual void setToViewCenter(std::shared_ptr<GameView> view);
     CoordinatePair getPosition();
     virtual Hitbox getHitbox();
     virtual Hitbox getHitbox(const uint& w, const uint& h);

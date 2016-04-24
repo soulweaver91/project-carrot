@@ -1,5 +1,6 @@
 #include "AnimationUser.h"
 #include "../CarrotQt5.h"
+#include "../gamestate/GameView.h"
 #include "../graphics/ShaderSource.h"
 
 AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
@@ -70,8 +71,8 @@ QVector<std::shared_ptr<GraphicResource>> AnimationUser::findAnimationCandidates
     return candidates;
 }
 
-void AnimationUser::drawCurrentFrame() {
-    auto canvas = root->getCanvas().lock();
+void AnimationUser::drawCurrentFrame(std::shared_ptr<GameView>& view) {
+    auto canvas = view->getCanvas().lock();
     if (canvas == nullptr) {
         return;
     }

@@ -21,7 +21,7 @@ public:
     ~MovingPlatform();
     void tickEvent() override;
     Hitbox getHitbox() override;
-    void drawUpdate() override;
+    void drawUpdate(std::shared_ptr<GameView>& view) override;
     CoordinatePair getLocationDelta();
 
 private:

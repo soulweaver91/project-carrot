@@ -3,8 +3,8 @@
 #include "../actor/Player.h"
 #include "../graphics/ShaderSource.h"
 
-PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player, std::weak_ptr<sf::RenderWindow> canvas)
-    : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), canvas(canvas), health(0), score(0),
+PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player)
+    : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), health(0), score(0),
     currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0) {
 
     heartTexture = sf::Texture();
@@ -32,14 +32,9 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     weaponIconIdx[8] = animationBank.value("UI_WEAPON_ELECTRO");
 
     weaponIcon->setAnimation(weaponIconIdx[0]);
-    weaponIcon->setSpritePosition({
-        root->getViewWidth() - 80.0f,
-        root->getViewHeight() - 15.0f
-    });
 
     auto charIconGfx = animationBank.value("UI_CHARACTER_ICON_JAZZ");
     charIcon->setAnimation(charIconGfx);
-    charIcon->setSpritePosition({ 5.0f, (float)root->getViewHeight() });
 
     collectionMessage = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
     livesString       = std::make_unique<BitmapString>(root->getFont(), "x3", FONT_ALIGN_LEFT);
@@ -51,7 +46,7 @@ PlayerOSD::~PlayerOSD() {
 
 }
 
-void PlayerOSD::drawOSD() {
+void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
     advanceTimers();
     charIcon->advanceTimers();
     weaponIcon->advanceTimers();
@@ -60,23 +55,29 @@ void PlayerOSD::drawOSD() {
         collectibleIcon->advanceTimers();
     }
 
-    auto canvasPtr = canvas.lock();
-    if (canvasPtr == nullptr) {
+    auto canvas = view->getCanvas().lock();
+    if (canvas == nullptr) {
         return;
     }
 
-    unsigned vw = root->getViewWidth();
-    unsigned vh = root->getViewHeight();
-    charIcon->drawCurrentFrame(*canvasPtr);
-    weaponIcon->drawCurrentFrame(*canvasPtr);
+    unsigned vw = view->getViewWidth();
+    unsigned vh = view->getViewHeight();
+    charIcon->setSpritePosition({ 5.0f, (float)view->getViewHeight() });
+    charIcon->drawCurrentFrame(*canvas);
 
-    livesString->drawString(root->getCanvas(), 40, vh - 25);
+    weaponIcon->setSpritePosition({
+        view->getViewWidth() - 80.0f,
+        view->getViewHeight() - 15.0f
+    });
+    weaponIcon->drawCurrentFrame(*canvas);
+
+    livesString->drawString(canvas, 40, vh - 25);
 
     sf::Sprite heartspr(heartTexture);
     for (unsigned i = 0; i < health; ++i) {
         heartspr.setPosition((vw - 100.0) + i * 18.0, 5.0);
         if (!((health == 1) && ((root->getFrame() % 6) > 2))) {
-            canvasPtr->draw(heartspr);
+            canvas->draw(heartspr);
         }
     }
 
@@ -101,7 +102,7 @@ void PlayerOSD::drawOSD() {
                 vh - messageOffsetAmount / 2.0f + 12.0f
             });
 
-            collectibleIcon->drawCurrentFrame(*canvasPtr);
+            collectibleIcon->drawCurrentFrame(*canvas);
         }
     }
 }
@@ -165,10 +166,6 @@ void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
 
     if (weaponIconIdx[type] != nullptr) {
         weaponIcon->setAnimation(weaponIconIdx[type]);
-        weaponIcon->setSpritePosition({
-            root->getViewWidth() - 80.0f,
-            root->getViewHeight() - 15.0f
-        });
     }
 }
 

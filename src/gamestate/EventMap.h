@@ -25,7 +25,7 @@ public:
     EventMap(std::shared_ptr<CarrotQt5> gameRoot, unsigned int width, unsigned int height);
     ~EventMap();
     void storeTileEvent(int x, int y, PCEvent e = PC_EMPTY, int flags = 0, const QVector<quint16>& params = QVector<quint16>());
-    void activateEvents(const sf::View& center, int tileDistance = 32);
+    void activateEvents(const CoordinatePair& center, int tileDistance = 32);
     bool isPosHurting(double x, double y);
     unsigned short isPosPole(double x, double y);
     void deactivate(int x, int y);

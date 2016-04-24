@@ -10,6 +10,7 @@
 class CarrotQt5;
 class AnimationInstance;
 class AnimationUser;
+class GameView;
 
 typedef void(AnimationUser::*AnimationCallbackFunc)(std::shared_ptr<AnimationInstance>);
 
@@ -55,7 +56,7 @@ protected:
     bool setAnimation(std::shared_ptr<GraphicResource> animation);
     bool setAnimation(const QString& animationID, const size_t& idx = 0);
     QVector<std::shared_ptr<GraphicResource>> findAnimationCandidates(const AnimStateT& state);
-    void drawCurrentFrame();
+    void drawCurrentFrame(std::shared_ptr<GameView>& view);
 
     QMap<QString, std::shared_ptr<GraphicResource>> animationBank;
 

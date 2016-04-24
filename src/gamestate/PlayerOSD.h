@@ -25,10 +25,10 @@ enum OSDMessageType {
 
 class PlayerOSD : public AnimationUser {
 public:
-    PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player, std::weak_ptr<sf::RenderWindow> canvas);
+    PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player);
     ~PlayerOSD();
 
-    void drawOSD();
+    void drawOSD(std::shared_ptr<GameView>& view);
     void clearMessage();
     void setMessage(OSDMessageType type, QVariant param);
     void setWeaponType(WeaponType type, bool poweredUp);
@@ -39,7 +39,6 @@ public:
 
 private:
     std::weak_ptr<Player> owner;
-    std::weak_ptr<sf::RenderWindow> canvas;
     std::unique_ptr<BitmapString> collectionMessage;
     OSDMessageType collectionMessageType;
     std::unique_ptr<BitmapString> livesString;

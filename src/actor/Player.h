@@ -52,6 +52,7 @@ public:
     void receiveLevelCarryOver(LevelCarryOver o);
     void addScore(unsigned points);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
+    void setView(std::shared_ptr<GameView> view);
 
 public slots:
     void debugHealth();
@@ -69,6 +70,7 @@ private:
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
     ControlScheme controls;
+    std::shared_ptr<GameView> assignedView;
 
     std::weak_ptr<MovingPlatform> carryingObject;
 

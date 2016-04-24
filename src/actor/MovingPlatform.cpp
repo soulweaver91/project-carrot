@@ -63,8 +63,8 @@ Hitbox MovingPlatform::getHitbox() {
     return hitbox;
 }
 
-void MovingPlatform::drawUpdate() {
-    auto canvas = root->getCanvas().lock();
+void MovingPlatform::drawUpdate(std::shared_ptr<GameView>& view) {
+    auto canvas = view->getCanvas().lock();
     if (canvas == nullptr) {
         return;
     }
@@ -75,7 +75,7 @@ void MovingPlatform::drawUpdate() {
         chainAnimation->drawCurrentFrame(*canvas);
     }
 
-    CommonActor::drawUpdate();
+    CommonActor::drawUpdate(view);
 }
 
 CoordinatePair MovingPlatform::getLocationDelta() {

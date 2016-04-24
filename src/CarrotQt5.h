@@ -29,6 +29,7 @@
 #include "graphics/ShaderSource.h"
 #include "gamestate/ControlManager.h"
 #include "gamestate/ResourceManager.h"
+#include "gamestate/GameView.h"
 #include "struct/Controls.h"
 #include "struct/CoordinatePair.h"
 #include "struct/Hitbox.h"
@@ -70,11 +71,6 @@ public:
     void startMainMenu();
     unsigned getLevelWidth();
     unsigned getLevelHeight();
-    unsigned getViewWidth();
-    unsigned getViewHeight();
-    CoordinatePair getViewCenter();
-    void centerView(CoordinatePair pos);
-    void centerView(double x, double y);
     bool addActor(std::shared_ptr<CommonActor> actor);
     bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);
     void removeActor(std::shared_ptr<CommonActor> actor);
@@ -86,7 +82,6 @@ public:
     void clearActors();
     unsigned long getFrame();
     void createDebris(unsigned tileId, int x, int y);
-    void setLighting(int target, bool immediate);
     void initLevelChange(ExitType e = NEXT_NORMAL);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collisionActor);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me);
@@ -98,8 +93,8 @@ public:
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
-    int getLightingLevel();
     double gravity;
+    const uint getDefaultLightingLevel();
 #ifdef CARROT_DEBUG
     bool dbgOverlaysActive;
     bool dbgShowMasked;
@@ -131,26 +126,23 @@ private:
     QVector<std::shared_ptr<CommonActor>> actors;
     QVector<std::shared_ptr<DestructibleDebris>> debris;
     std::shared_ptr<Player> players[32];
+    QVector<std::shared_ptr<GameView>> views;
     bool paused;
-    std::unique_ptr<sf::View> uiView;
     std::unique_ptr<sf::Texture> pausedScreenshot;
-    std::unique_ptr<sf::RenderTexture> lightTexture;
     std::unique_ptr<sf::Sprite> pausedScreenshotSprite;
     std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> mainFont;
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;
-    std::unique_ptr<sf::View> gameView;
     std::unique_ptr<ResourceManager> resourceManager;
     std::shared_ptr<ControlManager> controlManager;
     QString levelName;
     QString nextLevel;
     unsigned long frame;
     SavedState lastSavePoint;
-    int lightingLevel;
-    int targetLightingLevel;
     ExitType lastExit;
+    uint defaultLightingLevel;
     std::shared_ptr<MenuScreen> menuObject;
     bool isMenu;
     QTime lastTimestamp;
@@ -161,7 +153,6 @@ private slots:
     void mainMenuTick();
     void openAboutCarrot();
     void openHomePage();
-    void setLightingStep();
     void delayedLevelChange();
 #ifdef CARROT_DEBUG
     void debugLoadMusic();

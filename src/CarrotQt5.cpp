@@ -29,7 +29,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
 #ifdef CARROT_DEBUG
     currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true),
 #endif
-    paused(false), levelName(""), frame(0), gravity(0.3), lightingLevel(80), isMenu(false), menuObject(nullptr), fps(0) {
+    paused(false), levelName(""), frame(0), gravity(0.3), isMenu(false), menuObject(nullptr), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -75,10 +75,6 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     // Read the main font
     mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 1, 224, 32, 256);
     
-    // Define the game view which we'll use for following the player
-    gameView = std::make_unique<sf::View>(sf::FloatRect(0.0, 0.0, 800.0, 600.0));
-    uiView = std::make_unique<sf::View>(sf::FloatRect(0.0, 0.0, 800.0, 600.0));
-
     resourceManager = std::make_unique<ResourceManager>();
     controlManager = std::make_shared<ControlManager>();
 
@@ -97,25 +93,6 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     // Define the pause text and add vertical bounce animation to it
     pausedText = std::make_unique<BitmapString>(mainFont, "Pause", FONT_ALIGN_CENTER);
     pausedText->setAnimation(true, 0.0, 6.0, 0.015, 1.25);
-
-    // Create the light overlay texture
-    lightTexture = std::make_unique<sf::RenderTexture>();
-    lightTexture->create(1600, 1200);
-
-    // Fill the light overlay texture with black
-    sf::RectangleShape tempOverlayRectangle(sf::Vector2f(1600, 1200));
-    tempOverlayRectangle.setFillColor(sf::Color::Black);
-    lightTexture->draw(tempOverlayRectangle);
-
-    // Create a hole in the middle
-    sf::CircleShape tempOverlayCircle(96);
-    tempOverlayCircle.setFillColor(sf::Color(0,0,0,0));
-    tempOverlayCircle.setOrigin(96,96);
-    tempOverlayCircle.setPosition(800, 600);
-    lightTexture->draw(tempOverlayCircle, sf::RenderStates(sf::BlendNone));
-
-    // TODO: create a feather effect
-    // check the shader stuff and apply them to the texture here
 
     lastTimestamp = QTime::currentTime();
 }
@@ -149,8 +126,7 @@ void CarrotQt5::cleanUpLevel() {
     actors.clear();
     std::fill_n(players, 32, nullptr);
     resourceManager->getGraphicsCache()->flush();
-    
-    windowCanvas->setView(*uiView);
+    views.clear();
 }
 
 void CarrotQt5::startGame(QVariant filename) {
@@ -220,18 +196,14 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
     } else if (e->type() == QEvent::WindowDeactivate) {
         resourceManager->getSoundSystem()->fadeMusicOut(1000);
         paused = true;
-        windowCanvas->setView(*uiView);
         pausedScreenshot->update(*windowCanvas);
     } else if (e->type() == QEvent::Resize) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
 
-        gameView->setSize(w, h);
-        uiView->setSize(w, h);
-        uiView->setCenter(w / 2.0, h / 2.0);
         ui.mainFrame->resize(ui.centralWidget->size());
         windowCanvas->setSize(sf::Vector2u(w, h));
-        windowCanvas->setView(*uiView);
+        windowCanvas->setView(sf::View(sf::FloatRect(0, 0, w, h)));
         pausedScreenshot->create(w, h);
     }
     return FALSE;  // dispatch normally
@@ -359,19 +331,16 @@ void CarrotQt5::gameTick() {
     // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
     windowCanvas->clear();
 
-    // Set player to the center of the view
-    players[0]->setToViewCenter();
-    windowCanvas->setView(*gameView);
-
     // Deactivate far away instances, create near instances
-    int view_x = static_cast<unsigned>(windowCanvas->getView().getCenter().x) / 32;
-    int view_y = static_cast<unsigned>(windowCanvas->getView().getCenter().y) / 32;
+    // TODO: Adapt for multiple players
+    int view_x = static_cast<unsigned>(views[0]->getViewCenter().x) / 32;
+    int view_y = static_cast<unsigned>(views[0]->getViewCenter().y) / 32;
     for (unsigned i = 0; i < actors.size(); i++) {
         if (actors.at(i)->deactivate(view_x, view_y, 32)) {
             --i;
         }
     }
-    gameEvents->activateEvents(windowCanvas->getView());
+    gameEvents->activateEvents(views[0]->getViewCenter());
 
     // Run isAnimated tiles' timers
     gameTiles->advanceAnimatedTileTimers();
@@ -389,37 +358,38 @@ void CarrotQt5::gameTick() {
         }
     }
 
-    processControlEvents();
-
-    // Draw the layers: first lower (background and sprite) levels...
-    gameTiles->drawLowerLevels();
-    // ...then draw all the actors...
-    for (unsigned i = 0; i < actors.size(); i++) {
-        actors.at(i)->drawUpdate();
-    }
-    // ...then all the debris elements...
+    // TODO: Adapt for multiple players
     for (unsigned i = 0; i < debris.size(); i++) {
         debris.at(i)->tickUpdate();
-        if (debris.at(i)->getY() - windowCanvas->getView().getCenter().y > 400) {
+        if (debris.at(i)->getY() - views[0]->getViewCenter().y > 400) {
             debris.erase(debris.begin() + i);
             --i;
         }
     }
-    // ...and finally the higher (foreground) levels
-    gameTiles->drawHigherLevels();
 
-    // Draw the lighting overlay
-    sf::Sprite s(lightTexture->getTexture());
-    s.setColor(sf::Color(255, 255, 255, (255 * (100 - lightingLevel) / 100)));
-    s.setOrigin(800, 600);
-    s.setPosition(players[0]->getPosition().x, players[0]->getPosition().y - 15); // middle of the sprite vertically
-    windowCanvas->draw(s);
+    processControlEvents();
 
-    // Draw the UI
-    windowCanvas->setView(*uiView);
+    for (auto view : views) {
+        // Set player to the center of the view
+        view->centerToPlayer();
 
-    // Draw the character icon; managed by the player object
-    players[0]->drawUIOverlay();
+        // Draw the layers: first lower (background and sprite) levels...
+        gameTiles->drawLowerLevels(view);
+        // ...then draw all the actors...
+        for (auto& actor : actors) {
+            actor->drawUpdate(view);
+        }
+        // ...then all the debris elements...
+        for (auto& oneDebris : debris) {
+            oneDebris->drawUpdate(view);
+        }
+
+        // ...and finally the higher (foreground) levels
+        gameTiles->drawHigherLevels(view);
+
+        view->drawUiElements();
+        view->drawView(getCanvas().lock());
+    }
 
 #ifdef CARROT_DEBUG
     if (dbgOverlaysActive) {
@@ -435,7 +405,6 @@ void CarrotQt5::gameTick() {
     // Update the drawn surface to the screen and set the view back to the player
     //windowCanvas->display();
     windowCanvas->updateContents();
-    windowCanvas->setView(*gameView);
 }
 
 unsigned CarrotQt5::getLevelWidth() {
@@ -504,7 +473,6 @@ bool CarrotQt5::loadLevel(const QString& name) {
             QString tileset = level_config.value("Level/Tileset", "").toString();
             
             nextLevel = level_config.value("Level/Next", "").toString();
-                
             
             QDir tileset_dir(QDir::currentPath() + QString::fromStdString("/Tilesets/") + tileset);
             if (tileset_dir.exists()) {
@@ -546,9 +514,21 @@ bool CarrotQt5::loadLevel(const QString& name) {
                     auto defaultplayer = std::make_shared<Player>(shared_from_this(), 320.0, 32.0);
                     addPlayer(defaultplayer, 0);
                 }
+
+                views.clear();
+                sf::Vector2f viewSize(windowCanvas->getSize().x, windowCanvas->getSize().y);
+                for (uint i = 0; i < 32; ++i) {
+                    if (players[i] != nullptr) {
+                        views.append(std::make_shared<GameView>(shared_from_this(), i, viewSize));
+                        players[i]->setView(views.last());
+                    }
+                }
                 
                 resourceManager->getSoundSystem()->setMusic(("Music/" + level_config.value("Level/MusicDefault", "").toString().toUtf8()).data());
-                setLighting(level_config.value("Level/LightInit", 100).toInt(),true);
+                defaultLightingLevel = level_config.value("Level/LightInit", 100).toInt();
+                for (auto view : views) {
+                    view->setLighting(defaultLightingLevel, true);
+                }
                 
                 connect(ui.debug_health, SIGNAL(triggered()), players[0].get(), SLOT(debugHealth()));
                 connect(ui.debug_ammo, SIGNAL(triggered()), players[0].get(), SLOT(debugAmmo()));
@@ -646,7 +626,10 @@ void CarrotQt5::debugSetGravity() {
 }
 
 void CarrotQt5::debugSetLighting() {
-    lightingLevel = QInputDialog::getInt(this, "Set new lighting", "Lighting:", lightingLevel, 0, 100);
+    int lightingLevel = QInputDialog::getInt(this, "Set new lighting", "Lighting:", 100, 0, 100);
+    for (auto view : views) {
+        view->setLighting(lightingLevel, true);
+    }
 }
 
 void CarrotQt5::debugSetPosition() {
@@ -693,33 +676,9 @@ unsigned long CarrotQt5::getFrame() {
 
 void CarrotQt5::createDebris(unsigned tileId, int x, int y) {
     for (int i = 0; i < 4; ++i) {
-        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), getCanvas(), x, y, tileId % 10, tileId / 10, i);
+        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), x, y, tileId % 10, tileId / 10, i);
         debris << d;
     }
-}
-
-void CarrotQt5::setLighting(int target, bool immediate) {
-    targetLightingLevel = target;
-    if (target == lightingLevel) {
-        return;
-    }
-    if (immediate) {
-        lightingLevel = target;
-    } else {
-        // TODO: Bind to frames somehow
-        QTimer::singleShot(50, this, SLOT(setLightingStep()));
-    }
-}
-
-void CarrotQt5::setLightingStep() {
-    if (targetLightingLevel == lightingLevel) {
-        return;
-    }
-    short dir = (targetLightingLevel < lightingLevel) ? -1 : 1;
-    lightingLevel += dir;
-
-    // TODO: Bind to frames somehow
-    QTimer::singleShot(50, this, SLOT(setLightingStep()));
 }
 
 void CarrotQt5::initLevelChange(ExitType e) {
@@ -803,19 +762,6 @@ QVector<std::weak_ptr<Player>> CarrotQt5::getCollidingPlayer(const Hitbox& hitbo
     return result;
 }
 
-unsigned CarrotQt5::getViewHeight() {
-    return gameView->getSize().y;
-}
-
-CoordinatePair CarrotQt5::getViewCenter() {
-    auto center = gameView->getCenter();
-    return { center.x, center.y };
-}
-
-unsigned CarrotQt5::getViewWidth() {
-    return gameView->getSize().x;
-}
-
 std::weak_ptr<Player> CarrotQt5::getPlayer(unsigned number) {
     if (number > 32) {
         return std::weak_ptr<Player>();
@@ -836,16 +782,8 @@ std::shared_ptr<ResourceSet> CarrotQt5::loadActorTypeResources(const QString& ac
     return resourceManager->loadActorTypeResources(actorType);
 }
 
-int CarrotQt5::getLightingLevel() {
-    return lightingLevel;
-}
-
-void CarrotQt5::centerView(double x, double y) {
-    gameView->setCenter(x, y);
-}
-
-void CarrotQt5::centerView(CoordinatePair pair) {
-    gameView->setCenter(pair.x, pair.y);
+const uint CarrotQt5::getDefaultLightingLevel() {
+    return defaultLightingLevel;
 }
 
 void CarrotQt5::invokeFunction(InvokableRootFunction func, QVariant param) {
