@@ -15,14 +15,15 @@ GameView::GameView(std::shared_ptr<CarrotQt5> root, const uint& playerID, const 
 }
 
 void GameView::setLighting(int target, bool immediate) {
-    targetLightingLevel = target;
-    if (target == lightingLevel) {
+    if (target == targetLightingLevel) {
         return;
     }
+
+    targetLightingLevel = target;
     if (immediate) {
         lightingLevel = target;
     } else {
-        addTimer(1.0, false, static_cast<TimerCallbackFunc>(&GameView::setLightingStep));
+        addTimer(3.0, false, static_cast<TimerCallbackFunc>(&GameView::setLightingStep));
     }
 }
 
@@ -36,7 +37,7 @@ void GameView::setLightingStep() {
     }
     short dir = (targetLightingLevel < lightingLevel) ? -1 : 1;
     lightingLevel += dir;
-    addTimer(1.0, false, static_cast<TimerCallbackFunc>(&GameView::setLightingStep));
+    addTimer(3.0, false, static_cast<TimerCallbackFunc>(&GameView::setLightingStep));
 }
 
 CoordinatePair GameView::getViewCenter() {
@@ -64,6 +65,8 @@ void GameView::drawView(std::shared_ptr<sf::RenderTarget> windowCanvas) {
 }
 
 void GameView::drawUiElements() {
+    advanceTimers();
+
     auto player = root->getPlayer(playerID).lock();
     if (player == nullptr) {
         return;
