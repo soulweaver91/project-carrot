@@ -69,8 +69,6 @@ public:
     ~CarrotQt5();
     void parseCommandLine();
     void startMainMenu();
-    unsigned getLevelWidth();
-    unsigned getLevelHeight();
     bool addActor(std::shared_ptr<CommonActor> actor);
     bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);
     void removeActor(std::shared_ptr<CommonActor> actor);

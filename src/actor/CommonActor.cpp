@@ -258,14 +258,22 @@ void CommonActor::tickEvent() {
     setAnimation(newState);
 
     // Make sure we stay within the level boundaries
-    posX = std::min(std::max(posX, 0.0), root->getLevelWidth() * 32.0);
-    posY = std::min(std::max(posY, 0.0), root->getLevelHeight() * 32.0);
+    auto tiles = root->getGameTiles().lock();
+    if (tiles != nullptr) {
+        posX = std::min(std::max(posX, 0.0), tiles->getLevelWidth() * 32.0);
+        posY = std::min(std::max(posY, 0.0), tiles->getLevelHeight() * 32.0);
+    }
 } 
 
 void CommonActor::setToViewCenter(std::shared_ptr<GameView> view) {
+    auto tiles = root->getGameTiles().lock();
+    if (tiles == nullptr) {
+        return;
+    }
+
     view->centerView(
-        std::max(400.0, std::min(32.0 * (root->getLevelWidth() + 1)  - 400.0, (double)qRound(posX))),
-        std::max(300.0, std::min(32.0 * (root->getLevelHeight() + 1) - 300.0, (double)qRound(posY)))
+        std::max(400.0, std::min(32.0 * (tiles->getLevelWidth() + 1)  - 400.0, (double)qRound(posX))),
+        std::max(300.0, std::min(32.0 * (tiles->getLevelHeight() + 1) - 300.0, (double)qRound(posY)))
     );
 }
 

@@ -417,15 +417,6 @@ void CarrotQt5::gameTick() {
     windowCanvas->updateContents();
 }
 
-unsigned CarrotQt5::getLevelWidth() {
-    // todo: phase out
-    return gameTiles->getLevelWidth();
-}
-unsigned CarrotQt5::getLevelHeight() {
-    // todo: phase out
-    return gameTiles->getLevelHeight();
-}
-
 bool CarrotQt5::addActor(std::shared_ptr<CommonActor> actor) {
     actors.push_back(actor);
     return true;
@@ -513,7 +504,7 @@ bool CarrotQt5::loadLevel(const QString& name) {
                     gameTiles->readAnimatedTiles(levelDir.absoluteFilePath("animtiles.dat"));
                 }
                 
-                gameEvents = std::make_shared<EventMap>(shared_from_this(), getLevelWidth(), getLevelHeight());
+                gameEvents = std::make_shared<EventMap>(shared_from_this(), gameTiles->getLevelWidth(), gameTiles->getLevelHeight());
                 if (levelFiles.contains("event.layer")) {
                     gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat", 1).toUInt());
                 }
@@ -648,8 +639,8 @@ void CarrotQt5::debugSetPosition() {
         return;
     }
 
-    int x = QInputDialog::getInt(this, "Move player", "X position", player->getPosition().x, 0, getLevelWidth() * 32);
-    int y = QInputDialog::getInt(this, "Move player", "Y position", player->getPosition().y, 0, getLevelHeight() * 32);
+    int x = QInputDialog::getInt(this, "Move player", "X position", player->getPosition().x, 0, gameTiles->getLevelWidth() * 32);
+    int y = QInputDialog::getInt(this, "Move player", "Y position", player->getPosition().y, 0, gameTiles->getLevelHeight() * 32);
     player->moveInstantly({ x * 1.0, y * 1.0 });
 }
 
