@@ -1,30 +1,17 @@
 #include "GameView.h"
 #include "../CarrotQt5.h"
 #include "../actor/Player.h"
+#include "../graphics/ShaderSource.h"
 
 GameView::GameView(std::shared_ptr<CarrotQt5> root, const uint& playerID, const sf::Vector2f& dimensions) 
     : playerID(playerID), root(root) {
     canvas = std::make_shared<sf::RenderTexture>();
     canvas->create(dimensions.x, dimensions.y);
+    renderAuxiliaryCanvas = std::make_shared<sf::RenderTexture>();
+    renderAuxiliaryCanvas->create(dimensions.x, dimensions.y);
     playerView = std::make_unique<sf::View>(sf::FloatRect(0, 0, dimensions.x, dimensions.y));
     uiView = std::make_unique<sf::View>(sf::FloatRect(0, 0, dimensions.x, dimensions.y));
     viewSprite = std::make_unique<sf::Sprite>(canvas->getTexture());
-
-    // Create the light overlay texture
-    lightTexture = std::make_unique<sf::RenderTexture>();
-    lightTexture->create(1600, 1200);
-
-    // Fill the light overlay texture with black
-    sf::RectangleShape tempOverlayRectangle(sf::Vector2f(1600, 1200));
-    tempOverlayRectangle.setFillColor(sf::Color::Black);
-    lightTexture->draw(tempOverlayRectangle);
-
-    // Create a hole in the middle
-    sf::CircleShape tempOverlayCircle(96);
-    tempOverlayCircle.setFillColor(sf::Color(0, 0, 0, 0));
-    tempOverlayCircle.setOrigin(96, 96);
-    tempOverlayCircle.setPosition(800, 600);
-    lightTexture->draw(tempOverlayCircle, sf::RenderStates(sf::BlendNone));
 }
 
 void GameView::setLighting(int target, bool immediate) {
@@ -81,18 +68,30 @@ void GameView::drawUiElements() {
     if (player == nullptr) {
         return;
     }
-
-    // Draw the lighting overlay
-    sf::Sprite s(lightTexture->getTexture());
-    s.setColor(sf::Color(255, 255, 255, (255 * (100 - lightingLevel) / 100)));
-    s.setOrigin(800, 600);
-    s.setPosition(player->getPosition().x, player->getPosition().y - 15); // middle of the sprite vertically
-    canvas->draw(s);
-
     canvas->setView(*uiView.get());
+
+    sf::RenderStates states;
+    auto shader = ShaderSource::getShader("LightingShader");
+    if (shader != nullptr) {
+        shader->setParameter("color", sf::Color::Black);
+        shader->setParameter("lightingLevel", lightingLevel / 100.0);
+
+        shader->setParameter("center", sf::Vector2f(
+            player->getPosition().x - playerView->getCenter().x + playerView->getSize().x / 2,
+            // Reverse the vertical coordinate, as the frame buffer is "upside down"
+            playerView->getSize().y - ((player->getPosition().y - 15) - playerView->getCenter().y + playerView->getSize().y / 2)
+        ));
+        states.shader = shader.get();
+        renderAuxiliaryCanvas->clear();
+        renderAuxiliaryCanvas->draw(*viewSprite.get(), states);
+        renderAuxiliaryCanvas->display();
+        std::swap(canvas, renderAuxiliaryCanvas);
+        viewSprite->setTexture(canvas->getTexture());
+    }
 
     // Draw the character icon; managed by the player object
     player->drawUIOverlay();
+
 }
 
 void GameView::centerToPlayer() {
@@ -106,6 +105,7 @@ void GameView::centerToPlayer() {
 
 void GameView::setSize(const sf::Vector2f& dimensions) {
     canvas->create(dimensions.x, dimensions.y);
+    renderAuxiliaryCanvas->create(dimensions.x, dimensions.y);
     playerView->setCenter(dimensions.x / 2, dimensions.y / 2);
     playerView->setSize(dimensions);
     uiView->setCenter(dimensions.x / 2, dimensions.y / 2);

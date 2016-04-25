@@ -483,6 +483,9 @@
     <None Include="Scripts\Convert-Tilesets.ps1">
       <Filter>Scripts</Filter>
     </None>
+    <None Include="Shaders\LightingShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE">

@@ -9,6 +9,7 @@ void ShaderSource::initialize() {
     systemSupportsShaders = sf::Shader::isAvailable();
     if (systemSupportsShaders) {
         loadShader("ColorizeShader");
+        loadShader("LightingShader");
     }
 }
 

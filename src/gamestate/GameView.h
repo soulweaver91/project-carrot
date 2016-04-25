@@ -27,10 +27,10 @@ private:
 
     std::shared_ptr<CarrotQt5> root;
     std::shared_ptr<sf::RenderTexture> canvas;
+    std::shared_ptr<sf::RenderTexture> renderAuxiliaryCanvas;
     std::unique_ptr<sf::View> playerView;
     std::unique_ptr<sf::View> uiView;
     std::unique_ptr<sf::Sprite> viewSprite;
-    std::shared_ptr<sf::RenderTexture> lightTexture;
     int lightingLevel;
     int targetLightingLevel;
     uint playerID;
