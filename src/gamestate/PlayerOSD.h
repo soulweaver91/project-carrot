@@ -36,6 +36,7 @@ public:
     void setHealth(unsigned newHealth);
     void setScore(unsigned long newScore);
     void setLives(unsigned lives);
+    void setSugarRushActive();
 
 private:
     std::weak_ptr<Player> owner;
@@ -63,4 +64,6 @@ private:
     unsigned gemCounter;
     HSAMPLE gemSound;
 
+    uint sugarRushLeft;
+    std::unique_ptr<BitmapString> sugarRushText;
 };

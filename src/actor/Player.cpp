@@ -13,7 +13,7 @@
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
-    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), foodCounter(0),
+    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), foodCounter(0), isSugarRush(false),
     poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
     loadResources("Interactive/PlayerJazz");
 
@@ -524,8 +524,16 @@ void Player::tickEvent() {
         {
             auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
             if (enemy != nullptr) {
-                if (isUsingDamagingMove) {
+                if (isUsingDamagingMove || isSugarRush) {
                     enemy->decreaseHealth(1);
+                    if (isSugarRush) {
+                        if (canJump) {
+                            speedY = 3;
+                            canJump = false;
+                            externalForceY = 0.6;
+                        }
+                        speedY *= -.5;
+                    }
                     if ((currentState & AnimState::BUTTSTOMP) > 0) {
                         setAnimation(currentState & ~AnimState::BUTTSTOMP);
                         isUsingDamagingMove = false;
@@ -667,9 +675,19 @@ void Player::addFastFire(unsigned amount) {
 
 void Player::consumeFood(const bool& isDrinkable) {
     foodCounter += 1;
-    while (foodCounter >= 100) {
-        foodCounter -= 100;
-        // TODO: Sugar rush
+    if (foodCounter >= SUGAR_RUSH_THRESHOLD) {
+        foodCounter = foodCounter % SUGAR_RUSH_THRESHOLD;
+        if (!isSugarRush) {
+            auto soundSystem = root->getSoundSystem().lock();
+            if (soundSystem != nullptr) {
+                soundSystem->pauseMusic();
+                playSound("PLAYER_SUGAR_RUSH");
+            }
+
+            isSugarRush = true;
+            osd->setSugarRushActive();
+            addTimer(21.548 * 70.0, false, static_cast<TimerCallbackFunc>(&Player::endSugarRush));
+        }
     }
 
     if (isDrinkable) {
@@ -715,6 +733,14 @@ void Player::deathRecovery(std::shared_ptr<AnimationInstance> animation) {
         fastfires = 0;
     } else {
         // TODO: game over handling
+    }
+}
+
+void Player::endSugarRush() {
+    isSugarRush = false;
+    auto soundSystem = root->getSoundSystem().lock();
+    if (soundSystem != nullptr) {
+        soundSystem->resumeMusic();
     }
 }
 
@@ -992,3 +1018,5 @@ template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     osd->setAmmo(ammo[currentWeapon]);
     return newAmmo;
 }
+
+const uint Player::SUGAR_RUSH_THRESHOLD = 100;

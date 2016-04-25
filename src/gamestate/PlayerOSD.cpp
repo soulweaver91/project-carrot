@@ -5,7 +5,7 @@
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player)
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), health(0), score(0),
-    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0) {
+    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0), sugarRushLeft(0) {
 
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
@@ -40,6 +40,9 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     livesString       = std::make_unique<BitmapString>(root->getFont(), "x3", FONT_ALIGN_LEFT);
     scoreString       = std::make_unique<BitmapString>(root->getFont(), "00000000", FONT_ALIGN_LEFT);
     ammoString        = std::make_unique<BitmapString>(root->getFont(), "x^", FONT_ALIGN_LEFT);
+    sugarRushText     = std::make_unique<BitmapString>(root->getFont(), "", FONT_ALIGN_CENTER);
+    sugarRushText->setColoured(true);
+    sugarRushText->setAnimation(true, -3.0, 3.0, 0.05, 0.95);
 }
 
 PlayerOSD::~PlayerOSD() {
@@ -104,6 +107,16 @@ void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
 
             collectibleIcon->drawCurrentFrame(*canvas);
         }
+    }
+
+    if (sugarRushLeft > 0) {
+        if (sugarRushLeft % 70 == 0) {
+            sugarRushText->setText("Sugar  RUSH  " + QString::number(sugarRushLeft / 70 - 1));
+        }
+        if (sugarRushLeft > 140 || sugarRushLeft % 6 > 2) {
+            sugarRushText->drawString(canvas, vw / 2, 10);
+        }
+        sugarRushLeft--;
     }
 }
 
@@ -193,5 +206,9 @@ void PlayerOSD::setScore(unsigned long newScore) {
 
 void PlayerOSD::setLives(unsigned lives) {
     livesString->setText(QString("x") + QString::number(lives));
+}
+
+void PlayerOSD::setSugarRushActive() {
+    sugarRushLeft = 21 * 70;
 }
 

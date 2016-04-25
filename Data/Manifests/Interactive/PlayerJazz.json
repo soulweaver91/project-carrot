@@ -302,6 +302,11 @@
         "pickup/food_edible_3.wav",
         "pickup/food_edible_4.wav"
       ]
+    },
+    "PLAYER_SUGAR_RUSH": {
+      "filename": [
+        "pickup/food_sugar_rush.wav"
+      ]
     }
   },
   "children": [
