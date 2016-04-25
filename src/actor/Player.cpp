@@ -21,8 +21,8 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     health = 5;
     lives = 3;
     currentWeapon = WEAPON_BLASTER;
-    std::fill_n(ammo, 9, 0);
-    std::fill_n(isWeaponPoweredUp, 9, false);
+    std::fill_n(ammo, WEAPONCOUNT, 0);
+    std::fill_n(isWeaponPoweredUp, WEAPONCOUNT, false);
     std::fill_n(collectedCoins, 2, 0);
     std::fill_n(collectedGems, 4, 0);
 
@@ -114,9 +114,9 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.weaponChangeButton) {
         // Select next available weapon in numerical order
-        int new_type = (currentWeapon + 1) % 9;
+        int new_type = (currentWeapon + 1) % WEAPONCOUNT;
         while (!selectWeapon(static_cast<WeaponType>(new_type))) {
-            new_type = (new_type + 1) % 9;
+            new_type = (new_type + 1) % WEAPONCOUNT;
         }
         return;
     }
@@ -266,10 +266,10 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
                 }
 
                 if (ammo[currentWeapon] == 0) {
-                    int newType = (currentWeapon + 1) % 9;
+                    int newType = (currentWeapon + 1) % WEAPONCOUNT;
                     // Iterate through weapons to pick the next usable when running out of ammo
                     while (!selectWeapon(static_cast<WeaponType>(newType))) {
-                        newType = (newType + 1) % 9;
+                        newType = (newType + 1) % WEAPONCOUNT;
                     }
                 }
             }
@@ -621,11 +621,11 @@ void Player::debugHealth() {
 }
 
 void Player::debugAmmo() {
-    std::fill_n(ammo, 9, 999);
+    std::fill_n(ammo, WEAPONCOUNT, 999);
 }
 
 void Player::addAmmo(enum WeaponType type, unsigned amount) {
-    if (type > 8) { return; }
+    if (type > (WEAPONCOUNT - 1)) { return; }
     playSound("PLAYER_PICKUP_AMMO");
     
     if (ammo[type] == 0) {
@@ -912,7 +912,7 @@ LevelCarryOver Player::prepareLevelCarryOver() {
     LevelCarryOver o;
     o.lives = lives;
     o.fastfires = fastfires;
-    for (int i = 0; i < 9; ++i) {
+    for (int i = 0; i < WEAPONCOUNT; ++i) {
         o.ammo[i] = ammo[i];
         o.poweredUp[i] = isWeaponPoweredUp[i];
     }
@@ -925,7 +925,7 @@ LevelCarryOver Player::prepareLevelCarryOver() {
 void Player::receiveLevelCarryOver(LevelCarryOver o) {
     lives = o.lives;
     fastfires = o.fastfires;
-    for (int i = 0; i < 9; ++i) {
+    for (int i = 0; i < WEAPONCOUNT; ++i) {
         ammo[i] = o.ammo[i];
         isWeaponPoweredUp[i] = o.poweredUp[i];
     }

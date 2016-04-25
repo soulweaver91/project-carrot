@@ -10,6 +10,7 @@
 #include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
 #include "../struct/WeaponTypes.h"
+#include "../struct/Constants.h"
 #include "MovingPlatform.h"
 #include "collectible/GemCollectible.h"
 #include "collectible/CoinCollectible.h"
@@ -24,8 +25,8 @@ enum PlayerCharacter {
 
 struct LevelCarryOver {
     uint lives;
-    uint ammo[9];
-    bool poweredUp[9];
+    uint ammo[WEAPONCOUNT];
+    bool poweredUp[WEAPONCOUNT];
     uint fastfires;
     uint score;
     uint foodCounter;
@@ -85,8 +86,8 @@ private:
     std::weak_ptr<MovingPlatform> carryingObject;
 
     unsigned lives;
-    unsigned ammo[9];
-    bool isWeaponPoweredUp[9];
+    unsigned ammo[WEAPONCOUNT];
+    bool isWeaponPoweredUp[WEAPONCOUNT];
     int fastfires;
     unsigned long score;
     unsigned collectedGems[4];
