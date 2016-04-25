@@ -22,6 +22,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     lives = 3;
     currentWeapon = WEAPON_BLASTER;
     std::fill_n(ammo, 9, 0);
+    std::fill_n(isWeaponPoweredUp, 9, false);
     std::fill_n(collectedCoins, 2, 0);
     std::fill_n(collectedGems, 4, 0);
 
@@ -913,7 +914,11 @@ LevelCarryOver Player::prepareLevelCarryOver() {
     o.fastfires = fastfires;
     for (int i = 0; i < 9; ++i) {
         o.ammo[i] = ammo[i];
+        o.poweredUp[i] = isWeaponPoweredUp[i];
     }
+    o.score = score;
+    o.foodCounter = foodCounter;
+    o.currentWeapon = currentWeapon;
     return o;
 }
 
@@ -922,7 +927,11 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     fastfires = o.fastfires;
     for (int i = 0; i < 9; ++i) {
         ammo[i] = o.ammo[i];
+        isWeaponPoweredUp[i] = o.poweredUp[i];
     }
+    score = o.score;
+    foodCounter = o.foodCounter;
+    currentWeapon = o.currentWeapon;
 }
 
 void Player::addScore(unsigned points) {

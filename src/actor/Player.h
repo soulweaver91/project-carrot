@@ -23,9 +23,13 @@ enum PlayerCharacter {
 };
 
 struct LevelCarryOver {
-    int lives;
-    int ammo[9];
-    int fastfires;
+    uint lives;
+    uint ammo[9];
+    bool poweredUp[9];
+    uint fastfires;
+    uint score;
+    uint foodCounter;
+    WeaponType currentWeapon;
 };
 
 class Player : public CommonActor {
