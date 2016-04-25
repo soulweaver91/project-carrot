@@ -15,6 +15,7 @@ struct ActorTimer {
     unsigned long initialFramesLeft;
     double initialFramesRemainder;
     bool recurring;
+    bool isNew;
 
     // callback
     TimerCallbackFunc func;

@@ -10,7 +10,15 @@ TimerUser::~TimerUser() {
 }
 
 void TimerUser::advanceTimers() {
+    for (auto& timer : timers) {
+        timer.second.isNew = false;
+    }
+
     for (int i = 0; i < timers.size(); ++i) {
+        if (timers[i].second.isNew) {
+            continue;
+        }
+
         timers[i].second.framesLeft--;
         if (timers[i].second.framesLeft == 0) {
             invokeTimer(i);
@@ -34,14 +42,14 @@ void TimerUser::invokeTimer(int idx) {
 }
 
 unsigned long TimerUser::addTimer(unsigned frames, bool recurring, TimerCallbackFunc func) {
-    ActorTimer t = { frames, 0.0, frames, 0.0, recurring, func };
+    ActorTimer t = { frames, 0.0, frames, 0.0, recurring, true, func };
     timers.append(qMakePair(nextTimer, t));
     return nextTimer++;
 }
 unsigned long TimerUser::addTimer(double frames, bool recurring, TimerCallbackFunc func) {
     unsigned long floored = qRound(floor(frames));
 
-    ActorTimer t = { floored, frames - floored, floored, frames - floored, recurring, func };
+    ActorTimer t = { floored, frames - floored, floored, frames - floored, recurring, true, func };
     timers.append(qMakePair(nextTimer, t));
     return nextTimer++;
 }
