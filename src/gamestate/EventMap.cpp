@@ -2,7 +2,10 @@
 #include <QList>
 #include "../CarrotQt5.h"
 #include "../actor/SolidObject.h"
-#include "../actor/Collectible.h"
+#include "../actor/collectible/Collectible.h"
+#include "../actor/collectible/AmmoCollectible.h"
+#include "../actor/collectible/CoinCollectible.h"
+#include "../actor/collectible/FastFireCollectible.h"
 #include "../actor/Player.h"
 #include "../actor/enemy/Enemy.h"
 #include "../actor/PushBox.h"
@@ -82,10 +85,6 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
 
             if (!tile->isEventActive && tile->storedEvent != PC_EMPTY) {
                 switch (tile->storedEvent) {
-                    case PC_FAST_FIRE:
-                    case PC_GEM_RED:
-                    case PC_GEM_GREEN:
-                    case PC_GEM_BLUE:
                     case PC_AMMO_TOASTER:
                     case PC_AMMO_BOUNCER:
                     case PC_AMMO_FREEZER:
@@ -94,11 +93,33 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                     case PC_AMMO_TNT:
                     case PC_AMMO_PEPPER:
                     case PC_AMMO_ELECTRO:
+                        {
+                            auto c = std::make_shared<AmmoCollectible>(root, static_cast<WeaponType>(tile->storedEvent - 1), 
+                                32.0 * x + 16.0, 32.0 * y + 16.0);
+                            root->addActor(c);
+                        }
+                        break;
+                    case PC_GEM_RED:
+                    case PC_GEM_GREEN:
+                    case PC_GEM_BLUE:
+                    case PC_GEM_PURPLE:
+                        {
+                            auto c = std::make_shared<GemCollectible>(root, static_cast<GemType>(tile->storedEvent - (uint)PC_GEM_RED),
+                                32.0 * x + 16.0, 32.0 * y + 16.0);
+                            root->addActor(c);
+                        }
+                        break;
                     case PC_COIN_SILVER:
                     case PC_COIN_GOLD:
                         {
-                            auto c = std::make_shared<Collectible>(root, static_cast<CollectibleType>(tile->storedEvent), 
+                            auto c = std::make_shared<CoinCollectible>(root, static_cast<CoinType>(tile->storedEvent - (uint)PC_COIN_SILVER),
                                 32.0 * x + 16.0, 32.0 * y + 16.0);
+                            root->addActor(c);
+                        }
+                        break;
+                    case PC_FAST_FIRE:
+                        {
+                            auto c = std::make_shared<FastFireCollectible>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
                             root->addActor(c);
                         }
                         break;

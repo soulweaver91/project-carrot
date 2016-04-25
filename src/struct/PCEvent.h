@@ -25,6 +25,7 @@ enum PCEvent {
     PC_GEM_RED              = 0x0040,
     PC_GEM_GREEN            = 0x0041,
     PC_GEM_BLUE             = 0x0042,
+    PC_GEM_PURPLE           = 0x0043,
     PC_SAVE_POINT           = 0x005A,
     PC_SPRING_RED           = 0x00C0,
     PC_SPRING_GREEN         = 0x00C1,

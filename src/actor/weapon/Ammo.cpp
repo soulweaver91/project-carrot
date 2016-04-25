@@ -1,7 +1,7 @@
 #include "Ammo.h"
 #include "../../gamestate/EventMap.h"
 #include "../enemy/Enemy.h"
-#include "../Collectible.h"
+#include "../collectible/Collectible.h"
 #include "../PushBox.h"
 
 Ammo::Ammo(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,

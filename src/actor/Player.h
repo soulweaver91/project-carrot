@@ -11,6 +11,8 @@
 #include "../struct/Controls.h"
 #include "../struct/WeaponTypes.h"
 #include "MovingPlatform.h"
+#include "collectible/GemCollectible.h"
+#include "collectible/CoinCollectible.h"
 
 enum PlayerCharacter {
     CHAR_JAZZ       = 0x00,
@@ -51,6 +53,10 @@ public:
     LevelCarryOver prepareLevelCarryOver();
     void receiveLevelCarryOver(LevelCarryOver o);
     void addScore(unsigned points);
+    void addAmmo(WeaponType type, unsigned amount);
+    void addGems(GemType type, unsigned amount);
+    void addCoins(CoinType type, unsigned amount);
+    void addFastFire(unsigned amount);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
 
@@ -63,7 +69,6 @@ private:
     void onHitCeilingHook();
     void onHitWallHook();
     bool selectWeapon(enum WeaponType newType);
-    void addAmmo(enum WeaponType type, unsigned amount);
     void setupOSD(OSDMessageType type, int param = 0);
     template<typename T> std::shared_ptr<T> fireWeapon();
 

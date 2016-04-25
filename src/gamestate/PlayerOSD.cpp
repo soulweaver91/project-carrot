@@ -122,17 +122,22 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     switch (type) {
         case OSD_GEM_RED:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            collectibleIcon->setColor({ 511, 0, 0 });
+            collectibleIcon->setColor({ 512, 0, 0 });
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_GREEN:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            collectibleIcon->setColor({ 0, 511, 0 });
+            collectibleIcon->setColor({ 0, 512, 0 });
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_GEM_BLUE:
             collectionMessage->setText("  x" + QString::number(param.toInt()));
-            collectibleIcon->setColor({ 0, 0, 511 });
+            collectibleIcon->setColor({ 0, 0, 512 });
+            collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
+            break;
+        case OSD_GEM_PURPLE:
+            collectionMessage->setText("  x" + QString::number(param.toInt()));
+            collectibleIcon->setColor({ 256, 0, 512 });
             collectibleGraphics = animationBank.value("PICKUP_GEM", nullptr);
             break;
         case OSD_COIN_SILVER:

@@ -114,6 +114,12 @@
     <Filter Include="Scripts">
       <UniqueIdentifier>{387c5db3-ab3f-4811-b614-45ca0d96acb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Actor headers\Collectible headers">
+      <UniqueIdentifier>{35ab41b9-56b1-4f0a-b585-2b50967d6765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actor\Collectible">
+      <UniqueIdentifier>{5aa2dce2-dc59-41c3-b4ca-7346af0cfb0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
@@ -156,9 +162,6 @@
       <Filter>Source Files\Actor\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\Bridge.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\actor\Collectible.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\Player.cpp">
@@ -242,11 +245,23 @@
     <ClCompile Include="src\gamestate\GameView.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\collectible\Collectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\collectible\AmmoCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\collectible\GemCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\collectible\CoinCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="src\actor\Collectible.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </CustomBuild>
     <CustomBuild Include="src\actor\Player.h">
       <Filter>Header Files\Actor headers</Filter>
     </CustomBuild>
@@ -261,6 +276,9 @@
     </CustomBuild>
     <CustomBuild Include="CarrotQt5.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\actor\collectible\Collectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +422,18 @@
     </ClInclude>
     <ClInclude Include="src\gamestate\GameView.h">
       <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\AmmoCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\GemCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\CoinCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\FastFireCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

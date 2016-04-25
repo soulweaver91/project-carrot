@@ -4,7 +4,7 @@
 #include "SolidObject.h"
 #include "TriggerCrate.h"
 #include "enemy/Enemy.h"
-#include "Collectible.h"
+#include "collectible/Collectible.h"
 #include "SavePoint.h"
 #include "Spring.h"
 #include "weapon/AmmoBlaster.h"
@@ -569,81 +569,7 @@ void Player::tickEvent() {
 
         auto collectible = std::dynamic_pointer_cast<Collectible>(collisionPtr);
         if (collectible != nullptr) {
-            switch (collectible->type) {
-                case COLLTYPE_FAST_FIRE:
-                    fastfires = std::min(fastfires + 1, 10);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_TOASTER:
-                    addAmmo(WEAPON_TOASTER, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_SEEKER:
-                    addAmmo(WEAPON_SEEKER, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_BOUNCER:
-                    addAmmo(WEAPON_BOUNCER, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_FREEZER:
-                    addAmmo(WEAPON_FREEZER, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_RF:
-                    addAmmo(WEAPON_RF, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_TNT:
-                    addAmmo(WEAPON_TNT, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_PEPPER:
-                    addAmmo(WEAPON_PEPPER, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                case COLLTYPE_AMMO_ELECTRO:
-                    addAmmo(WEAPON_ELECTRO, 3);
-                    playSound("PLAYER_PICKUP_AMMO");
-                    addScore(100);
-                    break;
-                // Gem sounds are managed by the OSD
-                case COLLTYPE_GEM_RED:
-                    addScore(100);
-                    collectedGems[0]++;
-                    setupOSD(OSD_GEM_RED);
-                    break;
-                case COLLTYPE_GEM_GREEN:
-                    addScore(500);
-                    collectedGems[1]++;
-                    setupOSD(OSD_GEM_GREEN);
-                    break;
-                case COLLTYPE_GEM_BLUE:
-                    addScore(1000);
-                    collectedGems[2]++;
-                    setupOSD(OSD_GEM_BLUE);
-                    break;
-                case COLLTYPE_COIN_GOLD:
-                    addScore(1000);
-                    playSound("PLAYER_PICKUP_COIN");
-                    collectedCoins[1]++;
-                    setupOSD(OSD_COIN_GOLD);
-                    break;
-                case COLLTYPE_COIN_SILVER:
-                    addScore(500);
-                    playSound("PLAYER_PICKUP_COIN");
-                    collectedCoins[0]++;
-                    setupOSD(OSD_COIN_SILVER);
-                    break;
-            }
+            collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
             collisionPtr->deleteFromEventMap();
             root->removeActor(collisionPtr);
         }
@@ -699,6 +625,7 @@ void Player::debugAmmo() {
 
 void Player::addAmmo(enum WeaponType type, unsigned amount) {
     if (type > 8) { return; }
+    playSound("PLAYER_PICKUP_AMMO");
     
     if (ammo[type] == 0) {
         // Switch to the newly obtained weapon
@@ -711,6 +638,30 @@ void Player::addAmmo(enum WeaponType type, unsigned amount) {
     if (type == currentWeapon) {
         osd->setAmmo(ammo[type]);
     }
+}
+
+void Player::addGems(GemType type, unsigned amount) {
+    if ((uint)type >= 4) {
+        return;
+    }
+
+    collectedGems[(uint)type]++;
+    setupOSD((OSDMessageType)((uint)OSD_GEM_RED + (uint)type));
+}
+
+void Player::addCoins(CoinType type, unsigned amount) {
+    if ((uint)type >= 2) {
+        return;
+    }
+
+    playSound("PLAYER_PICKUP_COIN");
+    collectedCoins[(uint)type]++;
+    setupOSD((OSDMessageType)((uint)OSD_COIN_SILVER + (uint)type));
+}
+
+void Player::addFastFire(unsigned amount) {
+    fastfires = std::min(fastfires + 1, 10);
+    playSound("PLAYER_PICKUP_AMMO");
 }
 
 bool Player::perish() {
@@ -985,6 +936,9 @@ void Player::setupOSD(OSDMessageType type, int param) {
             break;
         case OSD_GEM_BLUE:
             osd->setMessage(OSD_GEM_BLUE, collectedGems[2]);
+            break;
+        case OSD_GEM_PURPLE:
+            osd->setMessage(OSD_GEM_PURPLE, collectedGems[3]);
             break;
         case OSD_COIN_SILVER: 
             osd->setMessage(OSD_COIN_SILVER, collectedCoins[0] + 5 * collectedCoins[1]);
