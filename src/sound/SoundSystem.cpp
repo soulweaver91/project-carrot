@@ -65,6 +65,23 @@ void SoundSystem::fadeMusicIn(uint ms) {
     BASS_ChannelSlideAttribute(currentMusic, BASS_ATTRIB_MUSIC_VOL_GLOBAL, 128, ms);
 }
 
+void SoundSystem::pauseMusic() {
+    if (BASS_ChannelIsActive(currentMusic)) {
+        BASS_ChannelPause(currentMusic);
+    }
+}
+
+void SoundSystem::resumeMusic() {
+    if (BASS_ChannelIsActive(currentMusic)) {
+        BASS_ChannelPlay(currentMusic, false);
+    }
+}
+
+void SoundSystem::clearSounds() {
+    BASS_Stop();
+    BASS_Start();
+}
+
 bool SoundSystem::setMusic(const QString& filename) {
     // Stop the current music track and free its resources
     if (BASS_ChannelIsActive(currentMusic)) {

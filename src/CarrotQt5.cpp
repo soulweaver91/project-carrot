@@ -126,6 +126,10 @@ void CarrotQt5::cleanUpLevel() {
     actors.clear();
     std::fill_n(players, 32, nullptr);
     resourceManager->getGraphicsCache()->flush();
+    auto soundSystem = getSoundSystem().lock();
+    if (soundSystem != nullptr) {
+        soundSystem->clearSounds();
+    }
     views.clear();
 }
 

@@ -21,6 +21,9 @@ public:
     bool setMusic(const QString& filename);
     void fadeMusicOut(uint ms);
     void fadeMusicIn(uint ms);
+    void pauseMusic();
+    void resumeMusic();
+    void clearSounds();
 
 private:
     QMultiMap<QString, HSAMPLE> effectBank;
