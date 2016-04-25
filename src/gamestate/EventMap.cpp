@@ -93,90 +93,52 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                     case PC_AMMO_TNT:
                     case PC_AMMO_PEPPER:
                     case PC_AMMO_ELECTRO:
-                        {
-                            auto c = std::make_shared<AmmoCollectible>(root, static_cast<WeaponType>(tile->storedEvent - 1), 
-                                32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(c);
-                        }
+                        createCommonActorEvent<AmmoCollectible>(x, y, static_cast<WeaponType>(tile->storedEvent - (uint)PC_AMMO_BOUNCER + 1));
                         break;
                     case PC_GEM_RED:
                     case PC_GEM_GREEN:
                     case PC_GEM_BLUE:
                     case PC_GEM_PURPLE:
-                        {
-                            auto c = std::make_shared<GemCollectible>(root, static_cast<GemType>(tile->storedEvent - (uint)PC_GEM_RED),
-                                32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(c);
-                        }
+                        createCommonActorEvent<GemCollectible>(x, y, static_cast<GemType>(tile->storedEvent - (uint)PC_GEM_RED));
                         break;
                     case PC_COIN_SILVER:
                     case PC_COIN_GOLD:
-                        {
-                            auto c = std::make_shared<CoinCollectible>(root, static_cast<CoinType>(tile->storedEvent - (uint)PC_COIN_SILVER),
-                                32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(c);
-                        }
+                        createCommonActorEvent<CoinCollectible>(x, y, static_cast<CoinType>(tile->storedEvent - (uint)PC_COIN_SILVER));
                         break;
                     case PC_FAST_FIRE:
-                        {
-                            auto c = std::make_shared<FastFireCollectible>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(c);
-                        }
+                        createCommonActorEvent<FastFireCollectible>(x, y);
                         break;
                     case PC_ENEMY_TURTLE_NORMAL:
-                        {
-                            auto e = std::make_shared<EnemyNormalTurtle>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<EnemyNormalTurtle>(x, y);
                         break;
                     case PC_ENEMY_LIZARD:
-                        {
-                            auto e = std::make_shared<EnemyLizard>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<EnemyLizard>(x, y);
                         break;
                     case PC_SAVE_POINT:
-                        {
-                            auto e = std::make_shared<SavePoint>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<SavePoint>(x, y);
                         break;
                     case PC_PUSHABLE_ROCK:
-                        {
-                            auto e = std::make_shared<PushBox>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile->eventParams[0]);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<PushBox>(x, y, tile->eventParams[0]);
                         break;
                     case PC_TRIGGER_CRATE:
-                        {
-                            auto e = std::make_shared<TriggerCrate>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, tile->eventParams[0]);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<TriggerCrate>(x, y, tile->eventParams[0]);
                         break;
                     case PC_BRIDGE:
-                        {
-                            auto e = std::make_shared<DynamicBridge>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
-                                tile->eventParams[0], static_cast<DynamicBridgeType>(tile->eventParams[1]), tile->eventParams[2]);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<DynamicBridge>(x, y, tile->eventParams[0],
+                            static_cast<DynamicBridgeType>(tile->eventParams[1]), tile->eventParams[2]);
                         break;
                     case PC_SPRING_RED:
                     case PC_SPRING_GREEN:
                     case PC_SPRING_BLUE:
-                        {
-                            auto e = std::make_shared<Spring>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, 
-                                (SpringType)(1 + (tile->storedEvent - PC_SPRING_RED)), (byte)tile->eventParams[0]);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<Spring>(x, y,
+                            (SpringType)(1 + (tile->storedEvent - PC_SPRING_RED)),
+                            (byte)tile->eventParams[0]);
                         break;
                     case PC_MOVING_PLATFORM:
-                        {
-                            auto e = std::make_shared<MovingPlatform>(root, 32.0 * x + 16.0, 32.0 * y + 16.0,
-                                static_cast<PlatformType>(tile->eventParams[0]),
-                                tile->eventParams[3], (qint16)tile->eventParams[2], tile->eventParams[1],
-                                tile->eventParams[4] != 0);
-                            root->addActor(e);
-                        }
+                        createCommonActorEvent<MovingPlatform>(x, y,
+                            static_cast<PlatformType>(tile->eventParams[0]),
+                            tile->eventParams[3], (qint16)tile->eventParams[2], tile->eventParams[1],
+                            tile->eventParams[4] != 0);
                         break;
                 }
                 tile->isEventActive = true;
@@ -342,3 +304,8 @@ CoordinatePair EventMap::getWarpTarget(unsigned id) {
     }
 }
 
+template<typename T, typename... P>
+void EventMap::createCommonActorEvent(const double& x, const double& y, P... params) {
+    auto e = std::make_shared<T>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, *&params...);
+    root->addActor(e);
+}

@@ -13,7 +13,7 @@ enum GemType {
 
 class GemCollectible : public Collectible {
 public:
-    GemCollectible(std::shared_ptr<CarrotQt5> root, GemType type, double x, double y, bool fromEventMap = true);
+    GemCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, GemType type, bool fromEventMap = true);
     virtual void collect(std::shared_ptr<Player> player) override;
 
 private:

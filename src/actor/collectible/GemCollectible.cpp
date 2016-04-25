@@ -15,7 +15,7 @@ const sf::Vector3i GemCollectible::gemColors[4] = {
     { 256, 0, 512 }
 };
 
-GemCollectible::GemCollectible(std::shared_ptr<CarrotQt5> root, GemType type, double x, double y, bool fromEventMap)
+GemCollectible::GemCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, GemType type, bool fromEventMap)
     : Collectible(root, x, y, fromEventMap), gemType(type) {
     scoreValue = gemValues[(uint)type % 4];
     setFacingDirection();

@@ -45,4 +45,7 @@ private:
     std::shared_ptr<CarrotQt5> root;
     QVector<QVector<std::shared_ptr<EventTile>>> eventLayout;
     QMultiMap<unsigned, CoordinatePair> warpTargets;
+
+    template<typename T, typename... P>
+    void createCommonActorEvent(const double& x, const double& y, P... params);
 };

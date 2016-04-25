@@ -7,7 +7,7 @@ class Player;
 
 class AmmoCollectible : public Collectible {
 public:
-    AmmoCollectible(std::shared_ptr<CarrotQt5> root, WeaponType type, double x, double y, bool fromEventMap = true);
+    AmmoCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, WeaponType type, bool fromEventMap = true);
     virtual void collect(std::shared_ptr<Player> player) override;
 
 private:

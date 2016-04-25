@@ -6,7 +6,7 @@ const uint CoinCollectible::coinValues[2] = {
     1000
 };
 
-CoinCollectible::CoinCollectible(std::shared_ptr<CarrotQt5> root, CoinType type, double x, double y, bool fromEventMap)
+CoinCollectible::CoinCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, CoinType type, bool fromEventMap)
     : Collectible(root, x, y, fromEventMap), coinType(type) {
     scoreValue = coinValues[(uint)type % 2];
     switch (coinType) {
