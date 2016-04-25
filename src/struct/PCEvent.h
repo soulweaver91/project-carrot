@@ -1,7 +1,5 @@
 #pragma once
 
-// These need to match the other event tables (at the moment only at Collectible.h) where applicable
-// because created objects are directly cast from these values in the event spawner
 enum PCEvent {
     PC_EMPTY                = 0x0000,
     PC_FAST_FIRE            = 0x0001,
@@ -58,5 +56,41 @@ enum PCEvent {
     PC_COIN_GOLD            = 0x0049,
     PC_MOVING_PLATFORM      = 0x00C4,
     PC_AREA_FLOAT_UP        = 0x0142,
-    PC_MODIFIER_TUBE        = 0x0144
+    PC_MODIFIER_TUBE        = 0x0144,
+    PC_FOOD_APPLE           = 0x008D,
+    PC_FOOD_BANANA          = 0x008E,
+    PC_FOOD_CHERRY          = 0x008F,
+    PC_FOOD_ORANGE          = 0x0090,
+    PC_FOOD_PEAR            = 0x0091,
+    PC_FOOD_PRETZEL         = 0x0092,
+    PC_FOOD_STRAWBERRY      = 0x0093,
+    PC_FOOD_LEMON           = 0x009A,
+    PC_FOOD_LIME            = 0x009B,
+    PC_FOOD_THING           = 0x009C,
+    PC_FOOD_WATERMELON      = 0x009D,
+    PC_FOOD_PEACH           = 0x009E,
+    PC_FOOD_GRAPES          = 0x009F,
+    PC_FOOD_LETTUCE         = 0x00A0,
+    PC_FOOD_EGGPLANT        = 0x00A1,
+    PC_FOOD_CUCUMBER        = 0x00A2,
+    PC_FOOD_PEPSI           = 0x00A3,
+    PC_FOOD_COKE            = 0x00A4,
+    PC_FOOD_MILK            = 0x00A5,
+    PC_FOOD_PIE             = 0x00A6,
+    PC_FOOD_CAKE            = 0x00A7,
+    PC_FOOD_DONUT           = 0x00A8,
+    PC_FOOD_CUPCAKE         = 0x00A9,
+    PC_FOOD_CHIPS           = 0x00AA,
+    PC_FOOD_CANDY           = 0x00AB,
+    PC_FOOD_CHOCOLATE       = 0x00AC,
+    PC_FOOD_ICE_CREAM       = 0x00AD,
+    PC_FOOD_BURGER          = 0x00AE,
+    PC_FOOD_PIZZA           = 0x00AF,
+    PC_FOOD_FRIES           = 0x00B0,
+    PC_FOOD_CHICKEN_LEG     = 0x00B1,
+    PC_FOOD_SANDWICH        = 0x00B2,
+    PC_FOOD_TACO            = 0x00B3,
+    PC_FOOD_HOT_DOG         = 0x00B4,
+    PC_FOOD_HAM             = 0x00B5,
+    PC_FOOD_CHEESE          = 0x00B6
 };

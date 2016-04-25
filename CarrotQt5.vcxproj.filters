@@ -260,6 +260,9 @@
     <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp">
       <Filter>Source Files\Actor\Collectible</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\collectible\FoodCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -433,6 +436,9 @@
       <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\collectible\FastFireCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\FoodCollectible.h">
       <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
   </ItemGroup>

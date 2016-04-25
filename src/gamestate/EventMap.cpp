@@ -6,6 +6,7 @@
 #include "../actor/collectible/AmmoCollectible.h"
 #include "../actor/collectible/CoinCollectible.h"
 #include "../actor/collectible/FastFireCollectible.h"
+#include "../actor/collectible/FoodCollectible.h"
 #include "../actor/Player.h"
 #include "../actor/enemy/Enemy.h"
 #include "../actor/PushBox.h"
@@ -139,6 +140,44 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                             static_cast<PlatformType>(tile->eventParams[0]),
                             tile->eventParams[3], (qint16)tile->eventParams[2], tile->eventParams[1],
                             tile->eventParams[4] != 0);
+                        break;
+                    case PC_FOOD_APPLE:
+                    case PC_FOOD_BANANA:
+                    case PC_FOOD_CHERRY:
+                    case PC_FOOD_ORANGE:
+                    case PC_FOOD_PEAR:
+                    case PC_FOOD_PRETZEL:
+                    case PC_FOOD_STRAWBERRY:
+                    case PC_FOOD_LEMON:
+                    case PC_FOOD_LIME:
+                    case PC_FOOD_THING:
+                    case PC_FOOD_WATERMELON:
+                    case PC_FOOD_PEACH:
+                    case PC_FOOD_GRAPES:
+                    case PC_FOOD_LETTUCE:
+                    case PC_FOOD_EGGPLANT:
+                    case PC_FOOD_CUCUMBER:
+                    case PC_FOOD_PEPSI:
+                    case PC_FOOD_COKE:
+                    case PC_FOOD_MILK:
+                    case PC_FOOD_PIE:
+                    case PC_FOOD_CAKE:
+                    case PC_FOOD_DONUT:
+                    case PC_FOOD_CUPCAKE:
+                    case PC_FOOD_CHIPS:
+                    case PC_FOOD_CANDY:
+                    case PC_FOOD_CHOCOLATE:
+                    case PC_FOOD_ICE_CREAM:
+                    case PC_FOOD_BURGER:
+                    case PC_FOOD_PIZZA:
+                    case PC_FOOD_FRIES:
+                    case PC_FOOD_CHICKEN_LEG:
+                    case PC_FOOD_SANDWICH:
+                    case PC_FOOD_TACO:
+                    case PC_FOOD_HOT_DOG:
+                    case PC_FOOD_HAM:
+                    case PC_FOOD_CHEESE:
+                        createCommonActorEvent<FoodCollectible>(x, y, tile->storedEvent);
                         break;
                 }
                 tile->isEventActive = true;

@@ -71,6 +71,210 @@
       "states": [
         "0"
       ]
+    },
+    "PICKUP_FOOD_APPLE": {
+      "filename": "pickup/food_apple.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_BANANA": {
+      "filename": "pickup/food_banana.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_BURGER": {
+      "filename": "pickup/food_burger.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CAKE": {
+      "filename": "pickup/food_cake.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CANDY": {
+      "filename": "pickup/food_candy.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CHEESE": {
+      "filename": "pickup/food_cheese.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CHERRY": {
+      "filename": "pickup/food_cherry.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CHICKEN": {
+      "filename": "pickup/food_chicken.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CHIPS": {
+      "filename": "pickup/food_chips.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CHOCOLATE": {
+      "filename": "pickup/food_chocolate.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_COLA": {
+      "filename": "pickup/food_cola.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CUCUMBER": {
+      "filename": "pickup/food_cucumber.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_CUPCAKE": {
+      "filename": "pickup/food_cupcake.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_DONUT": {
+      "filename": "pickup/food_donut.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_EGGPLANT": {
+      "filename": "pickup/food_eggplant.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_FRIES": {
+      "filename": "pickup/food_fries.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_GRAPES": {
+      "filename": "pickup/food_grapes.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_HAM": {
+      "filename": "pickup/food_ham.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_HOTDOG": {
+      "filename": "pickup/food_hotdog.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_ICECREAM": {
+      "filename": "pickup/food_ice_cream.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_LEMON": {
+      "filename": "pickup/food_lemon.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_LIME": {
+      "filename": "pickup/food_lime.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_MILK": {
+      "filename": "pickup/food_milk.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_ORANGE": {
+      "filename": "pickup/food_orange.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_PEACH": {
+      "filename": "pickup/food_peach.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_PEAR": {
+      "filename": "pickup/food_pear.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_PIZZA": {
+      "filename": "pickup/food_pizza.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_PRETZEL": {
+      "filename": "pickup/food_pretzel.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_SANDWICH": {
+      "filename": "pickup/food_sandwich.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_SODA": {
+      "filename": "pickup/food_soda.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_STRAWBERRY": {
+      "filename": "pickup/food_strawberry.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_TACO": {
+      "filename": "pickup/food_taco.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_THING": {
+      "filename": "pickup/food_thing.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_WATERMELON": {
+      "filename": "pickup/food_watermelon.png",
+      "states": [
+        "0"
+      ]
     }
   },
   "sounds": {

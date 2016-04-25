@@ -57,6 +57,7 @@ public:
     void addGems(GemType type, unsigned amount);
     void addCoins(CoinType type, unsigned amount);
     void addFastFire(unsigned amount);
+    void consumeFood(const bool& isDrinkable);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
 
@@ -86,6 +87,7 @@ private:
     unsigned long score;
     unsigned collectedGems[4];
     unsigned collectedCoins[2];
+    unsigned foodCounter;
 
     enum WeaponType currentWeapon;
     unsigned weaponCooldown;

@@ -160,6 +160,7 @@
     <ClCompile Include="src\actor\collectible\AmmoCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\CoinCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp" />
+    <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="src\actor\collectible\AmmoCollectible.h" />
     <ClInclude Include="src\actor\collectible\CoinCollectible.h" />
     <ClInclude Include="src\actor\collectible\FastFireCollectible.h" />
+    <ClInclude Include="src\actor\collectible\FoodCollectible.h" />
     <ClInclude Include="src\actor\collectible\GemCollectible.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />

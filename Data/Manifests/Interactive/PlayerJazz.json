@@ -286,6 +286,22 @@
     },
     "PLAYER_VINE_ATTACH": {
       "filename": "common/swish_9.wav"
+    },
+    "PLAYER_CONSUME_DRINK": {
+      "filename": [
+        "pickup/food_drink_1.wav",
+        "pickup/food_drink_2.wav",
+        "pickup/food_drink_3.wav",
+        "pickup/food_drink_4.wav"
+      ]
+    },
+    "PLAYER_CONSUME_FOOD": {
+      "filename": [
+        "pickup/food_edible_1.wav",
+        "pickup/food_edible_2.wav",
+        "pickup/food_edible_3.wav",
+        "pickup/food_edible_4.wav"
+      ]
     }
   },
   "children": [

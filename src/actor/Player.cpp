@@ -13,7 +13,7 @@
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
-    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0),
+    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), foodCounter(0),
     poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
     loadResources("Interactive/PlayerJazz");
 
@@ -662,6 +662,20 @@ void Player::addCoins(CoinType type, unsigned amount) {
 void Player::addFastFire(unsigned amount) {
     fastfires = std::min(fastfires + 1, 10);
     playSound("PLAYER_PICKUP_AMMO");
+}
+
+void Player::consumeFood(const bool& isDrinkable) {
+    foodCounter += 1;
+    while (foodCounter >= 100) {
+        foodCounter -= 100;
+        // TODO: Sugar rush
+    }
+
+    if (isDrinkable) {
+        playSound("PLAYER_CONSUME_DRINK");
+    } else {
+        playSound("PLAYER_CONSUME_FOOD");
+    }
 }
 
 bool Player::perish() {
