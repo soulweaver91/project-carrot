@@ -40,7 +40,7 @@ void MovingPlatform::tickEvent() {
     hitbox.top -= 2;
 
     auto players = root->getCollidingPlayer(hitbox);
-    foreach(auto p, players) {
+    for (const auto& p : players) {
         p.lock()->setCarryingPlatform(std::dynamic_pointer_cast<MovingPlatform>(shared_from_this()));
     }
 
@@ -49,7 +49,7 @@ void MovingPlatform::tickEvent() {
         hitbox.bottom += 40;
 
         auto players = root->getCollidingPlayer(hitbox);
-        foreach(auto p, players) {
+        for (const auto& p : players) {
             p.lock()->takeDamage(2);
         }
     }

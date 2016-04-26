@@ -58,14 +58,14 @@ std::shared_ptr<ResourceSet> ResourceManager::loadActorTypeResources(const QStri
     const QJsonObject sounds = manifest.object().value("sounds").toObject();
     if (manifest.object().value("children").isArray()) {
         const QJsonArray children = manifest.object().value("children").toArray();
-        foreach(QJsonValue child, children) {
+        for (const QJsonValue& child : children) {
             if (child.isString()) {
                 loadActorTypeResources(child.toString());
             }
         }
     }
 
-    foreach(const QString& graphicId, graphics.keys()) {
+    for(const QString& graphicId : graphics.keys()) {
         if (!graphics.value(graphicId).isObject()) {
             continue;
         }
@@ -84,7 +84,7 @@ std::shared_ptr<ResourceSet> ResourceManager::loadActorTypeResources(const QStri
         auto localResource = std::make_shared<GraphicResource>(*resource);
         
         if (graphic.contains("states") && graphic.value("states").isArray()) {
-            foreach(QJsonValue value, graphic.value("states").toArray()) {
+            for(const QJsonValue& value : graphic.value("states").toArray()) {
                 if (value.isString()) {
                     localResource->state.insert(value.toString().toUInt());
                 }
@@ -117,7 +117,7 @@ std::shared_ptr<ResourceSet> ResourceManager::loadActorTypeResources(const QStri
 
         set->graphics.insert(graphicId, localResource);
     }
-    foreach(const QString& soundId, sounds.keys()) {
+    for (const QString& soundId : sounds.keys()) {
         if (!sounds.value(soundId).isObject()) {
             continue;
         }
@@ -129,7 +129,7 @@ std::shared_ptr<ResourceSet> ResourceManager::loadActorTypeResources(const QStri
 
         QVector<QString> names;
         if (sound.value("filename").isArray()) {
-            foreach(auto item, sound.value("filename").toArray()) {
+            for (const auto& item : sound.value("filename").toArray()) {
                 if (item.isString()) {
                     names << item.toString();
                 }
@@ -138,7 +138,7 @@ std::shared_ptr<ResourceSet> ResourceManager::loadActorTypeResources(const QStri
             names << sound.value("filename").toString();
         }
 
-        foreach(QString name, names) {
+        for (const QString& name : names) {
             auto handle = soundSystem->addSFX(soundId, name);
             if (handle == 0) {
                 continue;

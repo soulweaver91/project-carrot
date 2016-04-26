@@ -81,7 +81,7 @@ void CommonActor::processAllControlHeldEvents(const QMap<Control, ControlState>&
 
 void CommonActor::processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e) {
     // By default, just go through all events.
-    foreach(auto ev, e.keys()) {
+    for (const auto& ev : e.keys()) {
         processControlHeldEvent(qMakePair(ev, e.value(ev)));
     }
 }

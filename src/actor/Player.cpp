@@ -516,7 +516,7 @@ void Player::tickEvent() {
     }
 
     auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
-    foreach (auto collision, collisions) {
+    for (const auto& collision : collisions) {
         auto collisionPtr = collision.lock();
 
         // Different things happen with different actor types

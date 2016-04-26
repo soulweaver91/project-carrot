@@ -62,7 +62,7 @@ bool AnimationUser::setAnimation(const QString& animationId, const size_t& idx) 
 
 QVector<std::shared_ptr<GraphicResource>> AnimationUser::findAnimationCandidates(const AnimStateT& state) {
     QVector<std::shared_ptr<GraphicResource>> candidates;
-    foreach(auto a, animationBank) {
+    for (const auto& a : animationBank) {
         if (a->state.contains(state)) {
             candidates << a;
         }

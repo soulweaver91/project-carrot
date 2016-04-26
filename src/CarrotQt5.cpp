@@ -244,37 +244,37 @@ bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
 void CarrotQt5::processControlEvents() {
     ControlEventList events = controlManager->getPendingEvents();
 
-    foreach(auto pair, events.controlDownEvents) {
+    for (const auto& pair : events.controlDownEvents) {
         if (isMenu) {
             if (menuObject != nullptr) {
                 menuObject->processControlDownEvent(pair);
             }
         } else {
-            foreach(auto& actor, actors) {
+            for (auto& actor : actors) {
                 actor->processControlDownEvent(pair);
             }
         }
     }
 
     if (isMenu) {
-        foreach(auto key, events.controlHeldEvents.keys()) {
+        for (const auto& key : events.controlHeldEvents.keys()) {
             if (menuObject != nullptr) {
                 menuObject->processControlHeldEvent(qMakePair(key, events.controlHeldEvents.value(key)));
             }
         }
     } else {
-        foreach(auto& actor, actors) {
+        for (auto& actor : actors) {
             actor->processAllControlHeldEvents(events.controlHeldEvents);
         }
     }
 
-    foreach(auto pair, events.controlUpEvents) {
+    for (const auto& pair : events.controlUpEvents) {
         if (isMenu) {
             if (menuObject != nullptr) {
                 menuObject->processControlUpEvent(pair);
             }
         } else {
-            foreach(auto& actor, actors) {
+            for (auto& actor : actors) {
                 actor->processControlUpEvent(pair);
             }
         }

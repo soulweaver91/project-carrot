@@ -41,7 +41,7 @@ void ControlManager::setControlReleased(const Control& control) {
 }
 
 void ControlManager::processFrame() {
-    foreach(const auto& control, controlStates.keys()) {
+    for (const auto& control : controlStates.keys()) {
         ControlState& state = controlStates[control];
 
         if (state.pressStarted) {
@@ -60,7 +60,7 @@ void ControlManager::processFrame() {
 
 ControlEventList ControlManager::getPendingEvents() {
     ControlEventList events;
-    foreach(const auto& control, controlStates.keys()) {
+    for (const auto& control : controlStates.keys()) {
         const ControlState& state = controlStates.value(control);
         auto event = qMakePair(control, state);
 
