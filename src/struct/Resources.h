@@ -14,6 +14,7 @@ struct GraphicResource {
     QSet<AnimStateT> state;
     std::shared_ptr<sf::Texture> texture;
     sf::Vector2i frameDimensions;
+    sf::Vector2i frameConfiguration;
     uint frameDuration;
     uint frameCount;
     uint frameOffset;

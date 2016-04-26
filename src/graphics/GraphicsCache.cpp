@@ -9,6 +9,7 @@ const GraphicResource GraphicsCache::defaultResource = {
     {},
     nullptr,
     sf::Vector2i(0, 0),
+    sf::Vector2i(0, 0),
     0,
     0,
     0,
@@ -76,19 +77,37 @@ std::shared_ptr<GraphicResource> GraphicsCache::request(const QString& filename)
             }
         }
 
+        if (manifestRoot.contains("frameCount") && manifestRoot.value("frameCount").isDouble()) {
+            res->frameCount = manifestRoot.value("frameCount").toInt();
+        }
+
+        if (manifestRoot.contains("framesPerRow") && manifestRoot.value("framesPerRow").isDouble()) {
+            res->frameConfiguration.x = manifestRoot.value("framesPerRow").toInt();
+        } else {
+            res->frameConfiguration.x = res->frameCount;
+        }
+
+        if (manifestRoot.contains("framesPerCol") && manifestRoot.value("framesPerCol").isDouble()) {
+            res->frameConfiguration.y = manifestRoot.value("framesPerCol").toInt();
+        } else {
+            res->frameConfiguration.y = 1;
+        }
+
         if (manifestRoot.contains("width") && manifestRoot.value("width").isDouble()) {
             res->frameDimensions.x = manifestRoot.value("width").toInt();
-            res->frameCount = res->texture->getSize().x / res->frameDimensions.x;
         } else {
-            res->frameCount = res->texture->getSize().x;
-            res->frameCount = 1;
+            res->frameDimensions.x = res->texture->getSize().x;
+            res->frameConfiguration.x = 1;
         }
 
         if (manifestRoot.contains("height") && manifestRoot.value("height").isDouble()) {
             res->frameDimensions.y = manifestRoot.value("height").toInt();
         } else {
-            res->frameCount = res->texture->getSize().y;
+            res->frameDimensions.y = res->texture->getSize().y;
+            res->frameConfiguration.y = 1;
         }
+
+        res->frameCount = std::min(res->frameCount, (uint)(res->frameConfiguration.x * res->frameConfiguration.y));
 
         if (manifestRoot.contains("fps") && manifestRoot.value("fps").isDouble()) {
             int value = manifestRoot.value("fps").toInt();

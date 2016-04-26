@@ -89,7 +89,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     }
 
     // Read the main font
-    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 1, 224, 32, 256);
+    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 15, 32, 256);
     
     installEventFilter(this);
 

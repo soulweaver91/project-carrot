@@ -20,8 +20,6 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     }
     widthFile.close();
 
-    int charX = 0;
-    int charY = 0;
     int charCode = 0;
     firstCharCode = first;
     unsigned i = 0;
@@ -30,13 +28,12 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     }
     for (; i < last; ++i, ++charCode) {
         charWidth[i] = widthFromFileTable[charCode];
-        auto new_spr = std::make_shared<sf::Sprite>(fontTexture, sf::IntRect(charX, charY, widthFromFileTable[charCode], height));
+        auto new_spr = std::make_shared<sf::Sprite>(fontTexture, sf::IntRect(
+            ((i - first) % cols) * width,
+            ((i - first) / cols) * height,
+            widthFromFileTable[charCode],
+            height));
         characterMap.push_back(new_spr);
-        charX += width;
-        if (charCode % cols == (cols - 1)) {
-            charY += height;
-            charX = 0;
-        }
         if ((charCode > last) || (i >= 255)) {
             break;
         }

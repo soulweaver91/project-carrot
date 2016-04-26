@@ -126,8 +126,9 @@ void AnimationInstance::advanceAnimation() {
 
     frame = (frame + 1) % animationLength;
 
-    int frameLeft = (frame + animation->frameOffset) * animation->frameDimensions.x;
-    sprite.setTextureRect(sf::IntRect(frameLeft, 0, animation->frameDimensions.x, animation->frameDimensions.y));
+    int frameLeft = ((frame + animation->frameOffset) % animation->frameConfiguration.x) * animation->frameDimensions.x;
+    int frameTop  = ((frame + animation->frameOffset) / animation->frameConfiguration.x) * animation->frameDimensions.y;
+    sprite.setTextureRect(sf::IntRect(frameLeft, frameTop, animation->frameDimensions.x, animation->frameDimensions.y));
 
     if (frame == 0) {
         owner->animationFinishedHook(nullptr);
@@ -187,7 +188,9 @@ void AnimationInstance::clearCallback() {
 
 void AnimationInstance::resetFrame() {
     frame = animation->frameOffset;
-    sprite.setTextureRect(sf::IntRect(frame * animation->frameDimensions.x, 0,
+    sprite.setTextureRect(sf::IntRect(
+        (frame % animation->frameConfiguration.x) * animation->frameDimensions.x,
+        (frame / animation->frameConfiguration.x) * animation->frameDimensions.y,
         animation->frameDimensions.x,
         animation->frameDimensions.y));
 }
