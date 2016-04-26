@@ -27,7 +27,7 @@
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
 #ifdef CARROT_DEBUG
-    currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true),
+    currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true), initialized(false),
 #endif
     paused(false), levelName(""), frame(0), gravity(0.3), isMenu(false), menuObject(nullptr), fps(0) {
 #ifndef CARROT_DEBUG
@@ -72,14 +72,25 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
 
-    // Read the main font
-    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 1, 224, 32, 256);
-    
     resourceManager = std::make_unique<ResourceManager>();
     controlManager = std::make_shared<ControlManager>();
 
-    ShaderSource::initialize();
+    bool shadersSupported = ShaderSource::initialize();
+    int maxTextureSize = sf::Texture::getMaximumSize();
+    if (!shadersSupported  || maxTextureSize < 4096) {
+        QMessageBox::critical(nullptr, "System unsupported", QString(
+            "Your graphics card is not compatible with Project Carrot. For running Project Carrot, "
+            "support for OpenGL shaders and a minimum texture size of 4096 by 4096 pixels is required.\n\n"
+            "Your graphics card does%1 support shaders.\n"
+            "Your graphics card has a maximum texture size of %2 by %2 pixels."
+        ).arg(shadersSupported ? "" : " not").arg(maxTextureSize));
+        exit(EXIT_FAILURE);
+        return;
+    }
 
+    // Read the main font
+    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 1, 224, 32, 256);
+    
     installEventFilter(this);
 
     // Define pause screen resources
@@ -95,9 +106,14 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     pausedText->setAnimation(true, 0.0, 6.0, 0.015, 1.25);
 
     lastTimestamp = QTime::currentTime();
+    initialized = true;
 }
 
 CarrotQt5::~CarrotQt5() {
+    if (!initialized) {
+        return;
+    }
+
     if (!isMenu) {
         cleanUpLevel();
     }
@@ -106,6 +122,10 @@ CarrotQt5::~CarrotQt5() {
 }
 
 void CarrotQt5::parseCommandLine() {
+    if (!initialized) {
+        return;
+    }
+
     QStringList param = QCoreApplication::arguments();
     QString level = "";
     if (param.size() > 1) {

@@ -145,6 +145,7 @@ private:
     bool isMenu;
     QTime lastTimestamp;
     float fps;
+    bool initialized;
 
 private slots:
     void gameTick();

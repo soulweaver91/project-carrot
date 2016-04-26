@@ -9,7 +9,7 @@ class ShaderSource {
 public:
     ShaderSource() = delete;
     ~ShaderSource() = delete;
-    static void initialize();
+    static bool initialize();
     static void teardown();
     static std::shared_ptr<sf::Shader> getShader(const QString& name);
 

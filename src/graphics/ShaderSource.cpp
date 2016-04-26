@@ -5,12 +5,14 @@ QMap<QString, std::shared_ptr<sf::Shader>> ShaderSource::shaders = QMap<QString,
 
 bool ShaderSource::systemSupportsShaders = false;
 
-void ShaderSource::initialize() {
+bool ShaderSource::initialize() {
     systemSupportsShaders = sf::Shader::isAvailable();
     if (systemSupportsShaders) {
         loadShader("ColorizeShader");
         loadShader("LightingShader");
     }
+
+    return systemSupportsShaders;
 }
 
 void ShaderSource::teardown() {
