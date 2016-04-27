@@ -407,6 +407,7 @@ void Player::tickEvent() {
     // check if uppercut ended
     if (((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
         endDamagingMove();
+        setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
     }
     
     auto events = root->getGameEvents().lock();
@@ -470,9 +471,7 @@ void Player::tickEvent() {
                 break;
             case PC_MODIFIER_TUBE:
                 {
-                    setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
-                    isUsingDamagingMove = false;
-                    controllable = true;
+                    endDamagingMove();
                     setTransition(AnimState::DASH | AnimState::JUMP, false, false, false);
                     isGravityAffected = false;
                     speedX = 0;
@@ -583,6 +582,7 @@ void Player::tickEvent() {
             auto spring = std::dynamic_pointer_cast<Spring>(collisionPtr);
             if (spring != nullptr) {
                 sf::Vector2f params = spring->activate();
+                endDamagingMove();
                 short sign = ((params.x + params.y) > 1e-6 ? 1 : -1);
                 if (abs(params.x) > 1e-6) {
                     speedX = (4 + abs(params.x)) * sign;
@@ -782,7 +782,6 @@ void Player::endDamagingMove() {
     controllable = true;
     isGravityAffected = true;
     setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
-    setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
 }
 
 void Player::returnControl() {
