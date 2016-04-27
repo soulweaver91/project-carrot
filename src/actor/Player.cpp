@@ -468,6 +468,28 @@ void Player::tickEvent() {
                     isGravityAffected = false;
                 }
                 break;
+            case PC_MODIFIER_TUBE:
+                {
+                    setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
+                    isUsingDamagingMove = false;
+                    controllable = true;
+                    setTransition(AnimState::DASH | AnimState::JUMP, false, false, false);
+                    isGravityAffected = false;
+                    speedX = 0;
+                    speedY = 0;
+                    float moveX = (qint16)p[0] * 1.0;
+                    float moveY = (qint16)p[1] * 1.0;
+                    if (p[0] != 0) {
+                        posY = std::floor(posY / 32) * 32 + 8;
+                        speedX = moveX;
+                        posX += speedX;
+                    } else {
+                        posX = std::floor(posX / 32) * 32 + 16;
+                        speedY = moveY;
+                        posY += speedY;
+                    }
+                }
+                break;
             case PC_AREA_EOL:
                 if (controllable) {
                     playSound("PLAYER_JAZZ_EOL");
