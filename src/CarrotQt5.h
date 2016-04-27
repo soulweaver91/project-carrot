@@ -159,6 +159,7 @@ private slots:
     void debugSetGravity();
     void debugSetLighting();
     void debugSetPosition();
+    void debugSugarRush();
     void debugSetOverlaysActive(bool active);
 #endif
 };

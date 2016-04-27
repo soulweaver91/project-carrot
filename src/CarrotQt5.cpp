@@ -61,6 +61,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     connect(ui.debug_masks, SIGNAL(triggered(bool)), this, SLOT(debugShowMasks(bool)));
     connect(ui.debug_position, SIGNAL(triggered()), this, SLOT(debugSetPosition()));
     connect(ui.debug_overlays, SIGNAL(triggered(bool)), this, SLOT(debugSetOverlaysActive(bool)));
+    connect(ui.debug_rush, SIGNAL(triggered()), this, SLOT(debugSugarRush()));
 #else
     ui.menuDebug->menuAction()->setVisible(false);
 #endif
@@ -667,6 +668,17 @@ void CarrotQt5::debugSetPosition() {
     int x = QInputDialog::getInt(this, "Move player", "X position", player->getPosition().x, 0, gameTiles->getLevelWidth() * 32);
     int y = QInputDialog::getInt(this, "Move player", "Y position", player->getPosition().y, 0, gameTiles->getLevelHeight() * 32);
     player->moveInstantly({ x * 1.0, y * 1.0 });
+}
+
+void CarrotQt5::debugSugarRush() {
+    auto player = getPlayer(0).lock();
+    if (player == nullptr) {
+        return;
+    }
+
+    for (int i = 0; i < 100; ++i) {
+        player->consumeFood(false);
+    }
 }
 
 void CarrotQt5::debugSetOverlaysActive(bool active) {
