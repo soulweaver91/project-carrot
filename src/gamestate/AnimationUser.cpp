@@ -142,10 +142,8 @@ void AnimationInstance::drawCurrentFrame(sf::RenderTarget& canvas) {
     sf::RenderStates state;
     if (color != sf::Vector3i(0, 0, 0)) {
         auto shader = ShaderSource::getShader("ColorizeShader").get();
-        if (shader != nullptr) {
-            shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
-            state.shader = shader;
-        }
+        shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+        state.shader = shader;
     }
 
     canvas.draw(sprite, state);

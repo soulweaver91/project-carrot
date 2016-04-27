@@ -106,8 +106,6 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderTarget> destWindow, int x,
                 auto color = colouredFontColours[c % 7];
                 shader->setParameter("color", color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
                 state.shader = shader;
-            } else {
-                sprite->setColor(sf::Color::White);
             }
             sprite->setPosition(currentX + differenceX, y + differenceY);
             canvas->draw(*(sprite), state);

@@ -75,22 +75,20 @@ void GameView::drawUiElements() {
 
     sf::RenderStates states;
     auto shader = ShaderSource::getShader("LightingShader");
-    if (shader != nullptr) {
-        shader->setParameter("color", sf::Color::Black);
-        shader->setParameter("lightingLevel", lightingLevel / 100.0);
+    shader->setParameter("color", sf::Color::Black);
+    shader->setParameter("lightingLevel", lightingLevel / 100.0);
 
-        shader->setParameter("center", sf::Vector2f(
-            player->getPosition().x - playerView->getCenter().x + playerView->getSize().x / 2,
-            // Reverse the vertical coordinate, as the frame buffer is "upside down"
-            playerView->getSize().y - ((player->getPosition().y - 15) - playerView->getCenter().y + playerView->getSize().y / 2)
-        ));
-        states.shader = shader.get();
-        renderAuxiliaryCanvas->clear();
-        renderAuxiliaryCanvas->draw(*viewSprite.get(), states);
-        renderAuxiliaryCanvas->display();
-        std::swap(canvas, renderAuxiliaryCanvas);
-        viewSprite->setTexture(canvas->getTexture());
-    }
+    shader->setParameter("center", sf::Vector2f(
+        player->getPosition().x - playerView->getCenter().x + playerView->getSize().x / 2,
+        // Reverse the vertical coordinate, as the frame buffer is "upside down"
+        playerView->getSize().y - ((player->getPosition().y - 15) - playerView->getCenter().y + playerView->getSize().y / 2)
+    ));
+    states.shader = shader.get();
+    renderAuxiliaryCanvas->clear();
+    renderAuxiliaryCanvas->draw(*viewSprite.get(), states);
+    renderAuxiliaryCanvas->display();
+    std::swap(canvas, renderAuxiliaryCanvas);
+    viewSprite->setTexture(canvas->getTexture());
 
     // Draw the character icon; managed by the player object
     player->drawUIOverlay();
