@@ -72,6 +72,9 @@ private:
     void updateSprLayerIdx();
     void initializeBackgroundTexture(TileMapLayer& background);
     void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<GameView>& view);
+    void setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, const uint& x, const uint& y,
+        const TileDestructType& type, const quint16& extraByte);
+    bool advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const double& x, const double& y);
     std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
     std::unique_ptr<Tileset> levelTileset;
     QVector<TileMapLayer> levelLayout;

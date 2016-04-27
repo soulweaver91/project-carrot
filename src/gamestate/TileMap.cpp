@@ -772,23 +772,7 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     }
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
     if (tile->destructType == DESTRUCT_WEAPON && (tile->extraByte == 0 || tile->extraByte == (weapon + 1))) {
-        if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
-            // tile not destroyed yet, advance counter by one
-            tile->destructFrameIndex++;
-            tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
-            tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
-            if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
-                // the tile was destroyed, create debris
-                auto soundSystem = root->getSoundSystem().lock();
-                if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
-                    soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
-                }
-                root->createDebris(animatedTiles.at(tile->destructAnimation)
-                    ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),
-                    tx, ty);
-            }
-            return true;
-        }
+        return advanceDestructibleTileAnimation(tile, tx, ty);
     }
     return false;
 }
@@ -802,23 +786,7 @@ bool TileMap::checkSpecialDestructible(double x, double y) {
     }
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
     if (tile->destructType == DESTRUCT_SPECIAL) {
-        if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
-            // tile not destroyed yet, advance counter by one
-            tile->destructFrameIndex++;
-            tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
-            tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
-            if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
-                // the tile was destroyed, create debris
-                auto soundSystem = root->getSoundSystem().lock();
-                if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
-                    soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
-                }
-                root->createDebris(animatedTiles.at(tile->destructAnimation)
-                    ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),
-                    tx, ty);
-            }
-            return true;
-        }
+        return advanceDestructibleTileAnimation(tile, tx, ty);
     }
     return false;
 }
@@ -883,42 +851,50 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
             tile->suspendType = SuspendType::SUSPEND_HOOK;
             break;
         case PC_SCENERY_DESTRUCT:
-            if (tile->isAnimated) {
-                tile = cloneDefaultLayerTile(x, y);
-                tile->destructType = DESTRUCT_WEAPON;
-                tile->isAnimated = false;
-                tile->destructAnimation = tile->tileId;
-                tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
-                tile->destructFrameIndex = 0;
-                tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
-                tile->extraByte = p[0];
-            }
+            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_WEAPON, p[0]);
             break;
         case PC_SCENERY_BUTTSTOMP:
-            if (tile->isAnimated) {
-                tile = cloneDefaultLayerTile(x, y);
-                tile->destructType = DESTRUCT_SPECIAL;
-                tile->isAnimated = false;
-                tile->destructAnimation = tile->tileId;
-                tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
-                tile->destructFrameIndex = 0;
-                tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
-                tile->extraByte = p[0];
-            }
+            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_SPECIAL, p[0]);
             break;
         case PC_TRIGGER_AREA:
-            if (tile->isAnimated) {
-                tile = cloneDefaultLayerTile(x, y);
-                tile->destructType = DESTRUCT_TRIGGER;
-                tile->isAnimated = false;
-                tile->destructAnimation = tile->tileId;
-                tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
-                tile->destructFrameIndex = 0;
-                tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
-                tile->extraByte = p[0];
-            }
+            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_TRIGGER, p[0]);
             break;
     }
+}
+
+void TileMap::setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, const uint& x, const uint& y,
+    const TileDestructType& type, const quint16& extraByte) {
+    if (tile->isAnimated) {
+        tile = cloneDefaultLayerTile(x, y);
+        tile->destructType = type;
+        tile->isAnimated = false;
+        tile->destructAnimation = tile->tileId;
+        tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(0);
+        tile->destructFrameIndex = 0;
+        tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
+        tile->extraByte = extraByte;
+    }
+}
+
+bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const double& x, const double& y) {
+    if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
+        // tile not destroyed yet, advance counter by one
+        tile->destructFrameIndex++;
+        tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
+        tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
+        if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
+            // the tile was destroyed, create debris
+            auto soundSystem = root->getSoundSystem().lock();
+            if (soundSystem != nullptr && sceneryResources->sounds.contains("COMMON_SCENERY_DESTRUCT")) {
+                soundSystem->playSFX(sceneryResources->sounds.value("COMMON_SCENERY_DESTRUCT").sound);
+            }
+            root->createDebris(animatedTiles.at(tile->destructAnimation)
+                ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),
+                x, y);
+        }
+        return true;
+    }
+    return false;
 }
 
 SuspendType TileMap::getPosSuspendState(double x, double y) {
@@ -1000,4 +976,3 @@ void DestructibleDebris::drawUpdate(std::shared_ptr<GameView>& view) {
 double DestructibleDebris::getY() {
     return posY;
 }
-
