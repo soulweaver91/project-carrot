@@ -72,6 +72,7 @@ void GameView::drawUiElements() {
         return;
     }
     canvas->setView(*uiView.get());
+    canvas->display();
 
     sf::RenderStates states;
     auto shader = ShaderSource::getShader("LightingShader");
