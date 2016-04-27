@@ -498,7 +498,8 @@ bool CarrotQt5::loadLevel(const QString& name) {
             QString tileset = level_config.value("Level/Tileset", "").toString();
             
             nextLevel = level_config.value("Level/Next", "").toString();
-            
+            defaultLightingLevel = level_config.value("Level/LightInit", 100).toInt();
+
             QDir tileset_dir(QDir::currentPath() + QString::fromStdString("/Tilesets/") + tileset);
             if (tileset_dir.exists()) {
                 // Read the tileset and the sprite layer
@@ -548,12 +549,12 @@ bool CarrotQt5::loadLevel(const QString& name) {
                         players[i]->setView(views.last());
                     }
                 }
-                
-                resourceManager->getSoundSystem()->setMusic(("Music/" + level_config.value("Level/MusicDefault", "").toString().toUtf8()).data());
-                defaultLightingLevel = level_config.value("Level/LightInit", 100).toInt();
+
                 for (auto view : views) {
                     view->setLighting(defaultLightingLevel, true);
                 }
+
+                resourceManager->getSoundSystem()->setMusic(("Music/" + level_config.value("Level/MusicDefault", "").toString().toUtf8()).data());
                 
                 connect(ui.debug_health, SIGNAL(triggered()), players[0].get(), SLOT(debugHealth()));
                 connect(ui.debug_ammo, SIGNAL(triggered()), players[0].get(), SLOT(debugAmmo()));

@@ -312,6 +312,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                         case PC_LIGHT_RESET:
                             eventParams[0] = root->getDefaultLightingLevel();
                             storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
+                            break;
                         default:
                             storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
                             break;
