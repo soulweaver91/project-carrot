@@ -250,7 +250,7 @@ void CarrotQt5::processControlEvents() {
                 menuObject->processControlDownEvent(pair);
             }
         } else {
-            for (auto& actor : actors) {
+            foreach (auto& actor, actors) {
                 actor->processControlDownEvent(pair);
             }
         }
@@ -263,7 +263,7 @@ void CarrotQt5::processControlEvents() {
             }
         }
     } else {
-        for (auto& actor : actors) {
+        foreach (auto& actor, actors) {
             actor->processAllControlHeldEvents(events.controlHeldEvents);
         }
     }
@@ -274,7 +274,7 @@ void CarrotQt5::processControlEvents() {
                 menuObject->processControlUpEvent(pair);
             }
         } else {
-            for (auto& actor : actors) {
+            foreach (auto& actor, actors) {
                 actor->processControlUpEvent(pair);
             }
         }
