@@ -64,6 +64,11 @@ void Ammo::checkCollisions() {
     }
 
     if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY)) {
+        auto player = owner.lock();
+        if (player != nullptr) {
+            player->addScore(50);
+        }
+
         health = 0;
     }
 }

@@ -368,21 +368,27 @@ void Player::tickEvent() {
         }
     }
 
+    auto tileCollisionHitbox = getHitbox().extend(2 + std::abs(speedX), 2 + std::abs(speedY));
+
     // Buttstomp/etc. tiles checking
-    if (tiles != nullptr && (currentState & (AnimState::BUTTSTOMP | AnimState::UPPERCUT | AnimState::SIDEKICK)) > 0) {
-        // check all corners of hitbox
-        tiles->checkSpecialDestructible(posX - 14 + speedX, posY - 6 + speedY);
-        tiles->checkSpecialDestructible(posX + 14 + speedX, posY - 6 + speedY);
-        tiles->checkSpecialDestructible(posX - 14 + speedX, posY + 22 + speedY);
-        tiles->checkSpecialDestructible(posX + 14 + speedX, posY + 22 + speedY);
+    if (tiles != nullptr && (isUsingDamagingMove || isSugarRush)) {
+        uint destroyedCount = tiles->checkSpecialDestructible(tileCollisionHitbox);
+        addScore(destroyedCount * 50);
 
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(getHitbox().add(speedX, speedY), false, shared_from_this(), object))) {
+        if (!(root->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
             auto triggerCrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
             if (triggerCrate != nullptr) {
                 triggerCrate->decreaseHealth(1);
             }
         }
+    }
+
+    // Speed tiles checking
+    if (tiles != nullptr && (std::abs(speedX) > 1e-6 || std::abs(speedY) > 1e-6 || isSugarRush)) {
+        uint destroyedCount = tiles->checkSpecialSpeedDestructible(tileCollisionHitbox,
+            isSugarRush ? 64.0 : std::max(std::abs(speedX), std::abs(speedY)));
+        addScore(destroyedCount * 50);
     }
 
     // check if buttstomp ended

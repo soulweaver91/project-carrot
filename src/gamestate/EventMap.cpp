@@ -296,6 +296,8 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                         case PC_SCENERY_DESTRUCT:
                         case PC_SCENERY_BUTTSTOMP:
                         case PC_TRIGGER_AREA:
+                        case PC_SCENERY_DESTRUCT_SPD:
+                        case PC_SCENERY_COLLAPSE:
                         case PC_MODIFIER_H_POLE:
                         case PC_MODIFIER_V_POLE:
                             {

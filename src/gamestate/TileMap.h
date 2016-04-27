@@ -54,7 +54,8 @@ public:
     QVector<QVector<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
     void loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer);
     bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);
-    bool checkSpecialDestructible(double x, double y);
+    uint checkSpecialDestructible(const Hitbox& hitbox);
+    uint checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& speed);
     void saveInitialSpriteLayer();
     void setTrigger(unsigned char triggerID, bool newState);
     bool getTrigger(unsigned char triggerID);

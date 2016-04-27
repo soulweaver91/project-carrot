@@ -777,18 +777,42 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     return false;
 }
 
-bool TileMap::checkSpecialDestructible(double x, double y) {
-    int tx = static_cast<int>(x) / 32;
-    int ty = static_cast<int>(y) / 32;
+uint TileMap::checkSpecialDestructible(const Hitbox& hitbox) {
+    int x1 = hitbox.left / 32;
+    int x2 = std::min((uint)(hitbox.right / 32), levelWidth);
+    int y1 = hitbox.top / 32;
+    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight);
+    uint hit = 0;
+    for (int tx = x1; tx <= x2; ++tx) {
+        for (int ty = y1; ty <= y2; ++ty) {
+            auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
+            if (tile->destructType == DESTRUCT_SPECIAL) {
+                if (advanceDestructibleTileAnimation(tile, tx, ty)) {
+                    hit++;
+                }
+            }
+        }
+    }
+    return hit;
+}
 
-    if (ty >= levelHeight || tx >= levelWidth) {
-        return false;
+uint TileMap::checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& speed) {
+    int x1 = hitbox.left / 32;
+    int x2 = std::min((uint)(hitbox.right / 32), levelWidth);
+    int y1 = hitbox.top / 32;
+    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight);
+    uint hit = 0;
+    for (int tx = x1; tx <= x2; ++tx) {
+        for (int ty = y1; ty <= y2; ++ty) {
+            auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
+            if (tile->destructType == DESTRUCT_SPEED && tile->extraByte + 3 <= speed) {
+                if (advanceDestructibleTileAnimation(tile, tx, ty)) {
+                    hit++;
+                }
+            }
+        }
     }
-    auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
-    if (tile->destructType == DESTRUCT_SPECIAL) {
-        return advanceDestructibleTileAnimation(tile, tx, ty);
-    }
-    return false;
+    return hit;
 }
 
 void TileMap::saveInitialSpriteLayer() {
@@ -858,6 +882,12 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
             break;
         case PC_TRIGGER_AREA:
             setTileDestructibleEventFlag(tile, x, y, DESTRUCT_TRIGGER, p[0]);
+            break;
+        case PC_SCENERY_DESTRUCT_SPD:
+            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_SPEED, p[0]);
+            break;
+        case PC_SCENERY_COLLAPSE:
+            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_COLLAPSE, p[0]);
             break;
     }
 }
