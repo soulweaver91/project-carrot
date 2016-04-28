@@ -445,10 +445,10 @@ void Player::tickEvent() {
             break;
             case PC_MODIFIER_H_POLE:
                 if (poleSpinCount == 0) {
-                    posY = (qRound(posY - 15) / 32) * 32 + 16;
+                    posY = std::floor(qRound(posY) / 32) * 32 + 16;
                     setTransition(AnimState::TRANSITION_POLE_H_SLOW, false, true, false, &Player::endHPoleTransition);
                     poleSpinDirectionPositive = (speedX > 0);
-                    posX = (qRound(posX) / 32) * 32 + 16;
+                    posX = std::floor(qRound(posX) / 32) * 32 + 16;
                     poleSpinCount = 3;
                     speedX = 0;
                     speedY = 0;
@@ -461,10 +461,10 @@ void Player::tickEvent() {
                 break;
             case PC_MODIFIER_V_POLE:
                 if (poleSpinCount == 0) {
-                    posY = (qRound(posY) / 32) * 32 + 16;
+                    posY = std::floor(qRound(posY) / 32) * 32 + 16;
                     setTransition(AnimState::TRANSITION_POLE_V_SLOW, false, true, false, &Player::endVPoleTransition);
                     poleSpinDirectionPositive = (speedY > 0);
-                    posX = (qRound(posX) / 32) * 32 + 16;
+                    posX = std::floor(qRound(posX) / 32) * 32 + 16;
                     poleSpinCount = 3;
                     speedX = 0;
                     speedY = 0;
