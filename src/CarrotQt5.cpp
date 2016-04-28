@@ -201,12 +201,13 @@ void CarrotQt5::openHomePage() {
 }*/
 
 void CarrotQt5::closeEvent(QCloseEvent *event) {
-    QMessageBox msg;
+    QMessageBox msg(this);
     msg.setWindowTitle("Quit Project Carrot?");
     msg.setText("Are you sure you want to quit Project Carrot?");
     msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msg.setDefaultButton(QMessageBox::No);
     msg.setIcon(QMessageBox::Question);
+    msg.setWindowModality(Qt::ApplicationModal);
 
     if (msg.exec() == QMessageBox::No) {
         event->ignore();
@@ -216,12 +217,19 @@ void CarrotQt5::closeEvent(QCloseEvent *event) {
 bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
-        resourceManager->getSoundSystem()->fadeMusicIn(1000);
+        if (!isMenu) {
+            windowCanvas->draw(*pausedScreenshotSprite);
+            windowCanvas->updateContents();
+            pausedScreenshot->update(*windowCanvas);
+        }
         paused = false;
+        resourceManager->getSoundSystem()->fadeMusicIn(1000);
     } else if (e->type() == QEvent::WindowDeactivate) {
         resourceManager->getSoundSystem()->fadeMusicOut(1000);
+        if (!paused) {
+            pausedScreenshot->update(*windowCanvas);
+        }
         paused = true;
-        pausedScreenshot->update(*windowCanvas);
     } else if (e->type() == QEvent::Resize) {
         int w = ui.centralWidget->size().width();
         int h = ui.centralWidget->size().height();
