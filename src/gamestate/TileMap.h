@@ -4,6 +4,7 @@
 #include <QBitArray>
 #include <QVector>
 #include <QSettings>
+#include <QSet>
 #include <SFML/Graphics.hpp>
 
 #include "../graphics/Tileset.h"
@@ -56,10 +57,12 @@ public:
     bool checkWeaponDestructible(double x, double y, WeaponType weapon = WEAPON_BLASTER);
     uint checkSpecialDestructible(const Hitbox& hitbox);
     uint checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& speed);
+    uint checkCollapseDestructible(const Hitbox& hitbox);
     void saveInitialSpriteLayer();
     void setTrigger(unsigned char triggerID, bool newState);
     bool getTrigger(unsigned char triggerID);
     void advanceAnimatedTileTimers();
+    void advanceCollapsingTileTimers();
     const std::shared_ptr<sf::Texture> getTilesetTexture();
     bool isTileEmpty(unsigned x, unsigned y);
     bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
@@ -75,7 +78,7 @@ private:
     void drawTexturedBackground(TileMapLayer& layer, const double& x, const double& y, std::shared_ptr<GameView>& view);
     void setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, const uint& x, const uint& y,
         const TileDestructType& type, const quint16& extraByte);
-    bool advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const double& x, const double& y);
+    bool advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const double& x, const double& y, const QString& soundName);
     std::shared_ptr<LayerTile> cloneDefaultLayerTile(int x, int y);
     std::unique_ptr<Tileset> levelTileset;
     QVector<TileMapLayer> levelLayout;
@@ -89,4 +92,5 @@ private:
     unsigned levelHeight;
     sf::Color texturedBackgroundColor;
     std::shared_ptr<ResourceSet> sceneryResources;
+    QSet<QPair<int, int>> activeCollapsingTiles;
 };

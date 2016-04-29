@@ -385,8 +385,10 @@ void CarrotQt5::gameTick() {
     }
     gameEvents->activateEvents(views[0]->getViewCenter());
 
-    // Run isAnimated tiles' timers
+    // Run animated tiles' timers
     gameTiles->advanceAnimatedTileTimers();
+    gameTiles->advanceCollapsingTileTimers();
+
     // Run all actors' timers
     for (unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->advanceAnimationTimers();

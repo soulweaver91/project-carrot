@@ -5,6 +5,9 @@
   "sounds": {
     "COMMON_SCENERY_DESTRUCT": {
       "filename": "common/scenery_destruct.wav"
+    },
+    "COMMON_SCENERY_COLLAPSE": {
+      "filename": "common/scenery_collapse.wav"
     }
   }
 }
