@@ -402,7 +402,7 @@ void Player::tickEvent() {
 
     // check if copter ears ended
     if ((currentState & (AnimState::COPTER)) > 0) {
-        if (canJump || copterFramesLeft == 0) {
+        if (canJump || copterFramesLeft == 0 || suspendType != SUSPEND_NONE) {
             isGravityAffected = true;
             setAnimation(currentState & ~AnimState::COPTER);
         } else {
