@@ -806,6 +806,7 @@ void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance> animation) 
 void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance> animation) {
     speedY = 9;
     setAnimation(AnimState::BUTTSTOMP);
+    playSound("PLAYER_BUTTSTOMP", 1.0f, 0.0f, 0.8f);
 }
 
 bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, 

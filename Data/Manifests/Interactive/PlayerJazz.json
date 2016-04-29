@@ -307,6 +307,9 @@
       "filename": [
         "pickup/food_sugar_rush.wav"
       ]
+    },
+    "PLAYER_BUTTSTOMP": {
+      "filename": "common/down.wav"
     }
   },
   "children": [

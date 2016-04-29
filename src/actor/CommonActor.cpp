@@ -408,7 +408,8 @@ bool CommonActor::loadResources(const QString& classId) {
     return false;
 }
 
-bool CommonActor::playSound(const QString& id) {
+template<typename... P>
+bool CommonActor::playSound(const QString& id, P... params) {
     auto soundSystem = root->getSoundSystem().lock();
     if (soundSystem == nullptr) {
         return false;
@@ -416,12 +417,18 @@ bool CommonActor::playSound(const QString& id) {
 
     auto sounds = resources->sounds.values(id);
     if (sounds.length() > 0) {
-        soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound);
+        soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound, params...);
         return true;
     }
 
     return false;
 }
+
+// Specify allowed template instantations. This is apparently required to avoid implementing the template in the header.
+template bool CommonActor::playSound(const QString&);
+template bool CommonActor::playSound(const QString&, float);
+template bool CommonActor::playSound(const QString&, float, float);
+template bool CommonActor::playSound(const QString&, float, float, float);
 
 bool CommonActor::deactivate(int x, int y, int tileDistance) {
     auto events = root->getGameEvents().lock();

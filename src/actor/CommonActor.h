@@ -46,7 +46,10 @@ protected:
     virtual void onHitCeilingHook();
     virtual void onHitWallHook();
     bool loadResources(const QString& classId);
-    bool playSound(const QString& id);
+
+    template<typename... P>
+    bool playSound(const QString& id, P... params);
+
     std::shared_ptr<CarrotQt5> root;
     unsigned maxHealth;
     unsigned health;
