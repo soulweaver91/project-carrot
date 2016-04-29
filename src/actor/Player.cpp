@@ -265,6 +265,7 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
                     ammo[currentWeapon] -= 1;
                 }
 
+                osd->setAmmo(ammo[currentWeapon]);
                 if (ammo[currentWeapon] == 0) {
                     int newType = (currentWeapon + 1) % WEAPONCOUNT;
                     // Iterate through weapons to pick the next usable when running out of ammo
@@ -1045,7 +1046,6 @@ template<typename T> std::shared_ptr<T> Player::fireWeapon() {
 
     auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, isFacingLeft, lookup);
     root->addActor(newAmmo);
-    osd->setAmmo(ammo[currentWeapon]);
     return newAmmo;
 }
 
