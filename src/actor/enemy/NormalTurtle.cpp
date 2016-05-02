@@ -19,6 +19,7 @@ void EnemyNormalTurtle::tickEvent() {
         isTurning = true;
         hurtPlayer = false;
         speedX = 0;
+        playSound("ENEMY_TURTLE_WITHDRAW");
     }
 }
 
@@ -31,6 +32,7 @@ void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance> animation)
         if (!isWithdrawn) {
             isFacingLeft = !(isFacingLeft);
             setTransition(AnimState::TRANSITION_WITHDRAW_END, false, static_cast<AnimationCallbackFunc>(&EnemyNormalTurtle::handleTurn));
+            playSound("ENEMY_TURTLE_WITHDRAW_END");
             isWithdrawn = true;
         } else {
             hurtPlayer = true;
