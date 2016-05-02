@@ -20,6 +20,11 @@
     }
   },
   "sounds": {
-
+    "ENEMY_TURTLE_WITHDRAW": {
+      "filename": "turtle/turn_start.wav"
+    },
+    "ENEMY_TURTLE_WITHDRAW_END": {
+      "filename": "turtle/turn_end.wav"
+    }
   }
 }

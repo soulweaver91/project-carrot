@@ -150,6 +150,7 @@ void CarrotQt5::cleanUpLevel() {
     auto soundSystem = getSoundSystem().lock();
     if (soundSystem != nullptr) {
         soundSystem->clearSounds();
+        soundSystem->unregisterAllSoundListeners();
     }
     views.clear();
 }
@@ -403,6 +404,8 @@ void CarrotQt5::gameTick() {
         }
     }
 
+    resourceManager->updateSoundPositions();
+
     // TODO: Adapt for multiple players
     for (unsigned i = 0; i < debris.size(); i++) {
         debris.at(i)->tickUpdate();
@@ -546,11 +549,14 @@ bool CarrotQt5::loadLevel(const QString& name) {
                 }
 
                 gameTiles->saveInitialSpriteLayer();
+
                 
                 if (players[0] == nullptr) {
                     auto defaultplayer = std::make_shared<Player>(shared_from_this(), 320.0, 32.0);
                     addPlayer(defaultplayer, 0);
                 }
+
+                auto soundSystem = resourceManager->getSoundSystem();
 
                 views.clear();
                 sf::Vector2f viewSize(windowCanvas->getSize().x, windowCanvas->getSize().y);
@@ -558,6 +564,10 @@ bool CarrotQt5::loadLevel(const QString& name) {
                     if (players[i] != nullptr) {
                         views.append(std::make_shared<GameView>(shared_from_this(), i, viewSize));
                         players[i]->setView(views.last());
+
+                        if (soundSystem != nullptr) {
+                            soundSystem->registerSoundListener(players[i]->shared_from_this());
+                        }
                     }
                 }
 

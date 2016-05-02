@@ -174,7 +174,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     }
 
     if (type == OSD_GEM_BLUE || type == OSD_GEM_GREEN || type == OSD_GEM_RED || type == OSD_GEM_PURPLE) {
-        root->getSoundSystem().lock()->playSFX(gemSound, 1.0, 4.25 - abs(gemCounter % 16 - 8.25));
+        root->getSoundSystem().lock()->playSFX(gemSound, false, 1.0, 4.25 - abs(gemCounter % 16 - 8.25));
         gemCounter++;
     }
 }
