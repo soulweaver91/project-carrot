@@ -261,7 +261,7 @@ void CommonActor::tickEvent() {
     auto tiles = root->getGameTiles().lock();
     if (tiles != nullptr) {
         posX = std::min(std::max(posX, 0.0), tiles->getLevelWidth() * 32.0);
-        posY = std::min(std::max(posY, 0.0), tiles->getLevelHeight() * 32.0);
+        posY = std::min(std::max(posY, 0.0), tiles->getLevelHeight() * 32.0 + 31.0);
     }
 } 
 

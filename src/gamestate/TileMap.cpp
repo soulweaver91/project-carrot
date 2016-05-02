@@ -538,7 +538,7 @@ bool TileMap::isTileEmpty(unsigned x, unsigned y) {
 
 bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     // Consider out-of-level coordinates as solid walls
-    if ((hitbox.right >= levelWidth * 32) || (hitbox.bottom >= levelHeight * 32)
+    if ((hitbox.right >= levelWidth * 32) || (hitbox.bottom >= (levelHeight + 1) * 32)
      || (hitbox.left <= 0) || (hitbox.top <= 0)) {
         return false;
     }
@@ -552,7 +552,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
         int hx1 = floor(hitbox.left);
         int hx2 = ceil(hitbox.right);
         int hy1 = floor(hitbox.top);
-        int hy2 = ceil(hitbox.bottom);
+        int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 + 31.0);
 #ifdef CARROT_DEBUG
         if (root->dbgShowMasked) {
             auto target = root->getCanvas().lock();
