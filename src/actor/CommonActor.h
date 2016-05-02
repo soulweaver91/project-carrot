@@ -50,6 +50,9 @@ protected:
     template<typename... P>
     bool playSound(const QString& id, P... params);
 
+    template<typename... P>
+    bool playNonPositionalSound(const QString& id, P... params);
+
     std::shared_ptr<CarrotQt5> root;
     unsigned maxHealth;
     unsigned health;
@@ -73,4 +76,8 @@ protected:
     int originTileX;
     int originTileY;
     std::shared_ptr<ResourceSet> resources;
+
+private:
+    template<typename T, typename... P>
+    bool callPlaySound(const QString& id, T coordOrBool, P... params);
 };

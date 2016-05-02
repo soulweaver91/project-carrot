@@ -17,6 +17,7 @@ public:
     std::shared_ptr<SoundSystem> getSoundSystem();
     std::shared_ptr<GraphicsCache> getGraphicsCache();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
+    void updateSoundPositions();
 
 private:
     std::shared_ptr<SoundSystem> soundSystem;

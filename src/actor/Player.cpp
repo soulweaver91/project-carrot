@@ -500,7 +500,7 @@ void Player::tickEvent() {
                 break;
             case PC_AREA_EOL:
                 if (controllable) {
-                    playSound("PLAYER_JAZZ_EOL");
+                    playNonPositionalSound("PLAYER_JAZZ_EOL");
                     root->initLevelChange(NEXT_NORMAL);
                 }
                 controllable = false;
@@ -712,7 +712,7 @@ void Player::consumeFood(const bool& isDrinkable) {
             auto soundSystem = root->getSoundSystem().lock();
             if (soundSystem != nullptr) {
                 soundSystem->pauseMusic();
-                playSound("PLAYER_SUGAR_RUSH");
+                playNonPositionalSound("PLAYER_SUGAR_RUSH");
             }
 
             isSugarRush = true;

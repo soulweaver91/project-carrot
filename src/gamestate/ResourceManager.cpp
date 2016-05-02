@@ -154,3 +154,7 @@ std::shared_ptr<ResourceSet> ResourceManager::loadActorTypeResources(const QStri
     return set;
 }
 
+void ResourceManager::updateSoundPositions() {
+    soundSystem->updateSoundPositions();
+}
+

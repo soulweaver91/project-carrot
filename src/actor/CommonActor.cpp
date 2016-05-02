@@ -410,6 +410,16 @@ bool CommonActor::loadResources(const QString& classId) {
 
 template<typename... P>
 bool CommonActor::playSound(const QString& id, P... params) {
+    return callPlaySound(id, getPosition(), params...);
+}
+
+template<typename... P>
+bool CommonActor::playNonPositionalSound(const QString& id, P... params) {
+    return callPlaySound(id, false, params...);
+}
+
+template<typename T, typename... P>
+bool CommonActor::callPlaySound(const QString& id, T coordOrBool, P... params) {
     auto soundSystem = root->getSoundSystem().lock();
     if (soundSystem == nullptr) {
         return false;
@@ -417,7 +427,7 @@ bool CommonActor::playSound(const QString& id, P... params) {
 
     auto sounds = resources->sounds.values(id);
     if (sounds.length() > 0) {
-        soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound, params...);
+        soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound, coordOrBool, params...);
         return true;
     }
 
@@ -429,6 +439,10 @@ template bool CommonActor::playSound(const QString&);
 template bool CommonActor::playSound(const QString&, float);
 template bool CommonActor::playSound(const QString&, float, float);
 template bool CommonActor::playSound(const QString&, float, float, float);
+template bool CommonActor::playNonPositionalSound(const QString&);
+template bool CommonActor::playNonPositionalSound(const QString&, float);
+template bool CommonActor::playNonPositionalSound(const QString&, float, float);
+template bool CommonActor::playNonPositionalSound(const QString&, float, float, float);
 
 bool CommonActor::deactivate(int x, int y, int tileDistance) {
     auto events = root->getGameEvents().lock();
