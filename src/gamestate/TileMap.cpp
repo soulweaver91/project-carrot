@@ -925,7 +925,7 @@ void TileMap::setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, con
     }
 }
 
-bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const double& x, const double& y, const QString& soundName) {
+bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const int& x, const int& y, const QString& soundName) {
     if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
         // tile not destroyed yet, advance counter by one
         tile->destructFrameIndex++;
