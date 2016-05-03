@@ -1,7 +1,8 @@
 #include "AmmoBlaster.h"
 #include "../TriggerCrate.h"
 
-AmmoBlaster::AmmoBlaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
+AmmoBlaster::AmmoBlaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y,
+    double speed, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
     loadResources("Weapon/Blaster");
     if (firedUp) {
@@ -9,7 +10,7 @@ AmmoBlaster::AmmoBlaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> 
         AnimationUser::setAnimation("WEAPON_BLASTER_VER");
     } else {
         AnimationUser::setAnimation("WEAPON_BLASTER_HOR");
-        speedX = (firedLeft ? -12 : 12);
+        speedX = (firedLeft ? -12 : 12) + speed;
     }
 }
 

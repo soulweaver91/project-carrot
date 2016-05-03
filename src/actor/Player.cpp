@@ -1044,7 +1044,7 @@ template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
     int fire_y =  animation->hotspot.y - animation->gunspot.y;
 
-    auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, isFacingLeft, lookup);
+    auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup);
     root->addActor(newAmmo);
     return newAmmo;
 }

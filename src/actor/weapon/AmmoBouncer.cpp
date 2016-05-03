@@ -2,7 +2,8 @@
 #include "../../CarrotQt5.h"
 #include "../../gamestate/TileMap.h"
 
-AmmoBouncer::AmmoBouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
+AmmoBouncer::AmmoBouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y,
+    double speed, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 140) {
     elasticity = 0.9;
     loadResources("Weapon/Bouncer");
@@ -10,7 +11,7 @@ AmmoBouncer::AmmoBouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> 
         speedY = -2;
         isGravityAffected = false;
     } else {
-        speedX = (firedLeft ? -3 : 3);
+        speedX = (firedLeft ? -3 : 3) + speed;
     }
     setAnimation(AnimState::IDLE);
 }

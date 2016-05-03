@@ -2,7 +2,8 @@
 #include "../../CarrotQt5.h"
 #include "../../gamestate/TileMap.h"
 
-AmmoToaster::AmmoToaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft, bool firedUp)
+AmmoToaster::AmmoToaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y,
+    double speed, bool firedLeft, bool firedUp)
     : Ammo(root, firedBy, x, y, firedLeft, firedUp, 70) {
     isGravityAffected = false;
     loadResources("Weapon/Toaster");
@@ -11,7 +12,7 @@ AmmoToaster::AmmoToaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> 
         speedY = (1.0 + qrand() % 100 * 0.001) * -3;
     } else {
         speedY = (qrand() % 100 - 50.0) / 100.0;
-        speedX = (1.0 + qrand() % 100 * 0.001) * (firedLeft ? -3 : 3);
+        speedX = (1.0 + qrand() % 100 * 0.001) * (firedLeft ? -1 : 1) + speed;
     }
     setAnimation(AnimState::IDLE);
 }
