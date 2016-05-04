@@ -470,3 +470,16 @@ void CommonActor::deleteFromEventMap() {
     }
 }
 
+void CommonActor::updateGraphicState() {
+    const auto& source = inTransition ? transition : currentAnimation;
+    const auto& animation = source->getAnimation();
+
+    currentGraphicState = source->getGraphicState();
+    currentGraphicState.scale.x = isFacingLeft ? -1.0 : 1.0;
+    currentGraphicState.origin = { (float)posX, (float)posY };
+}
+
+const ActorGraphicState CommonActor::getGraphicState() {
+    return currentGraphicState;
+}
+

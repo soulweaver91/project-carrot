@@ -545,7 +545,7 @@ void Player::tickEvent() {
         cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, abs(cameraShiftFramesCount) - 10);
     }
 
-    auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
+    auto collisions = root->findCollisionActors(shared_from_this());
     for (const auto& collision : collisions) {
         auto collisionPtr = collision.lock();
 

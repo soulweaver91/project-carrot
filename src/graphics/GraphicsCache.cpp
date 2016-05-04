@@ -17,7 +17,8 @@ const GraphicResource GraphicsCache::defaultResource = {
     sf::Vector2i(0, 0),
     sf::Vector2i(0, 0),
     false,
-    false
+    false,
+    {}
 };
 
 GraphicsCache::GraphicsCache() {
@@ -117,6 +118,23 @@ std::shared_ptr<GraphicResource> GraphicsCache::request(const QString& filename)
         }
 
         res->frameOffset = 0;
+
+        sf::Image assetImage = res->texture->copyToImage();
+        for (uint i = 0; i < res->frameCount; ++i) {
+            auto mask = std::make_shared<QBitArray>();
+            mask->resize(res->frameDimensions.x * res->frameDimensions.y);
+
+            for (uint y = 0; y < res->frameDimensions.y; ++y) {
+                for (uint x = 0; x < res->frameDimensions.x; ++x) {
+                    mask->setBit(x + y * res->frameDimensions.x, assetImage.getPixel(
+                        res->frameDimensions.x * (i % res->frameConfiguration.x) + x,
+                        res->frameDimensions.y * (i / res->frameConfiguration.x) + y
+                    ) != sf::Color::Transparent);
+                }
+            }
+
+            res->bitmasks.append(mask);
+        }
 
         return res;
     }

@@ -23,6 +23,7 @@
 #include <QSettings>
 #include <QFile>
 #include <QDebug>
+#include <QTransform>
 #include <bass.h>
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
@@ -394,6 +395,7 @@ void CarrotQt5::gameTick() {
     for (unsigned i = 0; i < actors.size(); i++) {
         actors.at(i)->advanceAnimationTimers();
         actors.at(i)->advanceTimers();
+        actors.at(i)->updateGraphicState();
     }
 
     // Run all actors' tick events
@@ -628,18 +630,7 @@ void CarrotQt5::removeActor(std::shared_ptr<CommonActor> actor) {
     }
 }
 
-QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me) {
-    QVector<std::weak_ptr<CommonActor>> res;
-    for (int i = 0; i < actors.size(); ++i) {
-        CoordinatePair pos2 = actors.at(i)->getPosition();
-        if ((std::abs(pos.x - pos2.x) < 10) && (std::abs(pos.y - pos2.y) < 10)) {
-            res << actors.at(i);
-        }
-    }
-    return res;
-}
-
-QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hitbox, std::shared_ptr<CommonActor> me) {
+QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(const Hitbox& hitbox, std::shared_ptr<CommonActor> me) {
     QVector<std::weak_ptr<CommonActor>> res;
     for (int i = 0; i < actors.size(); ++i) {
         if (me == actors.at(i)) {
@@ -647,6 +638,80 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(Hitbox hitbox
         }
         if (actors.at(i)->getHitbox().overlaps(hitbox)) {
             res << actors.at(i);
+        }
+    }
+    return res;
+}
+
+QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(std::shared_ptr<CommonActor> me) {
+    const auto& myGS = me->getGraphicState();
+    
+    QVector<std::weak_ptr<CommonActor>> res;
+    QTransform tfMatrixA;
+    tfMatrixA
+        .rotate(myGS.angle * 360)
+        .scale(myGS.scale.x, myGS.scale.y)
+        .translate(-myGS.hotspot.x, -myGS.hotspot.y);
+
+    for (int i = 0; i < actors.size(); ++i) {
+        if (me == actors.at(i)) {
+            continue;
+        }
+        const auto& otherGS = actors.at(i)->getGraphicState();
+        bool done = false;
+
+        if (!myGS.boundingBox.intersects(otherGS.boundingBox)) {
+            continue;
+        }
+
+        sf::Vector2i delta = {
+            qRound(otherGS.origin.x - myGS.origin.x),
+            qRound(otherGS.origin.y - myGS.origin.y)
+        };
+
+        QTransform tfMatrixB;
+        tfMatrixB
+            .translate(otherGS.origin.x - myGS.origin.x, otherGS.origin.y - myGS.origin.y)
+            .rotate(otherGS.angle * 360)
+            .scale(otherGS.scale.x, otherGS.scale.y)
+            .translate(-otherGS.hotspot.x, -otherGS.hotspot.y);
+        tfMatrixB = tfMatrixB.inverted();
+
+        for (int y = 0; y < myGS.dimensions.y; ++y) {
+            if (done) {
+                break;
+            }
+            for (int x = 0; x < myGS.dimensions.x; ++x) {
+                if (done) {
+                    break;
+                }
+
+                if (!myGS.mask->at(y * myGS.dimensions.x + x)) {
+                    continue;
+                }
+
+                qreal worldX;
+                qreal worldY;
+                tfMatrixA.map(x, y, &worldX, &worldY);
+
+                qreal otherTexPosX;
+                qreal otherTexPosY;
+                tfMatrixB.map(worldX, worldY, &otherTexPosX, &otherTexPosY);
+                int otherTexPosXInt = qRound(otherTexPosX);
+                int otherTexPosYInt = qRound(otherTexPosY);
+
+                if (otherTexPosXInt < 0
+                 || otherTexPosYInt < 0
+                 || otherTexPosXInt >= otherGS.dimensions.x
+                 || otherTexPosYInt >= otherGS.dimensions.y) {
+                    continue;
+                }
+
+                if (otherGS.mask->at(otherTexPosXInt + otherGS.dimensions.x * otherTexPosYInt)) {
+                    done = true;
+                    res << actors.at(i);
+                }
+            }
         }
     }
     return res;

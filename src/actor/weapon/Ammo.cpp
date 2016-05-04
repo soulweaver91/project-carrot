@@ -25,7 +25,7 @@ void Ammo::tickEvent() {
 }
 
 void Ammo::checkCollisions() {
-    auto collisions = root->findCollisionActors(getHitbox(), shared_from_this());
+    auto collisions = root->findCollisionActors(shared_from_this());
     for (const auto& actor : collisions) {
         auto actorPtr = actor.lock();
         if (actorPtr == nullptr) {
