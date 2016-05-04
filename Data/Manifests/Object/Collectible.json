@@ -198,6 +198,12 @@
         "0"
       ]
     },
+    "PICKUP_FOOD_LETTUCE": {
+      "filename": "pickup/food_lettuce.png",
+      "states": [
+        "0"
+      ]
+    },
     "PICKUP_FOOD_LIME": {
       "filename": "pickup/food_lime.png",
       "states": [
@@ -224,6 +230,12 @@
     },
     "PICKUP_FOOD_PEAR": {
       "filename": "pickup/food_pear.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_FOOD_PIE": {
+      "filename": "pickup/food_pie.png",
       "states": [
         "0"
       ]
