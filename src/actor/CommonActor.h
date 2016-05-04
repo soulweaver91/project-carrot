@@ -3,6 +3,7 @@
 #include <memory>
 #include <QObject>
 #include <QKeyEvent>
+#include <QBitArray>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -36,6 +37,8 @@ public:
     virtual bool deactivate(int x, int y, int tileDistance);
     void moveInstantly(CoordinatePair location);
     void deleteFromEventMap();
+    void updateGraphicState();
+    const ActorGraphicState getGraphicState();
         
 protected:
     void processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e);
@@ -76,6 +79,7 @@ protected:
     int originTileX;
     int originTileY;
     std::shared_ptr<ResourceSet> resources;
+    ActorGraphicState currentGraphicState;
 
 private:
     template<typename T, typename... P>

@@ -205,6 +205,29 @@ void AnimationInstance::setColor(const sf::Vector3i & newColor) {
     color = newColor;
 }
 
+ActorGraphicState AnimationInstance::getGraphicState() {
+    if (animation == nullptr) {
+        return {
+            std::make_shared<QBitArray>(1, false),
+            { 0, 0 },
+            { 1, 1 },
+            sf::FloatRect(),
+            { 1.0, 1.0 },
+            { 0.0, 0.0 },
+            0.0f
+        };
+    }
+    return {
+        animation->bitmasks.at(frame),
+        animation->hotspot,
+        animation->frameDimensions,
+        sprite.getGlobalBounds(),
+        { 1.0, 1.0 },
+        { 0.0, 0.0 },
+        0.0f
+    };
+}
+
 void AnimationInstance::doCallback() {
     (owner->*(callback))(shared_from_this());
 }

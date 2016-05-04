@@ -27,6 +27,7 @@ public:
     void resetFrame();
     void resetAnimation();
     void setColor(const sf::Vector3i& newColor);
+    ActorGraphicState getGraphicState();
 
 private:
     void advanceAnimation();

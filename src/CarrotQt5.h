@@ -73,8 +73,8 @@ public:
     bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);
     void removeActor(std::shared_ptr<CommonActor> actor);
     bool loadLevel(const QString& name);
-    QVector<std::weak_ptr<CommonActor>> findCollisionActors(CoordinatePair pos, std::shared_ptr<CommonActor> me = nullptr);
-    QVector<std::weak_ptr<CommonActor>> findCollisionActors(Hitbox hitbox, std::shared_ptr<CommonActor> me = nullptr);
+    QVector<std::weak_ptr<CommonActor>> findCollisionActors(const Hitbox& hitbox, std::shared_ptr<CommonActor> me = nullptr);
+    QVector<std::weak_ptr<CommonActor>> findCollisionActors(std::shared_ptr<CommonActor> me = nullptr);
     void setSavePoint();
     void loadSavePoint();
     void clearActors();

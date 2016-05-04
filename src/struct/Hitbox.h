@@ -178,42 +178,42 @@ struct Hitbox {
         return extend(v, v, v, v);
     }
 
-    double width() {
+    double width() const {
         return right - left;
     }
 
-    double height() {
+    double height() const {
         return bottom - top;
     }
 
-    CoordinatePair center() {
+    CoordinatePair center() const {
         return { (left + right) / 2, (top + bottom) / 2 };
     }
 
     template<typename T>
-    bool contains(const T& ox, const T& oy) {
+    bool contains(const T& ox, const T& oy) const {
         return (ox >= left && ox <= right && oy >= top && oy <= bottom);
     }
 
     template<typename T>
-    bool contains(const sf::Vector2<T>& p) {
+    bool contains(const sf::Vector2<T>& p) const {
         return contains(p.x, p.y);
     }
 
-    bool contains(const CoordinatePair& p) {
+    bool contains(const CoordinatePair& p) const {
         return contains(p.x, p.y);
     }
 
-    bool overlaps(const Hitbox& other) {
+    bool overlaps(const Hitbox& other) const {
         return left < other.right && right > other.left
             && top < other.bottom && bottom > other.top;
     }
 
-    bool encloses(const Hitbox& other) {
+    bool encloses(const Hitbox& other) const {
         return contains(other.left, other.top) && contains(other.right, other.bottom);
     }
 
-    sf::FloatRect toSfFloatRect() {
+    sf::FloatRect toSfFloatRect() const {
         return { (float)left, (float)top, (float)(right - left), (float)(bottom - top) };
     }
 };
