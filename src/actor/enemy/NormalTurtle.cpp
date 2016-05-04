@@ -1,5 +1,7 @@
 #include "NormalTurtle.h"
 
+#include "../../CarrotQt5.h"
+
 EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
     : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
     loadResources("Enemy/Turtle");
@@ -21,6 +23,13 @@ void EnemyNormalTurtle::tickEvent() {
         speedX = 0;
         playSound("ENEMY_TURTLE_WITHDRAW");
     }
+
+    if (!isTurning && !isWithdrawn && !isAttacking) {
+        auto players = root->getCollidingPlayer(getHitbox().add(speedX * 64, 0.0));
+        if (players.length() > 0) {
+            attack();
+        }
+    }
 }
 
 Hitbox EnemyNormalTurtle::getHitbox() {
@@ -41,4 +50,17 @@ void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance> animation)
             speedX = (isFacingLeft ? -1 : 1) * 1;
         }
     }
+}
+
+void EnemyNormalTurtle::attack() {
+    setTransition(AnimState::TRANSITION_ATTACK, false, static_cast<AnimationCallbackFunc>(&EnemyNormalTurtle::endAttack));
+    speedX = 0;
+    isAttacking = true;
+    playSound("ENEMY_TURTLE_ATTACK");
+}
+
+void EnemyNormalTurtle::endAttack(std::shared_ptr<AnimationInstance> animation) {
+    speedX = (isFacingLeft ? -1 : 1) * 1;
+    isAttacking = false;
+    playSound("ENEMY_TURTLE_ATTACK_2");
 }

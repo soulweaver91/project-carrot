@@ -15,6 +15,7 @@ public:
 
 protected:
     bool hurtPlayer;
+    bool isAttacking;
     bool canMoveToPosition(double x, double y);
 };
 

@@ -79,6 +79,7 @@ namespace AnimState {
     // Aliases for object states overlapping player states
     unsigned const ACTIVATED            = 0x00000020;
     unsigned const TRANSITION_ACTIVATE  = 0x4F000000;
+    unsigned const TRANSITION_ATTACK    = 0x4F000001;
 
     unsigned const STATE_UNINITIALIZED  = 0xFFFFFFFF;
 }

@@ -14,7 +14,9 @@ public:
     void tickEvent() override;
     Hitbox getHitbox();
 private:
+    void attack();
     void handleTurn(std::shared_ptr<AnimationInstance> animation);
+    void endAttack(std::shared_ptr<AnimationInstance> animation);
     bool isTurning;
     bool isWithdrawn;
 };

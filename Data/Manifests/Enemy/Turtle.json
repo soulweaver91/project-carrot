@@ -17,6 +17,13 @@
       "states": [
         "1073741842"
       ]
+    },
+    "ENEMY_TURTLE_ATTACK": {
+      "filename": "turtle/attack.png",
+      "states": [
+        "1325400065"
+      ],
+      "fps": 20
     }
   },
   "sounds": {
@@ -25,6 +32,12 @@
     },
     "ENEMY_TURTLE_WITHDRAW_END": {
       "filename": "turtle/turn_end.wav"
+    },
+    "ENEMY_TURTLE_ATTACK": {
+      "filename": "turtle/attack_neck.wav"
+    },
+    "ENEMY_TURTLE_ATTACK_2": {
+      "filename": "turtle/attack_bite.wav"
     }
   }
 }

@@ -2,7 +2,8 @@
 #include "../../CarrotQt5.h"
 #include "../../gamestate/EventMap.h"
 
-Enemy::Enemy(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y), hurtPlayer(true) {
+Enemy::Enemy(std::shared_ptr<CarrotQt5> root, double x, double y) 
+    : CommonActor(root, x, y), hurtPlayer(true), isAttacking(false) {
 
 }
 
