@@ -52,9 +52,9 @@ void TurtleShell::tickEvent() {
 
         {
             auto specializedPtr = std::dynamic_pointer_cast<Enemy>(colliderPtr);
-            if (specializedPtr != nullptr) {
+            if (specializedPtr != nullptr && std::abs(speedX) > 0.5) {
                 specializedPtr->decreaseHealth(1);
-                impact(-speedX * 3);
+                speedX = std::max(std::abs(speedX), 2.0) * (speedX > 0 ? -1 : 1);
                 continue;
             }
         }
