@@ -26,7 +26,12 @@ TurtleShell::~TurtleShell() {
 
 void TurtleShell::tickEvent() {
     speedX = std::max(std::abs(speedX) - friction, 0.0) * (speedX > 1e-6 ? 1 : -1);
+
+    double posYBefore = posY;
     CommonActor::tickEvent();
+    if (posYBefore - posY > 0.5 && std::abs(speedY) < 1) {
+        speedX = std::max(std::abs(speedX) - 10 * friction, 0.0) * (speedX > 1e-6 ? 1 : -1);
+    }
 
     auto collisions = root->findCollisionActors(shared_from_this());
     Hitbox hitbox = getHitbox();
