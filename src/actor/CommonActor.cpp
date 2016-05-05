@@ -365,7 +365,7 @@ bool CommonActor::perish() {
 
     auto events = root->getGameEvents().lock();
     if (health == 0) {
-        if (events != nullptr) {
+        if (events != nullptr && isCreatedFromEventMap) {
             events->deactivate(originTileX, originTileY);
             events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
         }
