@@ -1,6 +1,7 @@
 #include "Ammo.h"
 #include "../../gamestate/EventMap.h"
 #include "../enemy/Enemy.h"
+#include "../enemy/TurtleShell.h"
 #include "../collectible/Collectible.h"
 #include "../PushBox.h"
 
@@ -39,17 +40,23 @@ void Ammo::checkCollisions() {
             decreaseHealth(1);
             return;
         }
+        auto box = std::dynamic_pointer_cast<PushBox>(actorPtr);
+        if (box != nullptr) {
+            decreaseHealth(1);
+            return;
+        }
+
+        auto shell = std::dynamic_pointer_cast<TurtleShell>(actorPtr);
+        if (shell != nullptr) {
+            shell->impact(speedX);
+            decreaseHealth(1);
+            return;
+        }
 
         auto coll = std::dynamic_pointer_cast<Collectible>(actorPtr);
         if (coll != nullptr) {
             coll->impact(speedX / 5.0, -speedY / 10.0);
         }
-
-        auto box = std::dynamic_pointer_cast<PushBox>(actorPtr);
-        if (box != nullptr) {
-            decreaseHealth(1);
-        }
-
     }
     
 

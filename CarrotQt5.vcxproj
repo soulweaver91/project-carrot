@@ -162,6 +162,7 @@
     <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
+    <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_CarrotQt5.cpp">
@@ -223,6 +224,7 @@
     <ClInclude Include="src\actor\collectible\FastFireCollectible.h" />
     <ClInclude Include="src\actor\collectible\FoodCollectible.h" />
     <ClInclude Include="src\actor\collectible\GemCollectible.h" />
+    <ClInclude Include="src\actor\enemy\TurtleShell.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
@@ -390,6 +392,7 @@
     <None Include="Data\Manifests\Common\Scenery.json" />
     <None Include="Data\Manifests\Enemy\Lizard.json" />
     <None Include="Data\Manifests\Enemy\Turtle.json" />
+    <None Include="Data\Manifests\Enemy\TurtleShell.json" />
     <None Include="Data\Manifests\Interactive\PlayerJazz.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />

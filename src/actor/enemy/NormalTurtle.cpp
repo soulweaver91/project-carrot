@@ -1,6 +1,7 @@
 #include "NormalTurtle.h"
 
 #include "../../CarrotQt5.h"
+#include "TurtleShell.h"
 
 EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
     : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
@@ -34,6 +35,16 @@ void EnemyNormalTurtle::tickEvent() {
 
 Hitbox EnemyNormalTurtle::getHitbox() {
     return CommonActor::getHitbox(30u, 30u);
+}
+
+bool EnemyNormalTurtle::perish() {
+    bool goingToPerish = (health == 0);
+    if (goingToPerish) {
+        root->addActor(std::make_shared<TurtleShell>(root, posX, posY, speedX, -5.0, false));
+        CommonActor::perish();
+    }
+
+    return goingToPerish;
 }
 
 void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance> animation) {

@@ -1,0 +1,12 @@
+{
+  "graphics": {
+    "ENEMY_TURTLE_SHELL_IDLE": {
+      "filename": "turtle/shell_reverse.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+  }
+}

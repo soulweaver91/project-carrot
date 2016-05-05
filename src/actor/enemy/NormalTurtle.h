@@ -13,6 +13,8 @@ public:
     ~EnemyNormalTurtle();
     void tickEvent() override;
     Hitbox getHitbox();
+    bool perish() override;
+
 private:
     void attack();
     void handleTurn(std::shared_ptr<AnimationInstance> animation);

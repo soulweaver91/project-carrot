@@ -263,6 +263,9 @@
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp">
       <Filter>Source Files\Actor\Collectible</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\enemy\TurtleShell.cpp">
+      <Filter>Source Files\Actor\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -441,6 +444,9 @@
     <ClInclude Include="src\actor\collectible\FoodCollectible.h">
       <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\enemy\TurtleShell.h">
+      <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -521,6 +527,9 @@
     </None>
     <None Include="Shaders\LightingShader.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Manifests\Enemy\TurtleShell.json">
+      <Filter>Actor Resource Manifests\Enemy</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
