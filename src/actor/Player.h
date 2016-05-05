@@ -116,7 +116,6 @@ private:
     void deathRecovery(std::shared_ptr<AnimationInstance> animation);
 
     bool isSugarRush;
-    void endSugarRush();
     static const uint SUGAR_RUSH_THRESHOLD;
 private slots:
     void delayedUppercutStart(std::shared_ptr<AnimationInstance> animation);

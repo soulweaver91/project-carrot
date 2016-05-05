@@ -120,15 +120,15 @@ void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
     }
 }
 
-void PlayerOSD::clearMessage() {
-    collectionMessageType = OSD_NONE;
-    gemCounter = 0;
-}
 
 void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     cancelTimer(messageTimer);
     messageOffsetAmount = 0;
-    messageTimer = addTimer(350u, false, static_cast<TimerCallbackFunc>(&PlayerOSD::clearMessage));
+    messageTimer = addTimer(350u, false, [this]() {
+        collectionMessageType = OSD_NONE;
+        gemCounter = 0;
+    });
+
     collectionMessageType = type;
     collectibleIcon->setColor({ 0, 0, 0 });
 

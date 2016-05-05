@@ -29,7 +29,6 @@ public:
     ~PlayerOSD();
 
     void drawOSD(std::shared_ptr<GameView>& view);
-    void clearMessage();
     void setMessage(OSDMessageType type, QVariant param);
     void setWeaponType(WeaponType type, bool poweredUp);
     void setAmmo(unsigned ammo);

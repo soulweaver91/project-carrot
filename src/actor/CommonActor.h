@@ -38,13 +38,13 @@ public:
     void moveInstantly(CoordinatePair location);
     void deleteFromEventMap();
     void updateGraphicState();
+    void setInvulnerability(uint frames = 210u, bool blink = false);
     const ActorGraphicState getGraphicState();
         
 protected:
     void processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e);
     virtual void processControlHeldEvent(const ControlEvent& e);
     bool setAnimation(AnimStateT state) override;
-    void removeInvulnerability();
     virtual void onHitFloorHook();
     virtual void onHitCeilingHook();
     virtual void onHitWallHook();

@@ -349,11 +349,6 @@ bool CommonActor::setAnimation(AnimStateT state) {
     return true;
 }
 
-void CommonActor::removeInvulnerability() {
-    isInvulnerable = false;
-    isBlinking = false;
-}
-
 void CommonActor::decreaseHealth(unsigned amount) {
     if (amount > health) {
         health = 0;
@@ -483,3 +478,11 @@ const ActorGraphicState CommonActor::getGraphicState() {
     return currentGraphicState;
 }
 
+void CommonActor::setInvulnerability(uint frames, bool blink) {
+    isInvulnerable = true;
+    isBlinking = blink;
+    addTimer(frames, false, [this]() {
+        isInvulnerable = false;
+        isBlinking = false;
+    });
+}

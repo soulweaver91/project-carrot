@@ -40,9 +40,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
     };
 
     // Get a brief invincibility at the start of the level
-    isInvulnerable = true;
-    isBlinking = true;
-    addTimer(210u, false, static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
+    setInvulnerability(210u, true);
 }
 
 Player::~Player() {
@@ -717,7 +715,13 @@ void Player::consumeFood(const bool& isDrinkable) {
 
             isSugarRush = true;
             osd->setSugarRushActive();
-            addTimer(21.548 * 70.0, false, static_cast<TimerCallbackFunc>(&Player::endSugarRush));
+            addTimer(21.548 * 70.0, false, [this]() {
+                isSugarRush = false;
+                auto soundSystem = root->getSoundSystem().lock();
+                if (soundSystem != nullptr) {
+                    soundSystem->resumeMusic();
+                }
+            });
         }
     }
 
@@ -764,14 +768,6 @@ void Player::deathRecovery(std::shared_ptr<AnimationInstance> animation) {
         fastfires = 0;
     } else {
         // TODO: game over handling
-    }
-}
-
-void Player::endSugarRush() {
-    isSugarRush = false;
-    auto soundSystem = root->getSoundSystem().lock();
-    if (soundSystem != nullptr) {
-        soundSystem->resumeMusic();
     }
 }
 
@@ -868,9 +864,7 @@ void Player::takeDamage(double pushForce) {
         speedX = 0;
         canJump = false;
         setTransition(AnimState::HURT, false, true, false, &Player::endHurtTransition);
-        isInvulnerable = true;
-        isBlinking = true;
-        addTimer(210u, false, static_cast<TimerCallbackFunc>(&Player::removeInvulnerability));
+        setInvulnerability(210u, true);
         playSound("PLAYER_JAZZ_HURT");
         osd->setHealth(health);
     }

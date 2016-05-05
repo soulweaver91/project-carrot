@@ -57,10 +57,12 @@ void EnemyNormalTurtle::attack() {
     speedX = 0;
     isAttacking = true;
     playSound("ENEMY_TURTLE_ATTACK");
+    addTimer(4u, false, [this](){
+        playSound("ENEMY_TURTLE_ATTACK_2"); 
+    });
 }
 
 void EnemyNormalTurtle::endAttack(std::shared_ptr<AnimationInstance> animation) {
     speedX = (isFacingLeft ? -1 : 1) * 1;
     isAttacking = false;
-    playSound("ENEMY_TURTLE_ATTACK_2");
 }
