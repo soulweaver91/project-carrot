@@ -4,6 +4,7 @@
 #include "SolidObject.h"
 #include "TriggerCrate.h"
 #include "enemy/Enemy.h"
+#include "enemy/TurtleShell.h"
 #include "collectible/Collectible.h"
 #include "SavePoint.h"
 #include "Spring.h"
@@ -605,12 +606,23 @@ void Player::tickEvent() {
             }
         }
 
-        auto collectible = std::dynamic_pointer_cast<Collectible>(collisionPtr);
-        if (collectible != nullptr) {
-            collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
-            collisionPtr->deleteFromEventMap();
-            root->removeActor(collisionPtr);
+        {
+            auto collectible = std::dynamic_pointer_cast<Collectible>(collisionPtr);
+            if (collectible != nullptr) {
+                collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
+                collisionPtr->deleteFromEventMap();
+                root->removeActor(collisionPtr);
+            }
         }
+
+        if (isUsingDamagingMove) {
+            auto collider = std::dynamic_pointer_cast<TurtleShell>(collisionPtr);
+            if (collider != nullptr) {
+                collider->decreaseHealth(10);
+                continue;
+            }
+        }
+
     }
 }
 
