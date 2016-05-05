@@ -23,3 +23,7 @@ void SavePoint::activateSavePoint() {
         activated = true;
     }
 }
+
+Hitbox SavePoint::getHitbox() {
+    return CommonActor::getHitbox(20u, 20u);
+}

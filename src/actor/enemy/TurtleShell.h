@@ -9,6 +9,7 @@ public:
     ~TurtleShell();
     void tickEvent() override;
     void impact(double speed);
+    Hitbox getHitbox() override;
 
 protected:
     void onHitFloorHook() override;

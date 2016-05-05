@@ -99,6 +99,10 @@ void TurtleShell::impact(double speed) {
     speedX = speed / 2;
 }
 
+Hitbox TurtleShell::getHitbox() {
+    return CommonActor::getHitbox(24u, 16u);
+}
+
 void TurtleShell::onHitFloorHook() {
     if (std::abs(speedY) > 1) {
         playSound("ENEMY_TURTLE_SHELL_IMPACT_GROUND");

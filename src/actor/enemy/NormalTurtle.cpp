@@ -34,7 +34,7 @@ void EnemyNormalTurtle::tickEvent() {
 }
 
 Hitbox EnemyNormalTurtle::getHitbox() {
-    return CommonActor::getHitbox(30u, 30u);
+    return CommonActor::getHitbox(24u, 24u);
 }
 
 bool EnemyNormalTurtle::perish() {
