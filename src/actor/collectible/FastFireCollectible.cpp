@@ -3,7 +3,7 @@
 
 FastFireCollectible::FastFireCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, bool fromEventMap)
     : Collectible(root, x, y, fromEventMap) {
-    scoreValue = 100;
+    scoreValue = 200;
     setFacingDirection();
 
     AnimationUser::setAnimation("PICKUP_FASTFIRE");

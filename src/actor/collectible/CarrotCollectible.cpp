@@ -6,10 +6,10 @@ CarrotCollectible::CarrotCollectible(std::shared_ptr<CarrotQt5> root, double x, 
     setFacingDirection();
 
     if (maxCarrot) {
-        scoreValue = 100;
+        scoreValue = 500;
         AnimationUser::setAnimation("PICKUP_CARROT_FULL");
     } else {
-        scoreValue = 100;
+        scoreValue = 200;
         AnimationUser::setAnimation("PICKUP_CARROT");
     }
 
