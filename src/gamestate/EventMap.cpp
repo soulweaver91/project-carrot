@@ -7,13 +7,14 @@
 #include "../actor/collectible/CoinCollectible.h"
 #include "../actor/collectible/FastFireCollectible.h"
 #include "../actor/collectible/FoodCollectible.h"
-#include "../actor/Player.h"
 #include "../actor/enemy/Enemy.h"
+#include "../actor/enemy/NormalTurtle.h"
+#include "../actor/enemy/Lizard.h"
+#include "../actor/enemy/TurtleShell.h"
+#include "../actor/Player.h"
 #include "../actor/PushBox.h"
 #include "../actor/TriggerCrate.h"
 #include "../actor/Bridge.h"
-#include "../actor/enemy/NormalTurtle.h"
-#include "../actor/enemy/Lizard.h"
 #include "../actor/SavePoint.h"
 #include "../actor/Spring.h"
 #include "../actor/MovingPlatform.h"
@@ -182,6 +183,9 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                     case PC_FOOD_HAM:
                     case PC_FOOD_CHEESE:
                         createCommonActorEvent<FoodCollectible>(x, y, tile->storedEvent);
+                        break;
+                    case PC_TURTLE_SHELL:
+                        createCommonActorEvent<TurtleShell>(x, y, 0.0, 0.0);
                         break;
                 }
                 tile->isEventActive = true;
