@@ -714,6 +714,18 @@ void Player::addFastFire(unsigned amount) {
     playSound("PLAYER_PICKUP_AMMO");
 }
 
+void Player::addHealth(unsigned amount) {
+    if (amount != -1) {
+        health = std::min(health + amount, maxHealth);
+        playSound("PLAYER_CONSUME_FOOD");
+    } else {
+        health = maxHealth;
+        playSound("PLAYER_JAZZ_CONSUME_MAX_CARROT");
+        setInvulnerability(210u, false);
+    }
+    osd->setHealth(health);
+}
+
 void Player::consumeFood(const bool& isDrinkable) {
     foodCounter += 1;
     if (foodCounter >= SUGAR_RUSH_THRESHOLD) {

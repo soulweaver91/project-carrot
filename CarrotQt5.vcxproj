@@ -158,6 +158,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\actor\collectible\AmmoCollectible.cpp" />
+    <ClCompile Include="src\actor\collectible\CarrotCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\CoinCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
@@ -220,6 +221,7 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_CarrotQt5.h" />
     <ClInclude Include="src\actor\collectible\AmmoCollectible.h" />
+    <ClInclude Include="src\actor\collectible\CarrotCollectible.h" />
     <ClInclude Include="src\actor\collectible\CoinCollectible.h" />
     <ClInclude Include="src\actor\collectible\FastFireCollectible.h" />
     <ClInclude Include="src\actor\collectible\FoodCollectible.h" />

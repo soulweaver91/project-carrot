@@ -97,4 +97,5 @@ enum PCEvent {
     PC_SCENERY_COLLAPSE     = 0x0119,
     PC_CARROT               = 0x0050,
     PC_TURTLE_SHELL         = 0x0182,
+    PC_CARROT_FULL          = 0x0051,
 };

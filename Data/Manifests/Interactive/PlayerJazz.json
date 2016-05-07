@@ -310,6 +310,9 @@
     },
     "PLAYER_BUTTSTOMP": {
       "filename": "common/down.wav"
+    },
+    "PLAYER_JAZZ_CONSUME_MAX_CARROT": {
+      "filename": "jazz/carrot.wav"
     }
   },
   "children": [

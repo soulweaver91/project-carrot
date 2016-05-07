@@ -7,6 +7,7 @@
 #include "../actor/collectible/CoinCollectible.h"
 #include "../actor/collectible/FastFireCollectible.h"
 #include "../actor/collectible/FoodCollectible.h"
+#include "../actor/collectible/CarrotCollectible.h"
 #include "../actor/enemy/Enemy.h"
 #include "../actor/enemy/NormalTurtle.h"
 #include "../actor/enemy/Lizard.h"
@@ -186,6 +187,12 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                         break;
                     case PC_TURTLE_SHELL:
                         createCommonActorEvent<TurtleShell>(x, y, 0.0, 0.0);
+                        break;
+                    case PC_CARROT:
+                        createCommonActorEvent<CarrotCollectible>(x, y, false);
+                        break;
+                    case PC_CARROT_FULL:
+                        createCommonActorEvent<CarrotCollectible>(x, y, true);
                         break;
                 }
                 tile->isEventActive = true;

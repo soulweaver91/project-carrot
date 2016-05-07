@@ -287,6 +287,18 @@
       "states": [
         "0"
       ]
+    },
+    "PICKUP_CARROT": {
+      "filename": "pickup/carrot.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_CARROT_FULL": {
+      "filename": "pickup/carrot_full.png",
+      "states": [
+        "0"
+      ]
     }
   },
   "sounds": {

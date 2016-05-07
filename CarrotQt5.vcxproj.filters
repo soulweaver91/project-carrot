@@ -266,6 +266,9 @@
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp">
       <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\collectible\CarrotCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -446,6 +449,9 @@
     </ClInclude>
     <ClInclude Include="src\actor\enemy\TurtleShell.h">
       <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\CarrotCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
