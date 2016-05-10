@@ -41,7 +41,7 @@ bool EnemyNormalTurtle::perish() {
     bool goingToPerish = (health == 0);
     if (goingToPerish) {
         root->addActor(std::make_shared<TurtleShell>(root, posX, posY, speedX, -5.0, false));
-        CommonActor::perish();
+        Enemy::perish();
     }
 
     return goingToPerish;
