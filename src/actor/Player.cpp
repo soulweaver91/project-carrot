@@ -623,14 +623,14 @@ void Player::tickEvent() {
                 quint16 p[8];
                 collider->getParams(p);
                 int owed = p[3];
-                if (owed <= collectedCoins[0] + collectedCoins[1] * 5) {
+                if (owed <= getCoinsTotalValue()) {
                     while (owed >= 5 && collectedCoins[1] > 0) {
                         owed -= 5;
                         collectedCoins[1]--;
                     }
                     collectedCoins[0] -= owed;
 
-                    setupOSD(OSD_COIN_SILVER, collectedCoins[0] + collectedCoins[1] * 5);
+                    setupOSD(OSD_COIN_SILVER, getCoinsTotalValue());
 
                     warpTarget = collider->getWarpTarget();
                     setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
@@ -643,7 +643,7 @@ void Player::tickEvent() {
                     internalForceY = 0;
                     playSound("COMMON_WARP_IN");
                 } else {
-                    setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - (collectedCoins[0] + collectedCoins[1] * 5));
+                    setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - getCoinsTotalValue());
                 }
             }
         }
@@ -1066,7 +1066,7 @@ void Player::setView(std::shared_ptr<GameView> view) {
 void Player::setupOSD(OSDMessageType type, int param) {
     switch (type) {
         case OSD_GEM_RED: 
-            osd->setMessage(OSD_GEM_RED, collectedGems[0] + 5 * collectedGems[1] + 10 * collectedGems[2]);
+            osd->setMessage(OSD_GEM_RED, getGemsTotalValue());
             break;
         case OSD_GEM_GREEN:
             osd->setMessage(OSD_GEM_GREEN, collectedGems[1]);
@@ -1078,7 +1078,7 @@ void Player::setupOSD(OSDMessageType type, int param) {
             osd->setMessage(OSD_GEM_PURPLE, collectedGems[3]);
             break;
         case OSD_COIN_SILVER: 
-            osd->setMessage(OSD_COIN_SILVER, collectedCoins[0] + 5 * collectedCoins[1]);
+            osd->setMessage(OSD_COIN_SILVER, getCoinsTotalValue());
             break;
         case OSD_COIN_GOLD: 
             osd->setMessage(OSD_COIN_GOLD, collectedCoins[1]);
@@ -1087,6 +1087,14 @@ void Player::setupOSD(OSDMessageType type, int param) {
             osd->setMessage(OSD_BONUS_WARP_NOT_ENOUGH_COINS, param);
             break;
     }
+}
+
+uint Player::getGemsTotalValue() {
+    return collectedGems[0] + collectedGems[1] * 5 + collectedGems[2] * 10;
+}
+
+uint Player::getCoinsTotalValue() {
+    return collectedCoins[0] + collectedCoins[1] * 5;
 }
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {

@@ -80,6 +80,8 @@ private:
     bool selectWeapon(enum WeaponType newType);
     void setupOSD(OSDMessageType type, int param = 0);
     template<typename T> std::shared_ptr<T> fireWeapon();
+    uint getGemsTotalValue();
+    uint getCoinsTotalValue();
 
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
