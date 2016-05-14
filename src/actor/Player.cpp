@@ -15,7 +15,7 @@
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
     cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), foodCounter(0), isSugarRush(false),
-    poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
+    poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0), warpTarget(0, 0) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
@@ -432,6 +432,7 @@ void Player::tickEvent() {
                 if (!inTransition || cancellableTransition) {
                     CoordinatePair c = events->getWarpTarget(p[0]);
                     if (c.x >= 0) {
+                        warpTarget = c;
                         setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
                         isInvulnerable = true;
                         isGravityAffected = false;
@@ -970,10 +971,7 @@ void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
     }
 
     if (transition->getAnimationState() == AnimState::TRANSITION_WARP) {
-        quint16 p[8];
-        events->getPositionParams(posX, posY, p);
-        CoordinatePair c = events->getWarpTarget(p[0]);
-        moveInstantly(c); // validity checked when warping started
+        moveInstantly(warpTarget);
         setTransition(AnimState::TRANSITION_WARP_END, false, true, false, &Player::endWarpTransition);
         playSound("COMMON_WARP_OUT");
     } else {

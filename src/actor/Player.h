@@ -118,6 +118,9 @@ private:
 
     bool isSugarRush;
     static const uint SUGAR_RUSH_THRESHOLD;
+
+    CoordinatePair warpTarget;
+
 private slots:
     void delayedUppercutStart(std::shared_ptr<AnimationInstance> animation);
     void delayedButtstompStart(std::shared_ptr<AnimationInstance> animation);
