@@ -67,9 +67,11 @@ public:
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
 
+#ifdef CARROT_DEBUG
 public slots:
     void debugHealth();
     void debugAmmo();
+#endif
 
 private:
     void onHitFloorHook();

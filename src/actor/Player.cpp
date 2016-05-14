@@ -698,6 +698,7 @@ bool Player::selectWeapon(enum WeaponType new_type) {
     return true;
 }
 
+#ifdef CARROT_DEBUG
 void Player::debugHealth() {
     health = 5;
 }
@@ -705,6 +706,7 @@ void Player::debugHealth() {
 void Player::debugAmmo() {
     std::fill_n(ammo, WEAPONCOUNT, 999);
 }
+#endif
 
 void Player::addAmmo(enum WeaponType type, unsigned amount) {
     if (type > (WEAPONCOUNT - 1)) { return; }
