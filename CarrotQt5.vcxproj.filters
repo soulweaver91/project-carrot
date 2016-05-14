@@ -269,6 +269,9 @@
     <ClCompile Include="src\actor\collectible\CarrotCollectible.cpp">
       <Filter>Source Files\Actor\Collectible</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\BonusWarp.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -453,6 +456,9 @@
     <ClInclude Include="src\actor\collectible\CarrotCollectible.h">
       <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\BonusWarp.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -536,6 +542,9 @@
     </None>
     <None Include="Data\Manifests\Enemy\TurtleShell.json">
       <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\BonusWarp.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

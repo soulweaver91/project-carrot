@@ -8,6 +8,7 @@
 #include "collectible/Collectible.h"
 #include "SavePoint.h"
 #include "Spring.h"
+#include "BonusWarp.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
@@ -15,7 +16,7 @@
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
     cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), foodCounter(0), isSugarRush(false),
-    poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0) {
+    poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0), warpTarget(0, 0) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
@@ -432,6 +433,7 @@ void Player::tickEvent() {
                 if (!inTransition || cancellableTransition) {
                     CoordinatePair c = events->getWarpTarget(p[0]);
                     if (c.x >= 0) {
+                        warpTarget = c;
                         setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
                         isInvulnerable = true;
                         isGravityAffected = false;
@@ -612,6 +614,37 @@ void Player::tickEvent() {
                 collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
                 collisionPtr->deleteFromEventMap();
                 root->removeActor(collisionPtr);
+            }
+        }
+
+        if (warpTarget == CoordinatePair(0, 0)) {
+            auto collider = std::dynamic_pointer_cast<BonusWarp>(collisionPtr);
+            if (collider != nullptr) {
+                quint16 p[8];
+                collider->getParams(p);
+                int owed = p[3];
+                if (owed <= collectedCoins[0] + collectedCoins[1] * 5) {
+                    while (owed >= 5 && collectedCoins[1] > 0) {
+                        owed -= 5;
+                        collectedCoins[1]--;
+                    }
+                    collectedCoins[0] -= owed;
+
+                    setupOSD(OSD_COIN_SILVER, collectedCoins[0] + collectedCoins[1] * 5);
+
+                    warpTarget = collider->getWarpTarget();
+                    setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
+                    isInvulnerable = true;
+                    isGravityAffected = false;
+                    speedX = 0;
+                    speedY = 0;
+                    externalForceX = 0;
+                    externalForceY = 0;
+                    internalForceY = 0;
+                    playSound("COMMON_WARP_IN");
+                } else {
+                    setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - (collectedCoins[0] + collectedCoins[1] * 5));
+                }
             }
         }
 
@@ -970,10 +1003,7 @@ void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
     }
 
     if (transition->getAnimationState() == AnimState::TRANSITION_WARP) {
-        quint16 p[8];
-        events->getPositionParams(posX, posY, p);
-        CoordinatePair c = events->getWarpTarget(p[0]);
-        moveInstantly(c); // validity checked when warping started
+        moveInstantly(warpTarget);
         setTransition(AnimState::TRANSITION_WARP_END, false, true, false, &Player::endWarpTransition);
         playSound("COMMON_WARP_OUT");
     } else {
@@ -981,6 +1011,8 @@ void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
         isGravityAffected = true;
         controllable = true;
     }
+
+    warpTarget = { 0, 0 };
 }
 
 LevelCarryOver Player::prepareLevelCarryOver() {

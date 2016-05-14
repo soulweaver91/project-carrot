@@ -53,6 +53,7 @@ private:
     std::shared_ptr<AnimationInstance> charIcon;
     std::shared_ptr<AnimationInstance> weaponIcon;
     std::shared_ptr<AnimationInstance> collectibleIcon;
+    float collectibleIconOffset;
 
     sf::Texture heartTexture;
 
@@ -62,6 +63,7 @@ private:
 
     unsigned gemCounter;
     HSAMPLE gemSound;
+    HSAMPLE notEnoughCoinsSound;
 
     uint sugarRushLeft;
     std::unique_ptr<BitmapString> sugarRushText;

@@ -5,7 +5,7 @@
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player)
     : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), health(0), score(0),
-    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0), sugarRushLeft(0) {
+    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0), sugarRushLeft(0), collectibleIconOffset(32.0f) {
 
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
@@ -14,6 +14,7 @@ PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> play
     if (loadedResources != nullptr) {
         loadAnimationSet(loadedResources->graphics);
         gemSound = loadedResources->sounds.value("PLAYER_PICKUP_GEM", SoundResource()).sound;
+        notEnoughCoinsSound = loadedResources->sounds.value("PLAYER_BONUS_WARP_NOT_ENOUGH_COINS", SoundResource()).sound;
     }
 
     charIcon = std::make_shared<AnimationInstance>(this);
@@ -101,7 +102,7 @@ void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
         if (collectibleGraphics != nullptr) {
             // TODO: Move the sprite from the player's position to the UI instead of from below with the count
             collectibleIcon->setSpritePosition({
-                vw / 2.0f - collectionMessage->getWidth() / 2.0f + 32.0f - messageOffsetAmount / 2.0f,
+                vw / 2.0f - collectionMessage->getWidth() / 2.0f + collectibleIconOffset - messageOffsetAmount / 2.0f,
                 vh - messageOffsetAmount / 2.0f + 12.0f
             });
 
@@ -122,6 +123,10 @@ void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
 
 
 void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
+    if (type == OSD_BONUS_WARP_NOT_ENOUGH_COINS && type == collectionMessageType) {
+        return;
+    }
+
     cancelTimer(messageTimer);
     messageOffsetAmount = 0;
     messageTimer = addTimer(350u, false, [this]() {
@@ -131,6 +136,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
 
     collectionMessageType = type;
     collectibleIcon->setColor({ 0, 0, 0 });
+    collectibleIconOffset = 32.0f;
 
     switch (type) {
         case OSD_GEM_RED:
@@ -162,7 +168,10 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
             collectibleGraphics = animationBank.value("PICKUP_COIN_GOLD", nullptr);
             break;
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS:
-            collectionMessage->setText("need   x" + QString::number(param.toInt()) + " more");
+            collectionMessage->setText("need    x" + QString::number(param.toInt()) + " more");
+            collectibleGraphics = animationBank.value("PICKUP_COIN_SILVER", nullptr);
+            collectibleIconOffset = 32.0f + BitmapString(root->getFont(), "need  ").getWidth();
+            root->getSoundSystem().lock()->playSFX(notEnoughCoinsSound, false);
             break;
         case OSD_CUSTOM_TEXT:
             collectionMessage->setText(param.toString());

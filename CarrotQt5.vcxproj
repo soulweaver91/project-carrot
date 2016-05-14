@@ -157,6 +157,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\actor\BonusWarp.cpp" />
     <ClCompile Include="src\actor\collectible\AmmoCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\CarrotCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\CoinCollectible.cpp" />
@@ -220,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_CarrotQt5.h" />
+    <ClInclude Include="src\actor\BonusWarp.h" />
     <ClInclude Include="src\actor\collectible\AmmoCollectible.h" />
     <ClInclude Include="src\actor\collectible\CarrotCollectible.h" />
     <ClInclude Include="src\actor\collectible\CoinCollectible.h" />
@@ -396,6 +398,7 @@
     <None Include="Data\Manifests\Enemy\Turtle.json" />
     <None Include="Data\Manifests\Enemy\TurtleShell.json" />
     <None Include="Data\Manifests\Interactive\PlayerJazz.json" />
+    <None Include="Data\Manifests\Object\BonusWarp.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />
     <None Include="Data\Manifests\Object\MovingPlatform.json" />
