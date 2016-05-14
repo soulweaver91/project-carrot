@@ -116,6 +116,15 @@ struct CoordinatePair {
         return { -x, -y };
     }
 
+    bool operator==(const CoordinatePair& other) const {
+        return x == other.x && y == other.y;
+    }
+
+    template<typename T>
+    bool operator==(const sf::Vector2<T>& other) const {
+        return this == CoordinatePair(other);
+    }
+
     sf::Vector2f toSfVector2f() {
         return sf::Vector2f((float)x, (float)y);
     }

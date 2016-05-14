@@ -19,6 +19,7 @@
 #include "../actor/SavePoint.h"
 #include "../actor/Spring.h"
 #include "../actor/MovingPlatform.h"
+#include "../actor/BonusWarp.h"
 #include "../struct/WeaponTypes.h"
 
 EventMap::EventMap(std::shared_ptr<CarrotQt5> gameRoot, unsigned int width, unsigned int height)
@@ -193,6 +194,9 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                         break;
                     case PC_CARROT_FULL:
                         createCommonActorEvent<CarrotCollectible>(x, y, true);
+                        break;
+                    case PC_WARP_COIN_BONUS:
+                        createCommonActorEvent<BonusWarp>(x, y, tile->eventParams);
                         break;
                 }
                 tile->isEventActive = true;

@@ -8,6 +8,7 @@
 #include "collectible/Collectible.h"
 #include "SavePoint.h"
 #include "Spring.h"
+#include "BonusWarp.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
@@ -616,6 +617,37 @@ void Player::tickEvent() {
             }
         }
 
+        if (warpTarget == CoordinatePair(0, 0)) {
+            auto collider = std::dynamic_pointer_cast<BonusWarp>(collisionPtr);
+            if (collider != nullptr) {
+                quint16 p[8];
+                collider->getParams(p);
+                int owed = p[3];
+                if (owed <= collectedCoins[0] + collectedCoins[1] * 5) {
+                    while (owed >= 5 && collectedCoins[1] > 0) {
+                        owed -= 5;
+                        collectedCoins[1]--;
+                    }
+                    collectedCoins[0] -= owed;
+
+                    setupOSD(OSD_COIN_SILVER, collectedCoins[0] + collectedCoins[1] * 5);
+
+                    warpTarget = collider->getWarpTarget();
+                    setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
+                    isInvulnerable = true;
+                    isGravityAffected = false;
+                    speedX = 0;
+                    speedY = 0;
+                    externalForceX = 0;
+                    externalForceY = 0;
+                    internalForceY = 0;
+                    playSound("COMMON_WARP_IN");
+                } else {
+                    setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - (collectedCoins[0] + collectedCoins[1] * 5));
+                }
+            }
+        }
+
         if (isUsingDamagingMove) {
             auto collider = std::dynamic_pointer_cast<TurtleShell>(collisionPtr);
             if (collider != nullptr) {
@@ -979,6 +1011,8 @@ void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
         isGravityAffected = true;
         controllable = true;
     }
+
+    warpTarget = { 0, 0 };
 }
 
 LevelCarryOver Player::prepareLevelCarryOver() {

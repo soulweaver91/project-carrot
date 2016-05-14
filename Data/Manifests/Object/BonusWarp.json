@@ -1,0 +1,36 @@
+{
+  "graphics": {
+    "OBJECT_WARP_BONUS_GENERIC": {
+      "filename": "object/bonus_active.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_WARP_BONUS_10": {
+      "filename": "object/bonus_10.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_WARP_BONUS_20": {
+      "filename": "object/bonus_20.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_WARP_BONUS_50": {
+      "filename": "object/bonus_50.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_WARP_BONUS_100": {
+      "filename": "object/bonus_100.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+  }
+}

@@ -82,6 +82,9 @@
   "sounds": {
     "PLAYER_PICKUP_GEM": {
       "filename": "pickup/gem.wav"
+    },
+    "PLAYER_BONUS_WARP_NOT_ENOUGH_COINS": {
+      "filename": "object/bonus_not_enough_coins.wav"
     }
   }
 }
