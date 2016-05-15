@@ -546,6 +546,9 @@
     <None Include="Data\Manifests\Object\BonusWarp.json">
       <Filter>Actor Resource Manifests\Object</Filter>
     </None>
+    <None Include="appveyor.yml">
+      <Filter>Documents</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE">
