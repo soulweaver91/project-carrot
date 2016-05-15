@@ -1,0 +1,38 @@
+environment:
+  global:
+    CACHE_DIR: 'c:\cache'
+    BASS_VER: 24
+    SFML_VER: 2.3.2
+    QT_VER: 5.6
+    SFML_DIR: 'c:\sfml\SFML-%SFML_VER%\'
+    BASS_DIR: c:\bass\
+    BASS_FX_DIR: c:\bassfx\
+
+  matrix:
+    - platform: x64
+      SFML_EDITION: vc14-64-bit
+      QT_EDITION: msvc2015_64
+    - platform: x86
+      SFML_EDITION: vc14-32-bit
+      QT_EDITION: msvc2015
+
+cache:
+  - '%CACHE_DIR%'
+
+install:
+  - set QTDIR=C:\Qt\%QT_VER%\%QT_EDITION%
+  - set PATH=%PATH%;%QTDIR%\bin
+  - set SFML_TARGET=%CACHE_DIR%\sfml_%platform%.zip
+  - set SFML_URL=http://www.sfml-dev.org/files/SFML-%SFML_VER%-windows-%SFML_EDITION%.zip
+  - cmd: if not exist %CACHE_DIR% echo Creating cache folder...
+  - cmd: if not exist %CACHE_DIR% mkdir %CACHE_DIR%
+  - cmd: if not exist "%SFML_TARGET%" curl --fail --location --show-error -e ";auto" -o "%SFML_TARGET%" "%SFML_URL%"
+  - cmd: if not exist "%CACHE_DIR%\bass.zip" curl --fail --location --show-error -e ";auto" -o "%CACHE_DIR%\bass.zip" http://us.un4seen.com/files/bass%BASS_VER%.zip
+  - cmd: if not exist "%CACHE_DIR%\bassfx.zip" curl --fail --location --show-error -e ";auto" -o "%CACHE_DIR%\bassfx.zip" http://us.un4seen.com/files/z/0/bass_fx%BASS_VER%.zip
+  - cmd: 7z x "%SFML_TARGET%" -o"c:\sfml\" -y
+  - cmd: 7z x "%CACHE_DIR%\bass.zip" -o"c:\bass\" -y
+  - cmd: 7z x "%CACHE_DIR%\bassfx.zip" -o"c:\bassfx\" -y
+
+configuration:
+  - Debug
+  - Release
