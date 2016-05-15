@@ -5,6 +5,6 @@
 #else
     #define CP_VERSION QString("Project Carrot")
 #endif
-#define CP_VERSION_NUM 0.11
+#define CP_VERSION_NUM QString("0.2")
 #define LAYERFORMATVERSION 5
 #define EVENTSETVERSION 7

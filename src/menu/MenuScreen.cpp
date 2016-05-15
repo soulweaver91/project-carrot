@@ -144,7 +144,7 @@ void MenuScreen::tickEvent() {
     canvas->draw(projectCarrotLogoSprite);
     
 
-    BitmapString::drawString(canvas, root->getFont(), CP_VERSION + " v" + QString::number(CP_VERSION_NUM), 10, viewHeight - 30);
+    BitmapString::drawString(canvas, root->getFont(), CP_VERSION + " v" + CP_VERSION_NUM, 10, viewHeight - 30);
     attractionText.drawString(canvas, viewWidth - 10, viewHeight - 30);
 
     switch (currentMenuType) {
