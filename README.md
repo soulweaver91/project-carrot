@@ -30,7 +30,7 @@ Project Carrot projects, you don't have to add these for them separately. Altern
 setting these as environment variables should work as well.
 
 ### Linux
-[GCC 5.3](https://gcc.gnu.org/) or above and [Clang](http://clang.llvm.org/) or above are
+[GCC 5.3](https://gcc.gnu.org/) or above and [Clang 3.7](http://clang.llvm.org/) or above are
 provisionally supported and builds on the listed versions are automatically evaluated at
 [Travis CI](https://ci.appveyor.com/project/soulweaver91/project-carrot).
 
@@ -56,7 +56,7 @@ qmake -spec=linux-clang
 make release
 ```
 
-If in doubt, take a look at the [Travis configuration file](https://github.com/soulweaver91/project-carrot/blob/travis-test/.travis.yml)
+If in doubt, take a look at the [Travis configuration file](https://github.com/soulweaver91/project-carrot/blob/master/.travis.yml)
 and see if it can help you.
 
 ### Mac OS X
