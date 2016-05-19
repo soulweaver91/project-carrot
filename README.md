@@ -20,7 +20,7 @@ sufficiently C++14 compliant as the codebase utilizes many of the more modern C+
 ### Windows
 The suggested development environment, as well as the primary environment the code is written on,
 is [Microsoft Visual Studio 2015](http://www.visualstudio.com/). MSVC Windows build status is
-automatically evaluated at [AppVeyor](https://travis-ci.org/soulweaver91/project-carrot).
+automatically evaluated at [AppVeyor](https://ci.appveyor.com/project/soulweaver91/project-carrot).
 
 If using Visual Studio, configure the Qt paths with the MSVS plugin and set the appropriate
 values for the `SFML_DIR`, `BASS_DIR`, and `BASS_FX_DIR` user macros in the user property
@@ -32,7 +32,7 @@ setting these as environment variables should work as well.
 ### Linux
 [GCC 5.3](https://gcc.gnu.org/) or above and [Clang 3.7](http://clang.llvm.org/) or above are
 provisionally supported and builds on the listed versions are automatically evaluated at
-[Travis CI](https://ci.appveyor.com/project/soulweaver91/project-carrot).
+[Travis CI](https://travis-ci.org/soulweaver91/project-carrot).
 
 Download and extract the BASS and BASS FX Linux archives from their homepage and set
 Set the `BASS_DIR` and `BASS_FX_DIR` to point into that directory, and also add them
