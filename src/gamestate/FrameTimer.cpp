@@ -1,8 +1,5 @@
 #include "FrameTimer.h"
-
-void TimerUser::animationTimerA() {
-    // overridable
-}
+#include "TimerUser.h"
 
 unsigned long TimerManager::addTimer(std::weak_ptr<TimerUser> callee, genericFunction function, unsigned long duration, bool recurring) {
     FrameTimer t = {duration, 0.0, duration, 0.0, recurring, callee, function};

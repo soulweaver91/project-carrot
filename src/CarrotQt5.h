@@ -103,8 +103,8 @@ public:
 
     // remote function evoke
     void invokeFunction(InvokableRootFunction func, QVariant param);
-    void CarrotQt5::startGame(QVariant filename);
-    void CarrotQt5::quitFromMainMenu(QVariant param);
+    void startGame(QVariant filename);
+    void quitFromMainMenu(QVariant param);
     
 protected:
     bool eventFilter(QObject *watched, QEvent *e);

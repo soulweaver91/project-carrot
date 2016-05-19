@@ -526,19 +526,19 @@ bool CarrotQt5::loadLevel(const QString& name) {
             
                 // Read the sky layer if it exists
                 if (levelFiles.contains("sky.layer")) {
-                    gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), 0, level_config);
+                    gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), level_config, 0);
                 }
             
                 // Read the background layers
                 QStringList bgLayers = levelFiles.filter(".bg.layer");
                 for (unsigned i = 0; i < bgLayers.size(); ++i) {
-                    gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), i, level_config);
+                    gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), level_config, i);
                 }
 
                 // Read the foreground layers
                 QStringList fgLayers = levelFiles.filter(".fg.layer");
                 for (unsigned i = 0; i < fgLayers.size(); ++i) {
-                    gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), i, level_config);
+                    gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), level_config, i);
                 }
 
                 if (levelDir.entryList().contains("animtiles.dat")) {

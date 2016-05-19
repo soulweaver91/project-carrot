@@ -15,5 +15,5 @@ public:
     void tickEvent();
 
 private:
-    void AmmoBouncer::onHitFloorHook();
+    void onHitFloorHook();
 };

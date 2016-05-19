@@ -122,7 +122,7 @@ struct CoordinatePair {
 
     template<typename T>
     bool operator==(const sf::Vector2<T>& other) const {
-        return this == CoordinatePair(other);
+        return *this == CoordinatePair(other);
     }
 
     sf::Vector2f toSfVector2f() {

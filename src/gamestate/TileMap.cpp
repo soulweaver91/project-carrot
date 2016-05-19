@@ -21,7 +21,9 @@ TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFile
     texturedBackgroundTexture->create(256, 256);
     texturedBackgroundTexture->setRepeated(true);
     
-    readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, sprLayerFilename);
+    // The sprite layer has no settings to apply to it, so just pass an empty set instead.
+    QSettings dummySettings;
+    readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, sprLayerFilename, dummySettings);
     levelHeight = levelLayout.at(0).tileLayout.size() - 1;
     levelWidth = levelLayout.at(0).tileLayout.at(0).size() - 1;
 
@@ -376,7 +378,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
     }
 }
 
-void TileMap::readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layerIdx, QSettings& config) {
+void TileMap::readLayerConfiguration(enum LayerType type, const QString& filename, QSettings& config, unsigned layerIdx) {
     // Build a new layer
     TileMapLayer newLayer;
 

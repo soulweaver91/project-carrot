@@ -98,7 +98,7 @@ void CommonActor::tickEvent() {
 
     Hitbox currentHitbox = getHitbox();
     if (!root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
-        if (abs(speedX + externalForceX) > 1e-6) {
+        if (std::abs(speedX + externalForceX) > 1e-6) {
             // We are walking, thus having both vertical and horizontal speed
             if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, 0.0), speedY > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
@@ -120,11 +120,11 @@ void CommonActor::tickEvent() {
             } else {
                 // Nope, there's also some obstacle horizontally
                 // Let's figure out if we are going against an upward slope
-                if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, -abs(speedX + externalForceX) - 5), false, thisPtr)) {
+                if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, -std::abs(speedX + externalForceX) - 5.0), false, thisPtr)) {
                     // Yes, we indeed are
                     speedY = -(elasticity * speedY);
                     canJump = true;
-                    posY -= abs(speedX + externalForceX) + 1;
+                    posY -= std::abs(speedX + externalForceX) + 1;
                     /*while (root->game_tiles->isTileEmpty(CarrotQt5::calcHitbox(getHitbox(),speedX,speedY-abs(speedX)-2))) {
                         posY += 0.5;
                     }
@@ -191,11 +191,11 @@ void CommonActor::tickEvent() {
         if (canJump) {
             // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
             if (!root->isPositionEmpty(
-                currentHitbox + CoordinatePair(speedX + externalForceX, speedY + abs(speedX + externalForceX) + 5),
+                currentHitbox + CoordinatePair(speedX + externalForceX, speedY + std::abs(speedX + externalForceX) + 5),
                 false, thisPtr)
             ) {
                 while (root->isPositionEmpty(
-                    getHitbox().add(speedX + externalForceX, speedY + abs(speedX + externalForceX)),
+                    getHitbox().add(speedX + externalForceX, speedY + std::abs(speedX + externalForceX)),
                     false, thisPtr)
                 ) {
                     posY += 0.1;
@@ -229,13 +229,13 @@ void CommonActor::tickEvent() {
 
     // only certain ones don't need to be preserved from earlier state, others should be set as expected
     int composite = currentAnimation->getAnimationState() & 0xFFFFFFE0;
-    if (abs(speedX) > 3) {
+    if (std::abs(speedX) > 3) {
         // shift-running, speed is more than 3px/frame
         composite += 3;
-    } else if (abs(speedX) > 1) {
+    } else if (std::abs(speedX) > 1) {
         // running, speed is between 1px and 3px/frame
         composite += 2;
-    } else if (abs(speedX) > 1e-6) {
+    } else if (std::abs(speedX) > 1e-6) {
         // walking, speed is less than 1px/frame (mostly a transition zone)
         composite += 1;
     }

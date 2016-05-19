@@ -192,7 +192,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
         }
 
     } else {
-        speedX = std::max((abs(speedX) - 0.25), 0.0) * (speedX < -1e-6 ? -1 : 1);
+        speedX = std::max((std::abs(speedX) - 0.25), 0.0) * (speedX < -1e-6 ? -1 : 1);
     }
 
     if (e.contains(controls.jumpButton)) {
@@ -543,7 +543,7 @@ void Player::tickEvent() {
         cameraShiftFramesCount = std::max(-128, cameraShiftFramesCount - 1);
     } else {
         // Neither is being held, move camera up to 10 units back to equilibrium
-        cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, abs(cameraShiftFramesCount) - 10);
+        cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, std::abs(cameraShiftFramesCount) - 10);
     }
 
     auto collisions = root->findCollisionActors(shared_from_this());
@@ -594,12 +594,12 @@ void Player::tickEvent() {
                 sf::Vector2f params = spring->activate();
                 endDamagingMove();
                 short sign = ((params.x + params.y) > 1e-6 ? 1 : -1);
-                if (abs(params.x) > 1e-6) {
-                    speedX = (4 + abs(params.x)) * sign;
+                if (std::abs(params.x) > 1e-6) {
+                    speedX = (4 + std::abs(params.x)) * sign;
                     externalForceX = params.x;
                     setTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
                 } else {
-                    speedY = (4 + abs(params.y)) * sign;
+                    speedY = (4 + std::abs(params.y)) * sign;
                     externalForceY = -params.y;
                     setTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
                 }
@@ -936,8 +936,8 @@ void Player::setToViewCenter() {
         return;
     }
 
-    if (abs(cameraShiftFramesCount) > 48) {
-        shift_offset = (abs(cameraShiftFramesCount) - 48) * (cameraShiftFramesCount > 0 ? 1 : -1);
+    if (std::abs(cameraShiftFramesCount) > 48) {
+        shift_offset = (std::abs(cameraShiftFramesCount) - 48) * (cameraShiftFramesCount > 0 ? 1 : -1);
     }
     
     assignedView->centerView(

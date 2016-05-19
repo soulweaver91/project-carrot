@@ -2,7 +2,7 @@
 #include "../CarrotQt5.h"
 #include "../gamestate/TileMap.h"
 
-Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, byte orient) :
+Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, unsigned char orient) :
     CommonActor(root, x, y, false), orientation(orient), type(type) {
     loadResources("Object/Spring");
 

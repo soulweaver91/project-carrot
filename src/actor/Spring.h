@@ -13,13 +13,13 @@ enum SpringType {
 
 class Spring : public CommonActor {
 public:
-    Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, byte orient);
+    Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, unsigned char orient);
     ~Spring();
     Hitbox getHitbox() override;
     sf::Vector2f activate();
 
 private:
-    byte orientation;
+    unsigned char orientation;
     float strength;
     SpringType type;
 };

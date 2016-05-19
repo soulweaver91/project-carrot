@@ -1,4 +1,5 @@
 #include "QSFMLCanvas.h"
+#include "SFML/Window.hpp"
 
 QSFMLCanvas::QSFMLCanvas(QWidget* parent, const QPoint& position, const QSize& size) :
                     QWidget(parent), initialized(false) {
@@ -28,8 +29,7 @@ void QSFMLCanvas::showEvent(QShowEvent*) {
             XFlush(QX11Info::display());
         #endif
 
-        // Create the SFML window with the widget handle
-        sf::RenderWindow::create((HWND)winId()); //winId()
+        sf::RenderWindow::create((sf::WindowHandle)winId());
 
         // Let the derived class do its specific stuff
         onInit();
