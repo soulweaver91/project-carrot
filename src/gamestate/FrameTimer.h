@@ -5,13 +5,7 @@
 #include <QPair>
 
 class TimerManager;
-
-class TimerUser {
-    friend TimerManager;
-
-protected:
-    virtual void animationTimerA();
-};
+class TimerUser;
 typedef void (TimerUser::*genericFunction)(void);
 
 struct FrameTimer {

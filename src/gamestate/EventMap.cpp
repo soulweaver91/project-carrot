@@ -53,7 +53,7 @@ unsigned short EventMap::isPosPole(double x, double y) {
 }
 
 void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QVector<quint16>& params) {
-    if (e == PC_NONE && (x < 0 || y < 0 || y >= eventLayout.size() ||
+    if (e == PC_EMPTY && (x < 0 || y < 0 || y >= eventLayout.size() ||
         x >= eventLayout[0].size() || eventLayout.at(y).at(x) == nullptr)) {
         return;
     }
@@ -140,7 +140,7 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                     case PC_SPRING_BLUE:
                         createCommonActorEvent<Spring>(x, y,
                             (SpringType)(1 + (tile->storedEvent - PC_SPRING_RED)),
-                            (byte)tile->eventParams[0]);
+                            (unsigned char)tile->eventParams[0]);
                         break;
                     case PC_MOVING_PLATFORM:
                         createCommonActorEvent<MovingPlatform>(x, y,

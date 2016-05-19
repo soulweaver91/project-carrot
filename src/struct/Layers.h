@@ -66,7 +66,7 @@ struct TileMapLayer {
     bool useStarsTextured;
     sf::Color texturedBackgroundColor;
 
-    bool TileMapLayer::operator< (TileMapLayer layer) {
+    bool operator< (TileMapLayer layer) {
         if (type != layer.type) {
             return (type < layer.type);
         }

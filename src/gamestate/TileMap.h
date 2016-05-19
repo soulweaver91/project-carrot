@@ -44,7 +44,7 @@ public:
         
     // level related
     void readLevelConfiguration(const QString& filename);
-    void readLayerConfiguration(enum LayerType type, const QString& filename, unsigned layerIdx = 0, QSettings& config = QSettings());
+    void readLayerConfiguration(enum LayerType type, const QString& filename, QSettings& config, unsigned layerIdx = 0);
     void readAnimatedTiles(const QString& filename);
     void drawLowerLevels(std::shared_ptr<GameView>& view);
     void drawHigherLevels(std::shared_ptr<GameView>& view);

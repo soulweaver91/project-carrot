@@ -12,17 +12,17 @@ struct Control {
 
     // Required by QMap; returns an invalid control,
     // so should not be used in any self-written code
-    Control::Control() {
+    Control() {
         keyboardKey = 0;
         isKeyboard = false;
     }
 
-    Control::Control(const int& key) {
+    Control(const int& key) {
         keyboardKey = key;
         isKeyboard = true;
     }
 
-    Control::Control(const Control& other) {
+    Control(const Control& other) {
         keyboardKey = other.keyboardKey;
         isKeyboard = other.isKeyboard;
     }
