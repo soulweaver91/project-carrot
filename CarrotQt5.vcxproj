@@ -392,7 +392,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include=".travis.yml" />
     <None Include="appveyor.yml" />
+    <None Include="CarrotQt5.pri" />
+    <None Include="CarrotQt5.pro" />
     <None Include="Data\Assets\.gitignore" />
     <None Include="Data\Manifests\Common\Scenery.json" />
     <None Include="Data\Manifests\Enemy\Lizard.json" />

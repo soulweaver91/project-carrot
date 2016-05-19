@@ -1,0 +1,68 @@
+dist: trusty
+sudo: required
+language: cpp
+
+matrix:
+  include:
+    - addons: &gccaddons
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - g++-5
+          - p7zip-full
+          - libsfml-dev
+      env: BUILDTYPE=debug COMPILER=g++-5
+    - addons: &clangaddons
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          - llvm-toolchain-precise-3.7
+          packages:
+          - clang-3.7
+          - p7zip-full
+          - libsfml-dev
+      env: BUILDTYPE=debug COMPILER=clang++-3.7
+    - addons: *gccaddons
+      env: BUILDTYPE=release COMPILER=g++-5
+    - addons: *clangaddons
+      env: BUILDTYPE=release COMPILER=clang++-3.7
+
+cache:
+  directories:
+  - $HOME/archives
+  apt: true
+
+before_install:
+- sudo add-apt-repository --yes ppa:beineri/opt-qt56-trusty
+- sudo apt-get update -qq
+- sudo apt-get install -qq qt56base
+- export BASS_VER=24
+- export BASS_DIR=$HOME/bass
+- export BASS_FX_DIR=$HOME/bassfx
+- export CPATH=$CPATH:$BASS_DIR:$BASS_FX_DIR
+- test "$COMPILER" != "g++-5" || export SPEC=linux-g++-64
+- test "$COMPILER" != "clang++-3.7" || export SPEC=linux-clang
+- >
+    test "${COMPILER}" != "g++-5" || (
+    sudo update-alternatives --remove-all gcc ;
+    sudo update-alternatives --remove-all g++ ;
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 &&
+    sudo update-alternatives --config gcc &&
+    gcc --version &&
+    g++ --version
+    )
+- . /opt/qt56/bin/qt56-env.sh
+- > 
+    test -f "${HOME}/archives/bass.zip" ||
+    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bass.zip" http://us.un4seen.com/files/bass${BASS_VER}-linux.zip
+- > 
+    test -f "${HOME}/archives/bassfx.zip" || 
+    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bassfx.zip" http://us.un4seen.com/files/z/0/bass_fx${BASS_VER}-linux.zip
+- 7z x "${HOME}/archives/bass.zip" -o"${BASS_DIR}" -y
+- 7z x "${HOME}/archives/bassfx.zip" -o"${BASS_FX_DIR}" -y
+
+script:
+- qmake -v
+- qmake -spec $SPEC
+- make $BUILDTYPE
