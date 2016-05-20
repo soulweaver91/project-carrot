@@ -185,9 +185,6 @@
     <ClCompile Include="src\gamestate\EventMap.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
-    <ClCompile Include="src\gamestate\FrameTimer.cpp">
-      <Filter>Source Files\Game manager</Filter>
-    </ClCompile>
     <ClCompile Include="src\graphics\AnimatedTile.cpp">
       <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
@@ -352,9 +349,6 @@
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
     <ClInclude Include="src\gamestate\EventMap.h">
-      <Filter>Header Files\Game manager headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gamestate\FrameTimer.h">
       <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
     <ClInclude Include="src\JJ2Format.h">

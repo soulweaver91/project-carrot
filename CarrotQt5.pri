@@ -48,7 +48,6 @@ HEADERS += ./src/Version.h \
     ./src/gamestate/TileMap.h \
     ./src/gamestate/TimerUser.h \
     ./src/gamestate/EventMap.h \
-    ./src/gamestate/FrameTimer.h \
     ./src/struct/AnimState.h \
     ./src/struct/Constants.h \
     ./src/struct/Controls.h \
@@ -99,7 +98,6 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/ResourceManager.cpp \
     ./src/gamestate/AnimationUser.cpp \
     ./src/gamestate/EventMap.cpp \
-    ./src/gamestate/FrameTimer.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp

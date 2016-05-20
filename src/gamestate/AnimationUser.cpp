@@ -160,7 +160,9 @@ void AnimationInstance::setAnimation(std::shared_ptr<GraphicResource> newAnimati
     sprite.setOrigin(newAnimation->hotspot.x, newAnimation->hotspot.y);
     cancelTimer(animationTimer);
     animationTimer = addTimer(static_cast<unsigned>(animation->frameDuration / 1000.0 * 70.0),
-        true, static_cast<TimerCallbackFunc>(&AnimationInstance::advanceAnimation));
+        true, [this]() {
+        advanceAnimation();
+    });
 }
 
 void AnimationInstance::setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale) {
