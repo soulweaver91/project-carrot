@@ -204,7 +204,6 @@
     <ClCompile Include="src\gamestate\ResourceManager.cpp" />
     <ClCompile Include="src\gamestate\AnimationUser.cpp" />
     <ClCompile Include="src\gamestate\EventMap.cpp" />
-    <ClCompile Include="src\gamestate\FrameTimer.cpp" />
     <ClCompile Include="src\gamestate\PlayerOSD.cpp" />
     <ClCompile Include="src\gamestate\TileMap.cpp" />
     <ClCompile Include="src\gamestate\TimerUser.cpp" />
@@ -272,7 +271,6 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DNOMINMAX -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_CORE_LIB  "-I$(BASS_DIR)\c" "-I$(BASS_FX_DIR)\c" "-I$(SFML_DIR)\include" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtCore"</Command>
     </CustomBuild>
     <ClInclude Include="src\gamestate\EventMap.h" />
-    <ClInclude Include="src\gamestate\FrameTimer.h" />
     <ClInclude Include="src\graphics\AnimatedTile.h" />
     <ClInclude Include="src\graphics\BitmapFont.h" />
     <ClInclude Include="src\graphics\CarrotCanvas.h" />

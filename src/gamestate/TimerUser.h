@@ -7,10 +7,9 @@
 
 class TimerUser;
 
-typedef void(TimerUser::*TimerCallbackFunc)();
 typedef std::function<void()> TimerLambdaCallbackFunc;
 
-struct ActorTimer {
+struct TimerInstance {
     // current state
     unsigned framesLeft;
     double framesRemainder; // increased by initialFramesRemainder by every call if recurring
@@ -19,21 +18,11 @@ struct ActorTimer {
     double initialFramesRemainder;
     bool recurring;
     bool isNew;
+    TimerLambdaCallbackFunc cb;
 
-    // callback
-    bool useLambda;
-    TimerCallbackFunc func;
-    TimerLambdaCallbackFunc lambda;
-
-    ActorTimer(unsigned framesLeft, double framesRemainder, bool recurring, TimerCallbackFunc func)
-    : framesLeft(framesLeft), initialFramesLeft(framesLeft), framesRemainder(framesRemainder),
-    initialFramesRemainder(framesRemainder), recurring(recurring), isNew(true), func(func), useLambda(false) {
-
-    }
-
-    ActorTimer(unsigned framesLeft, double framesRemainder, bool recurring, TimerLambdaCallbackFunc lambda)
-    : framesLeft(framesLeft), initialFramesLeft(framesLeft), framesRemainder(framesRemainder),
-    initialFramesRemainder(framesRemainder), recurring(recurring), isNew(true), lambda(lambda), useLambda(true) {
+    TimerInstance(unsigned framesLeft, double framesRemainder, bool recurring, TimerLambdaCallbackFunc cb)
+    : framesLeft(framesLeft), framesRemainder(framesRemainder), initialFramesLeft(framesLeft),
+    initialFramesRemainder(framesRemainder), recurring(recurring), isNew(true), cb(cb) {
 
     }
 };
@@ -46,16 +35,13 @@ public:
     void advanceTimers();
 
 protected:
-    virtual unsigned long addTimer(double frames, bool recurring, TimerCallbackFunc func);
-    virtual unsigned long addTimer(unsigned frames, bool recurring, TimerCallbackFunc func);
-    virtual unsigned long addTimer(double frames, bool recurring, TimerLambdaCallbackFunc func);
-    virtual unsigned long addTimer(unsigned frames, bool recurring, TimerLambdaCallbackFunc func);
+    virtual unsigned long addTimer(double frames, bool recurring, TimerLambdaCallbackFunc cb);
+    virtual unsigned long addTimer(unsigned frames, bool recurring, TimerLambdaCallbackFunc cb);
     virtual void invokeTimer(int idx);
     void cancelTimer(unsigned long idx);
-    QVector<QPair<unsigned long, std::shared_ptr<ActorTimer>>> timers;
+    QVector<QPair<unsigned long, std::shared_ptr<TimerInstance>>> timers;
     unsigned long nextTimer;
 
 private:
-    template<typename T>
-    unsigned long addTimer(unsigned frames, double remainder, bool recurring, T callback);
+    unsigned long addTimer(unsigned frames, double remainder, bool recurring, TimerLambdaCallbackFunc cb);
 };

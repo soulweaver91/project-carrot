@@ -38,34 +38,20 @@ void TimerUser::advanceTimers() {
 }
 
 void TimerUser::invokeTimer(int idx) {
-    if (timers[idx].second->useLambda) {
-        timers[idx].second->lambda();
-    } else {
-        (this->*(timers[idx].second->func))();
-    }
+    timers[idx].second->cb();
 }
 
-unsigned long TimerUser::addTimer(unsigned frames, bool recurring, TimerCallbackFunc func) {
-    return addTimer(frames, 0.0, recurring, func);
+unsigned long TimerUser::addTimer(unsigned frames, bool recurring, TimerLambdaCallbackFunc cb) {
+    return addTimer(frames, 0.0, recurring, cb);
 }
 
-unsigned long TimerUser::addTimer(double frames, bool recurring, TimerCallbackFunc func) {
+unsigned long TimerUser::addTimer(double frames, bool recurring, TimerLambdaCallbackFunc cb) {
     unsigned floored = qRound(floor(frames));
-    return addTimer(floored, frames - floored, recurring, func);
+    return addTimer(floored, frames - floored, recurring, cb);
 }
 
-unsigned long TimerUser::addTimer(unsigned frames, bool recurring, TimerLambdaCallbackFunc lambda) {
-    return addTimer(frames, 0.0, recurring, lambda);
-}
-
-unsigned long TimerUser::addTimer(double frames, bool recurring, TimerLambdaCallbackFunc lambda) {
-    unsigned floored = qRound(floor(frames));
-    return addTimer(floored, frames - floored, recurring, lambda);
-}
-
-template<typename T>
-unsigned long TimerUser::addTimer(unsigned frames, double remainder, bool recurring, T callback) {
-    auto t = std::make_shared<ActorTimer>(frames, remainder, recurring, callback);
+unsigned long TimerUser::addTimer(unsigned frames, double remainder, bool recurring, TimerLambdaCallbackFunc cb) {
+    auto t = std::make_shared<TimerInstance>(frames, remainder, recurring, cb);
     timers.append(qMakePair(nextTimer, t));
     return nextTimer++;
 }

@@ -23,7 +23,9 @@ void GameView::setLighting(int target, bool immediate) {
     if (immediate) {
         lightingLevel = target;
     } else {
-        addTimer(3.0, false, static_cast<TimerCallbackFunc>(&GameView::setLightingStep));
+        addTimer(3.0, false, [this]() {
+            setLightingStep();
+        });
     }
 }
 
@@ -37,7 +39,9 @@ void GameView::setLightingStep() {
     }
     short dir = (targetLightingLevel < lightingLevel) ? -1 : 1;
     lightingLevel += dir;
-    addTimer(3.0, false, static_cast<TimerCallbackFunc>(&GameView::setLightingStep));
+    addTimer(3.0, false, [this]() {
+        setLightingStep();
+    });
 }
 
 CoordinatePair GameView::getViewCenter() {
