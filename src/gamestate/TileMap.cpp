@@ -3,6 +3,7 @@
 #include "GameView.h"
 #include "../CarrotQt5.h"
 #include "../graphics/AnimatedTile.h"
+#include "../struct/Constants.h"
 
 TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename,
     const QString& sprLayerFilename) : levelWidth(1), levelHeight(1), root(gameRoot), sprLayerIdx(0) {
@@ -202,13 +203,13 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
     int lw = layer.tileLayout.at(0).size();
     
     // Update offsets for moving layers
-    if (layer.autoSpeedX > 1e-10) {
+    if (layer.autoSpeedX > EPSILON) {
         layer.offsetX += layer.autoSpeedX * 2;
         while (layer.repeatX && (std::abs(layer.offsetX) > (lw * 32))) {
             layer.offsetX -= (lw * 32);
         }
     }
-    if (layer.autoSpeedY > 1e-10) {
+    if (layer.autoSpeedY > EPSILON) {
         layer.offsetY += layer.autoSpeedY * 2;
         while (layer.repeatY && (std::abs(layer.offsetY) > (lh * 32))) {
             layer.offsetY -= (lh * 32);

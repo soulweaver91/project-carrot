@@ -5,6 +5,7 @@
 #include "../gamestate/GameView.h"
 #include "../gamestate/ResourceManager.h"
 #include "../struct/PCEvent.h"
+#include "../struct/Constants.h"
 
 CommonActor::CommonActor(std::shared_ptr<CarrotQt5> gameRoot, double x, double y, bool fromEventMap)
     : AnimationUser(gameRoot), root(gameRoot), speedX(0), speedY(0), externalForceX(0), externalForceY(0), 
@@ -88,7 +89,7 @@ void CommonActor::processAllControlHeldEventsDefaultHandler(const QMap<Control, 
 
 void CommonActor::tickEvent() {
     // Sign of the speed: either -1, 0 or 1
-    short sign = ((speedX + externalForceX) > 1e-6) ? 1 : (((speedX + externalForceX) < -1e-6) ? -1 : 0);
+    short sign = ((speedX + externalForceX) > EPSILON) ? 1 : (((speedX + externalForceX) < -EPSILON) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
    
     speedX = std::min(std::max(speedX, -16.0), 16.0);
@@ -98,7 +99,7 @@ void CommonActor::tickEvent() {
 
     Hitbox currentHitbox = getHitbox();
     if (!root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
-        if (std::abs(speedX + externalForceX) > 1e-6) {
+        if (std::abs(speedX + externalForceX) > EPSILON) {
             // We are walking, thus having both vertical and horizontal speed
             if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, 0.0), speedY > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
@@ -208,7 +209,7 @@ void CommonActor::tickEvent() {
         }
     }
 
-    if (std::abs(externalForceX) > 1e-6) {
+    if (std::abs(externalForceX) > EPSILON) {
         // Reduce remaining push
         if (externalForceX > 0) {
             externalForceX = std::max(externalForceX - friction, 0.0);
@@ -235,7 +236,7 @@ void CommonActor::tickEvent() {
     } else if (std::abs(speedX) > 1) {
         // running, speed is between 1px and 3px/frame
         composite += 2;
-    } else if (std::abs(speedX) > 1e-6) {
+    } else if (std::abs(speedX) > EPSILON) {
         // walking, speed is less than 1px/frame (mostly a transition zone)
         composite += 1;
     }
@@ -245,10 +246,10 @@ void CommonActor::tickEvent() {
     } else {
         if (canJump) {
             // grounded, no vertical speed
-        } else if (speedY > 1e-6) {
+        } else if (speedY > EPSILON) {
             // falling, ver. speed is positive
             composite += 8;
-        } else if (speedY < -1e-6) {
+        } else if (speedY < -EPSILON) {
             // jumping, ver. speed is negative
             composite += 4;
         }

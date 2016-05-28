@@ -1,5 +1,6 @@
 #include "AmmoBlaster.h"
 #include "../TriggerCrate.h"
+#include "../../struct/Constants.h"
 
 AmmoBlaster::AmmoBlaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y,
     double speed, bool firedLeft, bool firedUp)
@@ -32,8 +33,8 @@ void AmmoBlaster::tickEvent() {
             playSound("SFX_AMMO_HIT_WALL");
 
             auto animation = currentAnimation->getAnimation();
-            double collisionX = posX + (speedY < -1e-6 ? 0 : speedX + (isFacingLeft ? -1 : 1) * animation->hotspot.x);
-            double collisionY = posY + (speedY < -1e-6 ? speedY - animation->hotspot.y : 0);
+            double collisionX = posX + (speedY < -EPSILON ? 0 : speedX + (isFacingLeft ? -1 : 1) * animation->hotspot.x);
+            double collisionY = posY + (speedY < -EPSILON ? speedY - animation->hotspot.y : 0);
             CoordinatePair c = {collisionX, collisionY};
             moveInstantly(c);
             checkCollisions();

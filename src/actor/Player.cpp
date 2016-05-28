@@ -61,7 +61,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
     }
 
     if (control == controls.upButton) {
-        if (controllable && canJump && std::abs(speedX < 1e-6)) {
+        if (controllable && canJump && std::abs(speedX < EPSILON)) {
             setAnimation(AnimState::LOOKUP);
         }
         return;
@@ -76,7 +76,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.downButton) {
         if (controllable) {
-            if (canJump && std::abs(speedX < 1e-6)) {
+            if (canJump && std::abs(speedX < EPSILON)) {
                 setAnimation(AnimState::CROUCH);
             } else {
                 if (suspendType != SuspendType::SUSPEND_NONE) {
@@ -192,7 +192,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
         }
 
     } else {
-        speedX = std::max((std::abs(speedX) - 0.25), 0.0) * (speedX < -1e-6 ? -1 : 1);
+        speedX = std::max((std::abs(speedX) - 0.25), 0.0) * (speedX < -EPSILON ? -1 : 1);
     }
 
     if (e.contains(controls.jumpButton)) {
@@ -293,7 +293,7 @@ void Player::tickEvent() {
     AnimStateT currentState = currentAnimation->getAnimationState();
 
     // Check for pushing
-    if (canJump && controllable && std::abs(speedX) > 1e-6) {
+    if (canJump && controllable && std::abs(speedX) > EPSILON) {
         std::weak_ptr<SolidObject> object;
         if (!(root->isPositionEmpty(getHitbox() + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
@@ -312,7 +312,7 @@ void Player::tickEvent() {
     }
 
     if (!carryingObject.expired()) {
-        if (speedY > 1e-6) {
+        if (speedY > EPSILON) {
             carryingObject = std::weak_ptr<MovingPlatform>();
         } else {
             auto platform = carryingObject.lock();
@@ -333,7 +333,7 @@ void Player::tickEvent() {
 
     CommonActor::tickEvent();
     currentState = currentAnimation->getAnimationState();
-    short sign = ((speedX + externalForceX) > 1e-6) ? 1 : (((speedX + externalForceX) < -1e-6) ? -1 : 0);
+    short sign = ((speedX + externalForceX) > EPSILON) ? 1 : (((speedX + externalForceX) < -EPSILON) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
 
 
@@ -385,7 +385,7 @@ void Player::tickEvent() {
         }
 
         // Speed tiles checking
-        if (std::abs(speedX) > 1e-6 || std::abs(speedY) > 1e-6 || isSugarRush) {
+        if (std::abs(speedX) > EPSILON || std::abs(speedY) > EPSILON || isSugarRush) {
             uint destroyedCount = tiles->checkSpecialSpeedDestructible(tileCollisionHitbox,
                 isSugarRush ? 64.0 : std::max(std::abs(speedX), std::abs(speedY)));
             addScore(destroyedCount * 50);
@@ -593,8 +593,8 @@ void Player::tickEvent() {
             if (spring != nullptr) {
                 sf::Vector2f params = spring->activate();
                 endDamagingMove();
-                short sign = ((params.x + params.y) > 1e-6 ? 1 : -1);
-                if (std::abs(params.x) > 1e-6) {
+                short sign = ((params.x + params.y) > EPSILON ? 1 : -1);
+                if (std::abs(params.x) > EPSILON) {
                     speedX = (4 + std::abs(params.x)) * sign;
                     externalForceX = params.x;
                     setTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
@@ -1049,7 +1049,7 @@ void Player::addScore(unsigned points) {
 }
 
 void Player::setCarryingPlatform(std::weak_ptr<MovingPlatform> platform) {
-    if (speedY < -1e-6) {
+    if (speedY < -EPSILON) {
         return;
     }
 
