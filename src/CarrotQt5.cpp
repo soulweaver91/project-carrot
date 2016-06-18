@@ -24,13 +24,14 @@
 #include <QFile>
 #include <QDebug>
 #include <QTransform>
+#include <QStringList>
 #include <bass.h>
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
 #ifdef CARROT_DEBUG
     currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true), initialized(false),
 #endif
-    paused(false), levelName(""), frame(0), gravity(0.3), isMenu(false), menuObject(nullptr), fps(0) {
+    paused(false), levelName(""), episodeName(""), frame(0), gravity(0.3), isMenu(false), menuObject(nullptr), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -180,6 +181,8 @@ void CarrotQt5::startMainMenu() {
     myTimer.start();
     isMenu = true;
 
+    episodeName = "";
+    levelName = "";
     setWindowTitle("Project Carrot");
     resourceManager->getSoundSystem()->setMusic("Music/Menu.it");
 
@@ -477,8 +480,14 @@ bool CarrotQt5::addPlayer(std::shared_ptr<Player> actor, short playerID) {
     return true;
 }
 
-bool CarrotQt5::loadLevel(const QString& name) {
-    QDir levelDir(name);
+bool CarrotQt5::loadLevel(const QString& name, const QString& episode) {
+    QDir levelDir = QDir::current();
+    if (episode != "") {
+        levelDir = QDir(levelDir.relativeFilePath("Episodes/" + episode + "/" + name));
+        episodeName = episode;
+    } else {
+        levelDir = QDir(levelDir.relativeFilePath("Levels/" + name));
+    }
     if (levelDir.exists()) {
         QStringList levelFiles = levelDir.entryList(QStringList("*.layer") << "config.ini");
         if (levelFiles.contains("spr.layer") && levelFiles.contains("config.ini")) {
@@ -614,6 +623,20 @@ bool CarrotQt5::loadLevel(const QString& name) {
         return false;
     }
     return true;
+}
+
+bool CarrotQt5::loadLevel(const QString& name) {
+    QStringList levelParts = name.split('/');
+    QString level = "";
+    QString episode = episodeName;
+    if (levelParts.length() > 1) {
+        episode = levelParts[0];
+        level = levelParts[1];
+    } else {
+        level = levelParts[0];
+    }
+
+    return loadLevel(level, episode);
 }
 
 void CarrotQt5::setLevelName(const QString& name) {
@@ -821,7 +844,7 @@ void CarrotQt5::delayedLevelChange() {
         paused = true;
 
         cleanUpLevel();
-        if (loadLevel("Levels/" + nextLevel)) {
+        if (loadLevel(nextLevel)) {
             players[0]->receiveLevelCarryOver(o);
             lastExit = NEXT_NONE;
             paused = false;

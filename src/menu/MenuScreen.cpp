@@ -185,7 +185,7 @@ void MenuScreen::loadLevelList(QVariant param) {
                 QSettings levelData(levelDir.absoluteFilePath(levels.at(i) + "/config.ini"), QSettings::Format::IniFormat);
                 menuOptions.append(buildMenuItem(
                     &CarrotQt5::startGame,
-                    QVariant(levelDir.absoluteFilePath(levels.at(i))),
+                    QVariant(levels.at(i)),
                     levelData.value("Level/FormalName").toString() + " ~ " + levels.at(i))
                 );
             }
@@ -211,7 +211,7 @@ void MenuScreen::loadEpisodeList(QVariant param) {
                 QSettings level_data(episodeDir.absoluteFilePath(eps.at(i) + "/config.ini"), QSettings::Format::IniFormat);
                 menuOptions.append(buildMenuItem(
                     &CarrotQt5::startGame,
-                    QVariant(episodeDir.absoluteFilePath(eps.at(i)) + "/" + level_data.value("Episode/FirstLevel").toString()),
+                    QVariant(eps.at(i) + "/" + level_data.value("Episode/FirstLevel").toString()),
                     level_data.value("Episode/FormalName").toString())
                 );
             }
