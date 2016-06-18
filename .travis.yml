@@ -13,20 +13,20 @@ matrix:
           - p7zip-full
           - libsfml-dev
       env: BUILDTYPE=debug COMPILER=g++-5
-    - addons: &clangaddons
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          - llvm-toolchain-precise-3.7
-          packages:
-          - clang-3.7
-          - p7zip-full
-          - libsfml-dev
-      env: BUILDTYPE=debug COMPILER=clang++-3.7
+#    - addons: &clangaddons
+#        apt:
+#          sources:
+#          - ubuntu-toolchain-r-test
+#          - llvm-toolchain-precise-3.7
+#          packages:
+#          - clang-3.7
+#          - p7zip-full
+#          - libsfml-dev
+#      env: BUILDTYPE=debug COMPILER=clang++-3.7
     - addons: *gccaddons
       env: BUILDTYPE=release COMPILER=g++-5
-    - addons: *clangaddons
-      env: BUILDTYPE=release COMPILER=clang++-3.7
+#    - addons: *clangaddons
+#      env: BUILDTYPE=release COMPILER=clang++-3.7
 
 cache:
   directories:
