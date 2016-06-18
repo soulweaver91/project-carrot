@@ -90,7 +90,7 @@ public:
     std::weak_ptr<EventMap> getGameEvents();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
     double gravity;
-    const uint getDefaultLightingLevel();
+    uint getDefaultLightingLevel();
 #ifdef CARROT_DEBUG
     bool dbgOverlaysActive;
     bool dbgShowMasked;
@@ -103,7 +103,7 @@ public:
     void quitFromMainMenu();
     
 protected:
-    bool eventFilter(QObject *watched, QEvent *e);
+    bool eventFilter(QObject* watched, QEvent* e);
 
 protected slots:
     void closeEvent(QCloseEvent* event);
@@ -121,6 +121,7 @@ private:
     QVector<std::shared_ptr<DestructibleDebris>> debris;
     std::shared_ptr<Player> players[32];
     QVector<std::shared_ptr<GameView>> views;
+    bool initialized;
     bool paused;
     std::unique_ptr<sf::Texture> pausedScreenshot;
     std::unique_ptr<sf::Sprite> pausedScreenshotSprite;
@@ -142,7 +143,6 @@ private:
     bool isMenu;
     QTime lastTimestamp;
     float fps;
-    bool initialized;
 
 private slots:
     void gameTick();

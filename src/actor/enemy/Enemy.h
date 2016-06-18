@@ -21,7 +21,7 @@ protected:
     bool hurtPlayer;
     bool isAttacking;
     bool canMoveToPosition(double x, double y);
-    void tryGenerateRandomDrop(const QVector<QPair<PCEvent, int>>& dropTable = Enemy::defaultDropTable);
+    void tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable = Enemy::defaultDropTable);
 
-    const static QVector<QPair<PCEvent, int>> defaultDropTable;
+    const static QVector<QPair<PCEvent, uint>> defaultDropTable;
 };

@@ -4,7 +4,7 @@
 #include "../graphics/ShaderSource.h"
 
 GameView::GameView(std::shared_ptr<CarrotQt5> root, const uint& playerID, const sf::Vector2f& dimensions) 
-    : playerID(playerID), root(root) {
+    : root(root), playerID(playerID) {
     canvas = std::make_shared<sf::RenderTexture>();
     canvas->create(dimensions.x, dimensions.y);
     renderAuxiliaryCanvas = std::make_shared<sf::RenderTexture>();

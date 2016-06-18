@@ -39,7 +39,7 @@ bool Enemy::canMoveToPosition(double x, double y) {
          && (!root->isPositionEmpty(hitbox + CoordinatePair(x + sign * (hitbox.right - hitbox.left) / 2, y + 32), false, shared_from_this())));
 }
 
-void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, int>>& dropTable) {
+void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable) {
     uint combinedChance = std::accumulate(dropTable.begin(), dropTable.end(), 0, [](const uint& sum, QPair<PCEvent, int> pair) {
         return sum + pair.second;
     });
@@ -62,6 +62,8 @@ void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, int>>& dropTable)
                 case PC_GEM_RED:
                     root->addActor(std::make_shared<GemCollectible>(root, posX, posY, (GemType)((int)GEM_RED + i), false));
                     break;
+                default:
+                    break;
             }
             return;
         }
@@ -74,11 +76,11 @@ bool Enemy::hurtsPlayer() {
     return hurtPlayer;
 }
 
-const QVector<QPair<PCEvent, int>> Enemy::defaultDropTable = {
-    qMakePair(PC_EMPTY,    10),
-    qMakePair(PC_CARROT,    2),
-    qMakePair(PC_FAST_FIRE, 2),
-    qMakePair(PC_GEM_RED,   3),
-    qMakePair(PC_GEM_GREEN, 2),
-    qMakePair(PC_GEM_BLUE,  1)
+const QVector<QPair<PCEvent, uint>> Enemy::defaultDropTable = {
+    qMakePair(PC_EMPTY,    10u),
+    qMakePair(PC_CARROT,    2u),
+    qMakePair(PC_FAST_FIRE, 2u),
+    qMakePair(PC_GEM_RED,   3u),
+    qMakePair(PC_GEM_GREEN, 2u),
+    qMakePair(PC_GEM_BLUE,  1u)
 };

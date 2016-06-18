@@ -7,7 +7,7 @@
 
 MovingPlatform::MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double y,
     PlatformType type, quint16 length, qint16 speed, ushort sync, bool swing)
-    : SolidObject(root, x, y), type(type), length(length), speed(speed), phase(0.0),
+    : SolidObject(root, x, y), type(type), speed(speed), length(length), phase(0.0),
     originX(x), originY(y), isSwing(swing) {
     loadResources("Object/MovingPlatform");
     isGravityAffected = false;

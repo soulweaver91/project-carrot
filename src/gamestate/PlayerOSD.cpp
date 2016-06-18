@@ -4,8 +4,9 @@
 #include "../graphics/ShaderSource.h"
 
 PlayerOSD::PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player)
-    : AnimationUser(root), owner(player), messageTimer(-1l), collectionMessageType(OSD_NONE), health(0), score(0),
-    currentWeapon(WEAPON_BLASTER), messageOffsetAmount(0), gemCounter(0), sugarRushLeft(0), collectibleIconOffset(32.0f) {
+    : AnimationUser(root), owner(player), collectionMessageType(OSD_NONE), messageTimer(-1l), messageOffsetAmount(0),
+    collectibleIconOffset(32.0f), currentWeapon(WEAPON_BLASTER), score(0), health(0),
+    gemCounter(0), sugarRushLeft(0) {
 
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
@@ -176,6 +177,8 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
         case OSD_CUSTOM_TEXT:
             collectionMessage->setText(param.toString());
             break;
+        default:
+            break;
     }
 
     if (collectibleGraphics != nullptr) {
@@ -188,7 +191,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     }
 }
 
-void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
+void PlayerOSD::setWeaponType(WeaponType type, bool) {
     currentWeapon = type;
 
     if (weaponIconIdx[type] != nullptr) {

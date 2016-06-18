@@ -4,7 +4,7 @@
 #include <QSettings>
 
 MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : root(root), selectedItemIdx(0),
-    currentMenuType(MENU_PLAIN_LIST), attractionText(root->getFont(), "", FONT_ALIGN_RIGHT) {
+    attractionText(root->getFont(), "", FONT_ALIGN_RIGHT), currentMenuType(MENU_PLAIN_LIST) {
     mainMenuCircularGlowTexture.loadFromFile("Data/Textures/radialglow.png");
     mainMenuCircularGlowSprite.setTexture(mainMenuCircularGlowTexture);
     mainMenuCircularGlowSprite.setPosition(400, 100);
@@ -99,7 +99,7 @@ void MenuScreen::processControlHeldEvent(const ControlEvent& e) {
     }
 }
 
-void MenuScreen::processControlUpEvent(const ControlEvent& e) {
+void MenuScreen::processControlUpEvent(const ControlEvent&) {
     // No use at the moment, but defined for the sake of consistency.
 }
 

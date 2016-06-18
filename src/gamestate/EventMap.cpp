@@ -52,7 +52,7 @@ unsigned short EventMap::isPosPole(double x, double y) {
            (event == PC_MODIFIER_V_POLE ? 1 : 0));
 }
 
-void EventMap::storeTileEvent(int x, int y, PCEvent e, int flags, const QVector<quint16>& params) {
+void EventMap::storeTileEvent(int x, int y, PCEvent e, int, const QVector<quint16>& params) {
     if (e == PC_EMPTY && (x < 0 || y < 0 || y >= eventLayout.size() ||
         x >= eventLayout[0].size() || eventLayout.at(y).at(x) == nullptr)) {
         return;
@@ -197,6 +197,8 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                         break;
                     case PC_WARP_COIN_BONUS:
                         createCommonActorEvent<BonusWarp>(x, y, tile->eventParams);
+                        break;
+                    default:
                         break;
                 }
                 tile->isEventActive = true;

@@ -2,8 +2,8 @@
 
 AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tileIDs, int fps, int delay,
     int delayJitter, bool pingPong, int pingPongDelay)
-    : delay(delay), delayJitter(delayJitter), pingPong(pingPong), pingPongDelay(pingPongDelay), currentTileIdx(0),
-    forwards(true), framesLeft(0), frameDuration(0.0), framesRemainder(0.0), fps(fps) {
+    : fps(fps), delay(delay), delayJitter(delayJitter), pingPong(pingPong), pingPongDelay(pingPongDelay), currentTileIdx(0),
+    forwards(true), framesLeft(0), framesRemainder(0.0), frameDuration(0.0) {
     for (unsigned tidx : tileIDs) {
         auto pseudotile = std::make_shared<LayerTile>();
         pseudotile->isAnimated = false;

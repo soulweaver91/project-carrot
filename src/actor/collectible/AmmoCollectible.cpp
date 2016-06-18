@@ -14,6 +14,8 @@ AmmoCollectible::AmmoCollectible(std::shared_ptr<CarrotQt5> root, double x, doub
         case WEAPON_TNT:     AnimationUser::setAnimation("PICKUP_AMMO_TNT");     break;
         case WEAPON_PEPPER:  AnimationUser::setAnimation("PICKUP_AMMO_PEPPER");  break;
         case WEAPON_ELECTRO: AnimationUser::setAnimation("PICKUP_AMMO_ELECTRO"); break;
+        default:
+            break;
     }
 }
 

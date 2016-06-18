@@ -27,11 +27,12 @@
 #include <QStringList>
 #include <bass.h>
 
-CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
+CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), gravity(0.3), 
 #ifdef CARROT_DEBUG
-    currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true), initialized(false),
+    dbgOverlaysActive(true), dbgShowMasked(false), currentTempModifier(0),
 #endif
-    paused(false), levelName(""), episodeName(""), frame(0), gravity(0.3), isMenu(false), menuObject(nullptr), fps(0) {
+    initialized(false), paused(false), levelName(""), episodeName(""), nextLevel(""), frame(0),
+    defaultLightingLevel(100), menuObject(nullptr), isMenu(false), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -92,7 +93,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     }
 
     // Read the main font
-    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 15, 32, 256);
+    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256);
     
     installEventFilter(this);
 
@@ -200,7 +201,7 @@ void CarrotQt5::openHomePage() {
     QDesktopServices::openUrl(QUrl("http://www.google.com/"));
 }*/
 
-void CarrotQt5::closeEvent(QCloseEvent *event) {
+void CarrotQt5::closeEvent(QCloseEvent* event) {
     QMessageBox msg(this);
     msg.setWindowTitle("Quit Project Carrot?");
     msg.setText("Are you sure you want to quit Project Carrot?");
@@ -214,7 +215,7 @@ void CarrotQt5::closeEvent(QCloseEvent *event) {
     }
 }
 
-bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
+bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
         if (!isMenu) {
@@ -682,11 +683,6 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(std::shared_p
             continue;
         }
 
-        sf::Vector2i delta = {
-            qRound(otherGS.origin.x - myGS.origin.x),
-            qRound(otherGS.origin.y - myGS.origin.y)
-        };
-
         QTransform tfMatrixB;
         tfMatrixB
             .translate(otherGS.origin.x - myGS.origin.x, otherGS.origin.y - myGS.origin.y)
@@ -923,7 +919,7 @@ std::shared_ptr<ResourceSet> CarrotQt5::loadActorTypeResources(const QString& ac
     return resourceManager->loadActorTypeResources(actorType);
 }
 
-const uint CarrotQt5::getDefaultLightingLevel() {
+uint CarrotQt5::getDefaultLightingLevel() {
     return defaultLightingLevel;
 }
 

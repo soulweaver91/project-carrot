@@ -14,15 +14,14 @@
 #include "weapon/AmmoToaster.h"
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
-    weaponCooldown(0), character(CHAR_JAZZ), controllable(true), isUsingDamagingMove(false), 
-    cameraShiftFramesCount(0), copterFramesLeft(0), fastfires(0), foodCounter(0), isSugarRush(false),
-    poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10), score(0), warpTarget(0, 0) {
+    character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
+    weaponCooldown(0), isUsingDamagingMove(false), controllable(true), cameraShiftFramesCount(0),
+    copterFramesLeft(0), poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10),
+    isSugarRush(false), warpTarget(0, 0) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
     health = 5;
-    lives = 3;
-    currentWeapon = WEAPON_BLASTER;
     std::fill_n(ammo, WEAPONCOUNT, 0);
     std::fill_n(isWeaponPoweredUp, WEAPONCOUNT, false);
     std::fill_n(collectedCoins, 2, 0);
@@ -143,6 +142,8 @@ void Player::processControlDownEvent(const ControlEvent& e) {
             case CHAR_LORI:
                 // sidekick
                 break;
+            default:
+                break;
         }
         return;
     }
@@ -227,7 +228,7 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
                 case WEAPON_BLASTER:
                 {
                     auto newAmmo = fireWeapon<AmmoBlaster>();
-                    weaponCooldown = std::max(0, 40 - 3 * fastfires);
+                    weaponCooldown = 40 - std::min(40u, 3 * fastfires);
                     playSound("WEAPON_BLASTER_JAZZ");
                     break;
                 }
@@ -328,14 +329,11 @@ void Player::tickEvent() {
                 carryingObject = std::weak_ptr<MovingPlatform>();
             }
         }
-
     }
 
     CommonActor::tickEvent();
     currentState = currentAnimation->getAnimationState();
-    short sign = ((speedX + externalForceX) > EPSILON) ? 1 : (((speedX + externalForceX) < -EPSILON) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
-
 
     if (tiles != nullptr) {
         // Check if hitting a vine
@@ -395,7 +393,7 @@ void Player::tickEvent() {
     }
 
     // check if buttstomp ended
-    if (canJump && (currentState & AnimState::BUTTSTOMP) > 0 || (isUsingDamagingMove && suspendType != SuspendType::SUSPEND_NONE)) {
+    if ((canJump && (currentState & AnimState::BUTTSTOMP) > 0) || (isUsingDamagingMove && suspendType != SuspendType::SUSPEND_NONE)) {
         setAnimation(currentState & ~AnimState::BUTTSTOMP);
         isUsingDamagingMove = false;
         controllable = true;
@@ -505,6 +503,8 @@ void Player::tickEvent() {
                     root->initLevelChange(NEXT_NORMAL);
                 }
                 controllable = false;
+                break;
+            default:
                 break;
         }
 
@@ -730,7 +730,7 @@ void Player::addGems(GemType type, unsigned amount) {
         return;
     }
 
-    collectedGems[(uint)type]++;
+    collectedGems[(uint)type] += amount;
     setupOSD((OSDMessageType)((uint)OSD_GEM_RED + (uint)type));
 }
 
@@ -740,12 +740,12 @@ void Player::addCoins(CoinType type, unsigned amount) {
     }
 
     playSound("PLAYER_PICKUP_COIN");
-    collectedCoins[(uint)type]++;
+    collectedCoins[(uint)type] += amount;
     setupOSD((OSDMessageType)((uint)OSD_COIN_SILVER + (uint)type));
 }
 
 void Player::addFastFire(unsigned amount) {
-    fastfires = std::min(fastfires + 1, 10);
+    fastfires = std::min(fastfires + amount, 10u);
     playSound("PLAYER_PICKUP_AMMO");
 }
 
@@ -800,7 +800,7 @@ bool Player::perish() {
     return false;
 }
 
-void Player::deathRecovery(std::shared_ptr<AnimationInstance> animation) {
+void Player::deathRecovery(std::shared_ptr<AnimationInstance>) {
     if (lives > 0) {
         lives--;
 
@@ -852,14 +852,14 @@ void Player::returnControl() {
     controllable = true;
 }
 
-void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance> animation) {
+void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance>) {
     externalForceY = 1.5;
     speedY = -2;
     canJump = false;
     setTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
 }
 
-void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance> animation) {
+void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance>) {
     speedY = 9;
     setAnimation(AnimState::BUTTSTOMP);
     playSound("PLAYER_BUTTSTOMP", 1.0f, 0.0f, 0.8f);
@@ -957,7 +957,7 @@ void Player::setToViewCenter() {
     );
 }
 
-bool Player::deactivate(int x, int y, int dist) {
+bool Player::deactivate(int, int, int) {
     // A player can never be deactivated
     return false;
 }
@@ -966,11 +966,11 @@ unsigned Player::getLives() {
     return lives;
 }
 
-void Player::endHurtTransition(std::shared_ptr<AnimationInstance> animation) {
+void Player::endHurtTransition(std::shared_ptr<AnimationInstance>) {
     controllable = true;
 }
 
-void Player::endHPoleTransition(std::shared_ptr<AnimationInstance> animation) {
+void Player::endHPoleTransition(std::shared_ptr<AnimationInstance>) {
     --poleSpinCount;
     if (poleSpinCount > 0) {
         setTransition(AnimState::TRANSITION_POLE_H, false, true, false, &Player::endHPoleTransition);
@@ -984,7 +984,7 @@ void Player::endHPoleTransition(std::shared_ptr<AnimationInstance> animation) {
     }
 }
 
-void Player::endVPoleTransition(std::shared_ptr<AnimationInstance> animation) {
+void Player::endVPoleTransition(std::shared_ptr<AnimationInstance>) {
     --poleSpinCount;
     if (poleSpinCount > 0) {
         setTransition(AnimState::TRANSITION_POLE_V, false, true, false, &Player::endVPoleTransition);
@@ -998,7 +998,7 @@ void Player::endVPoleTransition(std::shared_ptr<AnimationInstance> animation) {
     }
 }
 
-void Player::endWarpTransition(std::shared_ptr<AnimationInstance> animation) {
+void Player::endWarpTransition(std::shared_ptr<AnimationInstance>) {
     auto events = root->getGameEvents().lock();
     if (events == nullptr) {
         return;
@@ -1085,6 +1085,11 @@ void Player::setupOSD(OSDMessageType type, int param) {
             break;
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS: 
             osd->setMessage(OSD_BONUS_WARP_NOT_ENOUGH_COINS, param);
+            break;
+        case OSD_CUSTOM_TEXT:
+            // TODO
+            break;
+        case OSD_NONE:
             break;
     }
 }

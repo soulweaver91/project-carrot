@@ -21,7 +21,7 @@ public:
     void setAnimation(std::shared_ptr<GraphicResource> newAnimation, const AnimStateT& newState = AnimState::IDLE,
         AnimationCallbackFunc cb = nullptr);
     void setSpritePosition(const sf::Vector2f& position, const sf::Vector2f& scale = { 1.0, 1.0 });
-    const AnimStateT getAnimationState();
+    AnimStateT getAnimationState();
     std::shared_ptr<const GraphicResource> getAnimation();
     void clearCallback();
     void resetFrame();
@@ -32,6 +32,7 @@ public:
 private:
     void advanceAnimation();
     void doCallback();
+
     std::shared_ptr<GraphicResource> animation;
     unsigned frame;
     sf::Sprite sprite;
@@ -64,7 +65,7 @@ protected:
     std::shared_ptr<AnimationInstance> currentAnimation;
     std::shared_ptr<AnimationInstance> transition;
 
+    std::shared_ptr<CarrotQt5> root;
     bool inTransition;
     bool cancellableTransition;
-    std::shared_ptr<CarrotQt5> root;
 };

@@ -26,7 +26,7 @@ SoundSystem::~SoundSystem() {
 
 HCHANNEL SoundSystem::playSFX(HSAMPLE sample, bool use3D) {
     HCHANNEL ch = BASS_SampleGetChannel(sample, false);
-    if (ch != NULL) {
+    if (ch != 0) {
         if (!use3D) {
             BASS_ChannelSet3DAttributes(ch, BASS_3DMODE_OFF, 0, 0, 0, 0, 0);
             BASS_Apply3D();
@@ -40,7 +40,7 @@ HCHANNEL SoundSystem::playSFX(HSAMPLE sample, bool use3D) {
 HCHANNEL SoundSystem::playSFX(HSAMPLE sample, bool use3D, float speed, float pitch, float freq) {
     BASS_SAMPLE params;
     if (!BASS_SampleGetInfo(sample, &params)) {
-        return NULL;
+        return 0;
     }
 
     void* buffer = operator new(params.length);
@@ -52,7 +52,7 @@ HCHANNEL SoundSystem::playSFX(HSAMPLE sample, bool use3D, float speed, float pit
     operator delete(buffer);
 
     HSTREAM ch = BASS_FX_TempoCreate(stream, BASS_STREAM_AUTOFREE | BASS_SAMPLE_3D);
-    if (ch != NULL) {
+    if (ch != 0) {
         if (!use3D) {
             BASS_ChannelSet3DAttributes(ch, BASS_3DMODE_OFF, 0, 0, 0, 0, 0);
             BASS_Apply3D();
@@ -83,7 +83,7 @@ void SoundSystem::playSFX(HSAMPLE sample, const CoordinatePair& pos, float speed
 }
 
 void SoundSystem::append3DSoundIfNotNull(std::shared_ptr<SoundListener> listener, HCHANNEL ch, const CoordinatePair& pos) {
-    if (ch != NULL) {
+    if (ch != 0) {
         BASS_ChannelSet3DAttributes(ch, BASS_3DMODE_NORMAL, 5, 0, 360, 360, 1);
         listener->sounds.append(std::make_shared<SoundInstance>(ch, pos));
     }
@@ -150,7 +150,7 @@ void SoundSystem::updateSoundPositions() {
             if (BASS_ChannelIsActive(soundInstance->sound)) {
                 CoordinatePair pos = coords - soundInstance->position;
                 BASS_3DVECTOR spatialPos = { (float)-pos.x / 32, (float)-pos.y / 32, 0 };
-                bool success = BASS_ChannelSet3DPosition(soundInstance->sound, &spatialPos, NULL, NULL);
+                BASS_ChannelSet3DPosition(soundInstance->sound, &spatialPos, NULL, NULL);
             }
         }
     }

@@ -6,7 +6,7 @@
 #include "../struct/Constants.h"
 
 TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename,
-    const QString& sprLayerFilename) : levelWidth(1), levelHeight(1), root(gameRoot), sprLayerIdx(0) {
+    const QString& sprLayerFilename) : root(gameRoot), sprLayerIdx(0), levelWidth(1), levelHeight(1) {
     // Reserve textures for tileset and its mask counterpart
     levelTileset = std::make_unique<Tileset>(tilesetFilename, maskFilename);
     if (!levelTileset->getIsValid()) {
@@ -279,8 +279,6 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
     // minus 1 because indices are updated in the beginning of the loops
     x1 -= rem_x - 32.0;
     y1 -= rem_y - 32.0;
-    double xstart = x1;
-    double ystart = y1;
     
     // Calculate the last coordinates we want to draw to
     double x3 = x1 + 100 + view->getViewWidth();
@@ -322,7 +320,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
                     }
                 }
 
-                if (idx == 0 & !ani) { continue; }
+                if (idx == 0 && !ani) { continue; }
 
 #ifdef CARROT_DEBUG
                 if (root->dbgShowMasked) {
@@ -618,7 +616,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
         for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
             for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
                 bool fx = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedX;
-                bool fy = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedY;
+                // bool fy = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedY;
                 int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
                 if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
                     idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
@@ -911,6 +909,8 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
         case PC_SCENERY_COLLAPSE:
             setTileDestructibleEventFlag(tile, x, y, DESTRUCT_COLLAPSE, p[0] * 25);
             break;
+        default:
+            break;
     }
 }
 
@@ -958,7 +958,7 @@ SuspendType TileMap::getPosSuspendState(double x, double y) {
     auto tile = levelLayout[sprLayerIdx].tileLayout[ay][ax];
 
     bool fx = tile->isFlippedX;
-    bool fy = tile->isFlippedY;
+    //bool fy = tile->isFlippedY;
     if (tile->suspendType == SuspendType::SUSPEND_NONE) {
         return SuspendType::SUSPEND_NONE;
     }
