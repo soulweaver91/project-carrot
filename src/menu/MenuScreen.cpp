@@ -23,10 +23,10 @@ MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : 
     projectCarrotLogoSprite.setPosition(400, 10);
     projectCarrotLogoSprite.setOrigin(150, 0);
 
-    cancelItem = buildMenuItem(&MenuScreen::placeholderOption, QVariant(""), "");
+    cancelItem = buildMenuItem(placeholderOption, "");
     switch (entry) {
         case MENU_MAIN_MENU:
-            loadMainMenu(QVariant(""));
+            loadMainMenu();
             break;
         case MENU_PAUSE_MENU:
             break;
@@ -43,20 +43,9 @@ void MenuScreen::clearMenuList() {
     selectedItemIdx = 0;
 }
 
-std::shared_ptr<MenuItem> MenuScreen::buildMenuItem(InvokableMenuFunction localFunction, QVariant param, const QString& label) {
+std::shared_ptr<MenuItem> MenuScreen::buildMenuItem(MenuFunctionCallback callback, const QString& label) {
     auto m = std::make_shared<MenuItem>();
-    m->isLocal = true;
-    m->localFunction = localFunction;
-    m->param = param;
-    m->text = std::make_unique<BitmapString>(root->getFont(), label, FONT_ALIGN_CENTER);
-    return m;
-}
-
-std::shared_ptr<MenuItem> MenuScreen::buildMenuItem(InvokableRootFunction remoteFunction, QVariant param, const QString& label) {
-    auto m = std::make_shared<MenuItem>();
-    m->isLocal = false;
-    m->remoteFunction = remoteFunction;
-    m->param = param;
+    m->callback = callback;
     m->text = std::make_unique<BitmapString>(root->getFont(), label, FONT_ALIGN_CENTER);
     return m;
 }
@@ -86,22 +75,12 @@ void MenuScreen::processControlDownEvent(const ControlEvent& e) {
     std::shared_ptr<MenuItem> it;
     switch (e.first.keyboardKey) {
         case Qt::Key_Escape:
-            it = cancelItem;
-            if (it->isLocal) {
-                (this->*(it->localFunction))(it->param);
-            } else {
-                root->invokeFunction(it->remoteFunction, it->param);
-            }
+            cancelItem->callback();
             break;
         case Qt::Key_Return:
         case Qt::Key_Enter:
             // Select the currently highlighted option and run its designated function
-            it = menuOptions[selectedItemIdx];
-            if (it->isLocal) {
-                (this->*(it->localFunction))(it->param);
-            } else {
-                root->invokeFunction(it->remoteFunction, it->param);
-            }
+            menuOptions[selectedItemIdx]->callback();
             break;
         case Qt::Key_Up:
             // Move selection up
@@ -172,7 +151,7 @@ void MenuScreen::tickEvent() {
     }
 }
 
-void MenuScreen::loadLevelList(QVariant param) {
+void MenuScreen::loadLevelList() {
     clearMenuList();
     QDir levelDir("Levels");
     if (levelDir.exists()) {
@@ -183,22 +162,28 @@ void MenuScreen::loadLevelList(QVariant param) {
             }
             if (QDir(levelDir.absoluteFilePath(levels.at(i))).exists()) {
                 QSettings levelData(levelDir.absoluteFilePath(levels.at(i) + "/config.ini"), QSettings::Format::IniFormat);
+                QString levelName = levels.at(i);
                 menuOptions.append(buildMenuItem(
-                    &CarrotQt5::startGame,
-                    QVariant(levels.at(i)),
-                    levelData.value("Level/FormalName").toString() + " ~ " + levels.at(i))
+                    [this, levelName]() {
+                        root->startGame(levelName);
+                    },
+                    levelData.value("Level/FormalName").toString() + " ~ " + levelName)
                 );
             }
         }
     } 
-    menuOptions.append(buildMenuItem(&MenuScreen::loadMainMenu, QVariant(""), "Cancel"));
+    menuOptions.append(buildMenuItem([this]() {
+        loadMainMenu();
+    }, "Cancel"));
     setMenuItemSelected(0);
-    cancelItem->localFunction = &MenuScreen::loadMainMenu;
+    cancelItem->callback = [this]() {
+        loadEpisodeList();
+    };
     currentMenuType = MENU_PLAIN_LIST;
     attractionText.setText("Select Level");
 }
 
-void MenuScreen::loadEpisodeList(QVariant param) {
+void MenuScreen::loadEpisodeList() {
     clearMenuList();
     QDir episodeDir("Episodes");
     if (episodeDir.exists()) {
@@ -209,35 +194,45 @@ void MenuScreen::loadEpisodeList(QVariant param) {
             }
             if (QDir(episodeDir.absoluteFilePath(eps.at(i))).exists()) {
                 QSettings level_data(episodeDir.absoluteFilePath(eps.at(i) + "/config.ini"), QSettings::Format::IniFormat);
+                QString levelName = eps.at(i) + "/" + level_data.value("Episode/FirstLevel").toString();
                 menuOptions.append(buildMenuItem(
-                    &CarrotQt5::startGame,
-                    QVariant(eps.at(i) + "/" + level_data.value("Episode/FirstLevel").toString()),
+                    [this, levelName]() {
+                        root->startGame(levelName);
+                    },
                     level_data.value("Episode/FormalName").toString())
                 );
             }
         }
     } 
-    menuOptions.append(buildMenuItem(&MenuScreen::loadLevelList, QVariant(""), "Home Cooked Levels"));
+    menuOptions.append(buildMenuItem([this]() {
+        loadLevelList();
+    }, "Home Cooked Levels"));
     setMenuItemSelected(0);
-    cancelItem->localFunction = &MenuScreen::loadMainMenu;
+    cancelItem->callback = [this]() {
+        loadMainMenu();
+    };
     currentMenuType = MENU_PLAIN_LIST;
     attractionText.setText("Select Episode");
 }
 
-void MenuScreen::loadMainMenu(QVariant param) {
+void MenuScreen::loadMainMenu() {
     clearMenuList();
     
-    menuOptions.append(buildMenuItem(&MenuScreen::loadEpisodeList, QVariant(""), "New Game"));
-    menuOptions.append(buildMenuItem(&MenuScreen::placeholderOption, QVariant(""), "Load Game"));
-    menuOptions.append(buildMenuItem(&MenuScreen::placeholderOption, QVariant(""), "Settings"));
-    menuOptions.append(buildMenuItem(&MenuScreen::placeholderOption, QVariant(""), "High Scores"));
-    menuOptions.append(buildMenuItem(&CarrotQt5::quitFromMainMenu, QVariant(""), "Quit Game"));
+    menuOptions.append(buildMenuItem([this]() {
+        loadEpisodeList();
+    }, "New Game"));
+    menuOptions.append(buildMenuItem(placeholderOption, "Load Game"));
+    menuOptions.append(buildMenuItem(placeholderOption, "Settings"));
+    menuOptions.append(buildMenuItem(placeholderOption, "High Scores"));
+    menuOptions.append(buildMenuItem([this]() {
+        root->quitFromMainMenu();
+    }, "Quit Game"));
     setMenuItemSelected(0);
-    cancelItem->localFunction = &MenuScreen::placeholderOption;
+    cancelItem->callback = [this]() {
+        setMenuItemSelected(-1, false);
+    };
     currentMenuType = MENU_PLAIN_LIST;
     attractionText.setText("Main Menu");
 }
 
-void MenuScreen::placeholderOption(QVariant param) {
-    // do nothing
-}
+const MenuFunctionCallback MenuScreen::placeholderOption = []() {};

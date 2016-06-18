@@ -157,20 +157,15 @@ void CarrotQt5::cleanUpLevel() {
     views.clear();
 }
 
-void CarrotQt5::startGame(QVariant filename) {
-    // Parameter is expected to be a string
-    if (filename.canConvert<QString>()) {
-        if (loadLevel(filename.toString())) {
-            myTimer.setInterval(1000 / 70);
-            myTimer.disconnect(this, SLOT(mainMenuTick()));
-            connect(&myTimer, SIGNAL(timeout()), this, SLOT(gameTick()));
-            menuObject = nullptr;
+void CarrotQt5::startGame(QString filename) {
+    if (loadLevel(filename)) {
+        myTimer.setInterval(1000 / 70);
+        myTimer.disconnect(this, SLOT(mainMenuTick()));
+        connect(&myTimer, SIGNAL(timeout()), this, SLOT(gameTick()));
+        menuObject = nullptr;
 
-            myTimer.start();
-            isMenu = false;
-        }
-    } else {
-        // invalid call
+        myTimer.start();
+        isMenu = false;
     }
 }
 
@@ -932,11 +927,7 @@ const uint CarrotQt5::getDefaultLightingLevel() {
     return defaultLightingLevel;
 }
 
-void CarrotQt5::invokeFunction(InvokableRootFunction func, QVariant param) {
-    (this->*func)(param);
-}
-
-void CarrotQt5::quitFromMainMenu(QVariant param) {
+void CarrotQt5::quitFromMainMenu() {
     this->close();
 }
 

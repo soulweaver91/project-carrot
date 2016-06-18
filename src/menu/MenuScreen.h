@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <QVector>
-#include <QVariant>
 #include <QKeyEvent>
 #include <QString>
 #include <SFML/Graphics.hpp>
@@ -13,7 +12,7 @@
 class MenuScreen;
 class CarrotQt5;
 
-typedef void (MenuScreen::*InvokableMenuFunction)(QVariant);
+typedef std::function<void()> MenuFunctionCallback;
 
 enum MenuLayout {
     MENU_UNKNOWN,
@@ -29,13 +28,8 @@ enum MenuEntryPoint {
 };
 
 struct MenuItem {
-    union {
-        InvokableRootFunction remoteFunction;
-        InvokableMenuFunction localFunction;
-    };
-    bool isLocal;
+    MenuFunctionCallback callback;
     std::unique_ptr<BitmapString> text;
-    QVariant param;
 };
 
 class MenuScreen {
@@ -50,14 +44,11 @@ public:
 private:
     void clearMenuList();
     void setMenuItemSelected(int idx = 0, bool relative = false);
-    std::shared_ptr<MenuItem> buildMenuItem(InvokableMenuFunction localFunction, QVariant param, const QString& label);
-    std::shared_ptr<MenuItem> buildMenuItem(InvokableRootFunction remoteFunction, QVariant param, const QString& label);
+    std::shared_ptr<MenuItem> buildMenuItem(MenuFunctionCallback callback, const QString& label);
 
-    // valid pointers in menu options
-    void loadLevelList(QVariant param);
-    void loadEpisodeList(QVariant param);
-    void loadMainMenu(QVariant param);
-    void placeholderOption(QVariant param);
+    void loadLevelList();
+    void loadEpisodeList();
+    void loadMainMenu();
 
     std::shared_ptr<CarrotQt5> root;
     sf::Texture mainMenuCircularGlowTexture;
@@ -72,4 +63,5 @@ private:
     BitmapString attractionText;
     MenuLayout currentMenuType;
 
+    static const MenuFunctionCallback placeholderOption;
 };

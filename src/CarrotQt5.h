@@ -14,7 +14,6 @@
 #include <QTimer>
 #include <QTime>
 #include <QString>
-#include <QVariant>
 #include <QWidget>
 #include <QObject>
 #include <QMap>
@@ -58,8 +57,6 @@ struct SavedState {
     QVector<QVector<std::shared_ptr<LayerTile>>> spriteLayerState;
 };
 
-typedef void (CarrotQt5::*InvokableRootFunction)(QVariant);
-
 class CarrotQt5 : public QMainWindow, public std::enable_shared_from_this<CarrotQt5> {
 
     Q_OBJECT
@@ -102,10 +99,8 @@ public:
     unsigned char currentTempModifier;
 #endif
 
-    // remote function evoke
-    void invokeFunction(InvokableRootFunction func, QVariant param);
-    void startGame(QVariant filename);
-    void quitFromMainMenu(QVariant param);
+    void startGame(QString filename);
+    void quitFromMainMenu();
     
 protected:
     bool eventFilter(QObject *watched, QEvent *e);
