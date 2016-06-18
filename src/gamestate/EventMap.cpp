@@ -84,8 +84,8 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
     int y1 = std::max(0, static_cast<int>(center.y) / 32 - tileDistance);
     int y2 = std::min(static_cast<int>(tiles->getLevelHeight()) - 1, static_cast<int>(center.y) / 32 + tileDistance);
 
-    for (unsigned x = x1; x <= x2; ++x) {
-        for (unsigned y = y1; y <= y2; ++y) {
+    for (int x = x1; x <= x2; ++x) {
+        for (int y = y1; y <= y2; ++y) {
             auto tile = eventLayout.at(y).at(x);
             if (tile == nullptr) {
                 continue;

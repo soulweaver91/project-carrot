@@ -622,7 +622,7 @@ void Player::tickEvent() {
             if (collider != nullptr) {
                 quint16 p[8];
                 collider->getParams(p);
-                int owed = p[3];
+                uint owed = p[3];
                 if (owed <= getCoinsTotalValue()) {
                     while (owed >= 5 && collectedCoins[1] > 0) {
                         owed -= 5;
@@ -750,7 +750,7 @@ void Player::addFastFire(unsigned amount) {
 }
 
 void Player::addHealth(unsigned amount) {
-    if (amount != -1) {
+    if (amount != UINT_MAX) {
         health = std::min(health + amount, maxHealth);
         playSound("PLAYER_CONSUME_FOOD");
     } else {

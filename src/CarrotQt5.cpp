@@ -379,7 +379,7 @@ void CarrotQt5::gameTick() {
     // TODO: Adapt for multiple players
     int view_x = static_cast<unsigned>(views[0]->getViewCenter().x) / 32;
     int view_y = static_cast<unsigned>(views[0]->getViewCenter().y) / 32;
-    for (unsigned i = 0; i < actors.size(); i++) {
+    for (int i = 0; i < actors.size(); i++) {
         if (actors.at(i)->deactivate(view_x, view_y, 32)) {
             --i;
         }
@@ -391,14 +391,14 @@ void CarrotQt5::gameTick() {
     gameTiles->advanceCollapsingTileTimers();
 
     // Run all actors' timers
-    for (unsigned i = 0; i < actors.size(); i++) {
+    for (int i = 0; i < actors.size(); i++) {
         actors.at(i)->advanceAnimationTimers();
         actors.at(i)->advanceTimers();
         actors.at(i)->updateGraphicState();
     }
 
     // Run all actors' tick events
-    for (unsigned i = 0; i < actors.size(); i++) {
+    for (int i = 0; i < actors.size(); i++) {
         actors.at(i)->tickEvent();
         if (actors.at(i)->perish()) {
             --i;
@@ -408,7 +408,7 @@ void CarrotQt5::gameTick() {
     resourceManager->updateSoundPositions();
 
     // TODO: Adapt for multiple players
-    for (unsigned i = 0; i < debris.size(); i++) {
+    for (int i = 0; i < debris.size(); i++) {
         debris.at(i)->tickUpdate();
         if (debris.at(i)->getY() - views[0]->getViewCenter().y > 400) {
             debris.erase(debris.begin() + i);
@@ -536,13 +536,13 @@ bool CarrotQt5::loadLevel(const QString& name, const QString& episode) {
             
                 // Read the background layers
                 QStringList bgLayers = levelFiles.filter(".bg.layer");
-                for (unsigned i = 0; i < bgLayers.size(); ++i) {
+                for (int i = 0; i < bgLayers.size(); ++i) {
                     gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), level_config, i);
                 }
 
                 // Read the foreground layers
                 QStringList fgLayers = levelFiles.filter(".fg.layer");
-                for (unsigned i = 0; i < fgLayers.size(); ++i) {
+                for (int i = 0; i < fgLayers.size(); ++i) {
                     gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), level_config, i);
                 }
 

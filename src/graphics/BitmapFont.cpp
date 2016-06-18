@@ -20,7 +20,7 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     }
     widthFile.close();
 
-    int charCode = 0;
+    uint charCode = 0;
     firstCharCode = first;
     unsigned i = 0;
     for (; i < first; ++i) {
@@ -139,8 +139,8 @@ void BitmapString::setText(QString text) {
 
 unsigned BitmapString::updateWidth() {
     unsigned sum = 0;
-    for(unsigned i = 0; i < stringText.length(); ++i) {
-        sum += textFont->getCharacterWidth(stringText.at(i));
+    for (QChar ch : stringText) {
+        sum += textFont->getCharacterWidth(ch);
     }
     width = sum + (stringText.length() - 1) * spacing;
     return sum;
@@ -178,9 +178,10 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderTarget> destWindow, std::s
 
 unsigned BitmapString::getStaticWidth(QString text, std::shared_ptr<BitmapFont> font) {
     unsigned sum = 0;
-    for(unsigned i = 0; i < text.length(); ++i) {
-        sum += font->getCharacterWidth(text.at(i));
+    for (QChar ch : text) {
+        sum += font->getCharacterWidth(ch);
     }
+
     return sum - (text.length() - 1);
 }
 

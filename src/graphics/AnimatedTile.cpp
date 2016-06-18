@@ -34,8 +34,12 @@ std::shared_ptr<LayerTile> AnimatedTile::getCurrentTile() {
 }
 
 void AnimatedTile::updateTile() {
+    if (animationTiles.size() < 2) {
+        return;
+    }
+
     if (forwards) {
-        if (currentTileIdx == (animationTiles.size() - 1)) {
+        if (currentTileIdx == static_cast<uint>(animationTiles.size() - 1)) {
             if (pingPong) {
                 forwards = false;
                 scheduleUpdate(frameDuration * (1 + pingPongDelay));

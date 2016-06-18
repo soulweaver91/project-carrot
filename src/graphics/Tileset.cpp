@@ -17,8 +17,8 @@ Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : is
         return;
     }
 
-    int width = texture->getSize().x / 32;
-    int height = texture->getSize().y / 32;
+    uint width = texture->getSize().x / 32;
+    uint height = texture->getSize().y / 32;
     tilesPerRow = width;
     tileCount = width * height;
 
