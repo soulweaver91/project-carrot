@@ -34,7 +34,7 @@ cache:
   apt: true
 
 before_install:
-- sudo add-apt-repository --yes ppa:beineri/opt-qt56-trusty
+- sudo add-apt-repository --yes ppa:beineri/opt-qt561-trusty
 - sudo apt-get update -qq
 - sudo apt-get install -qq qt56base
 - export BASS_VER=24
