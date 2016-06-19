@@ -13,7 +13,7 @@ enum FontAlign {
 
 class BitmapFont {
     public:
-        BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned rows, unsigned cols, unsigned first, unsigned last);
+        BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned cols, unsigned first, unsigned last);
         std::shared_ptr<sf::Sprite> getCharacterSprite(QChar code);
         unsigned getCharacterWidth(QChar code);
     private:

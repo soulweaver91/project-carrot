@@ -24,6 +24,9 @@ public:
     ~DynamicBridgePiece();
     bool deactivate(int x, int y, int dist) override;
     Hitbox getHitboxForParent();
+
+private:
+    DynamicBridgeType bridgeType;
 };
 
 class DynamicBridge : public CommonActor {

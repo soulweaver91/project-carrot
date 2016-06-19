@@ -3,7 +3,7 @@
 #include "../struct/Constants.h"
 #include "../graphics/ShaderSource.h"
 
-BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned rows, 
+BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     unsigned cols, unsigned first, unsigned last) {
     if (!(fontTexture.loadFromFile(filename.toUtf8().data()))) {
         throw 0;
@@ -20,7 +20,7 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     }
     widthFile.close();
 
-    int charCode = 0;
+    uint charCode = 0;
     firstCharCode = first;
     unsigned i = 0;
     for (; i < first; ++i) {
@@ -72,9 +72,8 @@ const sf::Vector3i BitmapString::colouredFontColours[7] = {
 };
 
 BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& initString, FontAlign initAlign) :
-    align(initAlign), isAnimated(false), varianceX(0.0), varianceY(0.0), phase(0.0), animationSpeed(0.0),
-    angleOffset(0.0), stringText(initString), isColoured(false), spacing(-1) {
-    textFont = font;
+    stringText(initString), align(initAlign), textFont(font), isAnimated(false), isColoured(false), 
+    varianceX(0.0), varianceY(0.0), phase(0.0), animationSpeed(0.0), angleOffset(0.0), spacing(-1) {
     updateWidth();
 }
 
@@ -140,8 +139,8 @@ void BitmapString::setText(QString text) {
 
 unsigned BitmapString::updateWidth() {
     unsigned sum = 0;
-    for(unsigned i = 0; i < stringText.length(); ++i) {
-        sum += textFont->getCharacterWidth(stringText.at(i));
+    for (QChar ch : stringText) {
+        sum += textFont->getCharacterWidth(ch);
     }
     width = sum + (stringText.length() - 1) * spacing;
     return sum;
@@ -179,9 +178,10 @@ void BitmapString::drawString(std::weak_ptr<sf::RenderTarget> destWindow, std::s
 
 unsigned BitmapString::getStaticWidth(QString text, std::shared_ptr<BitmapFont> font) {
     unsigned sum = 0;
-    for(unsigned i = 0; i < text.length(); ++i) {
-        sum += font->getCharacterWidth(text.at(i));
+    for (QChar ch : text) {
+        sum += font->getCharacterWidth(ch);
     }
+
     return sum - (text.length() - 1);
 }
 

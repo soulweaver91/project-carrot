@@ -40,7 +40,7 @@ struct LayerTile {
     SuspendType suspendType;
     TileDestructType destructType;
     unsigned long destructAnimation; // animation index for a destructible tile that uses an animation but doesn't animate normally
-    int destructFrameIndex; // denotes the specific frame from the above animation that is currently active
+    uint destructFrameIndex; // denotes the specific frame from the above animation that is currently active
     // Collapsible: delay ("wait" parameter); trigger: trigger id
     unsigned extraByte;
     bool tilesetDefault;

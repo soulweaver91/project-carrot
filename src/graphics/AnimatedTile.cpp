@@ -2,8 +2,8 @@
 
 AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tileIDs, int fps, int delay,
     int delayJitter, bool pingPong, int pingPongDelay)
-    : delay(delay), delayJitter(delayJitter), pingPong(pingPong), pingPongDelay(pingPongDelay), currentTileIdx(0),
-    forwards(true), framesLeft(0), frameDuration(0.0), framesRemainder(0.0), fps(fps) {
+    : fps(fps), delay(delay), delayJitter(delayJitter), pingPong(pingPong), pingPongDelay(pingPongDelay), currentTileIdx(0),
+    forwards(true), framesLeft(0), framesRemainder(0.0), frameDuration(0.0) {
     for (unsigned tidx : tileIDs) {
         auto pseudotile = std::make_shared<LayerTile>();
         pseudotile->isAnimated = false;
@@ -34,8 +34,12 @@ std::shared_ptr<LayerTile> AnimatedTile::getCurrentTile() {
 }
 
 void AnimatedTile::updateTile() {
+    if (animationTiles.size() < 2) {
+        return;
+    }
+
     if (forwards) {
-        if (currentTileIdx == (animationTiles.size() - 1)) {
+        if (currentTileIdx == static_cast<uint>(animationTiles.size() - 1)) {
             if (pingPong) {
                 forwards = false;
                 scheduleUpdate(frameDuration * (1 + pingPongDelay));

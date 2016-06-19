@@ -22,4 +22,5 @@ protected:
 private:
     std::weak_ptr<Player> owner;
     int framesLeft;
+    bool firedUp;
 };

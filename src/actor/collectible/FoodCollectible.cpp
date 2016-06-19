@@ -41,6 +41,8 @@ FoodCollectible::FoodCollectible(std::shared_ptr<CarrotQt5> root, double x, doub
         case PC_FOOD_HOT_DOG:     AnimationUser::setAnimation("PICKUP_FOOD_HOTDOG"); break;
         case PC_FOOD_HAM:         AnimationUser::setAnimation("PICKUP_FOOD_HAM"); break;
         case PC_FOOD_CHEESE:      AnimationUser::setAnimation("PICKUP_FOOD_CHEESE"); break;
+        default:
+            break;
     }
 
     switch (type) {

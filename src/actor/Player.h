@@ -93,7 +93,7 @@ private:
     unsigned lives;
     unsigned ammo[WEAPONCOUNT];
     bool isWeaponPoweredUp[WEAPONCOUNT];
-    int fastfires;
+    uint fastfires;
     unsigned long score;
     unsigned collectedGems[4];
     unsigned collectedCoins[2];

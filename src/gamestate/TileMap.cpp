@@ -6,7 +6,7 @@
 #include "../struct/Constants.h"
 
 TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename,
-    const QString& sprLayerFilename) : levelWidth(1), levelHeight(1), root(gameRoot), sprLayerIdx(0) {
+    const QString& sprLayerFilename) : root(gameRoot), sprLayerIdx(0), levelWidth(1), levelHeight(1) {
     // Reserve textures for tileset and its mask counterpart
     levelTileset = std::make_unique<Tileset>(tilesetFilename, maskFilename);
     if (!levelTileset->getIsValid()) {
@@ -37,17 +37,17 @@ TileMap::~TileMap() {
 
 void TileMap::drawLowerLevels(std::shared_ptr<GameView>& view) {
     // lower levels is everything below the sprite layer and the sprite layer itself
-    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
-        if (levelLayout.at(layer).type == LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(levelLayout[layer], view);
+    for (TileMapLayer& layer : levelLayout) {
+        if (layer.type == LAYER_FOREGROUND_LAYER) { continue; }
+        drawLayer(layer, view);
     }
 }
 
 void TileMap::drawHigherLevels(std::shared_ptr<GameView>& view) {
     // higher levels is only the foreground layers
-    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
-        if (levelLayout.at(layer).type != LAYER_FOREGROUND_LAYER) { continue; }
-        drawLayer(levelLayout[layer], view);
+    for (TileMapLayer& layer : levelLayout) {
+        if (layer.type != LAYER_FOREGROUND_LAYER) { continue; }
+        drawLayer(layer, view);
     }
 }
 
@@ -279,8 +279,6 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
     // minus 1 because indices are updated in the beginning of the loops
     x1 -= rem_x - 32.0;
     y1 -= rem_y - 32.0;
-    double xstart = x1;
-    double ystart = y1;
     
     // Calculate the last coordinates we want to draw to
     double x3 = x1 + 100 + view->getViewWidth();
@@ -322,7 +320,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
                     }
                 }
 
-                if (idx == 0 & !ani) { continue; }
+                if (idx == 0 && !ani) { continue; }
 
 #ifdef CARROT_DEBUG
                 if (root->dbgShowMasked) {
@@ -518,25 +516,17 @@ bool TileMap::isTileEmpty(unsigned x, unsigned y) {
         return false;
     }
 
-    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
-        // We need to find the sprite layer, only collisions in that layer matter
-        if (!(levelLayout.at(layer).type == LAYER_SPRITE_LAYER)) { continue; }
-
-        int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
-        if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
-            idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
-        }
-
-        if (levelTileset->isTileMaskEmpty(idx)) {
-            return true;
-        } else {
-            // TODO: Pixel perfect collision wanted here? probably, so do that later
-            return false;
-        }
+    int idx = levelLayout.at(sprLayerIdx).tileLayout.at(y).at(x)->tileId;
+    if (levelLayout.at(sprLayerIdx).tileLayout.at(y).at(x)->isAnimated) {
+        idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
     }
 
-    // Safeguard return value; any valid tile should be caught earlier on already
-    return true;
+    if (levelTileset->isTileMaskEmpty(idx)) {
+        return true;
+    } else {
+        // TODO: Pixel perfect collision wanted here? probably, so do that later
+        return false;
+    }
 }
 
 bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
@@ -546,113 +536,107 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
         return false;
     }
 
-    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
-        // We need to find the sprite layer, only collisions in that layer matter
-        if (!(levelLayout.at(layer).type == LAYER_SPRITE_LAYER)) { continue; }
-
-        // check all covered tiles for collisions; if all are empty, no need to do pixel level collision checking
-        bool all_empty = true;
-        int hx1 = floor(hitbox.left);
-        int hx2 = ceil(hitbox.right);
-        int hy1 = floor(hitbox.top);
-        int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 + 31.0);
+    // check all covered tiles for collisions; if all are empty, no need to do pixel level collision checking
+    bool all_empty = true;
+    int hx1 = floor(hitbox.left);
+    int hx2 = ceil(hitbox.right);
+    int hy1 = floor(hitbox.top);
+    int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 + 31.0);
 #ifdef CARROT_DEBUG
-        if (root->dbgShowMasked) {
-            auto target = root->getCanvas().lock();
-            if (target != nullptr) {
-                // debug code
-                sf::RectangleShape b(sf::Vector2f((hx2 / 32 - hx1 / 32) * 32 + 32,(hy2 / 32 - hy1 / 32) * 32 + 32));
-                b.setPosition(hx1 / 32 * 32,hy1 / 32 * 32);
-                b.setFillColor(sf::Color::Green);
-                target->draw(b);
+    if (root->dbgShowMasked) {
+        auto target = root->getCanvas().lock();
+        if (target != nullptr) {
+            // debug code
+            sf::RectangleShape b(sf::Vector2f((hx2 / 32 - hx1 / 32) * 32 + 32,(hy2 / 32 - hy1 / 32) * 32 + 32));
+            b.setPosition(hx1 / 32 * 32,hy1 / 32 * 32);
+            b.setFillColor(sf::Color::Green);
+            target->draw(b);
             
-                sf::RectangleShape a(sf::Vector2f(hitbox.right-hitbox.left, hitbox.bottom-hitbox.top));
-                a.setPosition(hitbox.left,hitbox.top);
-                a.setFillColor(sf::Color::Blue);
-                target->draw(a);
-            }
+            sf::RectangleShape a(sf::Vector2f(hitbox.right-hitbox.left, hitbox.bottom-hitbox.top));
+            a.setPosition(hitbox.left,hitbox.top);
+            a.setFillColor(sf::Color::Blue);
+            target->draw(a);
         }
+    }
 #endif
 
-        for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
-            for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
-                int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
-                if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
-                    idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
-                }
+    const auto& sprLayerLayout = levelLayout.at(sprLayerIdx).tileLayout;
 
-                if (!levelTileset->isTileMaskEmpty(idx) &&
-                    !(levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay && !downwards) &&
-                    !(levelLayout.at(layer).tileLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE)) {
-                    all_empty = false;
-#ifdef CARROT_DEBUG
-                    if (root->dbgShowMasked) {
-                        sf::RectangleShape a(sf::Vector2f(32, 32));
-                        a.setPosition(x*32, y*32);
-                        a.setFillColor(sf::Color::Red);
-                        auto target = root->getCanvas().lock();
-                        if (target != nullptr) {
-                            target->draw(a);
-                        }
-                    }
-#endif
-                    break;
-                }
+    for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
+        for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
+            int idx = sprLayerLayout.at(y).at(x)->tileId;
+            if (sprLayerLayout.at(y).at(x)->isAnimated) {
+                idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
             }
+
+            if (!levelTileset->isTileMaskEmpty(idx) &&
+                !(sprLayerLayout.at(y).at(x)->isOneWay && !downwards) &&
+                !(sprLayerLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE)) {
+                all_empty = false;
 #ifdef CARROT_DEBUG
-            if (!all_empty && !root->dbgShowMasked) {
+                if (root->dbgShowMasked) {
+                    sf::RectangleShape a(sf::Vector2f(32, 32));
+                    a.setPosition(x*32, y*32);
+                    a.setFillColor(sf::Color::Red);
+                    auto target = root->getCanvas().lock();
+                    if (target != nullptr) {
+                        target->draw(a);
+                    }
+                }
+#endif
                 break;
             }
+        }
+#ifdef CARROT_DEBUG
+        if (!all_empty && !root->dbgShowMasked) {
+            break;
+        }
 #else
-            if (!all_empty) {
-                break;
-            }
+        if (!all_empty) {
+            break;
+        }
 #endif
-        }
+    }
 
-        if (all_empty) {
-            return true;
-        }
-
-        // check each tile pixel perfectly for collisions
-        for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
-            for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
-                bool fx = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedX;
-                bool fy = levelLayout.at(layer).tileLayout.at(y).at(x)->isFlippedY;
-                int idx = levelLayout.at(layer).tileLayout.at(y).at(x)->tileId;
-                if (levelLayout.at(layer).tileLayout.at(y).at(x)->isAnimated) {
-                    idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
-                }
-
-                if ((levelLayout.at(layer).tileLayout.at(y).at(x)->isOneWay
-                    && !downwards && (hy2 < ((y + 1) * 32)))
-                    || levelLayout.at(layer).tileLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE) {
-                    continue;
-                }
-                QBitArray mask = levelTileset->getTileMask(idx);
-                for (int i = 0; i < 1024; ++i) {
-                    int nowx = (32 * x + i % 32);
-                    int nowy = (32 * y + i / 32);
-                    if (hx2 < nowx || hx1 >= nowx) {
-                        continue;
-                    }
-                    if (hy2 < nowy || hy1 >= nowy) {
-                        continue;
-                    }
-                    int px_idx = i;
-                    if (fx) { px_idx =      (i / 32)  * 32 + (31 - (i % 32)); }
-                    //if (fy) { px_idx = (31 -(i / 32)) * 32 +        i % 32  ; }
-                    // TODO: fix so that both flags work simultaneously
-                    if (mask[px_idx]) {
-                        return false;
-                    }
-                }
-            }
-        }
+    if (all_empty) {
         return true;
     }
 
-    // Safeguard return value; any valid tile should be caught earlier on already
+    // check each tile pixel perfectly for collisions
+    for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
+        for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
+            bool fx = sprLayerLayout.at(y).at(x)->isFlippedX;
+            // bool fy = sprLayerLayout.at(y).at(x)->isFlippedY;
+            int idx = sprLayerLayout.at(y).at(x)->tileId;
+            if (sprLayerLayout.at(y).at(x)->isAnimated) {
+                idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
+            }
+
+            if ((sprLayerLayout.at(y).at(x)->isOneWay
+                && !downwards && (hy2 < ((y + 1) * 32)))
+                || sprLayerLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE) {
+                continue;
+            }
+            QBitArray mask = levelTileset->getTileMask(idx);
+            for (int i = 0; i < 1024; ++i) {
+                int nowx = (32 * x + i % 32);
+                int nowy = (32 * y + i / 32);
+                if (hx2 < nowx || hx1 >= nowx) {
+                    continue;
+                }
+                if (hy2 < nowy || hy1 >= nowy) {
+                    continue;
+                }
+                int px_idx = i;
+                if (fx) { px_idx =      (i / 32)  * 32 + (31 - (i % 32)); }
+                //if (fy) { px_idx = (31 -(i / 32)) * 32 +        i % 32  ; }
+                // TODO: fix so that both flags work simultaneously
+                if (mask[px_idx]) {
+                    return false;
+                }
+            }
+        }
+    }
     return true;
 }
 
@@ -692,7 +676,7 @@ void TileMap::initializeTexturedBackgroundFade() {
 }
 
 void TileMap::updateSprLayerIdx() {
-    for (unsigned layer = 0; layer < levelLayout.size(); ++layer) {
+    for (int layer = 0; layer < levelLayout.size(); ++layer) {
         if (!(levelLayout.at(layer).type == LAYER_SPRITE_LAYER)) {
             continue;
         }
@@ -770,11 +754,12 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
 
-    if (ty >= levelHeight || tx >= levelWidth) {
+    if (ty >= static_cast<int>(levelHeight) || tx >= static_cast<int>(levelWidth)) {
         return false;
     }
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
-    if (tile->destructType == DESTRUCT_WEAPON && (tile->extraByte == 0 || tile->extraByte == (weapon + 1))) {
+    if (tile->destructType == DESTRUCT_WEAPON && (tile->extraByte == 0u
+        || tile->extraByte == static_cast<uint>(weapon + 1))) {
         return advanceDestructibleTileAnimation(tile, tx, ty, "COMMON_SCENERY_DESTRUCT");
     }
 
@@ -849,13 +834,13 @@ void TileMap::setTrigger(unsigned char triggerID, bool newState) {
     triggerState[triggerID] = newState;
 
     // go through all tiles and update any that are influenced by this trigger
-    for (int tx = 0; tx < levelWidth; ++tx) {
-        for (int ty = 0; ty < levelHeight; ++ty) {
+    for (uint tx = 0; tx < levelWidth; ++tx) {
+        for (uint ty = 0; ty < levelHeight; ++ty) {
             auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
             if (tile->destructType == DESTRUCT_TRIGGER) {
                 if (tile->extraByte == triggerID) {
                 if (animatedTiles.at(tile->destructAnimation)->getAnimationLength() > 1) {
-                    tile->destructFrameIndex = (newState ? 1 : 0);
+                    tile->destructFrameIndex = (newState ? 1u : 0u);
                     tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
                     tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
                 }
@@ -911,6 +896,8 @@ void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
         case PC_SCENERY_COLLAPSE:
             setTileDestructibleEventFlag(tile, x, y, DESTRUCT_COLLAPSE, p[0] * 25);
             break;
+        default:
+            break;
     }
 }
 
@@ -958,14 +945,14 @@ SuspendType TileMap::getPosSuspendState(double x, double y) {
     auto tile = levelLayout[sprLayerIdx].tileLayout[ay][ax];
 
     bool fx = tile->isFlippedX;
-    bool fy = tile->isFlippedY;
+    //bool fy = tile->isFlippedY;
     if (tile->suspendType == SuspendType::SUSPEND_NONE) {
         return SuspendType::SUSPEND_NONE;
     }
 
     QBitArray mask(1024, false);
     if (tile->isAnimated) {
-        if (tile->tileId < animatedTiles.size()) {
+        if (tile->tileId < static_cast<uint>(animatedTiles.size())) {
             mask = levelTileset->getTileMask(animatedTiles.at(tile->tileId)->getCurrentTile()->tileId);
         }
     } else {

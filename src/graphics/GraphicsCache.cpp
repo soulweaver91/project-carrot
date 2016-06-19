@@ -124,8 +124,8 @@ std::shared_ptr<GraphicResource> GraphicsCache::request(const QString& filename)
             auto mask = std::make_shared<QBitArray>();
             mask->resize(res->frameDimensions.x * res->frameDimensions.y);
 
-            for (uint y = 0; y < res->frameDimensions.y; ++y) {
-                for (uint x = 0; x < res->frameDimensions.x; ++x) {
+            for (int y = 0; y < res->frameDimensions.y; ++y) {
+                for (int x = 0; x < res->frameDimensions.x; ++x) {
                     mask->setBit(x + y * res->frameDimensions.x, assetImage.getPixel(
                         res->frameDimensions.x * (i % res->frameConfiguration.x) + x,
                         res->frameDimensions.y * (i / res->frameConfiguration.x) + y

@@ -41,12 +41,12 @@ QString JJ2Format::convertJ2B(const QString& original) {
     //     4 bytes, uncompressed data size
     // qUncompress wants the last size so don't remove that, and we need the magic number to know
     // whether the data is AM or AMFF; skip CRC and sizes and assume the file is not corrupt
-    if (outfile.read(4).toInt() != 0x4553554D) {
+    if (outfile.read(4).toUInt() != 0x4553554Du) {
         outfile.close();
         return "";
     }
 
-    int format = outfile.read(4).toInt();
+    uint format = outfile.read(4).toUInt();
     outfile.seek(8);
 
     QByteArray size_bytes = fromLittleEndian(outfile.read(4));    
@@ -58,9 +58,9 @@ QString JJ2Format::convertJ2B(const QString& original) {
     }
 
     // rest is todo
-    if (format == 0xAFBEADDE) {
+    if (format == 0xAFBEADDEu) {
         
-    } else if (format == 0xBEBAADDE) {
+    } else if (format == 0xBEBAADDEu) {
 
     } else {
         // unknown format

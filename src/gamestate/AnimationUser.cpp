@@ -22,7 +22,7 @@ void AnimationUser::advanceAnimationTimers() {
     sourceAnim->advanceTimers();
 }
 
-void AnimationUser::animationFinishedHook(std::shared_ptr<AnimationInstance> animation) {
+void AnimationUser::animationFinishedHook(std::shared_ptr<AnimationInstance>) {
     if (inTransition) {
         inTransition = false;
         currentAnimation->resetFrame();
@@ -109,8 +109,8 @@ bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationC
     return true;
 }
 
-AnimationInstance::AnimationInstance(AnimationUser* const owner) : animation(nullptr), state(AnimState::STATE_UNINITIALIZED),
-    frame(0), sprite(), color(0, 0, 0), animationTimer(0), owner(owner) {
+AnimationInstance::AnimationInstance(AnimationUser* const owner) : animation(nullptr), frame(0), sprite(), 
+    state(AnimState::STATE_UNINITIALIZED), color(0, 0, 0), animationTimer(0), owner(owner) {
 }
 
 void AnimationInstance::advanceAnimation() {
@@ -170,7 +170,7 @@ void AnimationInstance::setSpritePosition(const sf::Vector2f& position, const sf
     sprite.setScale(scale);
 }
 
-const AnimStateT AnimationInstance::getAnimationState() {
+AnimStateT AnimationInstance::getAnimationState() {
     return state;
 }
 

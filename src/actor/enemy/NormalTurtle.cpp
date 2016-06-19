@@ -47,7 +47,7 @@ bool EnemyNormalTurtle::perish() {
     return goingToPerish;
 }
 
-void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance> animation) {
+void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance>) {
     if (isTurning) {
         if (!isWithdrawn) {
             isFacingLeft = !(isFacingLeft);
@@ -73,7 +73,7 @@ void EnemyNormalTurtle::attack() {
     });
 }
 
-void EnemyNormalTurtle::endAttack(std::shared_ptr<AnimationInstance> animation) {
+void EnemyNormalTurtle::endAttack(std::shared_ptr<AnimationInstance>) {
     speedX = (isFacingLeft ? -1 : 1) * 1;
     isAttacking = false;
 }

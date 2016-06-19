@@ -8,10 +8,11 @@
 #include "../struct/Constants.h"
 
 CommonActor::CommonActor(std::shared_ptr<CarrotQt5> gameRoot, double x, double y, bool fromEventMap)
-    : AnimationUser(gameRoot), root(gameRoot), speedX(0), speedY(0), externalForceX(0), externalForceY(0), 
-    canJump(false), isFacingLeft(false), maxHealth(1), health(1), isGravityAffected(true), internalForceY(0),
-    isClippingAffected(true), elasticity(0.0), isInvulnerable(false), friction(root->gravity / 3),
-    isBlinking(false), suspendType(SuspendType::SUSPEND_NONE), posX(x), posY(y), isCreatedFromEventMap(fromEventMap) {
+    : AnimationUser(gameRoot), root(gameRoot), maxHealth(1), health(1), posX(x), posY(y),
+    speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
+    canJump(false), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
+    isInvulnerable(false), isBlinking(false), elasticity(0.0), friction(root->gravity / 3),
+    suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
     originTileX = static_cast<int>(x) / 32;
     originTileY = static_cast<int>(y) / 32;
 }
@@ -57,22 +58,22 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
     }
 }
 
-void CommonActor::processControlDownEvent(const ControlEvent& e) {
+void CommonActor::processControlDownEvent(const ControlEvent&) {
     // nothing to do in this event unless a child class
     // overrides the function
 }
 
-void CommonActor::processControlUpEvent(const ControlEvent& e) {
+void CommonActor::processControlUpEvent(const ControlEvent&) {
     // nothing to do in this event unless a child class
     // overrides the function
 }
 
-void CommonActor::processControlHeldEvent(const ControlEvent& e) {
+void CommonActor::processControlHeldEvent(const ControlEvent&) {
     // nothing to do in this event unless a child class
     // overrides the function
 }
 
-void CommonActor::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
+void CommonActor::processAllControlHeldEvents(const QMap<Control, ControlState>&) {
     // By default, there is no functionality here. Most actors do not process control
     // events at all. If they do, they can override this function and call the
     // processAllControlHeldEventsDefaultHandler function for easy handling of each
@@ -88,8 +89,6 @@ void CommonActor::processAllControlHeldEventsDefaultHandler(const QMap<Control, 
 }
 
 void CommonActor::tickEvent() {
-    // Sign of the speed: either -1, 0 or 1
-    short sign = ((speedX + externalForceX) > EPSILON) ? 1 : (((speedX + externalForceX) < -EPSILON) ? -1 : 0);
     double gravity = (isGravityAffected ? root->gravity : 0);
    
     speedX = std::min(std::max(speedX, -16.0), 16.0);

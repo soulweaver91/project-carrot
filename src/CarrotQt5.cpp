@@ -27,11 +27,12 @@
 #include <QStringList>
 #include <bass.h>
 
-CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
+CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), gravity(0.3), 
 #ifdef CARROT_DEBUG
-    currentTempModifier(0), dbgShowMasked(false), dbgOverlaysActive(true), initialized(false),
+    dbgOverlaysActive(true), dbgShowMasked(false), currentTempModifier(0),
 #endif
-    paused(false), levelName(""), episodeName(""), frame(0), gravity(0.3), isMenu(false), menuObject(nullptr), fps(0) {
+    initialized(false), paused(false), levelName(""), episodeName(""), nextLevel(""), frame(0),
+    defaultLightingLevel(100), menuObject(nullptr), isMenu(false), fps(0) {
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -92,7 +93,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent),
     }
 
     // Read the main font
-    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 15, 32, 256);
+    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256);
     
     installEventFilter(this);
 
@@ -200,7 +201,7 @@ void CarrotQt5::openHomePage() {
     QDesktopServices::openUrl(QUrl("http://www.google.com/"));
 }*/
 
-void CarrotQt5::closeEvent(QCloseEvent *event) {
+void CarrotQt5::closeEvent(QCloseEvent* event) {
     QMessageBox msg(this);
     msg.setWindowTitle("Quit Project Carrot?");
     msg.setText("Are you sure you want to quit Project Carrot?");
@@ -214,7 +215,7 @@ void CarrotQt5::closeEvent(QCloseEvent *event) {
     }
 }
 
-bool CarrotQt5::eventFilter(QObject *watched, QEvent *e) {
+bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
         if (!isMenu) {
@@ -378,7 +379,7 @@ void CarrotQt5::gameTick() {
     // TODO: Adapt for multiple players
     int view_x = static_cast<unsigned>(views[0]->getViewCenter().x) / 32;
     int view_y = static_cast<unsigned>(views[0]->getViewCenter().y) / 32;
-    for (unsigned i = 0; i < actors.size(); i++) {
+    for (int i = 0; i < actors.size(); i++) {
         if (actors.at(i)->deactivate(view_x, view_y, 32)) {
             --i;
         }
@@ -390,14 +391,14 @@ void CarrotQt5::gameTick() {
     gameTiles->advanceCollapsingTileTimers();
 
     // Run all actors' timers
-    for (unsigned i = 0; i < actors.size(); i++) {
+    for (int i = 0; i < actors.size(); i++) {
         actors.at(i)->advanceAnimationTimers();
         actors.at(i)->advanceTimers();
         actors.at(i)->updateGraphicState();
     }
 
     // Run all actors' tick events
-    for (unsigned i = 0; i < actors.size(); i++) {
+    for (int i = 0; i < actors.size(); i++) {
         actors.at(i)->tickEvent();
         if (actors.at(i)->perish()) {
             --i;
@@ -407,7 +408,7 @@ void CarrotQt5::gameTick() {
     resourceManager->updateSoundPositions();
 
     // TODO: Adapt for multiple players
-    for (unsigned i = 0; i < debris.size(); i++) {
+    for (int i = 0; i < debris.size(); i++) {
         debris.at(i)->tickUpdate();
         if (debris.at(i)->getY() - views[0]->getViewCenter().y > 400) {
             debris.erase(debris.begin() + i);
@@ -535,13 +536,13 @@ bool CarrotQt5::loadLevel(const QString& name, const QString& episode) {
             
                 // Read the background layers
                 QStringList bgLayers = levelFiles.filter(".bg.layer");
-                for (unsigned i = 0; i < bgLayers.size(); ++i) {
+                for (int i = 0; i < bgLayers.size(); ++i) {
                     gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), level_config, i);
                 }
 
                 // Read the foreground layers
                 QStringList fgLayers = levelFiles.filter(".fg.layer");
-                for (unsigned i = 0; i < fgLayers.size(); ++i) {
+                for (int i = 0; i < fgLayers.size(); ++i) {
                     gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), level_config, i);
                 }
 
@@ -681,11 +682,6 @@ QVector<std::weak_ptr<CommonActor>> CarrotQt5::findCollisionActors(std::shared_p
         if (!myGS.boundingBox.intersects(otherGS.boundingBox)) {
             continue;
         }
-
-        sf::Vector2i delta = {
-            qRound(otherGS.origin.x - myGS.origin.x),
-            qRound(otherGS.origin.y - myGS.origin.y)
-        };
 
         QTransform tfMatrixB;
         tfMatrixB
@@ -923,7 +919,7 @@ std::shared_ptr<ResourceSet> CarrotQt5::loadActorTypeResources(const QString& ac
     return resourceManager->loadActorTypeResources(actorType);
 }
 
-const uint CarrotQt5::getDefaultLightingLevel() {
+uint CarrotQt5::getDefaultLightingLevel() {
     return defaultLightingLevel;
 }
 

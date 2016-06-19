@@ -7,7 +7,7 @@
 
 Ammo::Ammo(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,
     bool firedUp, int lifeLength, bool powered)
-    : CommonActor(root, x, y, false), owner(firedBy), framesLeft(lifeLength), poweredUp(powered) {
+    : CommonActor(root, x, y, false), poweredUp(powered), owner(firedBy), framesLeft(lifeLength), firedUp(firedUp) {
     isFacingLeft = firedLeft;
 }
 
@@ -67,6 +67,9 @@ void Ammo::checkCollisions() {
         switch(e) {
             case PC_MODIFIER_RICOCHET:
                 ricochet();
+                break;
+            default:
+                break;
         }
     }
 

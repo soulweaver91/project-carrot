@@ -2,7 +2,7 @@
 #include "Player.h"
 
 DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x, double y, DynamicBridgeType type)
-    : SolidObject(root, x, y, false) {
+    : SolidObject(root, x, y, false), bridgeType(type) {
     loadResources("Object/BridgePiece");
     // temp
     AnimationUser::setAnimation("OBJECT_BRIDGE_PIECE_GEM");
@@ -16,7 +16,7 @@ DynamicBridgePiece::~DynamicBridgePiece() {
 }
 
 
-bool DynamicBridgePiece::deactivate(int x, int y, int dist) {
+bool DynamicBridgePiece::deactivate(int, int, int) {
     // removal of bridge pieces is handled by the bridge event
     return false;
 }
@@ -27,10 +27,10 @@ Hitbox DynamicBridgePiece::getHitboxForParent() {
 
 DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y, unsigned int width,
     DynamicBridgeType type, unsigned int toughness)
-    : CommonActor(root, x - 16.0, y - 16.0), toughness(toughness), bridgeWidth(width), bridgeType(type), originalY(y) {
+    : CommonActor(root, x - 16.0, y - 16.0), originalY(y), toughness(toughness), bridgeType(type), bridgeWidth(width) {
     loadResources("Object/Bridge");
 
-    for (int i = 0; i < width; ++i) {
+    for (uint i = 0; i < width; ++i) {
         auto piece_n = std::make_shared<DynamicBridgePiece>(root, x + 16 * i - 16, y - 16, type);
         root->addActor(piece_n);
         bridgePieces << piece_n;
@@ -67,7 +67,7 @@ void DynamicBridge::tickEvent() {
         if (p != nullptr) {
             found = true;
             CoordinatePair coords = p->getPosition();
-            unsigned int num = bridgePieces.size();
+            int num = bridgePieces.size();
 
             toughness = 0;
 
