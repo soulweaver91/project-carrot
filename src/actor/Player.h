@@ -50,8 +50,8 @@ public:
     unsigned getLives();
     bool perish();
     Hitbox getHitbox() override;
-    bool setTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
-        bool setSpecial = false, void(Player::*callback)(std::shared_ptr<AnimationInstance> animation) = nullptr);
+    bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
+        bool setSpecial = false, AnimationCallbackFunc callback = []() {});
     void takeDamage(double pushForce);
     void setToViewCenter();
     bool deactivate(int x, int y, int dist) override;
@@ -82,6 +82,7 @@ private:
     template<typename T> std::shared_ptr<T> fireWeapon();
     uint getGemsTotalValue();
     uint getCoinsTotalValue();
+    void warpToPosition(const CoordinatePair& pos);
 
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
@@ -104,30 +105,20 @@ private:
 
     bool isUsingDamagingMove;
     bool controllable;
+    bool isAttachedToPole;
     int cameraShiftFramesCount;
     int copterFramesLeft;
-
-    // Variables for spinning poles: counter to have three loops, boolean value to know which direction the pole is supposed to move you to
-    unsigned short poleSpinCount;
-    bool poleSpinDirectionPositive;
 
     // Counter for Toaster ammo subticks
     unsigned short toasterAmmoSubticks;
 
-    void endHurtTransition(std::shared_ptr<AnimationInstance> animation);
-    void endHPoleTransition(std::shared_ptr<AnimationInstance> animation);
-    void endVPoleTransition(std::shared_ptr<AnimationInstance> animation);
-    void endWarpTransition(std::shared_ptr<AnimationInstance> animation);
-    void deathRecovery(std::shared_ptr<AnimationInstance> animation);
+    void initialPoleStage(bool horizontal);
+    void nextPoleStage(bool horizontal, bool positive, ushort stagesLeft);
 
     bool isSugarRush;
     static const uint SUGAR_RUSH_THRESHOLD;
 
-    CoordinatePair warpTarget;
-
 private slots:
-    void delayedUppercutStart(std::shared_ptr<AnimationInstance> animation);
-    void delayedButtstompStart(std::shared_ptr<AnimationInstance> animation);
     void endDamagingMove();
     void returnControl();
 };

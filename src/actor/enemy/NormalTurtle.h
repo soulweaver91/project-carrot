@@ -17,8 +17,7 @@ public:
 
 private:
     void attack();
-    void handleTurn(std::shared_ptr<AnimationInstance> animation);
-    void endAttack(std::shared_ptr<AnimationInstance> animation);
+    void handleTurn(bool isFirstPhase);
     bool isTurning;
     bool isWithdrawn;
 };

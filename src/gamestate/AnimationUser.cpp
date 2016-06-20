@@ -95,9 +95,7 @@ bool AnimationUser::setAnimation(std::shared_ptr<GraphicResource> animation) {
 bool AnimationUser::setTransition(AnimStateT state, bool cancellable, AnimationCallbackFunc callback) {
     auto candidates = findAnimationCandidates(state);
     if (candidates.size() == 0) {
-        if (callback != nullptr) {
-            (this->*(callback))(nullptr);
-        }
+        callback();
 
         return false;
     } else {
@@ -231,5 +229,5 @@ ActorGraphicState AnimationInstance::getGraphicState() {
 }
 
 void AnimationInstance::doCallback() {
-    (owner->*(callback))(shared_from_this());
+    callback();
 }

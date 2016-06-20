@@ -15,9 +15,9 @@
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
-    weaponCooldown(0), isUsingDamagingMove(false), controllable(true), cameraShiftFramesCount(0),
-    copterFramesLeft(0), poleSpinCount(0), poleSpinDirectionPositive(false), toasterAmmoSubticks(10),
-    isSugarRush(false), warpTarget(0, 0) {
+    weaponCooldown(0), isUsingDamagingMove(false), controllable(true), isAttachedToPole(false), cameraShiftFramesCount(0),
+    copterFramesLeft(0), toasterAmmoSubticks(10),
+    isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
@@ -90,7 +90,11 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                     isGravityAffected = false;
                     isUsingDamagingMove = true;
                     setAnimation(AnimState::BUTTSTOMP);
-                    setTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, &Player::delayedButtstompStart);
+                    setPlayerTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, [this]() {
+                        speedY = 9;
+                        setAnimation(AnimState::BUTTSTOMP);
+                        playSound("PLAYER_BUTTSTOMP", 1.0f, 0.0f, 0.8f);
+                    });
                 }
             }
         }
@@ -126,7 +130,12 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                 if ((currentState & AnimState::CROUCH) > 0) {
                     controllable = false;
                     setAnimation(AnimState::UPPERCUT);
-                    setTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, &Player::delayedUppercutStart);
+                    setPlayerTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, [this]() {
+                        externalForceY = 1.5;
+                        speedY = -2;
+                        canJump = false;
+                        setPlayerTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
+                    });
                 } else {
                     if (speedY > 0 && !canJump) {
                         isGravityAffected = false;
@@ -361,7 +370,7 @@ void Player::tickEvent() {
             posY -= 1;
         } else {
             suspendType = SuspendType::SUSPEND_NONE;
-            if (((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0) && (poleSpinCount == 0)) {
+            if ((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0 && !isAttachedToPole) {
                 isGravityAffected = true;
             }
         }
@@ -402,8 +411,10 @@ void Player::tickEvent() {
     // check if copter ears ended
     if ((currentState & (AnimState::COPTER)) > 0) {
         if (canJump || copterFramesLeft == 0 || suspendType != SUSPEND_NONE) {
-            isGravityAffected = true;
             setAnimation(currentState & ~AnimState::COPTER);
+            if (!isAttachedToPole) {
+                isGravityAffected = true;
+            }
         } else {
             if (copterFramesLeft > 0) {
                 copterFramesLeft--;
@@ -431,56 +442,25 @@ void Player::tickEvent() {
                 if (!inTransition || cancellableTransition) {
                     CoordinatePair c = events->getWarpTarget(p[0]);
                     if (c.x >= 0) {
-                        warpTarget = c;
-                        setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
-                        isInvulnerable = true;
-                        isGravityAffected = false;
-                        speedX = 0;
-                        speedY = 0;
-                        externalForceX = 0;
-                        externalForceY = 0;
-                        internalForceY = 0;
-                        playSound("COMMON_WARP_IN");
+                        warpToPosition(c);
                     }
                 }
             }
             break;
             case PC_MODIFIER_H_POLE:
-                if (poleSpinCount == 0) {
-                    posY = std::floor(qRound(posY) / 32) * 32 + 16;
-                    setTransition(AnimState::TRANSITION_POLE_H_SLOW, false, true, false, &Player::endHPoleTransition);
-                    poleSpinDirectionPositive = (speedX > 0);
-                    posX = std::floor(qRound(posX) / 32) * 32 + 16;
-                    poleSpinCount = 3;
-                    speedX = 0;
-                    speedY = 0;
-                    externalForceX = 0;
-                    externalForceY = 0;
-                    internalForceY = 0;
-                    canJump = false;
-                    isGravityAffected = false;
+                if (controllable) {
+                    initialPoleStage(true);
                 }
                 break;
             case PC_MODIFIER_V_POLE:
-                if (poleSpinCount == 0) {
-                    posY = std::floor(qRound(posY) / 32) * 32 + 16;
-                    setTransition(AnimState::TRANSITION_POLE_V_SLOW, false, true, false, &Player::endVPoleTransition);
-                    poleSpinDirectionPositive = (speedY > 0);
-                    posX = std::floor(qRound(posX) / 32) * 32 + 16;
-                    poleSpinCount = 3;
-                    speedX = 0;
-                    speedY = 0;
-                    externalForceX = 0;
-                    externalForceY = 0;
-                    internalForceY = 0;
-                    canJump = false;
-                    isGravityAffected = false;
+                if (controllable) {
+                    initialPoleStage(false);
                 }
                 break;
             case PC_MODIFIER_TUBE:
                 {
                     endDamagingMove();
-                    setTransition(AnimState::DASH | AnimState::JUMP, false, false, false);
+                    setPlayerTransition(AnimState::DASH | AnimState::JUMP, false, false, false);
                     isGravityAffected = false;
                     speedX = 0;
                     speedY = 0;
@@ -597,11 +577,11 @@ void Player::tickEvent() {
                 if (std::abs(params.x) > EPSILON) {
                     speedX = (4 + std::abs(params.x)) * sign;
                     externalForceX = params.x;
-                    setTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
+                    setPlayerTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
                 } else {
                     speedY = (4 + std::abs(params.y)) * sign;
                     externalForceY = -params.y;
-                    setTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
+                    setPlayerTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
                 }
                 canJump = false;
                 continue;
@@ -617,7 +597,7 @@ void Player::tickEvent() {
             }
         }
 
-        if (warpTarget == CoordinatePair(0, 0)) {
+        if (!inTransition || cancellableTransition) {
             auto collider = std::dynamic_pointer_cast<BonusWarp>(collisionPtr);
             if (collider != nullptr) {
                 quint16 p[8];
@@ -631,17 +611,7 @@ void Player::tickEvent() {
                     collectedCoins[0] -= owed;
 
                     setupOSD(OSD_COIN_SILVER, getCoinsTotalValue());
-
-                    warpTarget = collider->getWarpTarget();
-                    setTransition(AnimState::TRANSITION_WARP, false, true, false, &Player::endWarpTransition);
-                    isInvulnerable = true;
-                    isGravityAffected = false;
-                    speedX = 0;
-                    speedY = 0;
-                    externalForceX = 0;
-                    externalForceY = 0;
-                    internalForceY = 0;
-                    playSound("COMMON_WARP_IN");
+                    warpToPosition(collider->getWarpTarget());
                 } else {
                     setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - getCoinsTotalValue());
                 }
@@ -795,39 +765,37 @@ bool Player::perish() {
     // handle death here
     if (health == 0 && transition->getAnimationState() != AnimState::TRANSITION_DEATH) {
         cancellableTransition = false;
-        setTransition(AnimState::TRANSITION_DEATH, false, true, false, &Player::deathRecovery);
+        setPlayerTransition(AnimState::TRANSITION_DEATH, false, true, false, [this]() {
+            if (lives > 0) {
+                lives--;
+
+                // Return us to the last save point
+                root->loadSavePoint();
+
+                // Reset health and remove one life
+                health = maxHealth;
+                osd->setLives(lives);
+                osd->setHealth(maxHealth);
+
+                // Negate all possible movement effects etc.
+                transition->clearCallback();
+                inTransition = false;
+                canJump = false;
+                externalForceX = 0;
+                externalForceY = 0;
+                internalForceY = 0;
+                speedX = 0;
+                speedY = 0;
+                controllable = true;
+
+                // remove fast fires
+                fastfires = 0;
+            } else {
+                // TODO: game over handling
+            }
+        });
     }
     return false;
-}
-
-void Player::deathRecovery(std::shared_ptr<AnimationInstance>) {
-    if (lives > 0) {
-        lives--;
-
-        // Return us to the last save point
-        root->loadSavePoint();
-
-        // Reset health and remove one life
-        health = maxHealth;
-        osd->setLives(lives);
-        osd->setHealth(maxHealth);
-
-        // Negate all possible movement effects etc.
-        transition->clearCallback();
-        inTransition = false;
-        canJump = false;
-        externalForceX = 0;
-        externalForceY = 0;
-        internalForceY = 0;
-        speedX = 0;
-        speedY = 0;
-        controllable = true;
-        
-        // remove fast fires
-        fastfires = 0;
-    } else {
-        // TODO: game over handling
-    }
 }
 
 Hitbox Player::getHitbox() {
@@ -852,21 +820,8 @@ void Player::returnControl() {
     controllable = true;
 }
 
-void Player::delayedUppercutStart(std::shared_ptr<AnimationInstance>) {
-    externalForceY = 1.5;
-    speedY = -2;
-    canJump = false;
-    setTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
-}
-
-void Player::delayedButtstompStart(std::shared_ptr<AnimationInstance>) {
-    speedY = 9;
-    setAnimation(AnimState::BUTTSTOMP);
-    playSound("PLAYER_BUTTSTOMP", 1.0f, 0.0f, 0.8f);
-}
-
-bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special, 
-    void(Player::*callback)(std::shared_ptr<AnimationInstance> animation)) {
+bool Player::setPlayerTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special,
+    AnimationCallbackFunc callback) {
     if (remove_control) {
         controllable = false;
     }
@@ -874,7 +829,7 @@ bool Player::setTransition(AnimStateT state, bool cancellable, bool remove_contr
         isUsingDamagingMove = true;
     }
 
-    return CommonActor::setTransition(state, cancellable, static_cast<AnimationCallbackFunc>(callback));
+    return CommonActor::setTransition(state, cancellable, callback);
 }
 
 void Player::onHitFloorHook() {
@@ -922,7 +877,9 @@ void Player::takeDamage(double pushForce) {
         speedY = -6.5;
         speedX = 0;
         canJump = false;
-        setTransition(AnimState::HURT, false, true, false, &Player::endHurtTransition);
+        setPlayerTransition(AnimState::HURT, false, true, false, [this]() {
+            controllable = true;
+        });
         setInvulnerability(210u, true);
         playSound("PLAYER_JAZZ_HURT");
         osd->setHealth(health);
@@ -966,55 +923,55 @@ unsigned Player::getLives() {
     return lives;
 }
 
-void Player::endHurtTransition(std::shared_ptr<AnimationInstance>) {
-    controllable = true;
+void Player::initialPoleStage(bool horizontal) {
+    bool positive;
+    if (horizontal) {
+        positive = (speedX > 0);
+    } else {
+        positive = (speedY > 0);
+    }
+
+    posX = std::floor(qRound(posX) / 32) * 32 + 16;
+    posY = std::floor(qRound(posY) / 32) * 32 + 16;
+    speedX = 0;
+    speedY = 0;
+    externalForceX = 0;
+    externalForceY = 0;
+    internalForceY = 0;
+    canJump = false;
+    isGravityAffected = false;
+    controllable = false;
+    isAttachedToPole = true;
+
+    AnimStateT poleAnim = horizontal ? AnimState::TRANSITION_POLE_H_SLOW : AnimState::TRANSITION_POLE_V_SLOW;
+
+    setPlayerTransition(poleAnim, false, true, false, [this, horizontal, positive]() {
+        nextPoleStage(horizontal, positive, 2);
+    });
 }
 
-void Player::endHPoleTransition(std::shared_ptr<AnimationInstance>) {
-    --poleSpinCount;
-    if (poleSpinCount > 0) {
-        setTransition(AnimState::TRANSITION_POLE_H, false, true, false, &Player::endHPoleTransition);
+void Player::nextPoleStage(bool horizontal, bool positive, ushort stagesLeft) {
+    if (stagesLeft > 0) {
+        AnimStateT poleAnim = horizontal ? AnimState::TRANSITION_POLE_H : AnimState::TRANSITION_POLE_V;
+
+        setPlayerTransition(poleAnim, false, true, false, [this, horizontal, positive, stagesLeft]() {
+            nextPoleStage(horizontal, positive, stagesLeft - 1);
+        });
     } else {
-        int mp = poleSpinDirectionPositive ? 1 : -1;
-        speedX = 10 * mp;
-        externalForceX = 10 * mp;
+        int mp = positive ? 1 : -1;
+        if (horizontal) {
+            speedX = 10 * mp;
+            externalForceX = 10 * mp;
+            isFacingLeft = !positive;
+        } else {
+            posY += mp * 32;
+            speedY = 10 * mp;
+            externalForceY = -1 * mp;
+        }
         controllable = true;
         isGravityAffected = true;
-        isFacingLeft = !poleSpinDirectionPositive;
+        isAttachedToPole = false;
     }
-}
-
-void Player::endVPoleTransition(std::shared_ptr<AnimationInstance>) {
-    --poleSpinCount;
-    if (poleSpinCount > 0) {
-        setTransition(AnimState::TRANSITION_POLE_V, false, true, false, &Player::endVPoleTransition);
-    } else {
-        int mp = poleSpinDirectionPositive ? 1 : -1;
-        posY += mp * 32;
-        speedY = 10 * mp;
-        externalForceY = -1 * mp;
-        controllable = true;
-        isGravityAffected = true;
-    }
-}
-
-void Player::endWarpTransition(std::shared_ptr<AnimationInstance>) {
-    auto events = root->getGameEvents().lock();
-    if (events == nullptr) {
-        return;
-    }
-
-    if (transition->getAnimationState() == AnimState::TRANSITION_WARP) {
-        moveInstantly(warpTarget);
-        setTransition(AnimState::TRANSITION_WARP_END, false, true, false, &Player::endWarpTransition);
-        playSound("COMMON_WARP_OUT");
-    } else {
-        isInvulnerable = false;
-        isGravityAffected = true;
-        controllable = true;
-    }
-
-    warpTarget = { 0, 0 };
 }
 
 LevelCarryOver Player::prepareLevelCarryOver() {
@@ -1100,6 +1057,33 @@ uint Player::getGemsTotalValue() {
 
 uint Player::getCoinsTotalValue() {
     return collectedCoins[0] + collectedCoins[1] * 5;
+}
+
+void Player::warpToPosition(const CoordinatePair& pos) {
+    setPlayerTransition(AnimState::TRANSITION_WARP, false, true, false, [this, pos]() {
+        auto events = root->getGameEvents().lock();
+        if (events == nullptr) {
+            return;
+        }
+
+        moveInstantly(pos);
+        playSound("COMMON_WARP_OUT");
+
+        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {
+            isInvulnerable = false;
+            isGravityAffected = true;
+            controllable = true;
+        });
+    });
+
+    isInvulnerable = true;
+    isGravityAffected = false;
+    speedX = 0;
+    speedY = 0;
+    externalForceX = 0;
+    externalForceY = 0;
+    internalForceY = 0;
+    playSound("COMMON_WARP_IN");
 }
 
 template<typename T> std::shared_ptr<T> Player::fireWeapon() {

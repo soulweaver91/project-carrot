@@ -2,6 +2,7 @@
 
 #include "../../CarrotQt5.h"
 #include "TurtleShell.h"
+#include "../../struct/Constants.h"
 
 EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
     : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
@@ -17,8 +18,10 @@ EnemyNormalTurtle::~EnemyNormalTurtle() {
 void EnemyNormalTurtle::tickEvent() {
     Enemy::tickEvent();
     
-    if (!canMoveToPosition(speedX, 0)) {
-        setTransition(AnimState::TRANSITION_WITHDRAW, false, static_cast<AnimationCallbackFunc>(&EnemyNormalTurtle::handleTurn));
+    if (std::abs(speedX) > EPSILON && !canMoveToPosition(speedX, 0)) {
+        setTransition(AnimState::TRANSITION_WITHDRAW, false, [this]() {
+            handleTurn(true);
+        });
         isTurning = true;
         hurtPlayer = false;
         speedX = 0;
@@ -47,11 +50,13 @@ bool EnemyNormalTurtle::perish() {
     return goingToPerish;
 }
 
-void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance>) {
+void EnemyNormalTurtle::handleTurn(bool isFirstPhase) {
     if (isTurning) {
-        if (!isWithdrawn) {
+        if (isFirstPhase) {
             isFacingLeft = !(isFacingLeft);
-            setTransition(AnimState::TRANSITION_WITHDRAW_END, false, static_cast<AnimationCallbackFunc>(&EnemyNormalTurtle::handleTurn));
+            setTransition(AnimState::TRANSITION_WITHDRAW_END, false, [this]() {
+                handleTurn(false);
+            });
             playSound("ENEMY_TURTLE_WITHDRAW_END");
             isWithdrawn = true;
         } else {
@@ -64,16 +69,14 @@ void EnemyNormalTurtle::handleTurn(std::shared_ptr<AnimationInstance>) {
 }
 
 void EnemyNormalTurtle::attack() {
-    setTransition(AnimState::TRANSITION_ATTACK, false, static_cast<AnimationCallbackFunc>(&EnemyNormalTurtle::endAttack));
+    setTransition(AnimState::TRANSITION_ATTACK, false, [this]() {
+        speedX = (isFacingLeft ? -1 : 1) * 1;
+        isAttacking = false;
+    });
     speedX = 0;
     isAttacking = true;
     playSound("ENEMY_TURTLE_ATTACK");
     addTimer(4u, false, [this](){
         playSound("ENEMY_TURTLE_ATTACK_2"); 
     });
-}
-
-void EnemyNormalTurtle::endAttack(std::shared_ptr<AnimationInstance>) {
-    speedX = (isFacingLeft ? -1 : 1) * 1;
-    isAttacking = false;
 }
