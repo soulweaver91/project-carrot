@@ -7,6 +7,7 @@
 #include "graphics/QSFMLCanvas.h"
 #include "graphics/CarrotCanvas.h"
 #include "menu/MenuScreen.h"
+#include "struct/Constants.h"
 #include "JJ2Format.h"
 
 #include "ui_AboutCarrotDialog.h"
@@ -70,8 +71,16 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), gravity(0.3),
 #endif
 
     // Initialize the paint surface
-    windowCanvas = std::make_shared<CarrotCanvas>(ui.mainFrame, QPoint(0, 0), QSize(800, 600));
+    windowCanvas = std::make_shared<CarrotCanvas>(this, QPoint(0, 0), QSize(DEFAULT_RESOLUTION_W, DEFAULT_RESOLUTION_H));
     windowCanvas->show();
+
+    // Resize the main window to exactly fit the menu bar and the game view itself.
+    // There might be a less hacky way to do this, but if there is, it is not very obvious.
+    setCentralWidget(windowCanvas.get());
+    centralWidget()->setFixedSize(QSize(DEFAULT_RESOLUTION_W, DEFAULT_RESOLUTION_H));
+    resize(sizeHint());
+    centralWidget()->setMinimumSize(QSize(320, 200));
+    centralWidget()->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
     
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
@@ -99,7 +108,7 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), gravity(0.3),
 
     // Define pause screen resources
     pausedScreenshot = std::make_unique<sf::Texture>();
-    pausedScreenshot->create(800, 600);
+    pausedScreenshot->create(DEFAULT_RESOLUTION_W, DEFAULT_RESOLUTION_H);
     pausedScreenshot->update(*windowCanvas);
 
     pausedScreenshotSprite = std::make_unique<sf::Sprite>();
@@ -232,10 +241,9 @@ bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
         }
         paused = true;
     } else if (e->type() == QEvent::Resize) {
-        int w = ui.centralWidget->size().width();
-        int h = ui.centralWidget->size().height();
+        int w = centralWidget()->width();
+        int h = centralWidget()->height();
 
-        ui.mainFrame->resize(ui.centralWidget->size());
         windowCanvas->setSize(sf::Vector2u(w, h));
         windowCanvas->setView(sf::View(sf::FloatRect(0, 0, w, h)));
         if (gameTiles != nullptr) {
