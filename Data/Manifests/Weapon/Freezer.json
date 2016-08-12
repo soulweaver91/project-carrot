@@ -1,0 +1,19 @@
+{
+  "graphics": {
+    "WEAPON_FREEZER_HOR": {
+      "filename": "weapon/bullet_freezer_hor.png",
+      "states": [
+        "0"
+      ]
+    },
+    "WEAPON_FREEZER_VER": {
+      "filename": "weapon/bullet_freezer_ver.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

@@ -16,6 +16,7 @@ public:
     virtual void tickEvent() override;
     virtual bool perish() override;
     bool hurtsPlayer();
+    virtual void handleCollision(std::shared_ptr<CommonActor> other) override;
 
 protected:
     bool hurtPlayer;

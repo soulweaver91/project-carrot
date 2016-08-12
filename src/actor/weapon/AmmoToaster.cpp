@@ -41,6 +41,10 @@ void AmmoToaster::tickEvent() {
     }
 }
 
+WeaponType AmmoToaster::getType() const {
+    return WEAPON_TOASTER;
+}
+
 void AmmoToaster::ricochet() {
     // do nothing
 }

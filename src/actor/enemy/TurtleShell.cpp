@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include "../collectible/Collectible.h"
 #include "../weapon/Ammo.h"
+#include "../weapon/AmmoFreezer.h"
+#include "../weapon/AmmoToaster.h"
 #include "../../gamestate/TileMap.h"
 #include "../../struct/Constants.h"
 
@@ -63,7 +65,7 @@ void TurtleShell::tickEvent() {
         {
             auto specializedPtr = std::dynamic_pointer_cast<Collectible>(colliderPtr);
             if (specializedPtr != nullptr) {
-                specializedPtr->impact();
+                specializedPtr->handleCollision(shared_from_this());
                 continue;
             }
         }
@@ -96,12 +98,23 @@ void TurtleShell::tickEvent() {
     }
 }
 
-void TurtleShell::impact(double speed) {
-    speedX = speed / 2;
-}
-
 Hitbox TurtleShell::getHitbox() {
     return CommonActor::getHitbox(24u, 16u);
+}
+
+void TurtleShell::handleCollision(std::shared_ptr<CommonActor> other) {
+    CommonActor::handleCollision(other);
+
+    // TODO: Use actor type specifying function instead when available
+    if (std::dynamic_pointer_cast<Ammo>(other) != nullptr &&
+        std::dynamic_pointer_cast<AmmoFreezer>(other) == nullptr) {
+        if (std::dynamic_pointer_cast<AmmoToaster>(other) != nullptr) {
+            health -= maxHealth;
+            return;
+        }
+
+        speedX = other->getSpeedX() / 2;
+    }
 }
 
 void TurtleShell::onHitFloorHook() {

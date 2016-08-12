@@ -8,8 +8,8 @@ public:
         double initSpeedY = 0.0, bool fromEventMap = false);
     ~TurtleShell();
     void tickEvent() override;
-    void impact(double speed);
     Hitbox getHitbox() override;
+    virtual void handleCollision(std::shared_ptr<CommonActor> other) override;
 
 protected:
     void onHitFloorHook() override;

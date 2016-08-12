@@ -5,6 +5,7 @@
 
 BonusWarp::BonusWarp(std::shared_ptr<CarrotQt5> root, double x, double y, const quint16 params[8])
 : CommonActor(root, x, y, true) {
+    canBeFrozen = false;
     std::copy_n(params, 8, eventParams);
     loadResources("Object/BonusWarp");
 

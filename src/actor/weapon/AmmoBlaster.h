@@ -13,4 +13,5 @@ public:
         double x = 0.0, double y = 0.0, double speed = 0.0, bool firedLeft = false, bool firedUp = false);
     ~AmmoBlaster();
     void tickEvent();
+    WeaponType getType() const override;
 };

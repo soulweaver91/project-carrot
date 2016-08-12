@@ -9,5 +9,6 @@ enum WeaponType {
     WEAPON_TOASTER = 5,
     WEAPON_TNT     = 6,
     WEAPON_PEPPER  = 7,
-    WEAPON_ELECTRO = 8
+    WEAPON_ELECTRO = 8,
+    WEAPON_UNKNOWN = INT_MAX
 };

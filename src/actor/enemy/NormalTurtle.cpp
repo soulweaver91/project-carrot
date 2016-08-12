@@ -17,6 +17,10 @@ EnemyNormalTurtle::~EnemyNormalTurtle() {
 
 void EnemyNormalTurtle::tickEvent() {
     Enemy::tickEvent();
+
+    if (frozenFramesLeft > 0) {
+        return;
+    }
     
     if (std::abs(speedX) > EPSILON && !canMoveToPosition(speedX, 0)) {
         setTransition(AnimState::TRANSITION_WITHDRAW, false, [this]() {

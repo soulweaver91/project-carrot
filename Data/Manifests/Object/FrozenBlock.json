@@ -1,0 +1,13 @@
+{
+  "graphics": {
+    "OBJECT_FROZEN_BLOCK": {
+      "filename": "common/ice_block.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  }
+}

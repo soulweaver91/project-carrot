@@ -12,6 +12,7 @@
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
+#include "weapon/AmmoFreezer.h"
 
 Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
@@ -37,7 +38,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
         Qt::Key::Key_Control,
         Qt::Key::Key_Space,
         Qt::Key::Key_Shift,
-        Qt::Key::Key_Enter
+        Qt::Key::Key_Return
     };
 
     // Get a brief invincibility at the start of the level
@@ -247,6 +248,12 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
                     weaponCooldown = 25;
                     break;
                 }
+                case WEAPON_FREEZER:
+                {
+                    auto newAmmo = fireWeapon<AmmoFreezer>();
+                    weaponCooldown = 25;
+                    break;
+                }
                 case WEAPON_TOASTER:
                 {
                     auto newAmmo = fireWeapon<AmmoToaster>();
@@ -256,7 +263,6 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
                 case WEAPON_TNT:
                     // do nothing, TNT can only be placed by keypress, not by holding space down
                     break;
-                case WEAPON_FREEZER:
                 case WEAPON_SEEKER:
                 case WEAPON_RF:
                 case WEAPON_PEPPER:
@@ -578,10 +584,12 @@ void Player::tickEvent() {
                     speedX = (4 + std::abs(params.x)) * sign;
                     externalForceX = params.x;
                     setPlayerTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
-                } else {
+                } else if (std::abs(params.y) > EPSILON) {
                     speedY = (4 + std::abs(params.y)) * sign;
                     externalForceY = -params.y;
                     setPlayerTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
+                } else {
+                    continue;
                 }
                 canJump = false;
                 continue;

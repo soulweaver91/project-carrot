@@ -4,6 +4,7 @@
 #include "../CarrotQt5.h"
 #include "../graphics/AnimatedTile.h"
 #include "../struct/Constants.h"
+#include "../actor/FrozenBlock.h"
 
 TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename,
     const QString& sprLayerFilename) : root(gameRoot), sprLayerIdx(0), levelWidth(1), levelHeight(1) {
@@ -758,9 +759,17 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
         return false;
     }
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
-    if (tile->destructType == DESTRUCT_WEAPON && (tile->extraByte == 0u
-        || tile->extraByte == static_cast<uint>(weapon + 1))) {
-        return advanceDestructibleTileAnimation(tile, tx, ty, "COMMON_SCENERY_DESTRUCT");
+    if (tile->destructType == DESTRUCT_WEAPON) {
+        if (weapon == WEAPON_FREEZER && (animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
+            auto e = std::make_shared<FrozenBlock>(root, 32 * tx + 16.0, 32.0 * ty + 16.0);
+            root->addActor(e);
+
+            return true;
+        }
+
+        if (tile->extraByte == 0u || tile->extraByte == static_cast<uint>(weapon + 1)) {
+            return advanceDestructibleTileAnimation(tile, tx, ty, "COMMON_SCENERY_DESTRUCT");
+        }
     }
 
     return false;

@@ -7,7 +7,9 @@
 
 Ammo::Ammo(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,
     bool firedUp, int lifeLength, bool powered)
-    : CommonActor(root, x, y, false), poweredUp(powered), owner(firedBy), framesLeft(lifeLength), firedUp(firedUp) {
+    : CommonActor(root, x, y, false), poweredUp(powered), strength(1), owner(firedBy), framesLeft(lifeLength),
+    firedUp(firedUp) {
+    canBeFrozen = false;
     isFacingLeft = firedLeft;
 }
 
@@ -25,6 +27,18 @@ void Ammo::tickEvent() {
     }
 }
 
+std::weak_ptr<Player> Ammo::getOwner() {
+    return owner;
+}
+
+int Ammo::getStrength() {
+    return strength;
+}
+
+WeaponType Ammo::getType() const {
+    return WEAPON_UNKNOWN;
+}
+
 void Ammo::checkCollisions() {
     auto collisions = root->findCollisionActors(shared_from_this());
     for (const auto& actor : collisions) {
@@ -33,29 +47,14 @@ void Ammo::checkCollisions() {
             continue;
         }
 
-        // Different things happen with different actor types
-        auto enemy = std::dynamic_pointer_cast<Enemy>(actorPtr);
-        if (enemy != nullptr) {
-            enemy->decreaseHealth(1);
-            decreaseHealth(1);
-            return;
-        }
-        auto box = std::dynamic_pointer_cast<PushBox>(actorPtr);
-        if (box != nullptr) {
-            decreaseHealth(1);
-            return;
-        }
+        actorPtr->handleCollision(shared_from_this());
 
-        auto shell = std::dynamic_pointer_cast<TurtleShell>(actorPtr);
-        if (shell != nullptr) {
-            shell->impact(speedX);
+        // TODO: Use actor type specifying function instead when available
+        if ((std::dynamic_pointer_cast<Enemy>(actorPtr) != nullptr) ||
+            (std::dynamic_pointer_cast<PushBox>(actorPtr) != nullptr) ||
+            (std::dynamic_pointer_cast<TurtleShell>(actorPtr) != nullptr)) {
             decreaseHealth(1);
             return;
-        }
-
-        auto coll = std::dynamic_pointer_cast<Collectible>(actorPtr);
-        if (coll != nullptr) {
-            coll->impact(speedX / 5.0, -speedY / 10.0);
         }
     }
     
@@ -73,10 +72,13 @@ void Ammo::checkCollisions() {
         }
     }
 
-    if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY)) {
-        auto player = owner.lock();
-        if (player != nullptr) {
-            player->addScore(50);
+    auto type = getType();
+    if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY, type)) {
+        if (type != WEAPON_FREEZER) {
+            auto player = owner.lock();
+            if (player != nullptr) {
+                player->addScore(50);
+            }
         }
 
         health = 0;

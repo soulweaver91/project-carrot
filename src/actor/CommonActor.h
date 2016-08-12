@@ -18,6 +18,7 @@
 class CarrotQt5;
 class TileMap;
 class GameView;
+class Ammo;
 
 class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
@@ -33,13 +34,18 @@ public:
     CoordinatePair getPosition();
     virtual Hitbox getHitbox();
     virtual Hitbox getHitbox(const uint& w, const uint& h);
+    double getSpeedX();
+    double getSpeedY();
     virtual bool perish();
     virtual bool deactivate(int x, int y, int tileDistance);
+    virtual void handleCollision(std::shared_ptr<CommonActor> other);
     void moveInstantly(CoordinatePair location);
     void deleteFromEventMap();
     void updateGraphicState();
     void setInvulnerability(uint frames = 210u, bool blink = false);
+    void advanceActorAnimationTimers();
     const ActorGraphicState getGraphicState();
+    void handleAmmoFrozenStateChange(std::shared_ptr<CommonActor> ammo);
         
 protected:
     void processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e);
@@ -67,11 +73,13 @@ protected:
     double externalForceY;
     double internalForceY;
     bool canJump;
+    bool canBeFrozen;
     bool isFacingLeft;
     bool isGravityAffected;
     bool isClippingAffected;
     bool isInvulnerable;
     bool isBlinking;
+    uint frozenFramesLeft;
     double elasticity;
     double friction;
     SuspendType suspendType;

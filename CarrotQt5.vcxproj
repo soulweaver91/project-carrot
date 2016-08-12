@@ -165,7 +165,9 @@
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
+    <ClCompile Include="src\actor\FrozenBlock.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
+    <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_CarrotQt5.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -228,7 +230,9 @@
     <ClInclude Include="src\actor\collectible\FoodCollectible.h" />
     <ClInclude Include="src\actor\collectible\GemCollectible.h" />
     <ClInclude Include="src\actor\enemy\TurtleShell.h" />
+    <ClInclude Include="src\actor\FrozenBlock.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
+    <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="src\actor\Bridge.h" />
@@ -403,6 +407,7 @@
     <None Include="Data\Manifests\Object\BonusWarp.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />
+    <None Include="Data\Manifests\Object\FrozenBlock.json" />
     <None Include="Data\Manifests\Object\MovingPlatform.json" />
     <None Include="Data\Manifests\Object\PushBox.json" />
     <None Include="Data\Manifests\Object\SavePoint.json" />
@@ -411,6 +416,7 @@
     <None Include="Data\Manifests\UI\PlayerOSD.json" />
     <None Include="Data\Manifests\Weapon\Blaster.json" />
     <None Include="Data\Manifests\Weapon\Bouncer.json" />
+    <None Include="Data\Manifests\Weapon\Freezer.json" />
     <None Include="Data\Manifests\Weapon\Toaster.json" />
     <None Include="README.md" />
     <None Include="Scripts\Convert-Levels.ps1" />

@@ -272,6 +272,12 @@
     <ClCompile Include="src\actor\BonusWarp.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp">
+      <Filter>Source Files\Actor\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\FrozenBlock.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -456,6 +462,12 @@
     <ClInclude Include="src\actor\BonusWarp.h">
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\weapon\AmmoFreezer.h">
+      <Filter>Header Files\Actor headers\Weapon headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\FrozenBlock.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -554,6 +566,12 @@
     </None>
     <None Include="CarrotQt5.pro">
       <Filter>Configuration</Filter>
+    </None>
+    <None Include="Data\Manifests\Weapon\Freezer.json">
+      <Filter>Actor Resource Manifests\Weapon</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\FrozenBlock.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

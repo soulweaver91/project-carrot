@@ -41,3 +41,7 @@ void AmmoBlaster::tickEvent() {
         }
     }
 }
+
+WeaponType AmmoBlaster::getType() const {
+    return WEAPON_BLASTER;
+}
