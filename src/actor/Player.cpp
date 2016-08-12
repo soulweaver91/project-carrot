@@ -38,7 +38,7 @@ Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActo
         Qt::Key::Key_Control,
         Qt::Key::Key_Space,
         Qt::Key::Key_Shift,
-        Qt::Key::Key_Enter
+        Qt::Key::Key_Return
     };
 
     // Get a brief invincibility at the start of the level
