@@ -61,7 +61,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
     }
 
     if (control == controls.upButton) {
-        if (controllable && canJump && std::abs(speedX < EPSILON)) {
+        if (controllable && canJump && (std::abs(speedX) < EPSILON)) {
             setAnimation(AnimState::LOOKUP);
         }
         return;
@@ -76,7 +76,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.downButton) {
         if (controllable) {
-            if (canJump && std::abs(speedX < EPSILON)) {
+            if (canJump && (std::abs(speedX) < EPSILON)) {
                 setAnimation(AnimState::CROUCH);
             } else {
                 if (suspendType != SuspendType::SUSPEND_NONE) {
@@ -894,7 +894,7 @@ void Player::takeDamage(double pushForce) {
     }
 }
 
-void Player::setToViewCenter() {
+void Player::setToOwnViewCenter() {
     int shift_offset = 0;
     auto tiles = root->getGameTiles().lock();
     if (tiles == nullptr) {

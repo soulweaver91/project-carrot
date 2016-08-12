@@ -21,5 +21,4 @@ public:
 private:
     unsigned char orientation;
     float strength;
-    SpringType type;
 };
