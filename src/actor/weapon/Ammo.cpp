@@ -11,6 +11,9 @@ Ammo::Ammo(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, doubl
     firedUp(firedUp) {
     canBeFrozen = false;
     isFacingLeft = firedLeft;
+
+    // Ignore unused member warning
+    (void)this->firedUp;
 }
 
 Ammo::~Ammo() {

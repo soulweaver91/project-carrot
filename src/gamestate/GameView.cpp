@@ -106,7 +106,7 @@ void GameView::centerToPlayer() {
         return;
     }
 
-    player->setToViewCenter();
+    player->setToOwnViewCenter();
 }
 
 void GameView::setSize(const sf::Vector2f& dimensions) {

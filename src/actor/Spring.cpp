@@ -3,7 +3,7 @@
 #include "../gamestate/TileMap.h"
 
 Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, unsigned char orient) :
-    CommonActor(root, x, y, false), orientation(orient), type(type) {
+    CommonActor(root, x, y, false), orientation(orient) {
     loadResources("Object/Spring");
 
     CoordinatePair tileCorner = { (int)(x / 32) * 32.0, (int)(y / 32) * 32.0 };

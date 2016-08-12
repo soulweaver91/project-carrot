@@ -23,6 +23,9 @@ AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector
         frameDuration = 70.0 / fps;
         scheduleUpdate(frameDuration);
     }
+
+    // Ignore unused member warning
+    (void)this->delayJitter;
 }
 
 AnimatedTile::~AnimatedTile() {

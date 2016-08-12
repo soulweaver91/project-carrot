@@ -53,7 +53,7 @@ public:
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
         bool setSpecial = false, AnimationCallbackFunc callback = []() {});
     void takeDamage(double pushForce);
-    void setToViewCenter();
+    void setToOwnViewCenter();
     bool deactivate(int x, int y, int dist) override;
     LevelCarryOver prepareLevelCarryOver();
     void receiveLevelCarryOver(LevelCarryOver o);

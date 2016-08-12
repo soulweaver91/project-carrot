@@ -10,6 +10,9 @@ DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x
     
     isGravityAffected = false;
     isOneWay = true;
+
+    // Ignore unused member warning
+    (void)bridgeType;
 }
 
 DynamicBridgePiece::~DynamicBridgePiece() {
@@ -38,6 +41,9 @@ DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y
     }
     isGravityAffected = false;
     toughness = 7;
+
+    // Ignore unused member warning
+    (void)bridgeType;
 }
 
 DynamicBridge::~DynamicBridge() {
@@ -73,7 +79,7 @@ void DynamicBridge::tickEvent() {
             toughness = 0;
 
             double lowest = (coords.x - posX) / 16;
-            int drop = std::min((-abs(lowest - num / 2.0) + (num / 2.0)) * 6, 2.0 * num - toughness);
+            int drop = std::min((-std::abs(lowest - num / 2.0) + (num / 2.0)) * 6, 2.0 * num - toughness);
             
             posY = std::min(originalY + drop, std::max(originalY, coords.y));
 
