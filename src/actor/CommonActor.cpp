@@ -6,12 +6,14 @@
 #include "../gamestate/ResourceManager.h"
 #include "../struct/PCEvent.h"
 #include "../struct/Constants.h"
+#include "weapon/AmmoFreezer.h"
+#include "weapon/AmmoToaster.h"
 
 CommonActor::CommonActor(std::shared_ptr<CarrotQt5> gameRoot, double x, double y, bool fromEventMap)
     : AnimationUser(gameRoot), root(gameRoot), maxHealth(1), health(1), posX(x), posY(y),
     speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
-    canJump(false), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
-    isInvulnerable(false), isBlinking(false), elasticity(0.0), friction(root->gravity / 3),
+    canJump(false), canBeFrozen(true), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
+    isInvulnerable(false), isBlinking(false), frozenFramesLeft(0), elasticity(0.0), friction(root->gravity / 3),
     suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
     originTileX = static_cast<int>(x) / 32;
     originTileY = static_cast<int>(y) / 32;
@@ -54,7 +56,15 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
         auto& source = (inTransition ? transition : currentAnimation);
     
         source->setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
-        drawCurrentFrame(view);
+
+        if (frozenFramesLeft > 0) {
+            auto actualColor = source->getColor();
+            source->setColor({ 128, 512, 512 });
+            drawCurrentFrame(view);
+            source->setColor(actualColor);
+        } else {
+            drawCurrentFrame(view);
+        }
     }
 }
 
@@ -220,7 +230,8 @@ void CommonActor::tickEvent() {
     internalForceY = std::max(internalForceY - gravity / 3, 0.0);
     //speedX = sign * std::max((sign * speedX) - friction, 0.0);
 
-    posX += speedX + externalForceX;
+    bool frozen = frozenFramesLeft > 0;
+    posX += (frozen ? 0 : speedX) + externalForceX;
     posY += speedY;
 
     // determine current animation last bits from speeds
@@ -305,6 +316,14 @@ Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
             posY - animation->hotspot.y + animation->frameDimensions.y
         };
     }
+}
+
+double CommonActor::getSpeedX() {
+    return speedX;
+}
+
+double CommonActor::getSpeedY() {
+    return speedY;
 }
 
 bool CommonActor::setAnimation(AnimStateT state) {
@@ -453,6 +472,14 @@ bool CommonActor::deactivate(int x, int y, int tileDistance) {
     return false;
 }
 
+void CommonActor::handleCollision(std::shared_ptr<CommonActor> other) {
+    // Objects should override this if they need to.
+
+    if (canBeFrozen) {
+        handleAmmoFrozenStateChange(other);
+    }
+}
+
 void CommonActor::moveInstantly(CoordinatePair location) {
     posX = location.x;
     posY = location.y;
@@ -478,6 +505,17 @@ const ActorGraphicState CommonActor::getGraphicState() {
     return currentGraphicState;
 }
 
+void CommonActor::handleAmmoFrozenStateChange(std::shared_ptr<CommonActor> ammo) {
+    // TODO: Use actor type specifying function instead when available
+    std::shared_ptr<AmmoFreezer> freezer = std::dynamic_pointer_cast<AmmoFreezer>(ammo);
+    if (freezer != nullptr && freezer->getOwner().lock() != std::dynamic_pointer_cast<Player>(shared_from_this())) {
+        frozenFramesLeft = freezer->getFrozenDuration();
+    }
+    if (std::dynamic_pointer_cast<AmmoToaster>(ammo) != nullptr) {
+        frozenFramesLeft = 0;
+    }
+}
+
 void CommonActor::setInvulnerability(uint frames, bool blink) {
     isInvulnerable = true;
     isBlinking = blink;
@@ -485,4 +523,12 @@ void CommonActor::setInvulnerability(uint frames, bool blink) {
         isInvulnerable = false;
         isBlinking = false;
     });
+}
+
+void CommonActor::advanceActorAnimationTimers() {
+    if (frozenFramesLeft == 0) {
+        advanceAnimationTimers();
+    } else if (frozenFramesLeft < UINT_MAX) {
+        --frozenFramesLeft;
+    }
 }

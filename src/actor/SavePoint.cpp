@@ -2,6 +2,7 @@
 #include "../CarrotQt5.h"
 
 SavePoint::SavePoint(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, true), activated(false) {
+    canBeFrozen = false;
     loadResources("Object/SavePoint");
     AnimationUser::setAnimation("OBJECT_SAVEPOINT_CLOSED");
 }

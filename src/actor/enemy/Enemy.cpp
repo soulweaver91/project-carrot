@@ -5,6 +5,7 @@
 #include "../collectible/CarrotCollectible.h"
 #include "../collectible/GemCollectible.h"
 #include "../collectible/FastFireCollectible.h"
+#include "../weapon/Ammo.h"
 
 Enemy::Enemy(std::shared_ptr<CarrotQt5> root, double x, double y) 
     : CommonActor(root, x, y), hurtPlayer(true), isAttacking(false) {
@@ -73,7 +74,17 @@ void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable
 }
 
 bool Enemy::hurtsPlayer() {
-    return hurtPlayer;
+    return hurtPlayer && (frozenFramesLeft == 0);
+}
+
+void Enemy::handleCollision(std::shared_ptr<CommonActor> other) {
+    CommonActor::handleCollision(other);
+
+    // TODO: Use actor type specifying function instead when available
+    std::shared_ptr<Ammo> ammo = std::dynamic_pointer_cast<Ammo>(other);
+    if (ammo != nullptr) {
+        decreaseHealth(ammo->getStrength());
+    }
 }
 
 const QVector<QPair<PCEvent, uint>> Enemy::defaultDropTable = {

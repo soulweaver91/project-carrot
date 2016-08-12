@@ -19,6 +19,7 @@ HEADERS += ./src/Version.h \
     ./src/actor/weapon/Ammo.h \
     ./src/actor/weapon/AmmoBlaster.h \
     ./src/actor/weapon/AmmoBouncer.h \
+    ./src/actor/weapon/AmmoFreezer.h \
     ./src/actor/weapon/AmmoToaster.h \
     ./src/actor/enemy/TurtleShell.h \
     ./src/actor/enemy/Enemy.h \
@@ -83,6 +84,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/weapon/Ammo.cpp \
     ./src/actor/weapon/AmmoBlaster.cpp \
     ./src/actor/weapon/AmmoBouncer.cpp \
+    ./src/actor/weapon/AmmoFreezer.cpp \
     ./src/actor/weapon/AmmoToaster.cpp \
     ./src/actor/collectible/AmmoCollectible.cpp \
     ./src/actor/collectible/CarrotCollectible.cpp \

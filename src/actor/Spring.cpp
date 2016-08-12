@@ -79,6 +79,10 @@ Hitbox Spring::getHitbox() {
 }
 
 sf::Vector2f Spring::activate() {
+    if (frozenFramesLeft > 0) {
+        return { 0, 0 };
+    }
+
     setTransition(currentAnimation->getAnimationState() | 0x200, false);
     switch (orientation) {
         case 0:

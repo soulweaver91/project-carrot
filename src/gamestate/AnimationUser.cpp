@@ -205,6 +205,10 @@ void AnimationInstance::setColor(const sf::Vector3i & newColor) {
     color = newColor;
 }
 
+sf::Vector3i AnimationInstance::getColor() {
+    return color;
+}
+
 ActorGraphicState AnimationInstance::getGraphicState() {
     if (animation == nullptr) {
         return {

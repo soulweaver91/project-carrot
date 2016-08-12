@@ -400,7 +400,7 @@ void CarrotQt5::gameTick() {
 
     // Run all actors' timers
     for (int i = 0; i < actors.size(); i++) {
-        actors.at(i)->advanceAnimationTimers();
+        actors.at(i)->advanceActorAnimationTimers();
         actors.at(i)->advanceTimers();
         actors.at(i)->updateGraphicState();
     }

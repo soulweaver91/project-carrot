@@ -3,6 +3,7 @@
 
 DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x, double y, DynamicBridgeType type)
     : SolidObject(root, x, y, false), bridgeType(type) {
+    canBeFrozen = false;
     loadResources("Object/BridgePiece");
     // temp
     AnimationUser::setAnimation("OBJECT_BRIDGE_PIECE_GEM");
