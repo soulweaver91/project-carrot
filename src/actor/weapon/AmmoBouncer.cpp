@@ -36,6 +36,10 @@ void AmmoBouncer::tickEvent() {
     }
 }
 
+WeaponType AmmoBouncer::getType() const {
+    return WEAPON_BOUNCER;
+}
+
 void AmmoBouncer::onHitFloorHook() {
     if (speedY < 0) {
         speedY = std::min(std::max(-4.0, speedY), -1.0);

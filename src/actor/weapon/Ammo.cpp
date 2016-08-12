@@ -35,6 +35,10 @@ int Ammo::getStrength() {
     return strength;
 }
 
+WeaponType Ammo::getType() const {
+    return WEAPON_UNKNOWN;
+}
+
 void Ammo::checkCollisions() {
     auto collisions = root->findCollisionActors(shared_from_this());
     for (const auto& actor : collisions) {
@@ -68,7 +72,8 @@ void Ammo::checkCollisions() {
         }
     }
 
-    if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY)) {
+    auto type = getType();
+    if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY, type)) {
         auto player = owner.lock();
         if (player != nullptr) {
             player->addScore(50);

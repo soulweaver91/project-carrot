@@ -15,6 +15,7 @@ public:
     void tickEvent();
     std::weak_ptr<Player> getOwner();
     int getStrength();
+    virtual WeaponType getType() const;
 
 protected:
     void checkCollisions();

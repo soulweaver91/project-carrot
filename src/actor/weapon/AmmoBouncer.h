@@ -13,6 +13,7 @@ public:
         double x = 0.0, double y = 0.0, double speed = 0.0, bool firedLeft = false, bool firedUp = false);
     ~AmmoBouncer();
     void tickEvent();
+    WeaponType getType() const override;
 
 private:
     void onHitFloorHook();

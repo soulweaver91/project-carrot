@@ -43,6 +43,10 @@ int AmmoFreezer::getFrozenDuration() {
     return 70 * 5;
 }
 
+WeaponType AmmoFreezer::getType() const {
+    return WEAPON_FREEZER;
+}
+
 void AmmoFreezer::ricochet() {
     // do nothing
 }

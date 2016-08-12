@@ -14,6 +14,7 @@ public:
     ~AmmoFreezer();
     void tickEvent();
     int getFrozenDuration();
+    WeaponType getType() const override;
 
 private:
     void ricochet() override;
