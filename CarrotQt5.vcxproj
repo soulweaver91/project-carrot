@@ -165,6 +165,7 @@
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
+    <ClCompile Include="src\actor\FrozenBlock.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="src\actor\collectible\FoodCollectible.h" />
     <ClInclude Include="src\actor\collectible\GemCollectible.h" />
     <ClInclude Include="src\actor\enemy\TurtleShell.h" />
+    <ClInclude Include="src\actor\FrozenBlock.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
@@ -405,6 +407,7 @@
     <None Include="Data\Manifests\Object\BonusWarp.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />
+    <None Include="Data\Manifests\Object\FrozenBlock.json" />
     <None Include="Data\Manifests\Object\MovingPlatform.json" />
     <None Include="Data\Manifests\Object\PushBox.json" />
     <None Include="Data\Manifests\Object\SavePoint.json" />

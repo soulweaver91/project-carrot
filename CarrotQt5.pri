@@ -16,6 +16,7 @@ HEADERS += ./src/Version.h \
     ./src/actor/SolidObject.h \
     ./src/actor/TriggerCrate.h \
     ./src/actor/Player.h \
+    ./src/actor/FrozenBlock.h \
     ./src/actor/weapon/Ammo.h \
     ./src/actor/weapon/AmmoBlaster.h \
     ./src/actor/weapon/AmmoBouncer.h \
@@ -77,6 +78,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/SolidObject.cpp \
     ./src/actor/Spring.cpp \
     ./src/actor/TriggerCrate.cpp \
+    ./src/actor/FrozenBlock.cpp \
     ./src/actor/enemy/TurtleShell.cpp \
     ./src/actor/enemy/Enemy.cpp \
     ./src/actor/enemy/Lizard.cpp \

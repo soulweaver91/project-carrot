@@ -74,9 +74,11 @@ void Ammo::checkCollisions() {
 
     auto type = getType();
     if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY, type)) {
-        auto player = owner.lock();
-        if (player != nullptr) {
-            player->addScore(50);
+        if (type != WEAPON_FREEZER) {
+            auto player = owner.lock();
+            if (player != nullptr) {
+                player->addScore(50);
+            }
         }
 
         health = 0;
