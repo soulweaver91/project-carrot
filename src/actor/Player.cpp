@@ -14,9 +14,9 @@
 #include "weapon/AmmoToaster.h"
 #include "weapon/AmmoFreezer.h"
 
-Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
+Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : InteractiveActor(root, x, y, false),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
-    weaponCooldown(0), isUsingDamagingMove(false), controllable(true), isAttachedToPole(false), cameraShiftFramesCount(0),
+    weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), cameraShiftFramesCount(0),
     copterFramesLeft(0), toasterAmmoSubticks(10),
     isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
@@ -822,10 +822,6 @@ void Player::endDamagingMove() {
     controllable = true;
     isGravityAffected = true;
     setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
-}
-
-void Player::returnControl() {
-    controllable = true;
 }
 
 bool Player::setPlayerTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special,

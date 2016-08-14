@@ -26,9 +26,6 @@ public:
     ~CommonActor();
     virtual void drawUpdate(std::shared_ptr<GameView>& view);
     virtual void tickEvent();
-    virtual void processControlDownEvent(const ControlEvent& e);
-    virtual void processControlUpEvent(const ControlEvent& e);
-    virtual void processAllControlHeldEvents(const QMap<Control, ControlState>& e);
     void decreaseHealth(unsigned amount = 1);
     virtual void setToViewCenter(std::shared_ptr<GameView> view);
     CoordinatePair getPosition();
@@ -48,8 +45,6 @@ public:
     void handleAmmoFrozenStateChange(std::shared_ptr<CommonActor> ammo);
         
 protected:
-    void processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e);
-    virtual void processControlHeldEvent(const ControlEvent& e);
     bool setAnimation(AnimStateT state) override;
     virtual void onHitFloorHook();
     virtual void onHitCeilingHook();

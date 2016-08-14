@@ -261,6 +261,12 @@ bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
 
 void CarrotQt5::processControlEvents() {
     ControlEventList events = controlManager->getPendingEvents();
+    QVector<InteractiveActor*> interactiveActors;
+    for (auto actor : actors) {
+        if (auto ptr = dynamic_cast<InteractiveActor*>(actor.get())) {
+            interactiveActors << ptr;
+        }
+    }
 
     for (const auto& pair : events.controlDownEvents) {
         if (isMenu) {
@@ -268,7 +274,7 @@ void CarrotQt5::processControlEvents() {
                 menuObject->processControlDownEvent(pair);
             }
         } else {
-            foreach (auto& actor, actors) {
+            foreach (auto& actor, interactiveActors) {
                 actor->processControlDownEvent(pair);
             }
         }
@@ -281,7 +287,7 @@ void CarrotQt5::processControlEvents() {
             }
         }
     } else {
-        foreach (auto& actor, actors) {
+        foreach (auto& actor, interactiveActors) {
             actor->processAllControlHeldEvents(events.controlHeldEvents);
         }
     }
@@ -292,7 +298,7 @@ void CarrotQt5::processControlEvents() {
                 menuObject->processControlUpEvent(pair);
             }
         } else {
-            foreach (auto& actor, actors) {
+            foreach (auto& actor, interactiveActors) {
                 actor->processControlUpEvent(pair);
             }
         }

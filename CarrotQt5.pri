@@ -7,6 +7,8 @@ HEADERS += ./src/Version.h \
     ./src/Resources.h \
     ./src/CarrotQt5.h \
     ./src/actor/BonusWarp.h \
+    ./src/actor/FrozenBlock.h \
+    ./src/actor/InteractiveActor.h \
     ./src/actor/MovingPlatform.h \
     ./src/actor/Bridge.h \
     ./src/actor/Spring.h \
@@ -16,11 +18,10 @@ HEADERS += ./src/Version.h \
     ./src/actor/SolidObject.h \
     ./src/actor/TriggerCrate.h \
     ./src/actor/Player.h \
-    ./src/actor/FrozenBlock.h \
+    ./src/actor/weapon/AmmoFreezer.h \
     ./src/actor/weapon/Ammo.h \
     ./src/actor/weapon/AmmoBlaster.h \
     ./src/actor/weapon/AmmoBouncer.h \
-    ./src/actor/weapon/AmmoFreezer.h \
     ./src/actor/weapon/AmmoToaster.h \
     ./src/actor/enemy/TurtleShell.h \
     ./src/actor/enemy/Enemy.h \
@@ -69,6 +70,8 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/graphics/QSFMLCanvas.cpp \
     ./src/graphics/Tileset.cpp \
     ./src/actor/BonusWarp.cpp \
+    ./src/actor/FrozenBlock.cpp \
+    ./src/actor/InteractiveActor.cpp \
     ./src/actor/MovingPlatform.cpp \
     ./src/actor/Bridge.cpp \
     ./src/actor/CommonActor.cpp \
@@ -78,15 +81,14 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/SolidObject.cpp \
     ./src/actor/Spring.cpp \
     ./src/actor/TriggerCrate.cpp \
-    ./src/actor/FrozenBlock.cpp \
     ./src/actor/enemy/TurtleShell.cpp \
     ./src/actor/enemy/Enemy.cpp \
     ./src/actor/enemy/Lizard.cpp \
     ./src/actor/enemy/NormalTurtle.cpp \
+    ./src/actor/weapon/AmmoFreezer.cpp \
     ./src/actor/weapon/Ammo.cpp \
     ./src/actor/weapon/AmmoBlaster.cpp \
     ./src/actor/weapon/AmmoBouncer.cpp \
-    ./src/actor/weapon/AmmoFreezer.cpp \
     ./src/actor/weapon/AmmoToaster.cpp \
     ./src/actor/collectible/AmmoCollectible.cpp \
     ./src/actor/collectible/CarrotCollectible.cpp \

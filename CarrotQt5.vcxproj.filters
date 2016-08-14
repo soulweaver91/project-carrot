@@ -278,6 +278,9 @@
     <ClCompile Include="src\actor\FrozenBlock.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\InteractiveActor.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -466,6 +469,9 @@
       <Filter>Header Files\Actor headers\Weapon headers</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\FrozenBlock.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\InteractiveActor.h">
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,11 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <QKeyEvent>
 #include <SFML/Graphics.hpp>
 
 #include "../CarrotQt5.h"
-#include "CommonActor.h"
+#include "InteractiveActor.h"
 #include "../gamestate/PlayerOSD.h"
 #include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
@@ -33,7 +32,7 @@ struct LevelCarryOver {
     WeaponType currentWeapon;
 };
 
-class Player : public CommonActor {
+class Player : public InteractiveActor {
 
     Q_OBJECT
 
@@ -83,10 +82,10 @@ private:
     uint getGemsTotalValue();
     uint getCoinsTotalValue();
     void warpToPosition(const CoordinatePair& pos);
+    void endDamagingMove();
 
     PlayerCharacter character;
     std::unique_ptr<PlayerOSD> osd;
-    ControlScheme controls;
     std::shared_ptr<GameView> assignedView;
 
     std::weak_ptr<MovingPlatform> carryingObject;
@@ -104,7 +103,6 @@ private:
     unsigned weaponCooldown;
 
     bool isUsingDamagingMove;
-    bool controllable;
     bool isAttachedToPole;
     int cameraShiftFramesCount;
     int copterFramesLeft;
@@ -117,8 +115,4 @@ private:
 
     bool isSugarRush;
     static const uint SUGAR_RUSH_THRESHOLD;
-
-private slots:
-    void endDamagingMove();
-    void returnControl();
 };

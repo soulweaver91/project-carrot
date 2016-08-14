@@ -166,6 +166,7 @@
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
     <ClCompile Include="src\actor\FrozenBlock.cpp" />
+    <ClCompile Include="src\actor\InteractiveActor.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="src\actor\collectible\GemCollectible.h" />
     <ClInclude Include="src\actor\enemy\TurtleShell.h" />
     <ClInclude Include="src\actor\FrozenBlock.h" />
+    <ClInclude Include="src\actor\InteractiveActor.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
