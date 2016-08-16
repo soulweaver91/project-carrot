@@ -5,7 +5,7 @@
 #include "SolidObject.h"
 #include "../struct/Hitbox.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 enum DynamicBridgeType {
     BRIDGE_ROPE         = 0,
@@ -20,7 +20,7 @@ enum DynamicBridgeType {
 
 class DynamicBridgePiece : public SolidObject {
 public:
-    DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
+    DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
     ~DynamicBridgePiece();
     bool deactivate(int x, int y, int dist) override;
     Hitbox getHitboxForParent();
@@ -31,7 +31,7 @@ private:
 
 class DynamicBridge : public CommonActor {
 public:
-    DynamicBridge(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, unsigned int width = 1, 
+    DynamicBridge(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, unsigned int width = 1,
         DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
     ~DynamicBridge();
     Hitbox getHitbox() override;

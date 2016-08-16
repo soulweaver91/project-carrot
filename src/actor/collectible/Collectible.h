@@ -4,13 +4,13 @@
 
 #include "../CommonActor.h"
 
-class CarrotQt5;
+class ActorAPI;
 class GameView;
 class Player;
 
 class Collectible : public CommonActor {
 public:
-    Collectible(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = true);
+    Collectible(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, bool fromEventMap = true);
     ~Collectible();
     void tickEvent();
     void drawUpdate(std::shared_ptr<GameView>& view) override;

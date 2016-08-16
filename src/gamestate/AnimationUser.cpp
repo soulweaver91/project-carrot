@@ -1,10 +1,9 @@
 #include "AnimationUser.h"
-#include "../CarrotQt5.h"
 #include "../gamestate/GameView.h"
 #include "../graphics/ShaderSource.h"
 
-AnimationUser::AnimationUser(std::shared_ptr<CarrotQt5> root) 
-    : root(root), inTransition(false), cancellableTransition(false) {
+AnimationUser::AnimationUser(std::shared_ptr<ActorAPI> api)
+    : api(api), inTransition(false), cancellableTransition(false) {
     currentAnimation = std::make_shared<AnimationInstance>(this);
     transition = std::make_shared<AnimationInstance>(this);
 }

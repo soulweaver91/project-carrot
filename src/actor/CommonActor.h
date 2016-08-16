@@ -15,14 +15,14 @@
 #include "../struct/Resources.h"
 #include "../struct/Layers.h"
 
-class CarrotQt5;
+class ActorAPI;
 class TileMap;
 class GameView;
 class Ammo;
 
-class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor>, public AnimationUser {
+class CommonActor : public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
-    CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
+    CommonActor(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();
     virtual void drawUpdate(std::shared_ptr<GameView>& view);
     virtual void tickEvent();
@@ -57,7 +57,7 @@ protected:
     template<typename... P>
     bool playNonPositionalSound(const QString& id, P... params);
 
-    std::shared_ptr<CarrotQt5> root;
+    std::shared_ptr<ActorAPI> api;
     unsigned maxHealth;
     unsigned health;
     double posX;

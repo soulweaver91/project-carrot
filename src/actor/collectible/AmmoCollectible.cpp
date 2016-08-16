@@ -1,8 +1,8 @@
 #include "AmmoCollectible.h"
 #include "../Player.h"
 
-AmmoCollectible::AmmoCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, WeaponType type, bool fromEventMap)
-: Collectible(root, x, y, fromEventMap), weaponType(type) {
+AmmoCollectible::AmmoCollectible(std::shared_ptr<ActorAPI> api, double x, double y, WeaponType type, bool fromEventMap)
+: Collectible(api, x, y, fromEventMap), weaponType(type) {
     scoreValue = 100;
 
     switch (weaponType) {

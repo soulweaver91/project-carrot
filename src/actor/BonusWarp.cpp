@@ -1,10 +1,10 @@
 #include "BonusWarp.h"
 
-#include "../CarrotQt5.h"
+#include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 
-BonusWarp::BonusWarp(std::shared_ptr<CarrotQt5> root, double x, double y, const quint16 params[8])
-: CommonActor(root, x, y, true) {
+BonusWarp::BonusWarp(std::shared_ptr<ActorAPI> api, double x, double y, const quint16 params[8])
+: CommonActor(api, x, y, true) {
     canBeFrozen = false;
     std::copy_n(params, 8, eventParams);
     loadResources("Object/BonusWarp");
@@ -33,7 +33,7 @@ BonusWarp::~BonusWarp() {
 }
 
 const CoordinatePair BonusWarp::getWarpTarget() {
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (events == nullptr) {
         return CoordinatePair(0, 0);
     }

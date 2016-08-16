@@ -4,11 +4,11 @@
 
 #include "CommonActor.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 class SavePoint : public CommonActor {
 public:
-    SavePoint(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0);
+    SavePoint(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~SavePoint();
     void tickEvent();
     void activateSavePoint();

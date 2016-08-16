@@ -1,16 +1,16 @@
 #include "Spring.h"
-#include "../CarrotQt5.h"
+#include "../gamestate/ActorAPI.h"
 #include "../gamestate/TileMap.h"
 
-Spring::Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, unsigned char orient) :
-    CommonActor(root, x, y, false), orientation(orient) {
+Spring::Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType type, unsigned char orient) :
+    CommonActor(api, x, y, false), orientation(orient) {
     loadResources("Object/Spring");
 
     CoordinatePair tileCorner = { (int)(x / 32) * 32.0, (int)(y / 32) * 32.0 };
     if (orientation == 5) {
         // JJ2 horizontal springs held no data about which way they were facing.
         // For compatibility, the level converter sets their orientation to 5, which is interpreted here.
-        orientation = !root->getGameTiles().lock()->isTileEmpty(getHitbox().add(16, 0), false) ? 3 : 1;
+        orientation = !api->getGameTiles().lock()->isTileEmpty(getHitbox().add(16, 0), false) ? 3 : 1;
     }
 
     int orientationBit = 0;

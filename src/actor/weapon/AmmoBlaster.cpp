@@ -1,10 +1,11 @@
 #include "AmmoBlaster.h"
 #include "../TriggerCrate.h"
 #include "../../struct/Constants.h"
+#include "../../gamestate/ActorAPI.h"
 
-AmmoBlaster::AmmoBlaster(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y,
+AmmoBlaster::AmmoBlaster(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
     double speed, bool firedLeft, bool firedUp)
-    : Ammo(root, firedBy, x, y, firedLeft, firedUp, 24) {
+    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 24) {
     loadResources("Weapon/Blaster");
     if (firedUp) {
         speedY = -8;
@@ -25,7 +26,7 @@ void AmmoBlaster::tickEvent() {
     posY += speedY;
 
     std::weak_ptr<SolidObject> actor;
-    if (!root->isPositionEmpty(getHitbox(), false, shared_from_this(), actor)) {
+    if (!api->isPositionEmpty(getHitbox(), false, shared_from_this(), actor)) {
         if (actor.lock() != nullptr && std::dynamic_pointer_cast<TriggerCrate>(actor.lock()) != nullptr) {
             ricochet();
         } else {

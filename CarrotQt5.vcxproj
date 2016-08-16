@@ -147,6 +147,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LevelManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_CarrotQt5.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -156,6 +160,10 @@
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LevelManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\actor\BonusWarp.cpp" />
     <ClCompile Include="src\actor\collectible\AmmoCollectible.cpp" />
@@ -169,6 +177,7 @@
     <ClCompile Include="src\actor\InteractiveActor.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
+    <ClCompile Include="src\gamestate\ActorAPI.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_CarrotQt5.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -204,6 +213,7 @@
     <ClCompile Include="src\actor\weapon\AmmoToaster.cpp" />
     <ClCompile Include="src\CarrotQt5.cpp" />
     <ClCompile Include="src\gamestate\GameView.cpp" />
+    <ClCompile Include="src\gamestate\LevelManager.cpp" />
     <ClCompile Include="src\gamestate\ResourceManager.cpp" />
     <ClCompile Include="src\gamestate\AnimationUser.cpp" />
     <ClCompile Include="src\gamestate\EventMap.cpp" />
@@ -219,6 +229,7 @@
     <ClCompile Include="src\graphics\Tileset.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
+    <ClCompile Include="src\ModeManager.cpp" />
     <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -235,11 +246,30 @@
     <ClInclude Include="src\actor\InteractiveActor.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
+    <ClInclude Include="src\gamestate\ActorAPI.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
     <ClInclude Include="src\actor\Bridge.h" />
     <ClInclude Include="src\actor\Spring.h" />
     <ClInclude Include="src\gamestate\GameView.h" />
+    <CustomBuild Include="src\gamestate\LevelManager.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing LevelManager.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DNOMINMAX -DCARROT_DEBUG -DUNICODE -DWIN32 -DQT_DLL -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_CORE_LIB "-I$(BASS_DIR)\c" "-I$(BASS_FX_DIR)\c" "-I$(SFML_DIR)\include" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtCore"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing LevelManager.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DNOMINMAX -DCARROT_DEBUG -DUNICODE -DWIN32 -DQT_DLL -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_CORE_LIB "-I$(BASS_DIR)\c" "-I$(BASS_FX_DIR)\c" "-I$(SFML_DIR)\include" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtCore"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing LevelManager.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DNOMINMAX -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_CORE_LIB "-I$(BASS_DIR)\c" "-I$(BASS_FX_DIR)\c" "-I$(SFML_DIR)\include" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtCore"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing LevelManager.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DNOMINMAX -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_CORE_LIB "-I$(BASS_DIR)\c" "-I$(BASS_FX_DIR)\c" "-I$(SFML_DIR)\include" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtCore"</Command>
+    </CustomBuild>
     <ClInclude Include="src\gamestate\ResourceManager.h" />
     <ClInclude Include="src\gamestate\AnimationUser.h" />
     <ClInclude Include="src\gamestate\PlayerOSD.h" />
@@ -247,12 +277,15 @@
     <ClInclude Include="src\gamestate\TimerUser.h" />
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
+    <ClInclude Include="src\ModeManager.h" />
     <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\Constants.h" />
     <ClInclude Include="src\struct\Controls.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
+    <ClInclude Include="src\struct\DebugConfig.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
     <ClInclude Include="src\struct\Layers.h" />
+    <ClInclude Include="src\struct\NextLevelData.h" />
     <ClInclude Include="src\struct\PCEvent.h" />
     <ClInclude Include="src\struct\Resources.h" />
     <ClInclude Include="src\struct\WeaponTypes.h" />

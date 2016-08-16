@@ -3,7 +3,7 @@
 #include "SolidObject.h"
 #include "../struct/Hitbox.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 enum SpringType {
     SPRING_RED = 1,
@@ -13,7 +13,7 @@ enum SpringType {
 
 class Spring : public CommonActor {
 public:
-    Spring(std::shared_ptr<CarrotQt5> root, double x, double y, SpringType type, unsigned char orient);
+    Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType type, unsigned char orient);
     ~Spring();
     Hitbox getHitbox() override;
     sf::Vector2f activate();

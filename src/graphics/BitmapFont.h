@@ -26,14 +26,14 @@ class BitmapFont {
 class BitmapString {
     public:
         BitmapString(std::shared_ptr<BitmapFont> font, const QString& initString = "", FontAlign initAlign = FONT_ALIGN_LEFT);
-        void drawString(std::weak_ptr<sf::RenderTarget> destWindow, int x, int y);
+        void drawString(sf::RenderTarget* canvas, int x, int y);
         void setAnimation(bool setAnimated = false, double varianceX = 0.0, double varianceY = 0.0,
                           double animationSpeed = 0.0, double animationAngle = 0.0);
         void removeAnimation();
         void setText(QString text);
         void setColoured(bool state);
         unsigned getWidth();
-        static void drawString(std::weak_ptr<sf::RenderTarget> destWindow, std::shared_ptr<BitmapFont> font, QString text,
+        static void drawString(sf::RenderTarget* canvas, std::shared_ptr<BitmapFont> font, QString text,
             int x, int y, FontAlign align = FONT_ALIGN_LEFT);
 
     private:

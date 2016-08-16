@@ -6,10 +6,10 @@
 #include "SolidObject.h"
 #include "../struct/PCEvent.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 class PushBox : public SolidObject {
 public:
-    PushBox(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, int type = 0);
+    PushBox(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, int type = 0);
     ~PushBox();
 };

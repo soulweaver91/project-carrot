@@ -5,11 +5,11 @@
 #include "TimerUser.h"
 #include "../struct/CoordinatePair.h"
 
-class CarrotQt5;
+class LevelManager;
 
 class GameView : public TimerUser {
 public:
-    GameView(std::shared_ptr<CarrotQt5> root, const uint& playerID, const sf::Vector2f& dimensions);
+    GameView(LevelManager* root, const uint& playerID, const sf::Vector2f& dimensions);
     unsigned getViewWidth();
     unsigned getViewHeight();
     CoordinatePair getViewCenter();
@@ -18,14 +18,14 @@ public:
     void setLighting(int target, bool immediate);
     std::weak_ptr<sf::RenderTexture> getCanvas();
     int getLightingLevel();
-    void drawView(std::shared_ptr<sf::RenderTarget> windowCanvas);
+    void drawView(sf::RenderTarget* windowCanvas);
     void drawUiElements();
     void centerToPlayer();
     void setSize(const sf::Vector2f& dimensions);
 private:
     void setLightingStep();
 
-    std::shared_ptr<CarrotQt5> root;
+    LevelManager* root;
     std::shared_ptr<sf::RenderTexture> canvas;
     std::shared_ptr<sf::RenderTexture> renderAuxiliaryCanvas;
     std::unique_ptr<sf::View> playerView;

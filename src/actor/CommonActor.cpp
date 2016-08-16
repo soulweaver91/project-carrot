@@ -1,19 +1,20 @@
 #include "CommonActor.h"
 
-#include "../CarrotQt5.h"
+#include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 #include "../gamestate/GameView.h"
 #include "../gamestate/ResourceManager.h"
 #include "../struct/PCEvent.h"
 #include "../struct/Constants.h"
+#include "../struct/DebugConfig.h"
 #include "weapon/AmmoFreezer.h"
 #include "weapon/AmmoToaster.h"
 
-CommonActor::CommonActor(std::shared_ptr<CarrotQt5> gameRoot, double x, double y, bool fromEventMap)
-    : AnimationUser(gameRoot), root(gameRoot), maxHealth(1), health(1), posX(x), posY(y),
+CommonActor::CommonActor(std::shared_ptr<ActorAPI> gameRoot, double x, double y, bool fromEventMap)
+    : AnimationUser(gameRoot), api(gameRoot), maxHealth(1), health(1), posX(x), posY(y),
     speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
     canJump(false), canBeFrozen(true), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
-    isInvulnerable(false), isBlinking(false), frozenFramesLeft(0), elasticity(0.0), friction(root->gravity / 3),
+    isInvulnerable(false), isBlinking(false), frozenFramesLeft(0), elasticity(0.0), friction(api->getGravity() / 3),
     suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
     originTileX = static_cast<int>(x) / 32;
     originTileY = static_cast<int>(y) / 32;
@@ -37,7 +38,7 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
     }
 
 #ifdef CARROT_DEBUG
-    if (root->dbgShowMasked) {
+    if (api->getDebugConfig().dbgShowMasked) {
         double len = sqrt(speedX * speedX + speedY * speedY);
         if (len > 0) {
             sf::RectangleShape line(sf::Vector2f(len * 4 + 5, 5));
@@ -51,7 +52,7 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
     }
 #endif
     
-    if (!((isBlinking) && ((root->getFrame() % 6) > 2))) {
+    if (!((isBlinking) && ((api->getFrame() % 6) > 2))) {
         // Pick the appropriate animation depending on if we are in the midst of a transition
         auto& source = (inTransition ? transition : currentAnimation);
     
@@ -69,7 +70,7 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
 }
 
 void CommonActor::tickEvent() {
-    double gravity = (isGravityAffected ? root->gravity : 0);
+    double gravity = (isGravityAffected ? api->getGravity() : 0);
    
     speedX = std::min(std::max(speedX, -16.0), 16.0);
     speedY = std::min(std::max(speedY + gravity - internalForceY - externalForceY, -16.0), 16.0);
@@ -77,10 +78,10 @@ void CommonActor::tickEvent() {
     auto thisPtr = shared_from_this();
 
     Hitbox currentHitbox = getHitbox();
-    if (!root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
+    if (!api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
         if (std::abs(speedX + externalForceX) > EPSILON) {
             // We are walking, thus having both vertical and horizontal speed
-            if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, 0.0), speedY > 0, thisPtr)) {
+            if (api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, 0.0), speedY > 0, thisPtr)) {
                 // We could go toward the horizontal direction only
                 // Chances are we're just casually strolling and gravity tries to pull us through,
                 // or we are falling diagonally and hit a floor
@@ -100,7 +101,7 @@ void CommonActor::tickEvent() {
             } else {
                 // Nope, there's also some obstacle horizontally
                 // Let's figure out if we are going against an upward slope
-                if (root->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, -std::abs(speedX + externalForceX) - 5.0), false, thisPtr)) {
+                if (api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, -std::abs(speedX + externalForceX) - 5.0), false, thisPtr)) {
                     // Yes, we indeed are
                     speedY = -(elasticity * speedY);
                     canJump = true;
@@ -116,7 +117,7 @@ void CommonActor::tickEvent() {
                     // Nope. Cannot move horizontally at all. Can we just go vertically then?
                     speedX = -(elasticity * speedX);
                     externalForceX *= -1;
-                    if (root->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), speedY > 0, thisPtr)) {
+                    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), speedY > 0, thisPtr)) {
                         // Yeah
                         canJump = false;
                         onHitWallHook();
@@ -139,10 +140,10 @@ void CommonActor::tickEvent() {
             // We are going directly vertically
             if (speedY > 0) {
                 // We are falling, or we are on solid ground and gravity tries to push us through the floor
-                if (root->isPositionEmpty(currentHitbox, true, shared_from_this())) {
+                if (api->isPositionEmpty(currentHitbox, true, shared_from_this())) {
                     // Let's just nullify that effect
                     speedY = -(elasticity * speedY);
-                    while (root->isPositionEmpty(getHitbox().add(speedX, speedY), true, thisPtr)) {
+                    while (api->isPositionEmpty(getHitbox().add(speedX, speedY), true, thisPtr)) {
                         posY += 0.5;
                     }
                     posY -= 0.5;
@@ -156,7 +157,7 @@ void CommonActor::tickEvent() {
                 }
             } else {
                 // We are jumping
-                if (!root->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), false, thisPtr)) {
+                if (!api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), false, thisPtr)) {
                     speedY = -(elasticity * speedY);
                     externalForceY = 0;
                     internalForceY = 0;
@@ -170,11 +171,11 @@ void CommonActor::tickEvent() {
     } else {
         if (canJump) {
             // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
-            if (!root->isPositionEmpty(
+            if (!api->isPositionEmpty(
                 currentHitbox + CoordinatePair(speedX + externalForceX, speedY + std::abs(speedX + externalForceX) + 5),
                 false, thisPtr)
             ) {
-                while (root->isPositionEmpty(
+                while (api->isPositionEmpty(
                     getHitbox().add(speedX + externalForceX, speedY + std::abs(speedX + externalForceX)),
                     false, thisPtr)
                 ) {
@@ -239,7 +240,7 @@ void CommonActor::tickEvent() {
     setAnimation(newState);
 
     // Make sure we stay within the level boundaries
-    auto tiles = root->getGameTiles().lock();
+    auto tiles = api->getGameTiles().lock();
     if (tiles != nullptr) {
         posX = std::min(std::max(posX, 0.0), tiles->getLevelWidth() * 32.0);
         posY = std::min(std::max(posY, 0.0), tiles->getLevelHeight() * 32.0 + 31.0);
@@ -247,7 +248,7 @@ void CommonActor::tickEvent() {
 } 
 
 void CommonActor::setToViewCenter(std::shared_ptr<GameView> view) {
-    auto tiles = root->getGameTiles().lock();
+    auto tiles = api->getGameTiles().lock();
     if (tiles == nullptr) {
         return;
     }
@@ -352,14 +353,14 @@ bool CommonActor::perish() {
     // Can be overridden, e.g. the player object instead implements death routines
     // like loading last save point here
 
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (health == 0) {
         if (events != nullptr && isCreatedFromEventMap) {
             events->deactivate(originTileX, originTileY);
             events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
         }
 
-        root->removeActor(shared_from_this());
+        api->removeActor(shared_from_this());
         return true;
     }
     return false;
@@ -382,7 +383,7 @@ void CommonActor::onHitWallHook() {
 }
 
 bool CommonActor::loadResources(const QString& classId) {
-    auto loadedResources = root->loadActorTypeResources(classId);
+    auto loadedResources = api->loadActorTypeResources(classId);
     if (loadedResources != nullptr) {
         resources = loadedResources;
         loadAnimationSet(resources->graphics);
@@ -404,11 +405,7 @@ bool CommonActor::playNonPositionalSound(const QString& id, P... params) {
 
 template<typename T, typename... P>
 bool CommonActor::callPlaySound(const QString& id, T coordOrBool, P... params) {
-    auto soundSystem = root->getSoundSystem().lock();
-    if (soundSystem == nullptr) {
-        return false;
-    }
-
+    auto soundSystem = api->getSoundSystem();
     auto sounds = resources->sounds.values(id);
     if (sounds.length() > 0) {
         soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound, coordOrBool, params...);
@@ -429,14 +426,14 @@ template bool CommonActor::playNonPositionalSound(const QString&, float, float);
 template bool CommonActor::playNonPositionalSound(const QString&, float, float, float);
 
 bool CommonActor::deactivate(int x, int y, int tileDistance) {
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
 
     if ((std::abs(x - originTileX) > tileDistance) || (std::abs(y - originTileY) > tileDistance)) {
         if (events != nullptr) {
             events->deactivate(originTileX, originTileY);
         }
 
-        root->removeActor(shared_from_this());
+        api->removeActor(shared_from_this());
         return true;
     }
     return false;
@@ -456,7 +453,7 @@ void CommonActor::moveInstantly(CoordinatePair location) {
 }
 
 void CommonActor::deleteFromEventMap() {
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (events != nullptr) {
         events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
     }

@@ -3,16 +3,18 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
-#include "../CarrotQt5.h"
 #include "InteractiveActor.h"
 #include "../gamestate/PlayerOSD.h"
 #include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
 #include "../struct/WeaponTypes.h"
 #include "../struct/Constants.h"
+#include "../struct/NextLevelData.h"
 #include "MovingPlatform.h"
 #include "collectible/GemCollectible.h"
 #include "collectible/CoinCollectible.h"
+
+class ActorAPI;
 
 enum PlayerCharacter {
     CHAR_JAZZ       = 0x00,
@@ -22,22 +24,12 @@ enum PlayerCharacter {
     CHAR_BIRD       = 0x81
 };
 
-struct LevelCarryOver {
-    uint lives;
-    uint ammo[WEAPONCOUNT];
-    bool poweredUp[WEAPONCOUNT];
-    uint fastfires;
-    uint score;
-    uint foodCounter;
-    WeaponType currentWeapon;
-};
-
-class Player : public InteractiveActor {
+class Player : public QObject, public InteractiveActor {
 
     Q_OBJECT
 
 public:
-    Player(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0);
+    Player(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~Player();
     void processControlDownEvent(const ControlEvent& e) override;
     void processControlUpEvent(const ControlEvent& e) override;

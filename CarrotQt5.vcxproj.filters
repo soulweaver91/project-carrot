@@ -281,6 +281,21 @@
     <ClCompile Include="src\actor\InteractiveActor.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\LevelManager.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModeManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LevelManager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LevelManager.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamestate\ActorAPI.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -300,6 +315,9 @@
     </CustomBuild>
     <CustomBuild Include="src\actor\collectible\Collectible.h">
       <Filter>Header Files\Actor headers\Collectible headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\gamestate\LevelManager.h">
+      <Filter>Header Files\Game manager headers</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -473,6 +491,18 @@
     </ClInclude>
     <ClInclude Include="src\actor\InteractiveActor.h">
       <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModeManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\NextLevelData.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\DebugConfig.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\ActorAPI.h">
+      <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

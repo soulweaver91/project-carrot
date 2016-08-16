@@ -4,19 +4,19 @@
 #include "../weapon/Ammo.h"
 #include "../weapon/AmmoFreezer.h"
 #include "../weapon/AmmoToaster.h"
+#include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/TileMap.h"
 #include "../../struct/Constants.h"
 
-#include "../../CarrotQt5.h"
 
-TurtleShell::TurtleShell(std::shared_ptr<CarrotQt5> root, double x, double y, double initSpeedX,
-    double initSpeedY, bool fromEventMap) : CommonActor(root, x, y, fromEventMap) {
+TurtleShell::TurtleShell(std::shared_ptr<ActorAPI> api, double x, double y, double initSpeedX,
+    double initSpeedY, bool fromEventMap) : CommonActor(api, x, y, fromEventMap) {
     loadResources("Enemy/TurtleShell");
     setAnimation(AnimState::IDLE);
 
     speedX = initSpeedX;
     speedY = initSpeedY;
-    friction = root->gravity / 100;
+    friction = api->getGravity() / 100;
     elasticity = 0.5;
     // TODO: test the actual number
     maxHealth = health = 8;
@@ -36,7 +36,7 @@ void TurtleShell::tickEvent() {
         speedX = std::max(std::abs(speedX) - 10 * friction, 0.0) * (speedX > EPSILON ? 1 : -1);
     }
 
-    auto collisions = root->findCollisionActors(shared_from_this());
+    auto collisions = api->findCollisionActors(shared_from_this());
     Hitbox hitbox = getHitbox();
     for (auto collider : collisions) {
         if (collider.expired()) {
@@ -90,7 +90,7 @@ void TurtleShell::tickEvent() {
         }
     }
 
-    auto tiles = root->getGameTiles().lock();
+    auto tiles = api->getGameTiles().lock();
     if (tiles != nullptr) {
         tiles->checkSpecialDestructible(hitbox);
         tiles->checkCollapseDestructible(hitbox);

@@ -1,6 +1,6 @@
 #include "Lizard.h"
 
-EnemyLizard::EnemyLizard(std::shared_ptr<CarrotQt5> root, double x, double y) : Enemy(root, x, y) {
+EnemyLizard::EnemyLizard(std::shared_ptr<ActorAPI> api, double x, double y) : Enemy(api, x, y) {
     loadResources("Enemy/Lizard");
     setAnimation(AnimState::WALK);
     speedX = 1;

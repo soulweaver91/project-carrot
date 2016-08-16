@@ -1,8 +1,8 @@
 #include "FrozenBlock.h"
 #include "../CarrotQt5.h"
 
-FrozenBlock::FrozenBlock(std::shared_ptr<CarrotQt5> root, double x, double y)
-    : CommonActor(root, x, y, false), ttl(3 * 70) {
+FrozenBlock::FrozenBlock(std::shared_ptr<ActorAPI> api, double x, double y)
+    : CommonActor(api, x, y, false), ttl(3 * 70) {
     isGravityAffected = false;
     canBeFrozen = false;
     loadResources("Object/FrozenBlock");

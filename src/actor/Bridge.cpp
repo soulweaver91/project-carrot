@@ -1,8 +1,9 @@
 #include "Bridge.h"
 #include "Player.h"
+#include "../gamestate/ActorAPI.h"
 
-DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<CarrotQt5> root, double x, double y, DynamicBridgeType type)
-    : SolidObject(root, x, y, false), bridgeType(type) {
+DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x, double y, DynamicBridgeType type)
+    : SolidObject(api, x, y, false), bridgeType(type) {
     canBeFrozen = false;
     loadResources("Object/BridgePiece");
     // temp
@@ -29,14 +30,14 @@ Hitbox DynamicBridgePiece::getHitboxForParent() {
     return getHitbox().extend(0, 2);
 }
 
-DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y, unsigned int width,
+DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, unsigned int width,
     DynamicBridgeType type, unsigned int toughness)
-    : CommonActor(root, x - 16.0, y - 16.0), originalY(y), toughness(toughness), bridgeType(type), bridgeWidth(width) {
+    : CommonActor(api, x - 16.0, y - 16.0), originalY(y), toughness(toughness), bridgeType(type), bridgeWidth(width) {
     loadResources("Object/Bridge");
 
     for (uint i = 0; i < width; ++i) {
-        auto piece_n = std::make_shared<DynamicBridgePiece>(root, x + 16 * i - 16, y - 16, type);
-        root->addActor(piece_n);
+        auto piece_n = std::make_shared<DynamicBridgePiece>(api, x + 16 * i - 16, y - 16, type);
+        api->addActor(piece_n);
         bridgePieces << piece_n;
     }
     isGravityAffected = false;
@@ -48,7 +49,7 @@ DynamicBridge::DynamicBridge(std::shared_ptr<CarrotQt5> root, double x, double y
 
 DynamicBridge::~DynamicBridge() {
     for (int i = 0; i < bridgePieces.size(); ++i) {
-        root->removeActor(bridgePieces.at(i));
+        api->removeActor(bridgePieces.at(i));
     }
 }
 
@@ -58,9 +59,9 @@ Hitbox DynamicBridge::getHitbox() {
 
 void DynamicBridge::tickEvent() {
     // get collision for all bridge elements
-    auto collision = root->findCollisionActors(getHitbox(), shared_from_this());
+    auto collision = api->findCollisionActors(getHitbox(), shared_from_this());
     for (int j = 0; j < bridgePieces.size(); ++j) {
-        collision.append(root->findCollisionActors(bridgePieces.at(j)->getHitboxForParent(), shared_from_this()));
+        collision.append(api->findCollisionActors(bridgePieces.at(j)->getHitboxForParent(), shared_from_this()));
     }
 
     bool found = false;

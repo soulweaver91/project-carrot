@@ -4,10 +4,11 @@
 #include "../enemy/TurtleShell.h"
 #include "../collectible/Collectible.h"
 #include "../PushBox.h"
+#include "../../gamestate/ActorAPI.h"
 
-Ammo::Ammo(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,
+Ammo::Ammo(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,
     bool firedUp, int lifeLength, bool powered)
-    : CommonActor(root, x, y, false), poweredUp(powered), strength(1), owner(firedBy), framesLeft(lifeLength),
+    : CommonActor(api, x, y, false), poweredUp(powered), strength(1), owner(firedBy), framesLeft(lifeLength),
     firedUp(firedUp) {
     canBeFrozen = false;
     isFacingLeft = firedLeft;
@@ -43,7 +44,7 @@ WeaponType Ammo::getType() const {
 }
 
 void Ammo::checkCollisions() {
-    auto collisions = root->findCollisionActors(shared_from_this());
+    auto collisions = api->findCollisionActors(shared_from_this());
     for (const auto& actor : collisions) {
         auto actorPtr = actor.lock();
         if (actorPtr == nullptr) {
@@ -62,8 +63,8 @@ void Ammo::checkCollisions() {
     }
     
 
-    auto events = root->getGameEvents().lock();
-    auto tiles = root->getGameTiles().lock();
+    auto events = api->getGameEvents().lock();
+    auto tiles = api->getGameTiles().lock();
     if (events != nullptr) {
         PCEvent e = events->getPositionEvent(posX, posY);
         switch(e) {
