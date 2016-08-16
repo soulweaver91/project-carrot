@@ -1,20 +1,21 @@
 #include "MovingPlatform.h"
+#include "../gamestate/GameView.h"
+#include "../gamestate/ActorAPI.h"
 #include "../struct/Constants.h"
-#include "../CarrotQt5.h"
 #include "Player.h"
 
 #define BASE_CYCLE_FRAMES 700
 
-MovingPlatform::MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double y,
+MovingPlatform::MovingPlatform(std::shared_ptr<ActorAPI> api, double x, double y,
     PlatformType type, quint16 length, qint16 speed, ushort sync, bool swing)
-    : SolidObject(root, x, y), type(type), speed(speed), length(length), phase(0.0),
+    : SolidObject(api, x, y), type(type), speed(speed), length(length), phase(0.0),
     originX(x), originY(y), isSwing(swing) {
     canBeFrozen = false;
     loadResources("Object/MovingPlatform");
     isGravityAffected = false;
     isOneWay = true;
 
-    phase = fmod(BASE_CYCLE_FRAMES - (root->getFrame() % BASE_CYCLE_FRAMES + sync * 175) * speed,
+    phase = fmod(BASE_CYCLE_FRAMES - (api->getFrame() % BASE_CYCLE_FRAMES + sync * 175) * speed,
         BASE_CYCLE_FRAMES);
 
     chainAnimation = std::make_shared<AnimationInstance>(this);
@@ -40,7 +41,7 @@ void MovingPlatform::tickEvent() {
     Hitbox hitbox = getHitbox();
     hitbox.top -= 2;
 
-    auto players = root->getCollidingPlayer(hitbox);
+    auto players = api->getCollidingPlayer(hitbox);
     for (const auto& p : players) {
         p.lock()->setCarryingPlatform(std::dynamic_pointer_cast<MovingPlatform>(shared_from_this()));
     }
@@ -49,7 +50,7 @@ void MovingPlatform::tickEvent() {
         hitbox.top += 40;
         hitbox.bottom += 40;
 
-        auto players = root->getCollidingPlayer(hitbox);
+        auto players = api->getCollidingPlayer(hitbox);
         for (const auto& p : players) {
             p.lock()->takeDamage(2);
         }

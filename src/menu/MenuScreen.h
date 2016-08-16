@@ -1,11 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 #include <QVector>
 #include <QKeyEvent>
 #include <QString>
 #include <SFML/Graphics.hpp>
 
+#include "../ModeManager.h"
 #include "../CarrotQt5.h"
 #include "../graphics/BitmapFont.h"
 
@@ -32,11 +34,12 @@ struct MenuItem {
     std::unique_ptr<BitmapString> text;
 };
 
-class MenuScreen {
+class MenuScreen : public ModeManager {
 public:
-    MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry = MENU_MAIN_MENU);
+    MenuScreen(CarrotQt5* root, MenuEntryPoint entry = MENU_MAIN_MENU);
     ~MenuScreen();
-    void tickEvent();
+    void tick(const ControlEventList& events) override;
+    void processControlEvents(const ControlEventList& events);
     void processControlDownEvent(const ControlEvent& e);
     void processControlHeldEvent(const ControlEvent& e);
     void processControlUpEvent(const ControlEvent& e);
@@ -50,7 +53,7 @@ private:
     void loadEpisodeList();
     void loadMainMenu();
 
-    std::shared_ptr<CarrotQt5> root;
+    CarrotQt5* root;
     sf::Texture mainMenuCircularGlowTexture;
     sf::Sprite mainMenuCircularGlowSprite;
     sf::Texture mainMenuConicGlowTexture;

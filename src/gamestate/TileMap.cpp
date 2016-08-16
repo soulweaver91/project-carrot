@@ -1,13 +1,17 @@
 #include "TileMap.h"
 #include "EventMap.h"
 #include "GameView.h"
-#include "../CarrotQt5.h"
+#include "LevelManager.h"
+#include "ActorAPI.h"
 #include "../graphics/AnimatedTile.h"
+#include "../sound/SoundSystem.h"
 #include "../struct/Constants.h"
+#include "../struct/DebugConfig.h"
 #include "../actor/FrozenBlock.h"
 
-TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename,
-    const QString& sprLayerFilename) : root(gameRoot), sprLayerIdx(0), levelWidth(1), levelHeight(1) {
+TileMap::TileMap(LevelManager* root, const QString& tilesetFilename, 
+    const QString& maskFilename, const QString& sprLayerFilename) 
+    : root(root), sprLayerIdx(0), levelWidth(1), levelHeight(1) {
     // Reserve textures for tileset and its mask counterpart
     levelTileset = std::make_unique<Tileset>(tilesetFilename, maskFilename);
     if (!levelTileset->getIsValid()) {
@@ -29,7 +33,7 @@ TileMap::TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFile
     levelHeight = levelLayout.at(0).tileLayout.size() - 1;
     levelWidth = levelLayout.at(0).tileLayout.at(0).size() - 1;
 
-    sceneryResources = root->loadActorTypeResources("Common/Scenery");
+    sceneryResources = root->getActorAPI()->loadActorTypeResources("Common/Scenery");
 }
 
 TileMap::~TileMap() {
@@ -111,10 +115,11 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, viewHeightHalf * 4 - 50);
 
 #ifdef CARROT_DEBUG
-    float perspectiveCurve        = root->tempModifier[0] / 10.0;
-    int perspectiveMultiplierNear = root->tempModifier[1];
-    int perspectiveMultiplierFar  = root->tempModifier[2];
-    int skyDepth                  = root->tempModifier[4];
+    auto debugConfig = root->getActorAPI()->getDebugConfig();
+    float perspectiveCurve        = debugConfig.tempModifier[0] / 10.0;
+    int perspectiveMultiplierNear = debugConfig.tempModifier[1];
+    int perspectiveMultiplierFar  = debugConfig.tempModifier[2];
+    int skyDepth                  = debugConfig.tempModifier[4];
 #else
     float perspectiveCurve        = 2.0;
     int perspectiveMultiplierNear = 1;
@@ -193,7 +198,9 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
     }
 
 #ifdef CARROT_DEBUG
-    if (root->dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
+    auto debugConfig = root->getActorAPI()->getDebugConfig();
+
+    if (debugConfig.dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
         // only draw sprite layer in collision debug mode
         return;
     }
@@ -287,7 +294,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
 
     if (layer.isTextured && (lh == 8) && (lw == 8)) {
 #ifdef CARROT_DEBUG
-        float perspectiveSpeed = root->tempModifier[3] / 10.0;
+        float perspectiveSpeed = debugConfig.tempModifier[3] / 10.0;
 #else
         float perspectiveSpeed = 0.4;
 #endif
@@ -324,7 +331,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
                 if (idx == 0 && !ani) { continue; }
 
 #ifdef CARROT_DEBUG
-                if (root->dbgShowMasked) {
+                if (debugConfig.dbgShowMasked) {
                     // debug code for masks
                     sf::RectangleShape b(sf::Vector2f(32, 32));
                     b.setPosition(x2, y2);
@@ -500,8 +507,9 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
             if (type == LAYER_SKY_LAYER && newLayer.isTextured) {
                 texturedBackgroundColor = newLayer.texturedBackgroundColor;
 
+                auto size = root->getActorAPI()->getCanvasSize();
                 initializeBackgroundTexture(newLayer);
-                initializeTexturedBackgroundFade();
+                initializeTexturedBackgroundFade(size.x, size.y);
             }
         } else {
             // TODO: uncompress fail, what do?
@@ -543,23 +551,6 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     int hx2 = ceil(hitbox.right);
     int hy1 = floor(hitbox.top);
     int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 + 31.0);
-#ifdef CARROT_DEBUG
-    if (root->dbgShowMasked) {
-        auto target = root->getCanvas().lock();
-        if (target != nullptr) {
-            // debug code
-            sf::RectangleShape b(sf::Vector2f((hx2 / 32 - hx1 / 32) * 32 + 32,(hy2 / 32 - hy1 / 32) * 32 + 32));
-            b.setPosition(hx1 / 32 * 32,hy1 / 32 * 32);
-            b.setFillColor(sf::Color::Green);
-            target->draw(b);
-            
-            sf::RectangleShape a(sf::Vector2f(hitbox.right-hitbox.left, hitbox.bottom-hitbox.top));
-            a.setPosition(hitbox.left,hitbox.top);
-            a.setFillColor(sf::Color::Blue);
-            target->draw(a);
-        }
-    }
-#endif
 
     const auto& sprLayerLayout = levelLayout.at(sprLayerIdx).tileLayout;
 
@@ -574,29 +565,12 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                 !(sprLayerLayout.at(y).at(x)->isOneWay && !downwards) &&
                 !(sprLayerLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE)) {
                 all_empty = false;
-#ifdef CARROT_DEBUG
-                if (root->dbgShowMasked) {
-                    sf::RectangleShape a(sf::Vector2f(32, 32));
-                    a.setPosition(x*32, y*32);
-                    a.setFillColor(sf::Color::Red);
-                    auto target = root->getCanvas().lock();
-                    if (target != nullptr) {
-                        target->draw(a);
-                    }
-                }
-#endif
                 break;
             }
         }
-#ifdef CARROT_DEBUG
-        if (!all_empty && !root->dbgShowMasked) {
-            break;
-        }
-#else
         if (!all_empty) {
             break;
         }
-#endif
     }
 
     if (all_empty) {
@@ -641,13 +615,8 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     return true;
 }
 
-void TileMap::initializeTexturedBackgroundFade() {
+void TileMap::initializeTexturedBackgroundFade(int width, int) {
     // initialize the render texture and fade vertices for textured background
-    auto canvas = root->getCanvas().lock();
-    int width = 800;
-    if (canvas != nullptr) {
-        width = canvas->getView().getSize().x;
-    }
 
     texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
     texturedBackgroundFadeArray->resize(12);
@@ -761,7 +730,7 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
     if (tile->destructType == DESTRUCT_WEAPON) {
         if (weapon == WEAPON_FREEZER && (animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
-            auto e = std::make_shared<FrozenBlock>(root, 32 * tx + 16.0, 32.0 * ty + 16.0);
+            auto e = std::make_shared<FrozenBlock>(root->getActorAPI(), 32 * tx + 16.0, 32.0 * ty + 16.0);
             root->addActor(e);
 
             return true;
@@ -932,8 +901,8 @@ bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile,
         tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
         if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
             // the tile was destroyed, create debris
-            auto soundSystem = root->getSoundSystem().lock();
-            if (soundSystem != nullptr && sceneryResources->sounds.contains(soundName)) {
+            auto soundSystem = root->getActorAPI()->getSoundSystem();
+            if (sceneryResources->sounds.contains(soundName)) {
                 soundSystem->playSFX(sceneryResources->sounds.value(soundName).sound, { x * 32 + 16, y * 32 + 16 });
             }
             root->createDebris(animatedTiles.at(tile->destructAnimation)

@@ -3,7 +3,7 @@
 #include "SolidObject.h"
 #include <SFML/Graphics.hpp>
 
-class CarrotQt5;
+class ActorAPI;
 
 enum PlatformType {
     CARROTUS_FRUIT = 1,
@@ -16,7 +16,7 @@ enum PlatformType {
 
 class MovingPlatform : public SolidObject {
 public:
-    MovingPlatform(std::shared_ptr<CarrotQt5> root, double x, double y, PlatformType type, 
+    MovingPlatform(std::shared_ptr<ActorAPI> api, double x, double y, PlatformType type,
         quint16 length, qint16 speed, ushort sync, bool swing);
     ~MovingPlatform();
     void tickEvent() override;

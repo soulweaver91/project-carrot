@@ -1,6 +1,8 @@
 #include "Player.h"
-#include "../gamestate/TileMap.h"
+#include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
+#include "../gamestate/GameView.h"
+#include "../gamestate/TileMap.h"
 #include "SolidObject.h"
 #include "TriggerCrate.h"
 #include "enemy/Enemy.h"
@@ -14,9 +16,9 @@
 #include "weapon/AmmoToaster.h"
 #include "weapon/AmmoFreezer.h"
 
-Player::Player(std::shared_ptr<CarrotQt5> root, double x, double y) : CommonActor(root, x, y, false), 
+Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveActor(api, x, y, false),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
-    weaponCooldown(0), isUsingDamagingMove(false), controllable(true), isAttachedToPole(false), cameraShiftFramesCount(0),
+    weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), cameraShiftFramesCount(0),
     copterFramesLeft(0), toasterAmmoSubticks(10),
     isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
@@ -297,7 +299,7 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
 void Player::tickEvent() {
     // Initialize these ASAP
     if (osd == nullptr) {
-        osd = std::make_unique<PlayerOSD>(root, std::dynamic_pointer_cast<Player>(shared_from_this()));
+        osd = std::make_unique<PlayerOSD>(api, std::dynamic_pointer_cast<Player>(shared_from_this()));
         osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
         osd->setAmmo(ammo[currentWeapon]);
         osd->setLives(lives);
@@ -305,13 +307,13 @@ void Player::tickEvent() {
         osd->setHealth(health);
     }
 
-    auto tiles = root->getGameTiles().lock();
+    auto tiles = api->getGameTiles().lock();
     AnimStateT currentState = currentAnimation->getAnimationState();
 
     // Check for pushing
     if (canJump && controllable && std::abs(speedX) > EPSILON) {
         std::weak_ptr<SolidObject> object;
-        if (!(root->isPositionEmpty(getHitbox() + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
+        if (!(api->isPositionEmpty(getHitbox() + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
 
             if (objectPtr != nullptr) {
@@ -335,10 +337,10 @@ void Player::tickEvent() {
             CoordinatePair delta = platform->getLocationDelta();
             Hitbox currentHitbox = getHitbox();
 
-            if (root->isPositionEmpty(currentHitbox + CoordinatePair(delta.x, delta.y), false, shared_from_this())) {
+            if (api->isPositionEmpty(currentHitbox + CoordinatePair(delta.x, delta.y), false, shared_from_this())) {
                 posX += delta.x;
                 posY += delta.y;
-            } else if (root->isPositionEmpty(currentHitbox + CoordinatePair(0.0, delta.y), false, shared_from_this())) {
+            } else if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, delta.y), false, shared_from_this())) {
                 posY += delta.y;
             } else {
                 carryingObject = std::weak_ptr<MovingPlatform>();
@@ -348,7 +350,7 @@ void Player::tickEvent() {
 
     CommonActor::tickEvent();
     currentState = currentAnimation->getAnimationState();
-    double gravity = (isGravityAffected ? root->gravity : 0);
+    double gravity = (isGravityAffected ? api->getGravity() : 0);
 
     if (tiles != nullptr) {
         // Check if hitting a vine
@@ -389,7 +391,7 @@ void Player::tickEvent() {
             addScore(destroyedCount * 50);
 
             std::weak_ptr<SolidObject> object;
-            if (!(root->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
+            if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
                 auto triggerCrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
                 if (triggerCrate != nullptr) {
                     triggerCrate->decreaseHealth(1);
@@ -434,7 +436,7 @@ void Player::tickEvent() {
         setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
     }
     
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (events != nullptr) {
         PCEvent e = events->getPositionEvent(posX, posY);
         quint16 p[8];
@@ -486,7 +488,7 @@ void Player::tickEvent() {
             case PC_AREA_EOL:
                 if (controllable) {
                     playNonPositionalSound("PLAYER_JAZZ_EOL");
-                    root->initLevelChange(NEXT_NORMAL);
+                    api->initLevelChange(NEXT_NORMAL);
                 }
                 controllable = false;
                 break;
@@ -509,7 +511,7 @@ void Player::tickEvent() {
                 externalForceY = gravity * 2;
                 speedY = std::min(gravity, speedY);
             } else {
-                speedY = std::min(root->gravity * 10, speedY);
+                speedY = std::min(api->getGravity() * 10, speedY);
             }
         }
     }
@@ -532,7 +534,7 @@ void Player::tickEvent() {
         cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, std::abs(cameraShiftFramesCount) - 10);
     }
 
-    auto collisions = root->findCollisionActors(shared_from_this());
+    auto collisions = api->findCollisionActors(shared_from_this());
     for (const auto& collision : collisions) {
         auto collisionPtr = collision.lock();
 
@@ -601,7 +603,7 @@ void Player::tickEvent() {
             if (collectible != nullptr) {
                 collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
                 collisionPtr->deleteFromEventMap();
-                root->removeActor(collisionPtr);
+                api->removeActor(collisionPtr);
             }
         }
 
@@ -650,10 +652,10 @@ void Player::drawUIOverlay() {
     }
 
 #ifdef CARROT_DEBUG
-    if (root->dbgOverlaysActive) {
-        BitmapString::drawString(canvas, root->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
-        BitmapString::drawString(canvas, root->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
-        BitmapString::drawString(canvas, root->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
+    if (api->getDebugConfig().dbgOverlaysActive) {
+        BitmapString::drawString(canvas.get(), api->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
+        BitmapString::drawString(canvas.get(), api->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
+        BitmapString::drawString(canvas.get(), api->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
     }
 #endif
 }
@@ -744,7 +746,7 @@ void Player::consumeFood(const bool& isDrinkable) {
     if (foodCounter >= SUGAR_RUSH_THRESHOLD) {
         foodCounter = foodCounter % SUGAR_RUSH_THRESHOLD;
         if (!isSugarRush) {
-            auto soundSystem = root->getSoundSystem().lock();
+            auto soundSystem = api->getSoundSystem();
             if (soundSystem != nullptr) {
                 soundSystem->pauseMusic();
                 playNonPositionalSound("PLAYER_SUGAR_RUSH");
@@ -754,7 +756,7 @@ void Player::consumeFood(const bool& isDrinkable) {
             osd->setSugarRushActive();
             addTimer(21.548 * 70.0, false, [this]() {
                 isSugarRush = false;
-                auto soundSystem = root->getSoundSystem().lock();
+                auto soundSystem = api->getSoundSystem();
                 if (soundSystem != nullptr) {
                     soundSystem->resumeMusic();
                 }
@@ -778,7 +780,7 @@ bool Player::perish() {
                 lives--;
 
                 // Return us to the last save point
-                root->loadSavePoint();
+                api->loadSavePoint();
 
                 // Reset health and remove one life
                 health = maxHealth;
@@ -824,10 +826,6 @@ void Player::endDamagingMove() {
     setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
 }
 
-void Player::returnControl() {
-    controllable = true;
-}
-
 bool Player::setPlayerTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special,
     AnimationCallbackFunc callback) {
     if (remove_control) {
@@ -841,7 +839,7 @@ bool Player::setPlayerTransition(AnimStateT state, bool cancellable, bool remove
 }
 
 void Player::onHitFloorHook() {
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (events == nullptr) {
         return;
     }
@@ -856,7 +854,7 @@ void Player::onHitFloorHook() {
 }
 
 void Player::onHitCeilingHook() {
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (events == nullptr) {
         return;
     }
@@ -867,7 +865,7 @@ void Player::onHitCeilingHook() {
 }
 
 void Player::onHitWallHook() {
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
     if (events == nullptr) {
         return;
     }
@@ -896,7 +894,7 @@ void Player::takeDamage(double pushForce) {
 
 void Player::setToOwnViewCenter() {
     int shift_offset = 0;
-    auto tiles = root->getGameTiles().lock();
+    auto tiles = api->getGameTiles().lock();
     if (tiles == nullptr) {
         return;
     }
@@ -1069,7 +1067,7 @@ uint Player::getCoinsTotalValue() {
 
 void Player::warpToPosition(const CoordinatePair& pos) {
     setPlayerTransition(AnimState::TRANSITION_WARP, false, true, false, [this, pos]() {
-        auto events = root->getGameEvents().lock();
+        auto events = api->getGameEvents().lock();
         if (events == nullptr) {
             return;
         }
@@ -1101,8 +1099,8 @@ template<typename T> std::shared_ptr<T> Player::fireWeapon() {
     int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
     int fire_y =  animation->hotspot.y - animation->gunspot.y;
 
-    auto newAmmo = std::make_shared<T>(root, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup);
-    root->addActor(newAmmo);
+    auto newAmmo = std::make_shared<T>(api, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup);
+    api->addActor(newAmmo);
     return newAmmo;
 }
 

@@ -1,9 +1,9 @@
 #include "GameView.h"
-#include "../CarrotQt5.h"
+#include "LevelManager.h"
 #include "../actor/Player.h"
 #include "../graphics/ShaderSource.h"
 
-GameView::GameView(std::shared_ptr<CarrotQt5> root, const uint& playerID, const sf::Vector2f& dimensions) 
+GameView::GameView(LevelManager* root, const uint& playerID, const sf::Vector2f& dimensions) 
     : root(root), playerID(playerID) {
     canvas = std::make_shared<sf::RenderTexture>();
     canvas->create(dimensions.x, dimensions.y);
@@ -60,7 +60,7 @@ int GameView::getLightingLevel() {
     return lightingLevel;
 }
 
-void GameView::drawView(std::shared_ptr<sf::RenderTarget> windowCanvas) {
+void GameView::drawView(sf::RenderTarget* windowCanvas) {
     canvas->display();
     windowCanvas->draw(*viewSprite.get());
 

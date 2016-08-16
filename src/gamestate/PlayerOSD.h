@@ -25,7 +25,7 @@ enum OSDMessageType {
 
 class PlayerOSD : public AnimationUser {
 public:
-    PlayerOSD(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> player);
+    PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player);
     ~PlayerOSD();
 
     void drawOSD(std::shared_ptr<GameView>& view);

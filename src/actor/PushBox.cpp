@@ -1,6 +1,6 @@
 #include "PushBox.h"
 
-PushBox::PushBox(std::shared_ptr<CarrotQt5> root, double x, double y, int type) : SolidObject(root, x, y, true) {
+PushBox::PushBox(std::shared_ptr<ActorAPI> api, double x, double y, int type) : SolidObject(api, x, y, true) {
     loadResources("Object/PushBox");
     if (type == 0) {
         AnimationUser::setAnimation("OBJECT_PUSHBOX_ROCK");

@@ -5,10 +5,11 @@
 #include <QString>
 #include <SFML/Graphics.hpp>
 #include "TimerUser.h"
+#include "LevelManager.h"
 #include "../struct/AnimState.h"
 #include "../struct/Resources.h"
 
-class CarrotQt5;
+class ActorAPI;
 class AnimationInstance;
 class AnimationUser;
 class GameView;
@@ -47,7 +48,7 @@ private:
 
 class AnimationUser : public TimerUser {
 public:
-    AnimationUser(std::shared_ptr<CarrotQt5> root);
+    AnimationUser(std::shared_ptr<ActorAPI> api);
     ~AnimationUser();
 
     void loadAnimationSet(QMap<QString, std::shared_ptr<GraphicResource>>& animations);
@@ -67,7 +68,7 @@ protected:
     std::shared_ptr<AnimationInstance> currentAnimation;
     std::shared_ptr<AnimationInstance> transition;
 
-    std::shared_ptr<CarrotQt5> root;
+    std::shared_ptr<ActorAPI> api;
     bool inTransition;
     bool cancellableTransition;
 };

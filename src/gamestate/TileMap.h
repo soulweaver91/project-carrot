@@ -15,9 +15,10 @@
 #include "../struct/Resources.h"
 #include "../struct/Layers.h"
 
-class CarrotQt5;
+class ActorAPI;
 class GameView;
 class AnimatedTile;
+class LevelManager;
 
 class DestructibleDebris {
 public:
@@ -39,7 +40,8 @@ private:
 
 class TileMap : public std::enable_shared_from_this<TileMap> {
 public:
-    TileMap(std::shared_ptr<CarrotQt5> gameRoot, const QString& tilesetFilename, const QString& maskFilename, const QString& sprLayerFilename);
+    TileMap(LevelManager* root, const QString& tilesetFilename, 
+        const QString& maskFilename, const QString& sprLayerFilename);
     ~TileMap();
         
     // level related
@@ -66,10 +68,10 @@ public:
     const std::shared_ptr<sf::Texture> getTilesetTexture();
     bool isTileEmpty(unsigned x, unsigned y);
     bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
-    void initializeTexturedBackgroundFade();
+    void initializeTexturedBackgroundFade(int width, int height);
 
 private:
-    std::shared_ptr<CarrotQt5> root;
+    LevelManager* root;
     void drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view);
     double translateCoordinate(const double& coordinate, const double& speed, const double& offset, const bool& isY,
         const int& viewHeight, const int& viewWidth) const;

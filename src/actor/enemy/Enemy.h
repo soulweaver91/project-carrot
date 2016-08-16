@@ -7,11 +7,11 @@
 #include "../CommonActor.h"
 #include "../../struct/PCEvent.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 class Enemy : public CommonActor {
 public:
-    Enemy(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0);
+    Enemy(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~Enemy();
     virtual void tickEvent() override;
     virtual bool perish() override;

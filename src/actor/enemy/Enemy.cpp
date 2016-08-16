@@ -1,14 +1,14 @@
 #include "Enemy.h"
 #include <algorithm>
-#include "../../CarrotQt5.h"
+#include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/EventMap.h"
 #include "../collectible/CarrotCollectible.h"
 #include "../collectible/GemCollectible.h"
 #include "../collectible/FastFireCollectible.h"
 #include "../weapon/Ammo.h"
 
-Enemy::Enemy(std::shared_ptr<CarrotQt5> root, double x, double y) 
-    : CommonActor(root, x, y), hurtPlayer(true), isAttacking(false) {
+Enemy::Enemy(std::shared_ptr<ActorAPI> api, double x, double y)
+    : CommonActor(api, x, y), hurtPlayer(true), isAttacking(false) {
 
 }
 
@@ -32,12 +32,12 @@ bool Enemy::canMoveToPosition(double x, double y) {
     Hitbox hitbox = getHitbox();
     short sign = (isFacingLeft ? -1 : 1);
 
-    auto events = root->getGameEvents().lock();
+    auto events = api->getGameEvents().lock();
 
-    return ((root->isPositionEmpty(hitbox + CoordinatePair(x, y - 10), false, shared_from_this())
-          || root->isPositionEmpty(hitbox + CoordinatePair(x, y + 2), false, shared_from_this()))
+    return ((api->isPositionEmpty(hitbox + CoordinatePair(x, y - 10), false, shared_from_this())
+          || api->isPositionEmpty(hitbox + CoordinatePair(x, y + 2), false, shared_from_this()))
          && (events != nullptr && (!(events->getPositionEvent(posX + x, posY + y) == PC_AREA_STOP_ENEMY)))
-         && (!root->isPositionEmpty(hitbox + CoordinatePair(x + sign * (hitbox.right - hitbox.left) / 2, y + 32), false, shared_from_this())));
+         && (!api->isPositionEmpty(hitbox + CoordinatePair(x + sign * (hitbox.right - hitbox.left) / 2, y + 32), false, shared_from_this())));
 }
 
 void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable) {
@@ -51,17 +51,17 @@ void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable
             int i = 0;
             switch (pair.first) {
                 case PC_CARROT:
-                    root->addActor(std::make_shared<CarrotCollectible>(root, posX, posY, false, false));
+                    api->addActor(std::make_shared<CarrotCollectible>(api, posX, posY, false, false));
                     break;
                 case PC_FAST_FIRE:
-                    root->addActor(std::make_shared<FastFireCollectible>(root, posX, posY, false));
+                    api->addActor(std::make_shared<FastFireCollectible>(api, posX, posY, false));
                     break;
                 case PC_GEM_BLUE:
                     i++;
                 case PC_GEM_GREEN:
                     i++;
                 case PC_GEM_RED:
-                    root->addActor(std::make_shared<GemCollectible>(root, posX, posY, (GemType)((int)GEM_RED + i), false));
+                    api->addActor(std::make_shared<GemCollectible>(api, posX, posY, (GemType)((int)GEM_RED + i), false));
                     break;
                 default:
                     break;

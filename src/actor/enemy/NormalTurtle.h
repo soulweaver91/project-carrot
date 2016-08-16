@@ -5,11 +5,11 @@
 #include "Enemy.h"
 #include "../../struct/Hitbox.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 class EnemyNormalTurtle : public Enemy {
 public:
-    EnemyNormalTurtle(std::shared_ptr<CarrotQt5>, double x = 0.0, double y = 0.0);
+    EnemyNormalTurtle(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~EnemyNormalTurtle();
     void tickEvent() override;
     Hitbox getHitbox();

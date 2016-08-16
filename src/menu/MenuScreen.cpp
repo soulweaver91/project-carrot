@@ -1,9 +1,9 @@
-#include <memory>
 #include "MenuScreen.h"
+#include <memory>
 #include <QDir>
 #include <QSettings>
 
-MenuScreen::MenuScreen(std::shared_ptr<CarrotQt5> root, MenuEntryPoint entry) : root(root), selectedItemIdx(0),
+MenuScreen::MenuScreen(CarrotQt5* root, MenuEntryPoint entry) : root(root), selectedItemIdx(0),
     attractionText(root->getFont(), "", FONT_ALIGN_RIGHT), currentMenuType(MENU_PLAIN_LIST) {
     mainMenuCircularGlowTexture.loadFromFile("Data/Textures/radialglow.png");
     mainMenuCircularGlowSprite.setTexture(mainMenuCircularGlowTexture);
@@ -103,11 +103,10 @@ void MenuScreen::processControlUpEvent(const ControlEvent&) {
     // No use at the moment, but defined for the sake of consistency.
 }
 
-void MenuScreen::tickEvent() {
-    auto canvas = root->getCanvas().lock();
-    if (canvas == nullptr) {
-        return;
-    }
+void MenuScreen::tick(const ControlEventList& events) {
+    processControlEvents(events);
+
+    auto canvas = root->getCanvas();
 
     unsigned int viewWidth = canvas->getView().getSize().x;
     unsigned int viewHeight = canvas->getView().getSize().y;
@@ -148,6 +147,20 @@ void MenuScreen::tickEvent() {
         default:
             // ?
             break;
+    }
+}
+
+void MenuScreen::processControlEvents(const ControlEventList& events) {
+    for (const auto& pair : events.controlDownEvents) {
+        processControlDownEvent(pair);
+    }
+
+    for (const auto& key : events.controlHeldEvents.keys()) {
+        processControlHeldEvent(qMakePair(key, events.controlHeldEvents.value(key)));
+    }
+
+    for (const auto& pair : events.controlUpEvents) {
+        processControlUpEvent(pair);
     }
 }
 
@@ -194,10 +207,11 @@ void MenuScreen::loadEpisodeList() {
             }
             if (QDir(episodeDir.absoluteFilePath(eps.at(i))).exists()) {
                 QSettings level_data(episodeDir.absoluteFilePath(eps.at(i) + "/config.ini"), QSettings::Format::IniFormat);
-                QString levelName = eps.at(i) + "/" + level_data.value("Episode/FirstLevel").toString();
+                QString epName = eps.at(i);
+                QString levelName = level_data.value("Episode/FirstLevel").toString();
                 menuOptions.append(buildMenuItem(
-                    [this, levelName]() {
-                        root->startGame(levelName);
+                    [this, levelName, epName]() {
+                        root->startGame(levelName, epName);
                     },
                     level_data.value("Episode/FormalName").toString())
                 );

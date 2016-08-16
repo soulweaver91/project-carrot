@@ -1,8 +1,8 @@
 #include "FoodCollectible.h"
 #include "../Player.h"
 
-FoodCollectible::FoodCollectible(std::shared_ptr<CarrotQt5> root, double x, double y, PCEvent type, bool fromEventMap)
-    : Collectible(root, x, y, fromEventMap) {
+FoodCollectible::FoodCollectible(std::shared_ptr<ActorAPI> api, double x, double y, PCEvent type, bool fromEventMap)
+    : Collectible(api, x, y, fromEventMap) {
     scoreValue = 50;
     switch (type) {
         case PC_FOOD_APPLE:       AnimationUser::setAnimation("PICKUP_FOOD_APPLE"); break;

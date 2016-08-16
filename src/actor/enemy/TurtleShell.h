@@ -2,9 +2,11 @@
 
 #include "../CommonActor.h"
 
+class ActorAPI;
+
 class TurtleShell : public CommonActor {
 public:
-    TurtleShell(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, double initSpeedX = 0.0,
+    TurtleShell(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, double initSpeedX = 0.0,
         double initSpeedY = 0.0, bool fromEventMap = false);
     ~TurtleShell();
     void tickEvent() override;

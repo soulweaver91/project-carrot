@@ -1,11 +1,11 @@
 #include "NormalTurtle.h"
 
-#include "../../CarrotQt5.h"
 #include "TurtleShell.h"
+#include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
 
-EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<CarrotQt5> root, double x, double y)
-    : Enemy(root, x, y), isTurning(false), isWithdrawn(false) {
+EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<ActorAPI> api, double x, double y)
+    : Enemy(api, x, y), isTurning(false), isWithdrawn(false) {
     loadResources("Enemy/Turtle");
     setAnimation(AnimState::WALK);
     speedX = 1;
@@ -33,7 +33,7 @@ void EnemyNormalTurtle::tickEvent() {
     }
 
     if (!isTurning && !isWithdrawn && !isAttacking) {
-        auto players = root->getCollidingPlayer(getHitbox().add(speedX * 64, 0.0));
+        auto players = api->getCollidingPlayer(getHitbox().add(speedX * 64, 0.0));
         if (players.length() > 0) {
             attack();
         }
@@ -47,7 +47,7 @@ Hitbox EnemyNormalTurtle::getHitbox() {
 bool EnemyNormalTurtle::perish() {
     bool goingToPerish = (health == 0);
     if (goingToPerish) {
-        root->addActor(std::make_shared<TurtleShell>(root, posX, posY, speedX, -5.0, false));
+        api->addActor(std::make_shared<TurtleShell>(api, posX, posY, speedX, -5.0, false));
         Enemy::perish();
     }
 

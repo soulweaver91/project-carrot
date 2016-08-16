@@ -4,11 +4,11 @@
 
 #include "CommonActor.h"
 
-class CarrotQt5;
+class ActorAPI;
 
 class SolidObject : public CommonActor {
 public:
-    SolidObject(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool movable = true);
+    SolidObject(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, bool movable = true);
     ~SolidObject();
     void push(bool left);
     bool getIsOneWay();

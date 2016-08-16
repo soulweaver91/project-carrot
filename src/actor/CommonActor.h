@@ -15,20 +15,17 @@
 #include "../struct/Resources.h"
 #include "../struct/Layers.h"
 
-class CarrotQt5;
+class ActorAPI;
 class TileMap;
 class GameView;
 class Ammo;
 
-class CommonActor : public QObject, public std::enable_shared_from_this<CommonActor>, public AnimationUser {
+class CommonActor : public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
-    CommonActor(std::shared_ptr<CarrotQt5> root, double x = 0.0, double y = 0.0, bool fromEventMap = false);
+    CommonActor(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, bool fromEventMap = false);
     ~CommonActor();
     virtual void drawUpdate(std::shared_ptr<GameView>& view);
     virtual void tickEvent();
-    virtual void processControlDownEvent(const ControlEvent& e);
-    virtual void processControlUpEvent(const ControlEvent& e);
-    virtual void processAllControlHeldEvents(const QMap<Control, ControlState>& e);
     void decreaseHealth(unsigned amount = 1);
     virtual void setToViewCenter(std::shared_ptr<GameView> view);
     CoordinatePair getPosition();
@@ -48,8 +45,6 @@ public:
     void handleAmmoFrozenStateChange(std::shared_ptr<CommonActor> ammo);
         
 protected:
-    void processAllControlHeldEventsDefaultHandler(const QMap<Control, ControlState>& e);
-    virtual void processControlHeldEvent(const ControlEvent& e);
     bool setAnimation(AnimStateT state) override;
     virtual void onHitFloorHook();
     virtual void onHitCeilingHook();
@@ -62,7 +57,7 @@ protected:
     template<typename... P>
     bool playNonPositionalSound(const QString& id, P... params);
 
-    std::shared_ptr<CarrotQt5> root;
+    std::shared_ptr<ActorAPI> api;
     unsigned maxHealth;
     unsigned health;
     double posX;

@@ -1,10 +1,10 @@
 #include "AmmoBouncer.h"
-#include "../../CarrotQt5.h"
+#include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/TileMap.h"
 
-AmmoBouncer::AmmoBouncer(std::shared_ptr<CarrotQt5> root, std::weak_ptr<Player> firedBy, double x, double y,
+AmmoBouncer::AmmoBouncer(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
     double speed, bool firedLeft, bool firedUp)
-    : Ammo(root, firedBy, x, y, firedLeft, firedUp, 140) {
+    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 140) {
     elasticity = 0.9;
     loadResources("Weapon/Bouncer");
     if (firedUp) {
@@ -23,7 +23,7 @@ AmmoBouncer::~AmmoBouncer() {
 void AmmoBouncer::tickEvent() {
     CommonActor::tickEvent();
     Ammo::tickEvent();
-    auto tiles = root->getGameTiles().lock();
+    auto tiles = api->getGameTiles().lock();
     if (tiles == nullptr || tiles->isTileEmpty((posX + speedX) / 32, (posY + speedY) / 32)) {
         posX += speedX;
         posY += speedY;

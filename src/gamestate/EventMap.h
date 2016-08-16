@@ -22,7 +22,7 @@ struct EventTile {
 
 class EventMap {
 public:
-    EventMap(std::shared_ptr<CarrotQt5> gameRoot, unsigned int width, unsigned int height);
+    EventMap(LevelManager* root, unsigned int width, unsigned int height);
     ~EventMap();
     void storeTileEvent(int x, int y, PCEvent e = PC_EMPTY, int flags = 0, const QVector<quint16>& params = QVector<quint16>());
     void activateEvents(const CoordinatePair& center, int tileDistance = 32);
@@ -42,7 +42,7 @@ public:
 private:
     void addWarpTarget(unsigned id, unsigned x, unsigned y);
     bool positionHasEvent(int x, int y);
-    std::shared_ptr<CarrotQt5> root;
+    LevelManager* root;
     QVector<QVector<std::shared_ptr<EventTile>>> eventLayout;
     QMultiMap<unsigned, CoordinatePair> warpTargets;
 

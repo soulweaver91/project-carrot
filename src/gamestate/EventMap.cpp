@@ -1,6 +1,6 @@
 #include "EventMap.h"
 #include <QList>
-#include "../CarrotQt5.h"
+#include "../gamestate/LevelManager.h"
 #include "../actor/SolidObject.h"
 #include "../actor/collectible/Collectible.h"
 #include "../actor/collectible/AmmoCollectible.h"
@@ -22,8 +22,8 @@
 #include "../actor/BonusWarp.h"
 #include "../struct/WeaponTypes.h"
 
-EventMap::EventMap(std::shared_ptr<CarrotQt5> gameRoot, unsigned int width, unsigned int height)
-    : root(gameRoot) {
+EventMap::EventMap(LevelManager* root, unsigned int width, unsigned int height)
+    : root(root) {
     for (unsigned int y = 0; y <= height; ++y) {
         QVector<std::shared_ptr<EventTile>> n;
         for (unsigned int x = 0; x <= width; ++x) {
@@ -302,7 +302,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                             break;
                         case PC_JAZZ_LEVEL_START:
                             if (root->getPlayer(0).lock() == nullptr) {
-                                auto defaultplayer = std::make_shared<Player>(root, 32.0 * x + 16.0, 32.0 * y + 16.0);
+                                auto defaultplayer = std::make_shared<Player>(root->getActorAPI(), 32.0 * x + 16.0, 32.0 * y + 16.0);
                                 root->addPlayer(defaultplayer, 0);
                             }
                             break;
@@ -369,6 +369,6 @@ CoordinatePair EventMap::getWarpTarget(unsigned id) {
 
 template<typename T, typename... P>
 void EventMap::createCommonActorEvent(const double& x, const double& y, P... params) {
-    auto e = std::make_shared<T>(root, 32.0 * x + 16.0, 32.0 * y + 16.0, *&params...);
+    auto e = std::make_shared<T>(root->getActorAPI(), 32.0 * x + 16.0, 32.0 * y + 16.0, *&params...);
     root->addActor(e);
 }
