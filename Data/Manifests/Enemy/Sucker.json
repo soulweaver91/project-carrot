@@ -1,0 +1,47 @@
+{
+  "graphics": {
+    "ENEMY_SUCKER_WALK": {
+      "filename": "sucker_tube/walk.png",
+      "states": [
+        "0", "1", "2", "3"
+      ]
+    }, 
+    "ENEMY_SUCKER_FALL": {
+      "filename": "sucker_tube/fall.png",
+      "states": [
+        "8", "9", "10", "11"
+      ]
+    },
+    "ENEMY_SUCKER_DEFLATION": {
+      "filename": "sucker_tube/inflated_deflate.png",
+      "states": [
+        "1073741824"
+      ]
+    }
+  },
+  "sounds": {
+    "ENEMY_SUCKER_DEFLATE": {
+      "filename": [
+        "sucker_tube/deflate.wav"
+      ]
+    },
+    "ENEMY_SUCKER_WALK_1": {
+      "filename": [
+        "sucker_tube/pinch_1.wav"
+      ]
+    },
+    "ENEMY_SUCKER_WALK_2": {
+      "filename": [
+        "sucker_tube/pinch_3.wav"
+      ]
+    },
+    "ENEMY_SUCKER_WALK_3": {
+      "filename": [
+        "sucker_tube/plop_1.wav",
+        "sucker_tube/plop_2.wav",
+        "sucker_tube/plop_3.wav",
+        "sucker_tube/plop_4.wav"
+      ]
+    }
+  }
+}

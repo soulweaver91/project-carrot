@@ -46,7 +46,7 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
         throw std::runtime_error(std::string("The level is using a too recent layer format. You might need to update to a newer game version."));
     }
 
-    api = std::make_unique<ActorAPI>(root, this);
+    api = std::make_shared<ActorAPI>(root, this);
 
     setLevelName(level_config.value("Level/FormalName", "Unnamed level").toString());
 

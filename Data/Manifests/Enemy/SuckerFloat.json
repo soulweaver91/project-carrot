@@ -1,0 +1,16 @@
+{
+  "graphics": {
+    "ENEMY_SUCKER_FLOAT": {
+      "filename": "sucker_tube/inflated.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+
+  },
+  "children": [
+    "Enemy/Sucker"
+  ]
+}

@@ -9,6 +9,14 @@
 
 class ActorAPI;
 
+enum LastHitDirection {
+    NONE,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+};
+
 class Enemy : public CommonActor {
 public:
     Enemy(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
@@ -25,4 +33,5 @@ protected:
     void tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable = Enemy::defaultDropTable);
 
     const static QVector<QPair<PCEvent, uint>> defaultDropTable;
+    LastHitDirection lastHitDir;
 };

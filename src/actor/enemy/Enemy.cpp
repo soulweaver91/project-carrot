@@ -8,7 +8,7 @@
 #include "../weapon/Ammo.h"
 
 Enemy::Enemy(std::shared_ptr<ActorAPI> api, double x, double y)
-    : CommonActor(api, x, y), hurtPlayer(true), isAttacking(false) {
+    : CommonActor(api, x, y), hurtPlayer(true), isAttacking(false), lastHitDir(NONE) {
 
 }
 
@@ -84,6 +84,13 @@ void Enemy::handleCollision(std::shared_ptr<CommonActor> other) {
     std::shared_ptr<Ammo> ammo = std::dynamic_pointer_cast<Ammo>(other);
     if (ammo != nullptr) {
         decreaseHealth(ammo->getStrength());
+        double ammoSpeedX = ammo->getSpeedX();
+        double ammoSpeedY = ammo->getSpeedY();
+        if (std::abs(ammoSpeedX) > EPSILON) {
+            lastHitDir = (ammoSpeedX > 0 ? RIGHT : LEFT);
+        } else {
+            lastHitDir = (ammoSpeedY > 0 ? DOWN : UP);
+        }
     }
 }
 
