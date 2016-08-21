@@ -296,6 +296,12 @@
     <ClCompile Include="src\gamestate\ActorAPI.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\enemy\SuckerFloat.cpp">
+      <Filter>Source Files\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\enemy\Sucker.cpp">
+      <Filter>Source Files\Actor\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -504,6 +510,12 @@
     <ClInclude Include="src\gamestate\ActorAPI.h">
       <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\enemy\SuckerFloat.h">
+      <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\enemy\Sucker.h">
+      <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -608,6 +620,12 @@
     </None>
     <None Include="Data\Manifests\Object\FrozenBlock.json">
       <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Enemy\SuckerFloat.json">
+      <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Enemy\Sucker.json">
+      <Filter>Actor Resource Manifests\Enemy</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
