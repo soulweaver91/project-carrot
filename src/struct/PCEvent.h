@@ -99,4 +99,6 @@ enum PCEvent {
     PC_TURTLE_SHELL         = 0x0182,
     PC_CARROT_FULL          = 0x0051,
     PC_WARP_COIN_BONUS      = 0x010D,
+    PC_ENEMY_SUCKER         = 0x018C,
+    PC_ENEMY_SUCKER_FLOAT   = 0x018D,
 };
