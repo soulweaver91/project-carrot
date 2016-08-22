@@ -4,7 +4,7 @@
 
 AmmoToaster::AmmoToaster(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
     double speed, bool firedLeft, bool firedUp)
-    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 70) {
+    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 63) {
     isGravityAffected = false;
     loadResources("Weapon/Toaster");
     if (firedUp) {
