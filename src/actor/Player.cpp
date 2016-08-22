@@ -236,29 +236,30 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
     if (e.first == controls.fireButton) {
         setAnimation(currentState | AnimState::SHOOT);
         if (weaponCooldown == 0) {
+            bool poweredUp = isWeaponPoweredUp[(uint)currentWeapon];
             switch (currentWeapon) {
                 case WEAPON_BLASTER:
                 {
-                    auto newAmmo = fireWeapon<AmmoBlaster>();
+                    auto newAmmo = fireWeapon<AmmoBlaster>(poweredUp);
                     weaponCooldown = 40 - std::min(40u, 3 * fastfires);
                     playSound("WEAPON_BLASTER_JAZZ");
                     break;
                 }
                 case WEAPON_BOUNCER:
                 {
-                    auto newAmmo = fireWeapon<AmmoBouncer>();
+                    auto newAmmo = fireWeapon<AmmoBouncer>(poweredUp);
                     weaponCooldown = 25;
                     break;
                 }
                 case WEAPON_FREEZER:
                 {
-                    auto newAmmo = fireWeapon<AmmoFreezer>();
+                    auto newAmmo = fireWeapon<AmmoFreezer>(poweredUp);
                     weaponCooldown = 25;
                     break;
                 }
                 case WEAPON_TOASTER:
                 {
-                    auto newAmmo = fireWeapon<AmmoToaster>();
+                    auto newAmmo = fireWeapon<AmmoToaster>(poweredUp);
                     weaponCooldown = 3;
                     break;
                 }
@@ -1119,14 +1120,14 @@ void Player::warpToPosition(const CoordinatePair& pos) {
     playSound("COMMON_WARP_IN");
 }
 
-template<typename T> std::shared_ptr<T> Player::fireWeapon() {
+template<typename T> std::shared_ptr<T> Player::fireWeapon(bool poweredUp) {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
     bool lookup = ((currentAnimation->getAnimationState() & AnimState::LOOKUP) > 0);
     auto animation = currentAnimation->getAnimation();
     int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
     int fire_y =  animation->hotspot.y - animation->gunspot.y;
 
-    auto newAmmo = std::make_shared<T>(api, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup);
+    auto newAmmo = std::make_shared<T>(api, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup, poweredUp);
     api->addActor(newAmmo);
     return newAmmo;
 }

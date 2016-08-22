@@ -7,8 +7,8 @@
 #include "../../gamestate/ActorAPI.h"
 
 Ammo::Ammo(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,
-    bool firedUp, int lifeLength, bool powered)
-    : CommonActor(api, x, y, false), poweredUp(powered), strength(1), owner(firedBy), framesLeft(lifeLength),
+    bool firedUp, int lifeLength, bool poweredUp)
+    : CommonActor(api, x, y, false), poweredUp(poweredUp), strength(1), owner(firedBy), framesLeft(lifeLength),
     firedUp(firedUp) {
     canBeFrozen = false;
     isFacingLeft = firedLeft;

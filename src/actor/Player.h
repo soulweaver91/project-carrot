@@ -71,7 +71,7 @@ private:
     void onHitWallHook();
     bool selectWeapon(enum WeaponType newType);
     void setupOSD(OSDMessageType type, int param = 0);
-    template<typename T> std::shared_ptr<T> fireWeapon();
+    template<typename T> std::shared_ptr<T> fireWeapon(bool poweredUp);
     uint getGemsTotalValue();
     uint getCoinsTotalValue();
     void warpToPosition(const CoordinatePair& pos);

@@ -3,8 +3,8 @@
 #include "../../gamestate/TileMap.h"
 
 AmmoToaster::AmmoToaster(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
-    double speed, bool firedLeft, bool firedUp)
-    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 63) {
+    double speed, bool firedLeft, bool firedUp, bool poweredUp)
+    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 63, poweredUp) {
     isGravityAffected = false;
     loadResources("Weapon/Toaster");
     if (firedUp) {
