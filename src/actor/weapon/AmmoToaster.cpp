@@ -14,7 +14,8 @@ AmmoToaster::AmmoToaster(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> fi
         speedY = (qrand() % 100 - 50.0) / 100.0;
         speedX = (1.0 + qrand() % 100 * 0.001) * (firedLeft ? -1 : 1) + speed;
     }
-    setAnimation(AnimState::IDLE);
+
+    AnimationUser::setAnimation(poweredUp ? "WEAPON_TOASTER_POWERUP" : "WEAPON_TOASTER");
 }
 
 
