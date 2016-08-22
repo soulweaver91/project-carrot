@@ -54,6 +54,60 @@
         "0"
       ]
     },
+    "UI_WEAPON_POWERUP_BLASTER_JAZZ": {
+      "filename": "ui/blaster_upgraded_jazz.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_BOUNCER": {
+      "filename": "pickup/ammo_bouncer_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_FREEZER": {
+      "filename": "pickup/ammo_freezer_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_SEEKER": {
+      "filename": "pickup/ammo_seeker_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_RF": {
+      "filename": "pickup/ammo_rf_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_TOASTER": {
+      "filename": "pickup/ammo_toaster_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_TNT": {
+      "filename": "object/tnt.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_PEPPER": {
+      "filename": "pickup/ammo_pepper_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "UI_WEAPON_POWERUP_ELECTRO": {
+      "filename": "pickup/ammo_electro_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
     "UI_CHARACTER_ICON_JAZZ": {
       "filename": "ui/icon_jazz.png",
       "states": [
