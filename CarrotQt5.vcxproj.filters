@@ -302,6 +302,9 @@
     <ClCompile Include="src\actor\enemy\Sucker.cpp">
       <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\PowerUpMonitor.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -516,6 +519,9 @@
     <ClInclude Include="src\actor\enemy\Sucker.h">
       <Filter>Header Files\Actor headers\Enemy headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\PowerUpMonitor.h">
+      <Filter>Header Files\Actor headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -626,6 +632,9 @@
     </None>
     <None Include="Data\Manifests\Enemy\Sucker.json">
       <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\PowerUpMonitor.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
