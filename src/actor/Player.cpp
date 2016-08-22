@@ -741,6 +741,33 @@ void Player::addHealth(unsigned amount) {
     osd->setHealth(health);
 }
 
+void Player::setPowerUp(WeaponType type) {
+    if (type > (WEAPONCOUNT - 1)) { return; }
+    uint typeIdx = (uint)type;
+
+    if (currentWeapon == type) {
+        // The OSD animation has to be refreshed if the same weapon was already selected.
+        osd->setWeaponType(type, true);
+    }
+
+    if (!isWeaponPoweredUp[typeIdx]) {
+        isWeaponPoweredUp[typeIdx] = true;
+
+        if (ammo[typeIdx] == 0) {
+            ammo[typeIdx] = 20;
+        }
+
+        selectWeapon(type);
+        osd->setMessage(OSD_CUSTOM_TEXT, "power up");
+    } else {
+        ammo[typeIdx] += 20;
+    }
+
+    if (currentWeapon == type) {
+        osd->setAmmo(ammo[typeIdx]);
+    }
+}
+
 void Player::consumeFood(const bool& isDrinkable) {
     foodCounter += 1;
     if (foodCounter >= SUGAR_RUSH_THRESHOLD) {

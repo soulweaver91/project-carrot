@@ -54,6 +54,7 @@ public:
     void addCoins(CoinType type, unsigned amount);
     void addFastFire(unsigned amount);
     void addHealth(unsigned amount);
+    void setPowerUp(WeaponType type);
     void consumeFood(const bool& isDrinkable);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
