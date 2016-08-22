@@ -286,6 +286,7 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
 
                 osd->setAmmo(ammo[currentWeapon]);
                 if (ammo[currentWeapon] == 0) {
+                    isWeaponPoweredUp[(uint)currentWeapon] = false;
                     int newType = (currentWeapon + 1) % WEAPONCOUNT;
                     // Iterate through weapons to pick the next usable when running out of ammo
                     while (!selectWeapon(static_cast<WeaponType>(newType))) {
