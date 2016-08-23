@@ -56,6 +56,10 @@
     }
   },
   "sounds": {
-
+    "OBJECT_POWER_UP_DESTROY": {
+      "filename": [
+        "object/powerup_break.wav"
+      ]
+    }
   }
 }

@@ -38,6 +38,7 @@ void PowerUpMonitor::handleCollision(std::shared_ptr<CommonActor> other) {
             if (playerPtr != nullptr) {
                 playerPtr->setPowerUp(type);
                 decreaseHealth(ammo->getStrength());
+                playSound("OBJECT_POWER_UP_DESTROY");
             }
         }
     }

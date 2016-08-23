@@ -8,6 +8,10 @@
     }
   },
   "sounds": {
-
+    "OBJECT_TRIGGER_CRATE_DESTROY": {
+      "filename": [
+        "object/powerup_break.wav"
+      ]
+    }
   }
 }
