@@ -630,14 +630,13 @@ void Player::tickEvent() {
             }
         }
 
-        if (isUsingDamagingMove) {
+        if (isUsingDamagingMove || isSugarRush) {
             auto collider = std::dynamic_pointer_cast<TurtleShell>(collisionPtr);
             if (collider != nullptr) {
                 collider->decreaseHealth(10);
                 continue;
             }
         }
-
     }
 }
 
