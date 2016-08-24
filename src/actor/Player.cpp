@@ -546,6 +546,8 @@ void Player::tickEvent() {
     }
 
     auto collisions = api->findCollisionActors(shared_from_this());
+    bool removeSpecialMove = false;
+
     for (const auto& collision : collisions) {
         auto collisionPtr = collision.lock();
 
@@ -565,9 +567,7 @@ void Player::tickEvent() {
                         speedY *= -.5;
                     }
                     if ((currentState & AnimState::BUTTSTOMP) > 0) {
-                        setAnimation(currentState & ~AnimState::BUTTSTOMP);
-                        isUsingDamagingMove = false;
-                        controllable = true;
+                        removeSpecialMove = true;
                         speedY *= -.5;
                     }
                 } else {
@@ -590,8 +590,8 @@ void Player::tickEvent() {
         {
             auto spring = std::dynamic_pointer_cast<Spring>(collisionPtr);
             if (spring != nullptr) {
+                removeSpecialMove = true;
                 sf::Vector2f params = spring->activate();
-                endDamagingMove();
                 short sign = ((params.x + params.y) > EPSILON ? 1 : -1);
                 if (std::abs(params.x) > EPSILON) {
                     speedX = (4 + std::abs(params.x)) * sign;
@@ -646,6 +646,10 @@ void Player::tickEvent() {
                 continue;
             }
         }
+    }
+
+    if (removeSpecialMove) {
+        endDamagingMove();
     }
 }
 
