@@ -11,6 +11,7 @@
 #include "SavePoint.h"
 #include "Spring.h"
 #include "BonusWarp.h"
+#include "PowerUpMonitor.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
@@ -394,9 +395,17 @@ void Player::tickEvent() {
 
             std::weak_ptr<SolidObject> object;
             if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
-                auto triggerCrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
-                if (triggerCrate != nullptr) {
-                    triggerCrate->decreaseHealth(1);
+                {
+                    auto collider = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
+                    if (collider != nullptr) {
+                        collider->decreaseHealth(1);
+                    }
+                }
+                {
+                    auto collider = std::dynamic_pointer_cast<PowerUpMonitor>(object.lock());
+                    if (collider != nullptr) {
+                        collider->destroyAndApplyToPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()), 1);
+                    }
                 }
             }
         }

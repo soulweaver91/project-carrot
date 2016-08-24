@@ -36,9 +36,7 @@ void PowerUpMonitor::handleCollision(std::shared_ptr<CommonActor> other) {
         if (ammo->getType() != WEAPON_FREEZER) {
             auto playerPtr = ammo->getOwner().lock();
             if (playerPtr != nullptr) {
-                playerPtr->setPowerUp(type);
-                decreaseHealth(ammo->getStrength());
-                playSound("OBJECT_POWER_UP_DESTROY");
+                destroyAndApplyToPlayer(playerPtr, ammo->getStrength());
             }
         }
     }
@@ -48,4 +46,10 @@ void PowerUpMonitor::handleCollision(std::shared_ptr<CommonActor> other) {
 
 bool PowerUpMonitor::perish() {
     return CommonActor::perish();
+}
+
+void PowerUpMonitor::destroyAndApplyToPlayer(std::shared_ptr<Player> player, int strength) {
+    player->setPowerUp(type);
+    decreaseHealth(strength);
+    playSound("OBJECT_POWER_UP_DESTROY");
 }
