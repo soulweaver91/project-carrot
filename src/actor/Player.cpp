@@ -11,6 +11,7 @@
 #include "SavePoint.h"
 #include "Spring.h"
 #include "BonusWarp.h"
+#include "PowerUpMonitor.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
@@ -236,29 +237,30 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
     if (e.first == controls.fireButton) {
         setAnimation(currentState | AnimState::SHOOT);
         if (weaponCooldown == 0) {
+            bool poweredUp = isWeaponPoweredUp[(uint)currentWeapon];
             switch (currentWeapon) {
                 case WEAPON_BLASTER:
                 {
-                    auto newAmmo = fireWeapon<AmmoBlaster>();
+                    auto newAmmo = fireWeapon<AmmoBlaster>(poweredUp);
                     weaponCooldown = 40 - std::min(40u, 3 * fastfires);
                     playSound("WEAPON_BLASTER_JAZZ");
                     break;
                 }
                 case WEAPON_BOUNCER:
                 {
-                    auto newAmmo = fireWeapon<AmmoBouncer>();
+                    auto newAmmo = fireWeapon<AmmoBouncer>(poweredUp);
                     weaponCooldown = 25;
                     break;
                 }
                 case WEAPON_FREEZER:
                 {
-                    auto newAmmo = fireWeapon<AmmoFreezer>();
+                    auto newAmmo = fireWeapon<AmmoFreezer>(poweredUp);
                     weaponCooldown = 25;
                     break;
                 }
                 case WEAPON_TOASTER:
                 {
-                    auto newAmmo = fireWeapon<AmmoToaster>();
+                    auto newAmmo = fireWeapon<AmmoToaster>(poweredUp);
                     weaponCooldown = 3;
                     break;
                 }
@@ -285,6 +287,7 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
 
                 osd->setAmmo(ammo[currentWeapon]);
                 if (ammo[currentWeapon] == 0) {
+                    isWeaponPoweredUp[(uint)currentWeapon] = false;
                     int newType = (currentWeapon + 1) % WEAPONCOUNT;
                     // Iterate through weapons to pick the next usable when running out of ammo
                     while (!selectWeapon(static_cast<WeaponType>(newType))) {
@@ -392,9 +395,17 @@ void Player::tickEvent() {
 
             std::weak_ptr<SolidObject> object;
             if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
-                auto triggerCrate = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
-                if (triggerCrate != nullptr) {
-                    triggerCrate->decreaseHealth(1);
+                {
+                    auto collider = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
+                    if (collider != nullptr) {
+                        collider->decreaseHealth(1);
+                    }
+                }
+                {
+                    auto collider = std::dynamic_pointer_cast<PowerUpMonitor>(object.lock());
+                    if (collider != nullptr) {
+                        collider->destroyAndApplyToPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()), 1);
+                    }
                 }
             }
         }
@@ -535,6 +546,8 @@ void Player::tickEvent() {
     }
 
     auto collisions = api->findCollisionActors(shared_from_this());
+    bool removeSpecialMove = false;
+
     for (const auto& collision : collisions) {
         auto collisionPtr = collision.lock();
 
@@ -554,9 +567,7 @@ void Player::tickEvent() {
                         speedY *= -.5;
                     }
                     if ((currentState & AnimState::BUTTSTOMP) > 0) {
-                        setAnimation(currentState & ~AnimState::BUTTSTOMP);
-                        isUsingDamagingMove = false;
-                        controllable = true;
+                        removeSpecialMove = true;
                         speedY *= -.5;
                     }
                 } else {
@@ -579,8 +590,8 @@ void Player::tickEvent() {
         {
             auto spring = std::dynamic_pointer_cast<Spring>(collisionPtr);
             if (spring != nullptr) {
+                removeSpecialMove = true;
                 sf::Vector2f params = spring->activate();
-                endDamagingMove();
                 short sign = ((params.x + params.y) > EPSILON ? 1 : -1);
                 if (std::abs(params.x) > EPSILON) {
                     speedX = (4 + std::abs(params.x)) * sign;
@@ -628,14 +639,17 @@ void Player::tickEvent() {
             }
         }
 
-        if (isUsingDamagingMove) {
+        if (isUsingDamagingMove || isSugarRush) {
             auto collider = std::dynamic_pointer_cast<TurtleShell>(collisionPtr);
             if (collider != nullptr) {
                 collider->decreaseHealth(10);
                 continue;
             }
         }
+    }
 
+    if (removeSpecialMove) {
+        endDamagingMove();
     }
 }
 
@@ -739,6 +753,33 @@ void Player::addHealth(unsigned amount) {
         setInvulnerability(210u, false);
     }
     osd->setHealth(health);
+}
+
+void Player::setPowerUp(WeaponType type) {
+    if (type > (WEAPONCOUNT - 1)) { return; }
+    uint typeIdx = (uint)type;
+
+    if (currentWeapon == type) {
+        // The OSD animation has to be refreshed if the same weapon was already selected.
+        osd->setWeaponType(type, true);
+    }
+
+    if (!isWeaponPoweredUp[typeIdx]) {
+        isWeaponPoweredUp[typeIdx] = true;
+
+        if (ammo[typeIdx] == 0) {
+            ammo[typeIdx] = 20;
+        }
+
+        selectWeapon(type);
+        osd->setMessage(OSD_CUSTOM_TEXT, "power up");
+    } else {
+        ammo[typeIdx] += 20;
+    }
+
+    if (currentWeapon == type) {
+        osd->setAmmo(ammo[typeIdx]);
+    }
 }
 
 void Player::consumeFood(const bool& isDrinkable) {
@@ -929,6 +970,11 @@ unsigned Player::getLives() {
     return lives;
 }
 
+bool Player::getPowerUp(WeaponType type) const {
+    if (type > (WEAPONCOUNT - 1)) { return false; }
+    return isWeaponPoweredUp[static_cast<uint>(type)];
+}
+
 void Player::initialPoleStage(bool horizontal) {
     bool positive;
     if (horizontal) {
@@ -1092,14 +1138,14 @@ void Player::warpToPosition(const CoordinatePair& pos) {
     playSound("COMMON_WARP_IN");
 }
 
-template<typename T> std::shared_ptr<T> Player::fireWeapon() {
+template<typename T> std::shared_ptr<T> Player::fireWeapon(bool poweredUp) {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
     bool lookup = ((currentAnimation->getAnimationState() & AnimState::LOOKUP) > 0);
     auto animation = currentAnimation->getAnimation();
     int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
     int fire_y =  animation->hotspot.y - animation->gunspot.y;
 
-    auto newAmmo = std::make_shared<T>(api, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup);
+    auto newAmmo = std::make_shared<T>(api, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup, poweredUp);
     api->addActor(newAmmo);
     return newAmmo;
 }

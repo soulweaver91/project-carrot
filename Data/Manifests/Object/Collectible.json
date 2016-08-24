@@ -72,6 +72,48 @@
         "0"
       ]
     },
+    "PICKUP_AMMO_POWERUP_BOUNCER": {
+      "filename": "pickup/ammo_bouncer_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_POWERUP_FREEZER": {
+      "filename": "pickup/ammo_freezer_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_POWERUP_SEEKER": {
+      "filename": "pickup/ammo_seeker_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_POWERUP_RF": {
+      "filename": "pickup/ammo_rf_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_POWERUP_TOASTER": {
+      "filename": "pickup/ammo_toaster_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_POWERUP_PEPPER": {
+      "filename": "pickup/ammo_pepper_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
+    "PICKUP_AMMO_POWERUP_ELECTRO": {
+      "filename": "pickup/ammo_electro_upgraded.png",
+      "states": [
+        "0"
+      ]
+    },
     "PICKUP_FOOD_APPLE": {
       "filename": "pickup/food_apple.png",
       "states": [

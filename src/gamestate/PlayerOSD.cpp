@@ -23,7 +23,7 @@ PlayerOSD::PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player
     weaponIcon = std::make_shared<AnimationInstance>(this);
     collectibleIcon = std::make_shared<AnimationInstance>(this);
 
-    std::fill_n(weaponIconIdx, 9, nullptr);
+    std::fill_n(weaponIconIdx, 18, nullptr);
     weaponIconIdx[0] = animationBank.value("UI_WEAPON_BLASTER_JAZZ");
     weaponIconIdx[1] = animationBank.value("UI_WEAPON_BOUNCER");
     weaponIconIdx[2] = animationBank.value("UI_WEAPON_FREEZER");
@@ -33,6 +33,15 @@ PlayerOSD::PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player
     weaponIconIdx[6] = animationBank.value("UI_WEAPON_TNT");
     weaponIconIdx[7] = animationBank.value("UI_WEAPON_PEPPER");
     weaponIconIdx[8] = animationBank.value("UI_WEAPON_ELECTRO");
+    weaponIconIdx[9] = animationBank.value("UI_WEAPON_POWERUP_BLASTER_JAZZ");
+    weaponIconIdx[10] = animationBank.value("UI_WEAPON_POWERUP_BOUNCER");
+    weaponIconIdx[11] = animationBank.value("UI_WEAPON_POWERUP_FREEZER");
+    weaponIconIdx[12] = animationBank.value("UI_WEAPON_POWERUP_SEEKER");
+    weaponIconIdx[13] = animationBank.value("UI_WEAPON_POWERUP_RF");
+    weaponIconIdx[14] = animationBank.value("UI_WEAPON_POWERUP_TOASTER");
+    weaponIconIdx[15] = animationBank.value("UI_WEAPON_POWERUP_TNT");
+    weaponIconIdx[16] = animationBank.value("UI_WEAPON_POWERUP_PEPPER");
+    weaponIconIdx[17] = animationBank.value("UI_WEAPON_POWERUP_ELECTRO");
 
     weaponIcon->setAnimation(weaponIconIdx[0]);
 
@@ -193,11 +202,12 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     }
 }
 
-void PlayerOSD::setWeaponType(WeaponType type, bool) {
+void PlayerOSD::setWeaponType(WeaponType type, bool poweredUp) {
     currentWeapon = type;
+    uint iconIdx = (uint)type + (poweredUp ? 9 : 0);
 
     if (weaponIconIdx[type] != nullptr) {
-        weaponIcon->setAnimation(weaponIconIdx[type]);
+        weaponIcon->setAnimation(weaponIconIdx[iconIdx]);
     }
 }
 

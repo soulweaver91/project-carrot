@@ -39,6 +39,7 @@ public:
     void drawUIOverlay();
     unsigned getHealth();
     unsigned getLives();
+    bool getPowerUp(WeaponType type) const;
     bool perish();
     Hitbox getHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
@@ -54,6 +55,7 @@ public:
     void addCoins(CoinType type, unsigned amount);
     void addFastFire(unsigned amount);
     void addHealth(unsigned amount);
+    void setPowerUp(WeaponType type);
     void consumeFood(const bool& isDrinkable);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
@@ -70,7 +72,7 @@ private:
     void onHitWallHook();
     bool selectWeapon(enum WeaponType newType);
     void setupOSD(OSDMessageType type, int param = 0);
-    template<typename T> std::shared_ptr<T> fireWeapon();
+    template<typename T> std::shared_ptr<T> fireWeapon(bool poweredUp);
     uint getGemsTotalValue();
     uint getCoinsTotalValue();
     void warpToPosition(const CoordinatePair& pos);

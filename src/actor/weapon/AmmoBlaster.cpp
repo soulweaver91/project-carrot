@@ -4,8 +4,8 @@
 #include "../../gamestate/ActorAPI.h"
 
 AmmoBlaster::AmmoBlaster(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
-    double speed, bool firedLeft, bool firedUp)
-    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 24) {
+    double speed, bool firedLeft, bool firedUp, bool poweredUp)
+    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 24, poweredUp) {
     loadResources("Weapon/Blaster");
     if (firedUp) {
         speedY = -8;

@@ -22,6 +22,7 @@
 #include "../actor/Spring.h"
 #include "../actor/MovingPlatform.h"
 #include "../actor/BonusWarp.h"
+#include "../actor/PowerUpMonitor.h"
 #include "../struct/WeaponTypes.h"
 
 EventMap::EventMap(LevelManager* root, unsigned int width, unsigned int height)
@@ -206,6 +207,16 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                     case PC_WARP_COIN_BONUS:
                         createCommonActorEvent<BonusWarp>(x, y, tile->eventParams);
                         break;
+                    case PC_POWERUP_BLASTER:
+                    case PC_POWERUP_BOUNCER:
+                    case PC_POWERUP_FREEZER:
+                    case PC_POWERUP_SEEKER:
+                    case PC_POWERUP_RF:
+                    case PC_POWERUP_TOASTER:
+                    case PC_POWERUP_TNT:
+                    case PC_POWERUP_PEPPER:
+                    case PC_POWERUP_ELECTRO:
+                        createCommonActorEvent<PowerUpMonitor>(x, y, static_cast<WeaponType>(tile->storedEvent - (uint)PC_POWERUP_BLASTER));
                     default:
                         break;
                 }

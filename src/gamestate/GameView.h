@@ -6,6 +6,7 @@
 #include "../struct/CoordinatePair.h"
 
 class LevelManager;
+class Player;
 
 class GameView : public TimerUser {
 public:
@@ -22,6 +23,7 @@ public:
     void drawUiElements();
     void centerToPlayer();
     void setSize(const sf::Vector2f& dimensions);
+    std::weak_ptr<Player> getViewPlayer();
 private:
     void setLightingStep();
 

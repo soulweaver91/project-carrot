@@ -1,0 +1,65 @@
+{
+  "graphics": {
+    "OBJECT_POWER_UP_MONITOR_BLASTER_JAZZ": {
+      "filename": "object/powerup_upgrade_blaster_jazz.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_BLASTER_SPAZ": {
+      "filename": "object/powerup_upgrade_blaster_spaz.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_BOUNCER": {
+      "filename": "object/powerup_upgrade_bouncer.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_FREEZER": {
+      "filename": "object/powerup_upgrade_freezer.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_SEEKER": {
+      "filename": "object/powerup_upgrade_seeker.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_RF": {
+      "filename": "object/powerup_upgrade_rf.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_TOASTER": {
+      "filename": "object/powerup_upgrade_toaster.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_PEPPER": {
+      "filename": "object/powerup_upgrade_pepper.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_POWER_UP_MONITOR_ELECTRO": {
+      "filename": "object/powerup_upgrade_electro.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+    "OBJECT_POWER_UP_DESTROY": {
+      "filename": [
+        "object/powerup_break.wav"
+      ]
+    }
+  }
+}

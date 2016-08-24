@@ -5,6 +5,12 @@
       "states": [
         "0"
       ]
+    },
+    "WEAPON_TOASTER_POWERUP": {
+      "filename": "weapon/bullet_toaster_upgraded.png",
+      "states": [
+        "0"
+      ]
     }
   },
   "sounds": {

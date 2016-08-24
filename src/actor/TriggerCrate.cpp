@@ -20,6 +20,8 @@ bool TriggerCrate::perish() {
         if (tiles != nullptr) {
             tiles->setTrigger(triggerID, true);
         }
+
+        playSound("OBJECT_TRIGGER_CRATE_DESTROY");
     }
     return CommonActor::perish();
 }

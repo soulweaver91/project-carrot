@@ -47,7 +47,7 @@ private:
 
     unsigned long messageTimer;
     unsigned messageOffsetAmount;
-    std::shared_ptr<GraphicResource> weaponIconIdx[9];
+    std::shared_ptr<GraphicResource> weaponIconIdx[18];
     std::shared_ptr<GraphicResource> collectibleGraphics;
 
     std::shared_ptr<AnimationInstance> charIcon;
