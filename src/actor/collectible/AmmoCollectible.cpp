@@ -1,25 +1,50 @@
 #include "AmmoCollectible.h"
 #include "../Player.h"
+#include "../../gamestate/GameView.h"
 
 AmmoCollectible::AmmoCollectible(std::shared_ptr<ActorAPI> api, double x, double y, WeaponType type, bool fromEventMap)
 : Collectible(api, x, y, fromEventMap), weaponType(type) {
     scoreValue = 100;
 
+    QString spriteName = "";
     switch (weaponType) {
-        case WEAPON_BOUNCER: AnimationUser::setAnimation("PICKUP_AMMO_BOUNCER"); break;
-        case WEAPON_FREEZER: AnimationUser::setAnimation("PICKUP_AMMO_FREEZER"); break;
-        case WEAPON_SEEKER:  AnimationUser::setAnimation("PICKUP_AMMO_SEEKER");  break;
-        case WEAPON_RF:      AnimationUser::setAnimation("PICKUP_AMMO_RF");      break;
-        case WEAPON_TOASTER: AnimationUser::setAnimation("PICKUP_AMMO_TOASTER"); break;
-        case WEAPON_TNT:     AnimationUser::setAnimation("PICKUP_AMMO_TNT");     break;
-        case WEAPON_PEPPER:  AnimationUser::setAnimation("PICKUP_AMMO_PEPPER");  break;
-        case WEAPON_ELECTRO: AnimationUser::setAnimation("PICKUP_AMMO_ELECTRO"); break;
+        case WEAPON_BOUNCER: spriteName = "BOUNCER"; break;
+        case WEAPON_FREEZER: spriteName = "FREEZER"; break;
+        case WEAPON_SEEKER:  spriteName = "SEEKER";  break;
+        case WEAPON_RF:      spriteName = "RF";      break;
+        case WEAPON_TOASTER: spriteName = "TOASTER"; break;
+        case WEAPON_TNT:     spriteName = "TNT";     break;
+        case WEAPON_PEPPER:  spriteName = "PEPPER";  break;
+        case WEAPON_ELECTRO: spriteName = "ELECTRO"; break;
         default:
             break;
+    }
+    
+    normalSprite = std::make_shared<AnimationInstance>(this);
+    auto res = animationBank.value("PICKUP_AMMO_" + spriteName);
+    if (res != nullptr) {
+        normalSprite->setAnimation(res);
+    }
+
+    if (spriteName != "TNT") {
+        spriteName = "POWERUP_" + spriteName;
+    }
+
+    poweredUpSprite = std::make_shared<AnimationInstance>(this);
+    res = animationBank.value("PICKUP_AMMO_" + spriteName);
+    if (res != nullptr) {
+        poweredUpSprite->setAnimation(res);
     }
 }
 
 void AmmoCollectible::collect(std::shared_ptr<Player> player) {
     player->addAmmo(weaponType, 3);
     Collectible::collect(player);
+}
+
+void AmmoCollectible::drawUpdate(std::shared_ptr<GameView>& view) {
+    auto player = view->getViewPlayer().lock();
+    currentAnimation = (player != nullptr && player->getPowerUp(weaponType) ? poweredUpSprite : normalSprite);
+
+    CommonActor::drawUpdate(view);
 }

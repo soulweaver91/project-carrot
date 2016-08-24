@@ -39,6 +39,7 @@ public:
     void drawUIOverlay();
     unsigned getHealth();
     unsigned getLives();
+    bool getPowerUp(WeaponType type) const;
     bool perish();
     Hitbox getHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 

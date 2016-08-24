@@ -119,6 +119,10 @@ void GameView::setSize(const sf::Vector2f& dimensions) {
     viewSprite->setTextureRect(sf::IntRect(0, 0, std::ceil(dimensions.x), std::ceil(dimensions.y)));
 }
 
+std::weak_ptr<Player> GameView::getViewPlayer() {
+    return root->getPlayer(playerID);
+}
+
 void GameView::centerView(const double& x, const double& y) {
     playerView->setCenter(x, y);
     canvas->setView(*playerView.get());

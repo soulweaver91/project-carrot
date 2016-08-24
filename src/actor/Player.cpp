@@ -970,6 +970,11 @@ unsigned Player::getLives() {
     return lives;
 }
 
+bool Player::getPowerUp(WeaponType type) const {
+    if (type > (WEAPONCOUNT - 1)) { return false; }
+    return isWeaponPoweredUp[static_cast<uint>(type)];
+}
+
 void Player::initialPoleStage(bool horizontal) {
     bool positive;
     if (horizontal) {
