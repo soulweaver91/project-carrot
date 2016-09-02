@@ -172,6 +172,7 @@
     <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
+    <ClCompile Include="src\actor\enemy\LabRat.cpp" />
     <ClCompile Include="src\actor\enemy\Sucker.cpp" />
     <ClCompile Include="src\actor\enemy\SuckerFloat.cpp" />
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
@@ -236,6 +237,7 @@
     <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\actor\enemy\LabRat.h" />
     <ClInclude Include="src\actor\enemy\Sucker.h" />
     <ClInclude Include="GeneratedFiles\ui_CarrotQt5.h" />
     <ClInclude Include="src\actor\BonusWarp.h" />
@@ -441,6 +443,7 @@
     <None Include="CarrotQt5.pro" />
     <None Include="Data\Assets\.gitignore" />
     <None Include="Data\Manifests\Common\Scenery.json" />
+    <None Include="Data\Manifests\Enemy\LabRat.json" />
     <None Include="Data\Manifests\Enemy\Sucker.json" />
     <None Include="Data\Manifests\Enemy\SuckerFloat.json" />
     <None Include="Data\Manifests\Enemy\Lizard.json" />

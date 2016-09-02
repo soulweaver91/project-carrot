@@ -1,0 +1,40 @@
+{
+  "graphics": {
+    "ENEMY_LAB_RAT_WALK": {
+      "filename": "lab_rat/walk.png",
+      "states": [
+        "1", "2", "8", "9", "10"
+      ]
+    }, 
+    "ENEMY_LAB_RAT_ATTACK": {
+      "filename": "lab_rat/attack.png",
+      "states": [
+        "1325400065"
+      ]
+    }, 
+    "ENEMY_LAB_RAT_IDLE": {
+      "filename": "lab_rat/idle.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+    "ENEMY_LAB_RAT_SPONTANEOUS": {
+      "filename": [
+        "lab_rat/noise_3.wav",
+        "lab_rat/noise_4.wav",
+        "lab_rat/noise_5.wav"
+      ]
+    },
+    "ENEMY_LAB_RAT_ATTACK": {
+      "filename": "lab_rat/attack.wav"
+    },
+    "ENEMY_LAB_RAT_IDLE": {
+      "filename": [
+        "lab_rat/noise_1.wav",
+        "lab_rat/noise_2.wav"
+      ]
+    }
+  }
+}

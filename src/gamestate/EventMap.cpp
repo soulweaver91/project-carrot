@@ -10,6 +10,7 @@
 #include "../actor/collectible/CarrotCollectible.h"
 #include "../actor/enemy/Enemy.h"
 #include "../actor/enemy/NormalTurtle.h"
+#include "../actor/enemy/LabRat.h"
 #include "../actor/enemy/Lizard.h"
 #include "../actor/enemy/TurtleShell.h"
 #include "../actor/enemy/Sucker.h"
@@ -130,6 +131,9 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                         break;
                     case PC_ENEMY_SUCKER:
                         createCommonActorEvent<EnemySucker>(x, y);
+                        break;
+                    case PC_ENEMY_LAB_RAT:
+                        createCommonActorEvent<EnemyLabRat>(x, y);
                         break;
                     case PC_SAVE_POINT:
                         createCommonActorEvent<SavePoint>(x, y);
