@@ -34,9 +34,9 @@ cache:
   apt: true
 
 before_install:
-- sudo add-apt-repository --yes ppa:beineri/opt-qt561-trusty
+- sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
 - sudo apt-get update -qq
-- sudo apt-get install -qq qt56base
+- sudo apt-get install -qq qt57base qt57gamepad
 - export BASS_VER=24
 - export BASS_DIR=$HOME/bass
 - export BASS_FX_DIR=$HOME/bassfx
@@ -52,15 +52,15 @@ before_install:
     gcc --version &&
     g++ --version
     )
-- . /opt/qt56/bin/qt56-env.sh
+- . /opt/qt57/bin/qt57-env.sh
 - > 
-    test -f "${HOME}/archives/bass.zip" ||
-    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bass.zip" http://us.un4seen.com/files/bass${BASS_VER}-linux.zip
+    test -f "${HOME}/archives/bass${BASS_VER}.zip" ||
+    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bass${BASS_VER}.zip" http://us.un4seen.com/files/bass${BASS_VER}-linux.zip
 - > 
-    test -f "${HOME}/archives/bassfx.zip" || 
-    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bassfx.zip" http://us.un4seen.com/files/z/0/bass_fx${BASS_VER}-linux.zip
-- 7z x "${HOME}/archives/bass.zip" -o"${BASS_DIR}" -y
-- 7z x "${HOME}/archives/bassfx.zip" -o"${BASS_FX_DIR}" -y
+    test -f "${HOME}/archives/bassfx${BASS_VER}.zip" || 
+    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bassfx${BASS_VER}.zip" http://us.un4seen.com/files/z/0/bass_fx${BASS_VER}-linux.zip
+- 7z x "${HOME}/archives/bass${BASS_VER}.zip" -o"${BASS_DIR}" -y
+- 7z x "${HOME}/archives/bassfx${BASS_VER}.zip" -o"${BASS_FX_DIR}" -y
 
 script:
 - qmake -v
