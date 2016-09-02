@@ -11,6 +11,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/FrozenBlock.h \
     ./src/actor/InteractiveActor.h \
     ./src/actor/MovingPlatform.h \
+    ./src/actor/PowerUpMonitor.h \
     ./src/actor/Bridge.h \
     ./src/actor/Spring.h \
     ./src/actor/CommonActor.h \
@@ -67,7 +68,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
     ./src/struct/WeaponTypes.h \
-    ./src/actor/PowerUpMonitor.h
+    ./src/actor/enemy/LabRat.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/ModeManager.cpp \
@@ -82,6 +83,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/FrozenBlock.cpp \
     ./src/actor/InteractiveActor.cpp \
     ./src/actor/MovingPlatform.cpp \
+    ./src/actor/PowerUpMonitor.cpp \
     ./src/actor/Bridge.cpp \
     ./src/actor/CommonActor.cpp \
     ./src/actor/Player.cpp \
@@ -120,7 +122,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp \
-    ./src/actor/PowerUpMonitor.cpp
+    ./src/actor/enemy/LabRat.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

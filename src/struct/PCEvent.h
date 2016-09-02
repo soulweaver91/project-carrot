@@ -101,4 +101,5 @@ enum PCEvent {
     PC_WARP_COIN_BONUS      = 0x010D,
     PC_ENEMY_SUCKER         = 0x018C,
     PC_ENEMY_SUCKER_FLOAT   = 0x018D,
+    PC_ENEMY_LAB_RAT        = 0x018B,
 };
