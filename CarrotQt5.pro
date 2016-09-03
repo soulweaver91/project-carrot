@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = CarrotQt5
 
-QT += core widgets gui
+QT += core widgets gui gamepad
 DEFINES += NOMINMAX QT_DLL QT_WIDGETS_LIB
 CONFIG += c++14 debug_and_release
 

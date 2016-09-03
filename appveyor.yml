@@ -3,7 +3,7 @@ environment:
     CACHE_DIR: 'c:\cache'
     BASS_VER: 24
     SFML_VER: 2.3.2
-    QT_VER: 5.6
+    QT_VER: 5.7
     SFML_DIR: 'c:\sfml\SFML-%SFML_VER%\'
     BASS_DIR: c:\bass\
     BASS_FX_DIR: c:\bassfx\

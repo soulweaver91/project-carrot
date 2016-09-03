@@ -10,7 +10,7 @@ You can discuss it [here](http://www.jazz2online.com/jcf/showthread.php?t=19535)
 ##Building
 ### Common dependencies
 
-* [Qt](http://qt-project.org/downloads) 5.6
+* [Qt](http://qt-project.org/downloads) 5.7 with Qt Gamepad Technology Preview addon installed
 * [SFML](http://www.sfml-dev.org/download.php) 2.3
 * [BASS](http://www.un4seen.com/bass.html) 2.4 and a compatible version of BASS FX
 
