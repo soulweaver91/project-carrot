@@ -15,6 +15,7 @@
 #include "../actor/enemy/TurtleShell.h"
 #include "../actor/enemy/Sucker.h"
 #include "../actor/enemy/SuckerFloat.h"
+#include "../actor/lighting/StaticLight.h"
 #include "../actor/Player.h"
 #include "../actor/PushBox.h"
 #include "../actor/TriggerCrate.h"
@@ -216,11 +217,15 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                     case PC_POWERUP_FREEZER:
                     case PC_POWERUP_SEEKER:
                     case PC_POWERUP_RF:
-                    case PC_POWERUP_TOASTER:
                     case PC_POWERUP_TNT:
+                    case PC_POWERUP_TOASTER:
                     case PC_POWERUP_PEPPER:
                     case PC_POWERUP_ELECTRO:
                         createCommonActorEvent<PowerUpMonitor>(x, y, static_cast<WeaponType>(tile->storedEvent - (uint)PC_POWERUP_BLASTER));
+                        break;
+                    case PC_LIGHT_STEADY:
+                        createCommonActorEvent<StaticLight>(x, y, tile->eventParams[0]);
+                        break;
                     default:
                         break;
                 }

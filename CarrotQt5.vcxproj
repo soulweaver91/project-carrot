@@ -182,6 +182,7 @@
     <ClCompile Include="src\actor\LightSource.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
     <ClCompile Include="src\actor\PowerUpMonitor.cpp" />
+    <ClCompile Include="src\actor\lighting\StaticLight.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
     <ClCompile Include="src\gamestate\ActorAPI.cpp" />
     <ClCompile Include="src\gamestate\ControlManager.cpp" />
@@ -257,6 +258,7 @@
     <ClInclude Include="src\actor\lighting\RadialLightSource.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />
     <ClInclude Include="src\actor\PowerUpMonitor.h" />
+    <ClInclude Include="src\actor\lighting\StaticLight.h" />
     <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
     <ClInclude Include="src\gamestate\ActorAPI.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
