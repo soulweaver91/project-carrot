@@ -18,6 +18,7 @@
 #include "weapon/AmmoFreezer.h"
 
 Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveActor(api, x, y, false),
+    RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), cameraShiftFramesCount(0),
     copterFramesLeft(0), toasterAmmoSubticks(10),
@@ -651,6 +652,8 @@ void Player::tickEvent() {
     if (removeSpecialMove) {
         endDamagingMove();
     }
+
+    lightLocation = { posX, posY - 10.0 };
 }
 
 unsigned Player::getHealth() {

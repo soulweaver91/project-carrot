@@ -123,6 +123,12 @@
     <Filter Include="Configuration\Data/Assets">
       <UniqueIdentifier>{542d696a-c6ee-4e82-b646-aaf4af6503e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Actor headers\Light source headers">
+      <UniqueIdentifier>{ee7e0571-1230-43ce-a431-ab41a553544a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actor\Lighting">
+      <UniqueIdentifier>{da658c61-728e-4bcb-9927-328f5a578d21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
@@ -307,6 +313,12 @@
     </ClCompile>
     <ClCompile Include="src\actor\enemy\LabRat.cpp">
       <Filter>Source Files\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\LightSource.cpp">
+      <Filter>Source Files\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\lighting\RadialLightSource.cpp">
+      <Filter>Source Files\Actor\Lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -527,6 +539,12 @@
     </ClInclude>
     <ClInclude Include="src\actor\enemy\LabRat.h">
       <Filter>Header Files\Actor headers\Enemy headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\lighting\RadialLightSource.h">
+      <Filter>Header Files\Actor headers\Light source headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\LightSource.h">
+      <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

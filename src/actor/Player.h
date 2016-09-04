@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "InteractiveActor.h"
+#include "lighting/RadialLightSource.h"
 #include "../gamestate/PlayerOSD.h"
 #include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
@@ -24,7 +25,7 @@ enum PlayerCharacter {
     CHAR_BIRD       = 0x81
 };
 
-class Player : public QObject, public InteractiveActor {
+class Player : public QObject, public InteractiveActor, public RadialLightSource {
 
     Q_OBJECT
 

@@ -10,6 +10,7 @@
 #include "EventMap.h"
 #include "ActorAPI.h"
 #include "../sound/SoundSystem.h"
+#include "../actor/LightSource.h"
 
 #include <QDir>
 #include <QMessageBox>
@@ -253,7 +254,14 @@ void LevelManager::tick(const ControlEventList& events) {
         // ...and finally the higher (foreground) levels
         gameTiles->drawHigherLevels(view);
 
-        view->drawUiElements();
+        QVector<LightSource*> lightSources;
+        for (auto actor : actors) {
+            if (dynamic_cast<LightSource*>(actor.get()) != nullptr) {
+                lightSources << dynamic_cast<LightSource*>(actor.get());
+            }
+        }
+
+        view->drawUiElements(lightSources);
         view->drawView(root->getCanvas());
     }
 
