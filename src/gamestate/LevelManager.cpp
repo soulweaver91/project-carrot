@@ -242,6 +242,7 @@ void LevelManager::tick(const ControlEventList& events) {
 
         // Draw the layers: first lower (background and sprite) levels...
         gameTiles->drawLowerLevels(view);
+
         // ...then draw all the actors...
         for (auto& actor : actors) {
             actor->drawUpdate(view);
@@ -260,8 +261,9 @@ void LevelManager::tick(const ControlEventList& events) {
                 lightSources << dynamic_cast<LightSource*>(actor.get());
             }
         }
-
-        view->drawUiElements(lightSources);
+        view->drawBackgroundEffects(lightSources);
+        view->drawLighting(lightSources);
+        view->drawUiElements();
         view->drawView(root->getCanvas());
     }
 

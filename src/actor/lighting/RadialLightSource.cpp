@@ -10,7 +10,7 @@ RadialLightSource::~RadialLightSource() {
 
 }
 
-void RadialLightSource::applyLightingToViewTexture(const CoordinatePair& viewPosition, const sf::Sprite& prev, sf::RenderTexture* next) {
+bool RadialLightSource::applyLightingToViewTexture(const CoordinatePair& viewPosition, const sf::Sprite& prev, sf::RenderTexture* next) {
     sf::RenderStates states;
     auto shader = ShaderSource::getShader("LightingShader");
     shader->setParameter("color", lightColor);
@@ -25,4 +25,6 @@ void RadialLightSource::applyLightingToViewTexture(const CoordinatePair& viewPos
     states.blendMode = sf::BlendNone;
     states.shader = shader.get();
     next->draw(prev, states);
+
+    return true;
 }

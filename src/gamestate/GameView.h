@@ -22,7 +22,9 @@ public:
     std::weak_ptr<sf::RenderTexture> getCanvas();
     int getLightingLevel();
     void drawView(sf::RenderTarget* windowCanvas);
-    void drawUiElements(const QVector<LightSource*>& lightingSources);
+    void drawBackgroundEffects(const QVector<LightSource*>& lightSources);
+    void drawLighting(const QVector<LightSource*>& lightSources);
+    void drawUiElements();
     void centerToPlayer();
     void setSize(const sf::Vector2f& dimensions);
     std::weak_ptr<Player> getViewPlayer();
