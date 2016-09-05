@@ -323,6 +323,9 @@
     <ClCompile Include="src\actor\lighting\StaticLight.cpp">
       <Filter>Source Files\Actor\Lighting</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\lighting\PulsatingLight.cpp">
+      <Filter>Source Files\Actor\Lighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -550,6 +553,9 @@
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\lighting\StaticLight.h">
+      <Filter>Header Files\Actor headers\Light source headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\lighting\PulsatingLight.h">
       <Filter>Header Files\Actor headers\Light source headers</Filter>
     </ClInclude>
   </ItemGroup>

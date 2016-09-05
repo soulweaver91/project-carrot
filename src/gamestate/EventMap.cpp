@@ -16,6 +16,7 @@
 #include "../actor/enemy/Sucker.h"
 #include "../actor/enemy/SuckerFloat.h"
 #include "../actor/lighting/StaticLight.h"
+#include "../actor/lighting/PulsatingLight.h"
 #include "../actor/Player.h"
 #include "../actor/PushBox.h"
 #include "../actor/TriggerCrate.h"
@@ -225,6 +226,9 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
                         break;
                     case PC_LIGHT_STEADY:
                         createCommonActorEvent<StaticLight>(x, y, tile->eventParams[0]);
+                        break;
+                    case PC_LIGHT_PULSE:
+                        createCommonActorEvent<PulsatingLight>(x, y, tile->eventParams[0], tile->eventParams[1], tile->eventParams[2]);
                         break;
                     default:
                         break;

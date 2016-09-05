@@ -178,6 +178,7 @@
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
     <ClCompile Include="src\actor\FrozenBlock.cpp" />
     <ClCompile Include="src\actor\InteractiveActor.cpp" />
+    <ClCompile Include="src\actor\lighting\PulsatingLight.cpp" />
     <ClCompile Include="src\actor\lighting\RadialLightSource.cpp" />
     <ClCompile Include="src\actor\LightSource.cpp" />
     <ClCompile Include="src\actor\MovingPlatform.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="src\actor\enemy\TurtleShell.h" />
     <ClInclude Include="src\actor\FrozenBlock.h" />
     <ClInclude Include="src\actor\InteractiveActor.h" />
+    <ClInclude Include="src\actor\lighting\PulsatingLight.h" />
     <ClInclude Include="src\actor\LightSource.h" />
     <ClInclude Include="src\actor\lighting\RadialLightSource.h" />
     <ClInclude Include="src\actor\MovingPlatform.h" />

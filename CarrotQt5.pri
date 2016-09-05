@@ -71,7 +71,8 @@ HEADERS += ./src/ModeManager.h \
     ./src/struct/NextLevelData.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
-    ./src/struct/WeaponTypes.h
+    ./src/struct/WeaponTypes.h \
+    ./src/actor/lighting/PulsatingLight.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/ModeManager.cpp \
@@ -128,7 +129,8 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/EventMap.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
-    ./src/gamestate/TimerUser.cpp
+    ./src/gamestate/TimerUser.cpp \
+    ./src/actor/lighting/PulsatingLight.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc
