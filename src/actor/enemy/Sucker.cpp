@@ -1,5 +1,6 @@
 #include "Sucker.h"
 
+#include <cmath>
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
 

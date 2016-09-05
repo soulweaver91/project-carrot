@@ -1,4 +1,6 @@
 #include "TurtleShell.h"
+
+#include <cmath>
 #include "Enemy.h"
 #include "../collectible/Collectible.h"
 #include "../weapon/Ammo.h"

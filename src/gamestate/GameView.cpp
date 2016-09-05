@@ -1,4 +1,6 @@
 #include "GameView.h"
+
+#include <cmath>
 #include "LevelManager.h"
 #include "../actor/Player.h"
 #include "../graphics/ShaderSource.h"

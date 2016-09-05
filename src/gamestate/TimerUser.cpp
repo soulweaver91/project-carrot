@@ -1,5 +1,6 @@
 #include "TimerUser.h"
 
+#include <cmath>
 
 TimerUser::TimerUser() : nextTimer(0) {
 
@@ -46,7 +47,7 @@ unsigned long TimerUser::addTimer(unsigned frames, bool recurring, TimerLambdaCa
 }
 
 unsigned long TimerUser::addTimer(double frames, bool recurring, TimerLambdaCallbackFunc cb) {
-    unsigned floored = qRound(floor(frames));
+    unsigned floored = qRound(std::floor(frames));
     return addTimer(floored, frames - floored, recurring, cb);
 }
 

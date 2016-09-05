@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include <cmath>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>

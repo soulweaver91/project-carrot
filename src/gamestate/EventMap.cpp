@@ -1,4 +1,5 @@
 #include "EventMap.h"
+#include <cmath>
 #include <QList>
 #include "../gamestate/LevelManager.h"
 #include "../actor/SolidObject.h"

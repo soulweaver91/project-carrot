@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include <algorithm>
+#include <cmath>
 #include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/EventMap.h"
 #include "../collectible/CarrotCollectible.h"

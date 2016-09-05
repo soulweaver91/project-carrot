@@ -1,5 +1,6 @@
 #include "NormalTurtle.h"
 
+#include <cmath>
 #include "TurtleShell.h"
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"

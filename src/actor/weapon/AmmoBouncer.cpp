@@ -1,4 +1,5 @@
 #include "AmmoBouncer.h"
+#include <cmath>
 #include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/TileMap.h"
 

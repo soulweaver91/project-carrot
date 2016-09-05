@@ -1,5 +1,6 @@
 #include "MenuScreen.h"
 #include <memory>
+#include <cmath>
 #include <QDir>
 #include <QSettings>
 

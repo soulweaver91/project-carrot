@@ -1,4 +1,6 @@
 #include "Player.h"
+
+#include <cmath>
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 #include "../gamestate/GameView.h"

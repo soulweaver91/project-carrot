@@ -1,4 +1,5 @@
 #include "AnimatedTile.h"
+#include <cmath>
 
 AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tileIDs, int fps, int delay,
     int delayJitter, bool pingPong, int pingPongDelay)

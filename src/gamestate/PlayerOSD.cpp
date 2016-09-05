@@ -1,4 +1,6 @@
 #include "PlayerOSD.h"
+
+#include <cmath>
 #include "ActorAPI.h"
 #include "GameView.h"
 #include "../actor/Player.h"

@@ -1,4 +1,6 @@
 #include "Bridge.h"
+
+#include <cmath>
 #include "Player.h"
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"

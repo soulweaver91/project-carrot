@@ -1,4 +1,6 @@
 #include "MovingPlatform.h"
+
+#include <cmath>
 #include "../gamestate/GameView.h"
 #include "../gamestate/ActorAPI.h"
 #include "../struct/Constants.h"
@@ -97,8 +99,8 @@ CoordinatePair MovingPlatform::getPhasePosition(bool next, uint distance) {
         effectivePhase = ((4.0 / 9.0) * pow(i, 6) - (17.0 / 9.0) * pow(i, 4) + (22.0 / 9.0) * pow(i, 2)) * BASE_CYCLE_FRAMES / 2;
     }
 
-    double multiX = cos(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
-    double multiY = sin(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
+    double multiX = std::cos(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
+    double multiY = std::sin(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
 
     return {
         originX + multiX * distance * 12,

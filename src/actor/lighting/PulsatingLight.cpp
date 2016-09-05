@@ -1,5 +1,6 @@
 #include "PulsatingLight.h"
 
+#include <cmath>
 #include "../../struct/Constants.h"
 #include "../../gamestate/ActorAPI.h"
 

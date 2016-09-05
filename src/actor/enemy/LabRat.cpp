@@ -1,5 +1,6 @@
 #include "LabRat.h"
 
+#include <cmath>
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
 #include "../Player.h"
