@@ -1,6 +1,7 @@
 #include "Bridge.h"
 #include "Player.h"
 #include "../gamestate/ActorAPI.h"
+#include "../gamestate/EventMap.h"
 
 DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x, double y, DynamicBridgeType type)
     : SolidObject(api, x, y, false), bridgeType(type) {
@@ -49,9 +50,24 @@ DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, 
 }
 
 DynamicBridge::~DynamicBridge() {
-    for (int i = 0; i < bridgePieces.size(); ++i) {
-        api->removeActor(bridgePieces.at(i));
+
+}
+
+bool DynamicBridge::deactivate(int x, int y, int dist) {
+    auto events = api->getGameEvents().lock();
+
+    if ((std::abs(x - originTileX) > dist) || (std::abs(y - originTileY) > dist)) {
+        if (events != nullptr) {
+            events->deactivate(originTileX, originTileY);
+        }
+
+        for (int i = 0; i < bridgePieces.size(); ++i) {
+            api->removeActor(bridgePieces.at(i));
+        }
+        api->removeActor(shared_from_this());
+        return true;
     }
+    return false;
 }
 
 void DynamicBridge::updateHitbox() {
