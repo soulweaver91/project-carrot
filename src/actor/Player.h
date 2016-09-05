@@ -42,7 +42,7 @@ public:
     unsigned getLives();
     bool getPowerUp(WeaponType type) const;
     bool perish();
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
         bool setSpecial = false, AnimationCallbackFunc callback = []() {});
     void takeDamage(double pushForce);

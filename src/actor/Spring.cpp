@@ -10,26 +10,26 @@ Spring::Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType typ
     if (orientation == 5) {
         // JJ2 horizontal springs held no data about which way they were facing.
         // For compatibility, the level converter sets their orientation to 5, which is interpreted here.
-        orientation = !api->getGameTiles().lock()->isTileEmpty(getHitbox().add(16, 0), false) ? 3 : 1;
+        orientation = api->getGameTiles().lock()->isTileEmpty(Hitbox(x + 16, y - 5, x + 20, y + 5), false) ? 1 : 3;
     }
 
     int orientationBit = 0;
     switch (orientation) {
         case 0:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 });
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 }, true);
             break;
         case 1:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 });
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 }, true);
             orientationBit = 1;
             isGravityAffected = false;
             break;
         case 2:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 });
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 }, true);
             orientationBit = 2;
             isGravityAffected = false;
             break;
         case 3:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 });
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 }, true);
             orientationBit = 1;
             isGravityAffected = false;
             isFacingLeft = true;
@@ -63,18 +63,18 @@ Spring::Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType typ
 Spring::~Spring() {
 }
 
-Hitbox Spring::getHitbox() {
+void Spring::updateHitbox() {
     switch (orientation) {
         case 1:
-            return { posX - 8, posY - 15, posX, posY + 15 };
+            currentHitbox = { posX - 8, posY - 15, posX, posY + 15 };
             break;
         case 3:
-            return { posX, posY - 15, posX + 8, posY + 15 };
+            currentHitbox = { posX, posY - 15, posX + 8, posY + 15 };
             break;
         case 0:
         case 2:
         default:
-            return { posX - 15, posY, posX + 15, posY + 8};
+            currentHitbox = { posX - 15, posY, posX + 15, posY + 8};
     }
 }
 

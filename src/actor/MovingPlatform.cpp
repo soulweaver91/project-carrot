@@ -36,9 +36,9 @@ void MovingPlatform::tickEvent() {
         phase += BASE_CYCLE_FRAMES;
     }
 
-    moveInstantly(getPhasePosition(false, length));
+    moveInstantly(getPhasePosition(false, length), true);
 
-    Hitbox hitbox = getHitbox();
+    Hitbox hitbox = Hitbox(currentHitbox);
     hitbox.top -= 2;
 
     auto players = api->getCollidingPlayer(hitbox);
@@ -59,10 +59,9 @@ void MovingPlatform::tickEvent() {
     CommonActor::tickEvent();
 }
 
-Hitbox MovingPlatform::getHitbox() {
-    Hitbox hitbox = CommonActor::getHitbox();
-    hitbox.bottom = hitbox.top + 10;
-    return hitbox;
+void MovingPlatform::updateHitbox() {
+    CommonActor::updateHitbox();
+    currentHitbox.bottom = currentHitbox.top + 10;
 }
 
 void MovingPlatform::drawUpdate(std::shared_ptr<GameView>& view) {

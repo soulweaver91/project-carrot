@@ -29,15 +29,14 @@ bool Enemy::perish() {
 }
 
 bool Enemy::canMoveToPosition(double x, double y) {
-    Hitbox hitbox = getHitbox();
     short sign = (isFacingLeft ? -1 : 1);
 
     auto events = api->getGameEvents().lock();
 
-    return ((api->isPositionEmpty(hitbox + CoordinatePair(x, y - 10), false, shared_from_this())
-          || api->isPositionEmpty(hitbox + CoordinatePair(x, y + 2), false, shared_from_this()))
+    return ((api->isPositionEmpty(currentHitbox + CoordinatePair(x, y - 10), false, shared_from_this())
+          || api->isPositionEmpty(currentHitbox + CoordinatePair(x, y + 2), false, shared_from_this()))
          && (events != nullptr && (!(events->getPositionEvent(posX + x, posY + y) == PC_AREA_STOP_ENEMY)))
-         && (!api->isPositionEmpty(hitbox + CoordinatePair(x + sign * (hitbox.right - hitbox.left) / 2, y + 32), false, shared_from_this())));
+         && (!api->isPositionEmpty(currentHitbox + CoordinatePair(x + sign * (currentHitbox.right - currentHitbox.left) / 2, y + 32), false, shared_from_this())));
 }
 
 void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable) {

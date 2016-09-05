@@ -25,6 +25,6 @@ void SavePoint::activateSavePoint() {
     }
 }
 
-Hitbox SavePoint::getHitbox() {
-    return CommonActor::getHitbox(20u, 20u);
+void SavePoint::updateHitbox() {
+    CommonActor::updateHitbox(20u, 20u);
 }

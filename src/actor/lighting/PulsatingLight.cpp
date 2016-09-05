@@ -9,6 +9,7 @@ PulsatingLight::PulsatingLight(std::shared_ptr<ActorAPI> api, double x, double y
     : CommonActor(api, x, y), RadialLightSource(100.0, 150.0, sf::Color(0, 0, 0, alpha), { x, y }), speed(4.0 / (speed + 1)) {
     phase = fmod(BASE_CYCLE_FRAMES - (api->getFrame() % BASE_CYCLE_FRAMES + sync * 175) * speed,
                  BASE_CYCLE_FRAMES);
+    isCollidable = false;
 }
 
 PulsatingLight::~PulsatingLight() {

@@ -34,7 +34,7 @@ public:
     DynamicBridge(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, unsigned int width = 1,
         DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
     ~DynamicBridge();
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
     void tickEvent() override;
 
 private:

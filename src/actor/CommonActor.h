@@ -29,20 +29,22 @@ public:
     void decreaseHealth(unsigned amount = 1);
     virtual void setToViewCenter(std::shared_ptr<GameView> view);
     CoordinatePair getPosition();
-    virtual Hitbox getHitbox();
-    virtual Hitbox getHitbox(const uint& w, const uint& h);
+    virtual void updateHitbox();
+    virtual void updateHitbox(const uint& w, const uint& h);
     double getSpeedX();
     double getSpeedY();
+    bool getIsCollidable();
     virtual bool perish();
     virtual bool deactivate(int x, int y, int tileDistance);
     virtual void handleCollision(std::shared_ptr<CommonActor> other);
-    void moveInstantly(CoordinatePair location);
+    void moveInstantly(CoordinatePair location, bool absolute);
     void deleteFromEventMap();
     void updateGraphicState();
     void setInvulnerability(uint frames = 210u, bool blink = false);
     void advanceActorAnimationTimers();
     const ActorGraphicState getGraphicState();
     void handleAmmoFrozenStateChange(std::shared_ptr<CommonActor> ammo);
+    Hitbox getHitbox();
         
 protected:
     bool setAnimation(AnimStateT state) override;
@@ -74,6 +76,7 @@ protected:
     bool isClippingAffected;
     bool isInvulnerable;
     bool isBlinking;
+    bool isCollidable;
     uint frozenFramesLeft;
     double elasticity;
     double friction;
@@ -83,6 +86,7 @@ protected:
     int originTileY;
     std::shared_ptr<ResourceSet> resources;
     ActorGraphicState currentGraphicState;
+    Hitbox currentHitbox;
 
 private:
     template<typename T, typename... P>

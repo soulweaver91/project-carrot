@@ -20,7 +20,7 @@ public:
         quint16 length, qint16 speed, ushort sync, bool swing);
     ~MovingPlatform();
     void tickEvent() override;
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
     void drawUpdate(std::shared_ptr<GameView>& view) override;
     CoordinatePair getLocationDelta();
 

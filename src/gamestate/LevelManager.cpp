@@ -304,20 +304,24 @@ QVector<std::weak_ptr<CommonActor>> LevelManager::findCollisionActors(const Hitb
 }
 
 QVector<std::weak_ptr<CommonActor>> LevelManager::findCollisionActors(std::shared_ptr<CommonActor> me) {
-    const auto& myGS = me->getGraphicState();
-
     QVector<std::weak_ptr<CommonActor>> res;
+
+    if (!me->getIsCollidable()) {
+        return res;
+    }
+
+    const auto& myGS = me->getGraphicState();
     QTransform tfMatrixA;
     tfMatrixA
         .rotate(myGS.angle * 360)
         .scale(myGS.scale.x, myGS.scale.y)
         .translate(-myGS.hotspot.x, -myGS.hotspot.y);
 
-    for (int i = 0; i < actors.size(); ++i) {
-        if (me == actors.at(i)) {
+    for (auto& actor : actors) {
+        if (me == actor || !actor->getIsCollidable()) {
             continue;
         }
-        const auto& otherGS = actors.at(i)->getGraphicState();
+        const auto& otherGS = actor->getGraphicState();
         bool done = false;
 
         if (!myGS.boundingBox.intersects(otherGS.boundingBox)) {
@@ -364,7 +368,7 @@ QVector<std::weak_ptr<CommonActor>> LevelManager::findCollisionActors(std::share
 
                 if (otherGS.mask->at(otherTexPosXInt + otherGS.dimensions.x * otherTexPosYInt)) {
                     done = true;
-                    res << actors.at(i);
+                    res << actor;
                 }
             }
         }
@@ -381,7 +385,7 @@ void LevelManager::setSavePoint() {
 void LevelManager::loadSavePoint() {
     clearActors();
     gameEvents->deactivateAll();
-    players[0]->moveInstantly(lastSavePoint.playerPosition);
+    players[0]->moveInstantly(lastSavePoint.playerPosition, true);
     gameTiles->loadSavePointLayer(lastSavePoint.spriteLayerState);
 }
 
@@ -540,7 +544,7 @@ void LevelManager::debugSetPosition() {
 
     int x = QInputDialog::getInt(root, "Move player", "X position", player->getPosition().x, 0, gameTiles->getLevelWidth() * 32);
     int y = QInputDialog::getInt(root, "Move player", "Y position", player->getPosition().y, 0, gameTiles->getLevelHeight() * 32);
-    player->moveInstantly({ x * 1.0, y * 1.0 });
+    player->moveInstantly({ x * 1.0, y * 1.0 }, true);
 }
 
 void LevelManager::debugSugarRush() {

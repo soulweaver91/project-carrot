@@ -12,7 +12,7 @@ public:
     EnemyNormalTurtle(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~EnemyNormalTurtle();
     void tickEvent() override;
-    Hitbox getHitbox();
+    void updateHitbox() override;
     bool perish() override;
 
 private:

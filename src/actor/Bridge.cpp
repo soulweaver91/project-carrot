@@ -27,7 +27,7 @@ bool DynamicBridgePiece::deactivate(int, int, int) {
 }
 
 Hitbox DynamicBridgePiece::getHitboxForParent() {
-    return getHitbox().extend(0, 2);
+    return Hitbox(currentHitbox).extend(0, 4);
 }
 
 DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, unsigned int width,
@@ -42,6 +42,7 @@ DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, 
     }
     isGravityAffected = false;
     toughness = 7;
+    updateHitbox();
 
     // Ignore unused member warning
     (void)bridgeType;
@@ -53,13 +54,13 @@ DynamicBridge::~DynamicBridge() {
     }
 }
 
-Hitbox DynamicBridge::getHitbox() {
-    return Hitbox(posX, posY - 10.0, posX + bridgeWidth * 16.0, posY + 16.0);
+void DynamicBridge::updateHitbox() {
+    currentHitbox = Hitbox(posX, posY - 10.0, posX + bridgeWidth * 16.0, posY + 16.0);
 }
 
 void DynamicBridge::tickEvent() {
     // get collision for all bridge elements
-    auto collision = api->findCollisionActors(getHitbox(), shared_from_this());
+    auto collision = api->findCollisionActors(currentHitbox, shared_from_this());
     for (int j = 0; j < bridgePieces.size(); ++j) {
         collision.append(api->findCollisionActors(bridgePieces.at(j)->getHitboxForParent(), shared_from_this()));
     }
@@ -97,7 +98,7 @@ void DynamicBridge::tickEvent() {
                     coords.y = originalY - 2;
                 }
 
-                bridgePieces.at(j)->moveInstantly(coords);
+                bridgePieces.at(j)->moveInstantly(coords, true);
             }
         }
 
@@ -107,7 +108,7 @@ void DynamicBridge::tickEvent() {
         for (int j = 0; j < bridgePieces.size(); ++j) {
             CoordinatePair coords = bridgePieces.at(j)->getPosition();
             coords.y = originalY;
-            bridgePieces.at(j)->moveInstantly(coords);
+            bridgePieces.at(j)->moveInstantly(coords, true);
         }
         posY = originalY;
     }

@@ -11,8 +11,8 @@ SolidObject::~SolidObject() {
 
 void SolidObject::push(bool left) {
     if (movable) {
-        if (api->isPositionEmpty(getHitbox().add((left ? -1 : 1), 0), false, shared_from_this())) {
-            posX += 0.3 * (left ? -1 : 1);
+        if (api->isPositionEmpty(currentHitbox + CoordinatePair((left ? -1 : 1), 0), false, shared_from_this())) {
+            moveInstantly({ 0.3 * (left ? -1 : 1), 0.0 }, false);
         }
     }
 }

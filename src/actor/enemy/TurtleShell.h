@@ -10,7 +10,7 @@ public:
         double initSpeedY = 0.0, bool fromEventMap = false);
     ~TurtleShell();
     void tickEvent() override;
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
     virtual void handleCollision(std::shared_ptr<CommonActor> other) override;
 
 protected:
