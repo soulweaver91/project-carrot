@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "InteractiveActor.h"
+#include "lighting/RadialLightSource.h"
 #include "../gamestate/PlayerOSD.h"
 #include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
@@ -24,7 +25,7 @@ enum PlayerCharacter {
     CHAR_BIRD       = 0x81
 };
 
-class Player : public QObject, public InteractiveActor {
+class Player : public QObject, public InteractiveActor, public RadialLightSource {
 
     Q_OBJECT
 
@@ -41,7 +42,7 @@ public:
     unsigned getLives();
     bool getPowerUp(WeaponType type) const;
     bool perish();
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
         bool setSpecial = false, AnimationCallbackFunc callback = []() {});
     void takeDamage(double pushForce);

@@ -15,7 +15,7 @@ class Spring : public CommonActor {
 public:
     Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType type, unsigned char orient);
     ~Spring();
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
     sf::Vector2f activate();
 
 private:

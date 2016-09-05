@@ -1,4 +1,6 @@
 #include "MovingPlatform.h"
+
+#include <cmath>
 #include "../gamestate/GameView.h"
 #include "../gamestate/ActorAPI.h"
 #include "../struct/Constants.h"
@@ -36,9 +38,9 @@ void MovingPlatform::tickEvent() {
         phase += BASE_CYCLE_FRAMES;
     }
 
-    moveInstantly(getPhasePosition(false, length));
+    moveInstantly(getPhasePosition(false, length), true);
 
-    Hitbox hitbox = getHitbox();
+    Hitbox hitbox = Hitbox(currentHitbox);
     hitbox.top -= 2;
 
     auto players = api->getCollidingPlayer(hitbox);
@@ -59,10 +61,9 @@ void MovingPlatform::tickEvent() {
     CommonActor::tickEvent();
 }
 
-Hitbox MovingPlatform::getHitbox() {
-    Hitbox hitbox = CommonActor::getHitbox();
-    hitbox.bottom = hitbox.top + 10;
-    return hitbox;
+void MovingPlatform::updateHitbox() {
+    CommonActor::updateHitbox();
+    currentHitbox.bottom = currentHitbox.top + 10;
 }
 
 void MovingPlatform::drawUpdate(std::shared_ptr<GameView>& view) {
@@ -98,8 +99,8 @@ CoordinatePair MovingPlatform::getPhasePosition(bool next, uint distance) {
         effectivePhase = ((4.0 / 9.0) * pow(i, 6) - (17.0 / 9.0) * pow(i, 4) + (22.0 / 9.0) * pow(i, 2)) * BASE_CYCLE_FRAMES / 2;
     }
 
-    double multiX = cos(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
-    double multiY = sin(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
+    double multiX = std::cos(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
+    double multiY = std::sin(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
 
     return {
         originX + multiX * distance * 12,

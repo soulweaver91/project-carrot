@@ -1,5 +1,6 @@
 #include "CommonActor.h"
 
+#include <cmath>
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 #include "../gamestate/GameView.h"
@@ -14,10 +15,11 @@ CommonActor::CommonActor(std::shared_ptr<ActorAPI> gameRoot, double x, double y,
     : AnimationUser(gameRoot), api(gameRoot), maxHealth(1), health(1), posX(x), posY(y),
     speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
     canJump(false), canBeFrozen(true), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
-    isInvulnerable(false), isBlinking(false), frozenFramesLeft(0), elasticity(0.0), friction(api->getGravity() / 3),
-    suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
+    isInvulnerable(false), isBlinking(false), isCollidable(true), frozenFramesLeft(0), elasticity(0.0),
+    friction(api->getGravity() / 3), suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
     originTileX = static_cast<int>(x) / 32;
     originTileY = static_cast<int>(y) / 32;
+    updateHitbox();
 }
 
 CommonActor::~CommonActor() {
@@ -77,7 +79,6 @@ void CommonActor::tickEvent() {
 
     auto thisPtr = shared_from_this();
 
-    Hitbox currentHitbox = getHitbox();
     if (!api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
         if (std::abs(speedX + externalForceX) > EPSILON) {
             // We are walking, thus having both vertical and horizontal speed
@@ -105,7 +106,7 @@ void CommonActor::tickEvent() {
                     // Yes, we indeed are
                     speedY = -(elasticity * speedY);
                     canJump = true;
-                    posY -= std::abs(speedX + externalForceX) + 1;
+                    moveInstantly({ 0.0, -(std::abs(speedX + externalForceX) + 1) }, false);
                     /*while (root->game_tiles->isTileEmpty(CarrotQt5::calcHitbox(getHitbox(),speedX,speedY-abs(speedX)-2))) {
                         posY += 0.5;
                     }
@@ -143,10 +144,10 @@ void CommonActor::tickEvent() {
                 if (api->isPositionEmpty(currentHitbox, true, shared_from_this())) {
                     // Let's just nullify that effect
                     speedY = -(elasticity * speedY);
-                    while (api->isPositionEmpty(getHitbox().add(speedX, speedY), true, thisPtr)) {
-                        posY += 0.5;
+                    while (api->isPositionEmpty(currentHitbox + CoordinatePair(speedX, speedY), true, thisPtr)) {
+                        moveInstantly({ 0.0, 0.5 }, false);
                     }
-                    posY -= 0.5;
+                    moveInstantly({ 0.0, -0.5 }, false);
                     
                     onHitFloorHook();
                     canJump = true;
@@ -176,12 +177,12 @@ void CommonActor::tickEvent() {
                 false, thisPtr)
             ) {
                 while (api->isPositionEmpty(
-                    getHitbox().add(speedX + externalForceX, speedY + std::abs(speedX + externalForceX)),
+                    currentHitbox + CoordinatePair(speedX + externalForceX, speedY + std::abs(speedX + externalForceX)),
                     false, thisPtr)
                 ) {
-                    posY += 0.1;
+                    moveInstantly({ 0.0, 0.1 }, false);
                 }
-                posY -= 0.1;
+                moveInstantly({ 0.0, -0.1 }, false);
             } else {
                 // That wasn't the case so forget about that
                 canJump = false;
@@ -204,6 +205,7 @@ void CommonActor::tickEvent() {
     bool frozen = frozenFramesLeft > 0;
     posX += (frozen ? 0 : speedX) + externalForceX;
     posY += speedY;
+    updateHitbox();
 
     // determine current animation last bits from speeds
     // it's okay to call setAnimation on every tick because it doesn't do
@@ -263,15 +265,14 @@ CoordinatePair CommonActor::getPosition() {
     return { posX, posY };
 }
 
-Hitbox CommonActor::getHitbox() {
-    auto animation = currentAnimation->getAnimation();
-    return getHitbox(animation->frameDimensions.x, animation->frameDimensions.y);
+void CommonActor::updateHitbox() {
+    updateHitbox(currentGraphicState.boundingBox.width, currentGraphicState.boundingBox.height);
 }
 
-Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
+void CommonActor::updateHitbox(const uint& w, const uint& h) {
     auto animation = currentAnimation->getAnimation();
     if (animation->hasColdspot) {
-        return {
+        currentHitbox = {
             posX - animation->hotspot.x + animation->coldspot.x - (w / 2),
             posY - animation->hotspot.y + animation->coldspot.y - h,
             posX - animation->hotspot.x + animation->coldspot.x + (w / 2),
@@ -280,7 +281,7 @@ Hitbox CommonActor::getHitbox(const uint& w, const uint& h) {
     } else {
         // Collision base set to the bottom of the sprite.
         // This is probably still not the correct way to do it, but at least it works for now.
-        return {
+        currentHitbox = {
             posX - (w / 2),
             posY - animation->hotspot.y + animation->frameDimensions.y - h,
             posX + (w / 2),
@@ -295,6 +296,10 @@ double CommonActor::getSpeedX() {
 
 double CommonActor::getSpeedY() {
     return speedY;
+}
+
+bool CommonActor::getIsCollidable() {
+    return isCollidable;
 }
 
 bool CommonActor::setAnimation(AnimStateT state) {
@@ -336,6 +341,7 @@ bool CommonActor::setAnimation(AnimStateT state) {
             break;
     }
 
+    updateHitbox();
     return true;
 }
 
@@ -447,9 +453,14 @@ void CommonActor::handleCollision(std::shared_ptr<CommonActor> other) {
     }
 }
 
-void CommonActor::moveInstantly(CoordinatePair location) {
-    posX = location.x;
-    posY = location.y;
+void CommonActor::moveInstantly(CoordinatePair location, bool absolute) {
+    CoordinatePair newPos = {
+        (absolute ? 0 : posX) + location.x,
+        (absolute ? 0 : posY) + location.y
+    };
+    currentHitbox.add(newPos - CoordinatePair(posX, posY));
+    posX = newPos.x;
+    posY = newPos.y;
 }
 
 void CommonActor::deleteFromEventMap() {
@@ -480,6 +491,10 @@ void CommonActor::handleAmmoFrozenStateChange(std::shared_ptr<CommonActor> ammo)
     if (std::dynamic_pointer_cast<AmmoToaster>(ammo) != nullptr) {
         frozenFramesLeft = 0;
     }
+}
+
+Hitbox CommonActor::getHitbox() {
+    return currentHitbox;
 }
 
 void CommonActor::setInvulnerability(uint frames, bool blink) {

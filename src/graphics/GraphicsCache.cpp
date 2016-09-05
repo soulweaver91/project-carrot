@@ -1,4 +1,5 @@
 #include "GraphicsCache.h"
+#include <cmath>
 #include <QFile>
 #include <QDir>
 #include <QJsonDocument>

@@ -1,4 +1,6 @@
 #include "TileMap.h"
+
+#include <cmath>
 #include "EventMap.h"
 #include "GameView.h"
 #include "LevelManager.h"
@@ -258,22 +260,22 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
 
     // Get the actual tile coords on the layer layout
     if (xinter > 0) {
-        tile_x = static_cast<int>(floor(xinter)) % lw;
-        tile_absx = static_cast<int>(floor(xinter));
+        tile_x = static_cast<int>(std::floor(xinter)) % lw;
+        tile_absx = static_cast<int>(std::floor(xinter));
     } else {
-        tile_x = static_cast<int>(ceil(xinter)) % lw;
-        tile_absx = static_cast<int>(ceil(xinter));
+        tile_x = static_cast<int>(std::ceil(xinter)) % lw;
+        tile_absx = static_cast<int>(std::ceil(xinter));
         while (tile_x < 0) {
             tile_x += lw;
         }
     }
     
     if (yinter > 0) {
-        tile_y = static_cast<int>(floor(yinter)) % lh;
-        tile_absy = static_cast<int>(floor(yinter));
+        tile_y = static_cast<int>(std::floor(yinter)) % lh;
+        tile_absy = static_cast<int>(std::floor(yinter));
     } else {
-        tile_y = static_cast<int>(ceil(yinter)) % lh;
-        tile_absy = static_cast<int>(ceil(yinter));
+        tile_y = static_cast<int>(std::ceil(yinter)) % lh;
+        tile_absy = static_cast<int>(std::ceil(yinter));
         while (tile_y < 0) {
             tile_y += lh;
         }

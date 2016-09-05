@@ -1,5 +1,7 @@
-#include <memory>
 #include "Collectible.h"
+
+#include <memory>
+#include <cmath>
 #include "../Player.h"
 #include "../enemy/TurtleShell.h"
 #include "../../struct/Constants.h"
@@ -27,7 +29,7 @@ void Collectible::tickEvent() {
 }
 
 void Collectible::drawUpdate(std::shared_ptr<GameView>& view) {
-    double waveOffset = 2.4 * cos((phase * 0.3) * PI);
+    double waveOffset = 2.4 * std::cos((phase * 0.3) * PI);
 
     // The position of the actor is altered for the draw event.
     // We want to keep the actual position of the actor constant, though.

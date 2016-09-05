@@ -1,4 +1,6 @@
 #include "Player.h"
+
+#include <cmath>
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 #include "../gamestate/GameView.h"
@@ -18,6 +20,7 @@
 #include "weapon/AmmoFreezer.h"
 
 Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveActor(api, x, y, false),
+    RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), cameraShiftFramesCount(0),
     copterFramesLeft(0), toasterAmmoSubticks(10),
@@ -83,7 +86,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                 setAnimation(AnimState::CROUCH);
             } else {
                 if (suspendType != SuspendType::SUSPEND_NONE) {
-                    posY += 10;
+                    moveInstantly({ 0, 10 }, false);
                     suspendType = SuspendType::SUSPEND_NONE;
                 } else {
                     controllable = false;
@@ -211,7 +214,7 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
 
     if (e.contains(controls.jumpButton)) {
         if (suspendType != SuspendType::SUSPEND_NONE) {
-            posY -= 5;
+            moveInstantly({ 0, -5 }, false);
             canJump = true;
         }
         if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
@@ -316,7 +319,7 @@ void Player::tickEvent() {
     // Check for pushing
     if (canJump && controllable && std::abs(speedX) > EPSILON) {
         std::weak_ptr<SolidObject> object;
-        if (!(api->isPositionEmpty(getHitbox() + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
+        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
 
             if (objectPtr != nullptr) {
@@ -338,13 +341,11 @@ void Player::tickEvent() {
         } else {
             auto platform = carryingObject.lock();
             CoordinatePair delta = platform->getLocationDelta();
-            Hitbox currentHitbox = getHitbox();
 
             if (api->isPositionEmpty(currentHitbox + CoordinatePair(delta.x, delta.y), false, shared_from_this())) {
-                posX += delta.x;
-                posY += delta.y;
+                moveInstantly(delta, false);
             } else if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, delta.y), false, shared_from_this())) {
-                posY += delta.y;
+                moveInstantly({ 0.0, delta.y }, false);
             } else {
                 carryingObject = std::weak_ptr<MovingPlatform>();
             }
@@ -376,9 +377,9 @@ void Player::tickEvent() {
 
             // move downwards until we're on the standard height
             while (tiles->getPosSuspendState(posX, posY - 5) != SuspendType::SUSPEND_NONE) {
-                posY += 1;
+                moveInstantly({ 0, 1 }, false);
             }
-            posY -= 1;
+            moveInstantly({ 0, -1 }, false);
         } else {
             suspendType = SuspendType::SUSPEND_NONE;
             if ((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0 && !isAttachedToPole) {
@@ -386,7 +387,7 @@ void Player::tickEvent() {
             }
         }
 
-        auto tileCollisionHitbox = getHitbox().extend(2 + std::abs(speedX), 2 + std::abs(speedY));
+        auto tileCollisionHitbox = Hitbox(currentHitbox).extend(2 + std::abs(speedX), 2 + std::abs(speedY));
 
         // Buttstomp/etc. tiles checking
         if (isUsingDamagingMove || isSugarRush) {
@@ -488,11 +489,11 @@ void Player::tickEvent() {
                     if (p[0] != 0) {
                         posY = std::floor(posY / 32) * 32 + 8;
                         speedX = moveX;
-                        posX += speedX;
+                        moveInstantly({ speedX, 0.0 }, false);
                     } else {
                         posX = std::floor(posX / 32) * 32 + 16;
                         speedY = moveY;
-                        posY += speedY;
+                        moveInstantly({ 0.0, speedY }, false);
                     }
                 }
                 break;
@@ -510,13 +511,12 @@ void Player::tickEvent() {
         // Check floating from each corner of an extended hitbox
         // Player should not pass from a single tile wide gap if the columns left or right have
         // float events, so checking for a wider box is necessary.
-        Hitbox hitbox = getHitbox();
         if (
-            (events->getPositionEvent(posX,               posY               ) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(hitbox.left  - 5.0, hitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(hitbox.right + 5.0, hitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(hitbox.right + 5.0, hitbox.bottom + 5.0) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(hitbox.left  - 5.0, hitbox.bottom + 5.0) == PC_AREA_FLOAT_UP)
+            (events->getPositionEvent(posX,                      posY                      ) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(currentHitbox.left  - 5.0, currentHitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP) ||
+            (events->getPositionEvent(currentHitbox.left  - 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP)
             ) {
             if (isGravityAffected) {
                 externalForceY = gravity * 2;
@@ -651,6 +651,8 @@ void Player::tickEvent() {
     if (removeSpecialMove) {
         endDamagingMove();
     }
+
+    lightLocation = { posX, posY - 10.0 };
 }
 
 unsigned Player::getHealth() {
@@ -849,15 +851,15 @@ bool Player::perish() {
     return false;
 }
 
-Hitbox Player::getHitbox() {
-    //return CommonActor::getHitbox(24u, 24u);
+void Player::updateHitbox() {
+    //currentHitbox = CommonActor::getHitbox(24u, 24u);
     // TODO: Figure out how to use hot/coldspots properly.
     // The sprite is always located relative to the hotspot.
     // The coldspot is usually located at the ground level of the sprite,
     // but for falling sprites for some reason somewhere above the hotspot instead.
     // It is absolutely important that the position of the hitbox stays constant
     // to the hotspot, though; otherwise getting stuck at walls happens all the time.
-    return Hitbox(CoordinatePair(posX, posY + 8), 24, 24);
+    currentHitbox = Hitbox(CoordinatePair(posX, posY + 8), 24, 24);
 }
 
 void Player::endDamagingMove() {
@@ -1016,7 +1018,7 @@ void Player::nextPoleStage(bool horizontal, bool positive, ushort stagesLeft) {
             externalForceX = 10 * mp;
             isFacingLeft = !positive;
         } else {
-            posY += mp * 32;
+            moveInstantly({ 0, mp * 32 }, false);
             speedY = 10 * mp;
             externalForceY = -1 * mp;
         }
@@ -1118,7 +1120,7 @@ void Player::warpToPosition(const CoordinatePair& pos) {
             return;
         }
 
-        moveInstantly(pos);
+        moveInstantly(pos, true);
         playSound("COMMON_WARP_OUT");
 
         setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {

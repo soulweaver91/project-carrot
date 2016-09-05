@@ -22,6 +22,14 @@ struct Hitbox {
     }
 
     template<typename T>
+    Hitbox(const sf::Rect<T>& rect) {
+        left = rect.left;
+        top = rect.top;
+        right = rect.left + rect.width;
+        bottom = rect.top + rect.height;
+    }
+
+    template<typename T>
     Hitbox(const T& l, const T& t, const T& r, const T& b) {
         left = l;
         top = t;

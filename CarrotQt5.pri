@@ -10,8 +10,10 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/BonusWarp.h \
     ./src/actor/FrozenBlock.h \
     ./src/actor/InteractiveActor.h \
+    ./src/actor/LightSource.h \
     ./src/actor/MovingPlatform.h \
     ./src/actor/PowerUpMonitor.h \
+    ./src/actor/lighting/StaticLight.h \
     ./src/actor/Bridge.h \
     ./src/actor/Spring.h \
     ./src/actor/CommonActor.h \
@@ -25,6 +27,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/weapon/AmmoBlaster.h \
     ./src/actor/weapon/AmmoBouncer.h \
     ./src/actor/weapon/AmmoToaster.h \
+    ./src/actor/enemy/LabRat.h \
     ./src/actor/enemy/Sucker.h \
     ./src/actor/enemy/SuckerFloat.h \
     ./src/actor/enemy/TurtleShell.h \
@@ -38,6 +41,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/collectible/FoodCollectible.h \
     ./src/actor/collectible/GemCollectible.h \
     ./src/actor/collectible/Collectible.h \
+    ./src/actor/lighting/RadialLightSource.h \
     ./src/graphics/ShaderSource.h \
     ./src/graphics/Tileset.h \
     ./src/graphics/GraphicsCache.h \
@@ -68,7 +72,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
     ./src/struct/WeaponTypes.h \
-    ./src/actor/enemy/LabRat.h
+    ./src/actor/lighting/PulsatingLight.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/ModeManager.cpp \
@@ -82,8 +86,10 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/BonusWarp.cpp \
     ./src/actor/FrozenBlock.cpp \
     ./src/actor/InteractiveActor.cpp \
+    ./src/actor/LightSource.cpp \
     ./src/actor/MovingPlatform.cpp \
     ./src/actor/PowerUpMonitor.cpp \
+    ./src/actor/lighting/StaticLight.cpp \
     ./src/actor/Bridge.cpp \
     ./src/actor/CommonActor.cpp \
     ./src/actor/Player.cpp \
@@ -92,6 +98,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/SolidObject.cpp \
     ./src/actor/Spring.cpp \
     ./src/actor/TriggerCrate.cpp \
+    ./src/actor/enemy/LabRat.cpp \
     ./src/actor/enemy/Sucker.cpp \
     ./src/actor/enemy/SuckerFloat.cpp \
     ./src/actor/enemy/TurtleShell.cpp \
@@ -110,6 +117,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/collectible/FoodCollectible.cpp \
     ./src/actor/collectible/GemCollectible.cpp \
     ./src/actor/collectible/Collectible.cpp \
+    ./src/actor/lighting/RadialLightSource.cpp \
     ./src/menu/MenuScreen.cpp \
     ./src/sound/SoundSystem.cpp \
     ./src/gamestate/ActorAPI.cpp \
@@ -122,7 +130,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp \
-    ./src/actor/enemy/LabRat.cpp
+    ./src/actor/lighting/PulsatingLight.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

@@ -1,5 +1,6 @@
 #include "LabRat.h"
 
+#include <cmath>
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
 #include "../Player.h"
@@ -33,7 +34,7 @@ void EnemyLabRat::tickEvent() {
         }
 
         if (canAttack && std::abs(speedY) < EPSILON) {
-            auto players = api->getCollidingPlayer(getHitbox().extend(
+            auto players = api->getCollidingPlayer(Hitbox(currentHitbox).extend(
                 isFacingLeft ? 128.0 : 0.0, 20.0,
                 isFacingLeft ? 0.0 : 128.0, 20.0
             ));
@@ -80,7 +81,7 @@ void EnemyLabRat::attack() {
         });
     });
     speedX = (isFacingLeft ? -1 : 1) * 2;
-    posY -= 1;
+    moveInstantly({ 0, -1 }, false);
     speedY = -1;
     internalForceY = 0.5;
     isAttacking = true;

@@ -1,4 +1,6 @@
 #include "TurtleShell.h"
+
+#include <cmath>
 #include "Enemy.h"
 #include "../collectible/Collectible.h"
 #include "../weapon/Ammo.h"
@@ -37,7 +39,6 @@ void TurtleShell::tickEvent() {
     }
 
     auto collisions = api->findCollisionActors(shared_from_this());
-    Hitbox hitbox = getHitbox();
     for (auto collider : collisions) {
         if (collider.expired()) {
             continue;
@@ -81,7 +82,7 @@ void TurtleShell::tickEvent() {
                 if (std::abs(speedX) > std::abs(specializedPtr->speedX)) {
                     // Handle this only in the faster of the two.
                     speedX *= -1;
-                    posX = specializedPtr->posX + (speedX > 0 ? 1 : -1) * (hitbox.right - hitbox.left + 1);
+                    posX = specializedPtr->posX + (speedX > 0 ? 1 : -1) * (currentHitbox.right - currentHitbox.left + 1);
                     specializedPtr->decreaseHealth(1);
                     playSound("ENEMY_TURTLE_SHELL_IMPACT_SHELL");
                 }
@@ -92,14 +93,14 @@ void TurtleShell::tickEvent() {
 
     auto tiles = api->getGameTiles().lock();
     if (tiles != nullptr) {
-        tiles->checkSpecialDestructible(hitbox);
-        tiles->checkCollapseDestructible(hitbox);
+        tiles->checkSpecialDestructible(currentHitbox);
+        tiles->checkCollapseDestructible(currentHitbox);
         tiles->checkWeaponDestructible(posX, posY, WEAPON_BLASTER);
     }
 }
 
-Hitbox TurtleShell::getHitbox() {
-    return CommonActor::getHitbox(24u, 16u);
+void TurtleShell::updateHitbox() {
+    CommonActor::updateHitbox(24u, 16u);
 }
 
 void TurtleShell::handleCollision(std::shared_ptr<CommonActor> other) {

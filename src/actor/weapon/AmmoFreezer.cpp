@@ -27,14 +27,11 @@ void AmmoFreezer::tickEvent() {
 
     auto tiles = api->getGameTiles().lock();
     if (tiles == nullptr || tiles->isTileEmpty((posX + speedX) / 32, (posY + speedY) / 32)) {
-        posX += speedX;
-        posY += speedY;
+        moveInstantly({ speedX, speedY }, false);
     } else {
-        posX += speedX;
-        posY += speedY;
+        moveInstantly({ speedX, speedY }, false);
         checkCollisions();
-        posX -= speedX;
-        posY -= speedY;
+        moveInstantly({ -speedX, -speedY }, false);
         health = 0;
     }
 }

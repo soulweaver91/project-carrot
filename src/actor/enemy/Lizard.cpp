@@ -23,6 +23,6 @@ void EnemyLizard::tickEvent() {
     }
 }
 
-Hitbox EnemyLizard::getHitbox() {
-    return CommonActor::getHitbox(30u, 30u);
+void EnemyLizard::updateHitbox() {
+    CommonActor::updateHitbox(30u, 30u);
 }

@@ -43,7 +43,7 @@ enum PCEvent {
     PC_SCENERY_BUTTSTOMP    = 0x0117,
     PC_MODIFIER_HURT        = 0x0115,
     PC_LIGHT_SET            = 0x0120,
-    PC_LIGHT_RESET          = 0x0125,
+    PC_LIGHT_RESET          = 0x0124,
     PC_ENEMY_TURTLE_NORMAL  = 0x0180,
     PC_ENEMY_LIZARD         = 0x0185,
     PC_PUSHABLE_ROCK        = 0x00C5,
@@ -102,4 +102,6 @@ enum PCEvent {
     PC_ENEMY_SUCKER         = 0x018C,
     PC_ENEMY_SUCKER_FLOAT   = 0x018D,
     PC_ENEMY_LAB_RAT        = 0x018B,
+    PC_LIGHT_STEADY         = 0x0121,
+    PC_LIGHT_PULSE          = 0x0122,
 };

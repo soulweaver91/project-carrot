@@ -1,5 +1,6 @@
 #include "NormalTurtle.h"
 
+#include <cmath>
 #include "TurtleShell.h"
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
@@ -33,15 +34,15 @@ void EnemyNormalTurtle::tickEvent() {
     }
 
     if (!isTurning && !isWithdrawn && !isAttacking) {
-        auto players = api->getCollidingPlayer(getHitbox().add(speedX * 64, 0.0));
+        auto players = api->getCollidingPlayer(currentHitbox + CoordinatePair(speedX * 64, 0.0));
         if (players.length() > 0) {
             attack();
         }
     }
 }
 
-Hitbox EnemyNormalTurtle::getHitbox() {
-    return CommonActor::getHitbox(24u, 24u);
+void EnemyNormalTurtle::updateHitbox() {
+    CommonActor::updateHitbox(24u, 24u);
 }
 
 bool EnemyNormalTurtle::perish() {

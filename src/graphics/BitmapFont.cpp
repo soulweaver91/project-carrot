@@ -1,4 +1,6 @@
 #include "BitmapFont.h"
+
+#include <cmath>
 #include <QFile>
 #include "../struct/Constants.h"
 #include "../graphics/ShaderSource.h"
@@ -89,8 +91,8 @@ void BitmapString::drawString(sf::RenderTarget* canvas, int x, int y) {
     int c = 0;
     for (int i = 0; i < stringText.length(); ++i) {
         if (isAnimated) {
-            differenceX = cos(((phase + i) * angleOffset) * PI) * varianceX;
-            differenceY = sin(((phase + i) * angleOffset) * PI) * varianceY;
+            differenceX = std::cos(((phase + i) * angleOffset) * PI) * varianceX;
+            differenceY = std::sin(((phase + i) * angleOffset) * PI) * varianceY;
         }
         auto sprite = textFont->getCharacterSprite(stringText.at(i));
         if (sprite != nullptr) {

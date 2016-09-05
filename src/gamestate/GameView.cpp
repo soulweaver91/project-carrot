@@ -1,4 +1,6 @@
 #include "GameView.h"
+
+#include <cmath>
 #include "LevelManager.h"
 #include "../actor/Player.h"
 #include "../graphics/ShaderSource.h"
@@ -7,8 +9,13 @@ GameView::GameView(LevelManager* root, const uint& playerID, const sf::Vector2f&
     : root(root), playerID(playerID) {
     canvas = std::make_shared<sf::RenderTexture>();
     canvas->create(dimensions.x, dimensions.y);
+
+    lightingAuxiliaryCanvas = std::make_shared<sf::RenderTexture>();
+    lightingAuxiliaryCanvas->create(dimensions.x, dimensions.y);
+
     renderAuxiliaryCanvas = std::make_shared<sf::RenderTexture>();
     renderAuxiliaryCanvas->create(dimensions.x, dimensions.y);
+
     playerView = std::make_unique<sf::View>(sf::FloatRect(0, 0, dimensions.x, dimensions.y));
     uiView = std::make_unique<sf::View>(sf::FloatRect(0, 0, dimensions.x, dimensions.y));
     viewSprite = std::make_unique<sf::Sprite>(canvas->getTexture());
@@ -66,38 +73,84 @@ void GameView::drawView(sf::RenderTarget* windowCanvas) {
 
     // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
     canvas->clear();
+    advanceTimers();
 }
 
-void GameView::drawUiElements() {
-    advanceTimers();
+void GameView::drawBackgroundEffects(const QVector<LightSource*>& lightSources) {
+    lightingAuxiliaryCanvas->clear(sf::Color(255, 255, 255, 0));
+    lightingAuxiliaryCanvas->display();
 
-    auto player = root->getPlayer(playerID).lock();
-    if (player == nullptr) {
-        return;
+    // Apply each light source onto the lighting canvas
+    CoordinatePair viewOffset = {
+        playerView->getCenter().x - playerView->getSize().x / 2,
+        playerView->getCenter().y - playerView->getSize().y / 2
+    };
+    renderAuxiliaryCanvas->clear();
+
+    for (auto actor : lightSources) {
+        bool updated = actor->applyBackgroundEffectToViewTexture(
+            viewOffset,
+            sf::Sprite(lightingAuxiliaryCanvas->getTexture()),
+            renderAuxiliaryCanvas.get()
+        );
+
+        if (updated) {
+            renderAuxiliaryCanvas->display();
+            std::swap(lightingAuxiliaryCanvas, renderAuxiliaryCanvas);
+            renderAuxiliaryCanvas->clear();
+        }
     }
+
+    auto effectSprite = sf::Sprite(lightingAuxiliaryCanvas->getTexture());
+    effectSprite.setPosition(viewOffset.x, viewOffset.y);
+    canvas->draw(effectSprite);
+}
+
+void GameView::drawLighting(const QVector<LightSource*>& lightSources) {
     canvas->setView(*uiView.get());
     canvas->display();
 
-    sf::RenderStates states;
-    auto shader = ShaderSource::getShader("LightingShader");
-    shader->setParameter("color", sf::Color::Black);
-    shader->setParameter("lightingLevel", lightingLevel / 100.0);
+    // Set up the initial lighting canvas with black at the opacity of the current lighting level
+    lightingAuxiliaryCanvas->clear(sf::Color(0, 0, 0, 255 - lightingLevel * 255.0 / 100.0));
+    lightingAuxiliaryCanvas->display();
 
-    shader->setParameter("center", sf::Vector2f(
-        player->getPosition().x - playerView->getCenter().x + playerView->getSize().x / 2,
-        // Reverse the vertical coordinate, as the frame buffer is "upside down"
-        playerView->getSize().y - ((player->getPosition().y - 15) - playerView->getCenter().y + playerView->getSize().y / 2)
-    ));
-    states.shader = shader.get();
+    // Apply each light source onto the lighting canvas
+    CoordinatePair viewOffset = {
+        playerView->getCenter().x - playerView->getSize().x / 2,
+        playerView->getCenter().y - playerView->getSize().y / 2
+    };
     renderAuxiliaryCanvas->clear();
-    renderAuxiliaryCanvas->draw(*viewSprite.get(), states);
+
+    for (auto actor : lightSources) {
+        bool updated = actor->applyLightingToViewTexture(
+            viewOffset,
+            sf::Sprite(lightingAuxiliaryCanvas->getTexture()),
+            renderAuxiliaryCanvas.get()
+        );
+
+        if (updated) {
+            renderAuxiliaryCanvas->display();
+            std::swap(lightingAuxiliaryCanvas, renderAuxiliaryCanvas);
+            renderAuxiliaryCanvas->clear();
+        }
+    }
+
+    // Compose the final view picture sans the UI
+    renderAuxiliaryCanvas->clear();
+    renderAuxiliaryCanvas->draw(*viewSprite);
+    renderAuxiliaryCanvas->draw(sf::Sprite(lightingAuxiliaryCanvas->getTexture()));
     renderAuxiliaryCanvas->display();
+
     std::swap(canvas, renderAuxiliaryCanvas);
     viewSprite->setTexture(canvas->getTexture());
+}
 
-    // Draw the character icon; managed by the player object
-    player->drawUIOverlay();
-
+void GameView::drawUiElements() {
+    // Draw the player's own overlays
+    auto player = root->getPlayer(playerID).lock();
+    if (player != nullptr) {
+        player->drawUIOverlay();
+    }
 }
 
 void GameView::centerToPlayer() {
@@ -112,6 +165,7 @@ void GameView::centerToPlayer() {
 void GameView::setSize(const sf::Vector2f& dimensions) {
     canvas->create(dimensions.x, dimensions.y);
     renderAuxiliaryCanvas->create(dimensions.x, dimensions.y);
+    lightingAuxiliaryCanvas->create(dimensions.x, dimensions.y);
     playerView->setCenter(dimensions.x / 2, dimensions.y / 2);
     playerView->setSize(dimensions);
     uiView->setCenter(dimensions.x / 2, dimensions.y / 2);

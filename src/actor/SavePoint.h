@@ -12,7 +12,7 @@ public:
     ~SavePoint();
     void tickEvent();
     void activateSavePoint();
-    Hitbox getHitbox() override;
+    void updateHitbox() override;
 
 private:
     bool activated;

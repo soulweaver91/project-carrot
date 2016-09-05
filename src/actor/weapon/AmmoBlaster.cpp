@@ -22,11 +22,10 @@ AmmoBlaster::~AmmoBlaster() {
 
 void AmmoBlaster::tickEvent() {
     Ammo::tickEvent();
-    posX += speedX;
-    posY += speedY;
+    moveInstantly({ speedX, speedY }, false);
 
     std::weak_ptr<SolidObject> actor;
-    if (!api->isPositionEmpty(getHitbox(), false, shared_from_this(), actor)) {
+    if (!api->isPositionEmpty(currentHitbox, false, shared_from_this(), actor)) {
         if (actor.lock() != nullptr && std::dynamic_pointer_cast<TriggerCrate>(actor.lock()) != nullptr) {
             ricochet();
         } else {
@@ -37,7 +36,7 @@ void AmmoBlaster::tickEvent() {
             double collisionX = posX + (speedY < -EPSILON ? 0 : speedX + (isFacingLeft ? -1 : 1) * animation->hotspot.x);
             double collisionY = posY + (speedY < -EPSILON ? speedY - animation->hotspot.y : 0);
             CoordinatePair c = {collisionX, collisionY};
-            moveInstantly(c);
+            moveInstantly(c, true);
             checkCollisions();
         }
     }

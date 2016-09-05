@@ -7,4 +7,4 @@
 #endif
 #define CP_VERSION_NUM QString("0.2")
 #define LAYERFORMATVERSION 5
-#define EVENTSETVERSION 8
+#define EVENTSETVERSION 10

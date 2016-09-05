@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QVector>
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include "TimerUser.h"
@@ -7,6 +8,7 @@
 
 class LevelManager;
 class Player;
+class LightSource;
 
 class GameView : public TimerUser {
 public:
@@ -20,6 +22,8 @@ public:
     std::weak_ptr<sf::RenderTexture> getCanvas();
     int getLightingLevel();
     void drawView(sf::RenderTarget* windowCanvas);
+    void drawBackgroundEffects(const QVector<LightSource*>& lightSources);
+    void drawLighting(const QVector<LightSource*>& lightSources);
     void drawUiElements();
     void centerToPlayer();
     void setSize(const sf::Vector2f& dimensions);
@@ -29,6 +33,7 @@ private:
 
     LevelManager* root;
     std::shared_ptr<sf::RenderTexture> canvas;
+    std::shared_ptr<sf::RenderTexture> lightingAuxiliaryCanvas;
     std::shared_ptr<sf::RenderTexture> renderAuxiliaryCanvas;
     std::unique_ptr<sf::View> playerView;
     std::unique_ptr<sf::View> uiView;

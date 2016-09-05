@@ -12,5 +12,5 @@ public:
     EnemyLizard(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~EnemyLizard();
     void tickEvent() override;
-    Hitbox getHitbox();
+    void updateHitbox() override;
 };
