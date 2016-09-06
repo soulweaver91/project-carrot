@@ -63,6 +63,14 @@ unsigned long ActorAPI::getFrame() {
     return mainClass->getFrame();
 }
 
+std::shared_ptr<BitmapString> ActorAPI::makeString(const QString& initString, BitmapFontSize size, FontAlign initAlign) {
+    return std::make_shared<BitmapString>(mainClass->getFont(size), initString, initAlign);
+}
+
+uint ActorAPI::getStringWidth(const QString& text, BitmapFontSize size) {
+    return BitmapString(mainClass->getFont(size), text).getWidth();
+}
+
 #ifdef CARROT_DEBUG
 DebugConfig ActorAPI::getDebugConfig() {
     return mainClass->getDebugConfig();
@@ -79,10 +87,6 @@ std::weak_ptr<EventMap> ActorAPI::getGameEvents() {
 
 SoundSystem* ActorAPI::getSoundSystem() {
     return mainClass->getSoundSystem();
-}
-
-std::shared_ptr<BitmapFont> ActorAPI::getFont() {
-    return mainClass->getFont();
 }
 
 std::shared_ptr<ResourceSet> ActorAPI::loadActorTypeResources(const QString& classId) {

@@ -279,6 +279,17 @@ void LevelManager::tick(const ControlEventList& events) {
             QString::number(debugConfig.currentTempModifier) + " " +
             debugConfig.tempModifierName[debugConfig.currentTempModifier] + ": " +
             QString::number(debugConfig.tempModifier[debugConfig.currentTempModifier]), 6, 540);
+
+        auto player = getPlayer(0).lock();
+        if (player != nullptr) {
+            BitmapString::drawString(canvas, root->getFont(), "P1: " +
+                QString::number(player->getPosition().x) + "," +
+                QString::number(player->getPosition().y), 6, 86);
+            BitmapString::drawString(canvas, root->getFont(), "  Hsp " +
+                QString::number(player->getSpeedX()), 6, 116);
+            BitmapString::drawString(canvas, root->getFont(), "  Vsp " +
+                QString::number(player->getSpeedY()), 6, 146);
+        }
     }
 #endif
 }

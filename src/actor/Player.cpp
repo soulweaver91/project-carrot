@@ -661,19 +661,6 @@ unsigned Player::getHealth() {
 
 void Player::drawUIOverlay() {
     osd->drawOSD(assignedView);
-
-    auto canvas = assignedView->getCanvas().lock();
-    if (canvas == nullptr) {
-        return;
-    }
-
-#ifdef CARROT_DEBUG
-    if (api->getDebugConfig().dbgOverlaysActive) {
-        BitmapString::drawString(canvas.get(), api->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
-        BitmapString::drawString(canvas.get(), api->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
-        BitmapString::drawString(canvas.get(), api->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
-    }
-#endif
 }
 
 bool Player::selectWeapon(enum WeaponType new_type) {

@@ -11,6 +11,12 @@ enum FontAlign {
     FONT_ALIGN_CENTER = 2
 };
 
+enum BitmapFontSize {
+    LARGE,
+    NORMAL,
+    SMALL
+};
+
 class BitmapFont {
     public:
         BitmapFont(const QString& filename, unsigned width, unsigned height, unsigned cols, unsigned first, unsigned last);

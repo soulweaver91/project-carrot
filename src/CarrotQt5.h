@@ -49,7 +49,7 @@ public:
     unsigned long getFrame();
     CarrotCanvas* getCanvas();
     SoundSystem* getSoundSystem();
-    std::shared_ptr<BitmapFont> getFont();
+    std::shared_ptr<BitmapFont> getFont(BitmapFontSize size = NORMAL);
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
     float getCurrentFPS();
 
@@ -80,7 +80,9 @@ private:
     std::unique_ptr<sf::Sprite> pausedScreenshotSprite;
     std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
+    std::shared_ptr<BitmapFont> smallFont;
     std::shared_ptr<BitmapFont> mainFont;
+    std::shared_ptr<BitmapFont> largeFont;
     std::unique_ptr<ResourceManager> resourceManager;
     std::shared_ptr<ControlManager> controlManager;
     unsigned long frame;

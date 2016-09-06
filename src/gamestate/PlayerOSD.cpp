@@ -50,11 +50,11 @@ PlayerOSD::PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player
     auto charIconGfx = animationBank.value("UI_CHARACTER_ICON_JAZZ");
     charIcon->setAnimation(charIconGfx);
 
-    collectionMessage = std::make_unique<BitmapString>(api->getFont(), "", FONT_ALIGN_CENTER);
-    livesString       = std::make_unique<BitmapString>(api->getFont(), "x3", FONT_ALIGN_LEFT);
-    scoreString       = std::make_unique<BitmapString>(api->getFont(), "00000000", FONT_ALIGN_LEFT);
-    ammoString        = std::make_unique<BitmapString>(api->getFont(), "x^", FONT_ALIGN_LEFT);
-    sugarRushText     = std::make_unique<BitmapString>(api->getFont(), "", FONT_ALIGN_CENTER);
+    collectionMessage = api->makeString("", NORMAL, FONT_ALIGN_CENTER);
+    livesString       = api->makeString("x3", NORMAL, FONT_ALIGN_LEFT);
+    scoreString       = api->makeString("00000000", NORMAL, FONT_ALIGN_LEFT);
+    ammoString        = api->makeString("x^", NORMAL, FONT_ALIGN_LEFT);
+    sugarRushText     = api->makeString("", NORMAL, FONT_ALIGN_CENTER);
     sugarRushText->setColoured(true);
     sugarRushText->setAnimation(true, -3.0, 3.0, 0.05, 0.95);
 }
@@ -184,7 +184,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS:
             collectionMessage->setText("need    x" + QString::number(param.toInt()) + " more");
             collectibleGraphics = animationBank.value("PICKUP_COIN_SILVER", nullptr);
-            collectibleIconOffset = 32.0f + BitmapString(api->getFont(), "need  ").getWidth();
+            collectibleIconOffset = 32.0f + api->getStringWidth("need  ");
             api->getSoundSystem()->playSFX(notEnoughCoinsSound, false);
             break;
         case OSD_CUSTOM_TEXT:

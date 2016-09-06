@@ -25,6 +25,8 @@ public:
     double getGravity();
     void initLevelChange(ExitType e = NEXT_NORMAL);
     unsigned long getFrame();
+    std::shared_ptr<BitmapString> makeString(const QString& initString = "", BitmapFontSize size = NORMAL, FontAlign initAlign = FONT_ALIGN_LEFT);
+    uint getStringWidth(const QString& text, BitmapFontSize size = NORMAL);
 
 #ifdef CARROT_DEBUG
     DebugConfig getDebugConfig();
@@ -34,7 +36,6 @@ public:
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
     SoundSystem* getSoundSystem();
-    std::shared_ptr<BitmapFont> getFont();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& classId);
     sf::Vector2u getCanvasSize();
 
