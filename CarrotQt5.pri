@@ -13,7 +13,6 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/LightSource.h \
     ./src/actor/MovingPlatform.h \
     ./src/actor/PowerUpMonitor.h \
-    ./src/actor/lighting/StaticLight.h \
     ./src/actor/Bridge.h \
     ./src/actor/Spring.h \
     ./src/actor/CommonActor.h \
@@ -41,7 +40,9 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/collectible/FoodCollectible.h \
     ./src/actor/collectible/GemCollectible.h \
     ./src/actor/collectible/Collectible.h \
+    ./src/actor/lighting/PulsatingLight.h \
     ./src/actor/lighting/RadialLightSource.h \
+    ./src/actor/lighting/StaticLight.h \
     ./src/graphics/ShaderSource.h \
     ./src/graphics/Tileset.h \
     ./src/graphics/GraphicsCache.h \
@@ -72,7 +73,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
     ./src/struct/WeaponTypes.h \
-    ./src/actor/lighting/PulsatingLight.h
+    ./src/graphics/BitmapString.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/ModeManager.cpp \
@@ -89,7 +90,6 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/LightSource.cpp \
     ./src/actor/MovingPlatform.cpp \
     ./src/actor/PowerUpMonitor.cpp \
-    ./src/actor/lighting/StaticLight.cpp \
     ./src/actor/Bridge.cpp \
     ./src/actor/CommonActor.cpp \
     ./src/actor/Player.cpp \
@@ -117,7 +117,9 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/collectible/FoodCollectible.cpp \
     ./src/actor/collectible/GemCollectible.cpp \
     ./src/actor/collectible/Collectible.cpp \
+    ./src/actor/lighting/PulsatingLight.cpp \
     ./src/actor/lighting/RadialLightSource.cpp \
+    ./src/actor/lighting/StaticLight.cpp \
     ./src/menu/MenuScreen.cpp \
     ./src/sound/SoundSystem.cpp \
     ./src/gamestate/ActorAPI.cpp \
@@ -130,7 +132,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp \
-    ./src/actor/lighting/PulsatingLight.cpp
+    ./src/graphics/BitmapString.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

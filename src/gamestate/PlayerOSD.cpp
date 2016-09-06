@@ -5,6 +5,7 @@
 #include "GameView.h"
 #include "../actor/Player.h"
 #include "../graphics/ShaderSource.h"
+#include "../graphics/BitmapString.h"
 
 PlayerOSD::PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player)
     : AnimationUser(api), owner(player), collectionMessageType(OSD_NONE), messageTimer(-1l), messageOffsetAmount(0),

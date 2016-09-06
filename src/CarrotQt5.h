@@ -25,6 +25,7 @@
 
 #include "ui_CarrotQt5.h"
 #include "graphics/BitmapFont.h"
+#include "graphics/BitmapString.h"
 #include "graphics/CarrotCanvas.h"
 #include "graphics/ShaderSource.h"
 #include "gamestate/ControlManager.h"

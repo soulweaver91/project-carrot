@@ -4,12 +4,12 @@
 #include <QVariant>
 #include <SFML/Graphics.hpp>
 #include "../gamestate/AnimationUser.h"
-#include "../graphics/BitmapFont.h"
 #include "../struct/WeaponTypes.h"
 #include "../struct/Resources.h"
 
 class CarrotQt5;
 class Player;
+class BitmapString;
 
 enum OSDMessageType {
     OSD_NONE,
