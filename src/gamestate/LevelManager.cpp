@@ -11,6 +11,9 @@
 #include "ActorAPI.h"
 #include "../sound/SoundSystem.h"
 #include "../actor/LightSource.h"
+#ifdef CARROT_DEBUG
+#include <cmath>
+#endif
 
 #include <QDir>
 #include <QMessageBox>
@@ -330,25 +333,38 @@ void LevelManager::tick(const ControlEventList& events) {
     auto debugConfig = root->getDebugConfig();
     if (debugConfig.dbgOverlaysActive) {
         float fps = root->getCurrentFPS();
-        //BitmapString::drawString(window,mainFont,"Frame: " + QString::number(frame),6,56);
-        BitmapString::drawString(canvas, root->getFont(), "Actors: " + QString::number(actors.size()), 6, 176);
-        BitmapString::drawString(canvas, root->getFont(), "FPS: " + QString::number(fps, 'f', 2) + " at " +
-            QString::number(1000 / root->getCurrentFPS()) + "ms/f", 6, 56);
-        BitmapString::drawString(canvas, root->getFont(), "Mod-" +
-            QString::number(debugConfig.currentTempModifier) + " " +
-            debugConfig.tempModifierName[debugConfig.currentTempModifier] + ": " +
-            QString::number(debugConfig.tempModifier[debugConfig.currentTempModifier]), 6, 540);
+        auto smallFont = root->getFont(SMALL);
+        BitmapString::drawString(canvas, smallFont,
+            QString::number(root->getCanvas()->getSize().x) + "x" +
+            QString::number(root->getCanvas()->getSize().y) + " " +
+            QString::number(fps, 'f', 2) + " FPS (" +
+            QString::number(1000 / root->getCurrentFPS()) + "ms/f)", 6, 30);
+        BitmapString::drawString(canvas, smallFont, "Frame: " + QString::number(root->getFrame()), 6, 45);
+        BitmapString::drawString(canvas, smallFont, "Actors: " + QString::number(actors.size()), 6, 60);
 
         auto player = getPlayer(0).lock();
         if (player != nullptr) {
-            BitmapString::drawString(canvas, root->getFont(), "P1: " +
-                QString::number(player->getPosition().x) + "," +
-                QString::number(player->getPosition().y), 6, 86);
-            BitmapString::drawString(canvas, root->getFont(), "  Hsp " +
-                QString::number(player->getSpeedX()), 6, 116);
-            BitmapString::drawString(canvas, root->getFont(), "  Vsp " +
-                QString::number(player->getSpeedY()), 6, 146);
+            BitmapString::drawString(canvas, smallFont, "P1: " +
+                QString::number(player->getPosition().x, 'f', 2) + ", ", 6, 75);
+            BitmapString::drawString(canvas, smallFont,
+                QString::number(player->getPosition().y, 'f', 2), 126, 75);
+            BitmapString::drawString(canvas, smallFont, "(" +
+                QString::number(std::floor(player->getPosition().x / 32)) + ", " +
+                QString::number(std::floor(player->getPosition().y / 32)) + ")", 226, 75);
+            BitmapString::drawString(canvas, smallFont, "Hsp " +
+                QString::number(player->getSpeedX(), 'f', 2), 26, 90);
+            BitmapString::drawString(canvas, smallFont, "Vsp " +
+                QString::number(player->getSpeedY(), 'f', 2), 126, 90);
         }
+
+        BitmapString::drawString(canvas, smallFont, "Level: " + levelName, 6, 120);
+        BitmapString::drawString(canvas, smallFont, "Episode: " + episodeName, 6, 135);
+        BitmapString::drawString(canvas, smallFont, "Next: " + nextLevel, 6, 150);
+
+        BitmapString::drawString(canvas, smallFont, "Mod-" +
+            QString::number(debugConfig.currentTempModifier) + " " +
+            debugConfig.tempModifierName[debugConfig.currentTempModifier] + ": " +
+            QString::number(debugConfig.tempModifier[debugConfig.currentTempModifier]), 6, views[0]->getViewHeight() - 60);
     }
 #endif
 }
