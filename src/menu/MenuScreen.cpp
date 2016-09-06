@@ -123,7 +123,9 @@ void MenuScreen::tick(const ControlEventList& events) {
     canvas->draw(projectCarrotLogoSprite);
     
 
-    BitmapString::drawString(canvas, root->getFont(), CP_VERSION + " v" + CP_VERSION_NUM, 10, viewHeight - 30);
+    BitmapString::drawString(canvas, root->getFont(SMALL), CP_VERSION + " v" + CP_VERSION_NUM +
+        " built on " + QString(__DATE__) + " " + QString(__TIME__), 10, viewHeight - 34);
+    BitmapString::drawString(canvas, root->getFont(SMALL), "(c) 2013-2016 Project Carrot Team", 10, viewHeight - 22);
     attractionText.drawString(canvas, viewWidth - 10, viewHeight - 30);
 
     switch (currentMenuType) {
