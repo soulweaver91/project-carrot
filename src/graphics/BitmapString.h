@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <QString>
+#include <QStringList>
 #include <QVector>
 #include <SFML/Graphics.hpp>
 
@@ -34,7 +35,7 @@ public:
 
 private:
     unsigned updateWidth();
-    QString stringText;
+    QStringList stringText;
     enum FontAlign align;
     std::shared_ptr<BitmapFont> textFont;
     bool isAnimated;
@@ -45,8 +46,9 @@ private:
     double animationSpeed;
     double angleOffset;
     char spacing;
-    unsigned width;
-    static unsigned getStaticWidth(QString text, std::shared_ptr<BitmapFont> font);
+    QVector<unsigned> width;
+    static unsigned getStaticLineWidth(const QString& text, std::shared_ptr<BitmapFont> font, char spacing);
+    static QStringList parseString(const QString& string);
 
     static const sf::Vector3i colouredFontColours[7];
 };
