@@ -3,7 +3,7 @@
 #include <QFile>
 
 BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
-    unsigned cols, unsigned first, unsigned last) {
+    unsigned cols, unsigned first, unsigned last, int defaultSpacing) : defaultSpacing(defaultSpacing) {
     if (!(fontTexture.loadFromFile(filename.toUtf8().data()))) {
         throw 0;
     }
@@ -58,4 +58,8 @@ unsigned BitmapFont::getCharacterWidth(QChar code) {
     } else {
         return characterMap.at(num)->getTextureRect().width;
     }
+}
+
+int BitmapFont::getDefaultSpacing() {
+    return defaultSpacing;
 }

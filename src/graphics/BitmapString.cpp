@@ -17,7 +17,7 @@ const sf::Vector3i BitmapString::colouredFontColours[7] = {
 
 BitmapString::BitmapString(std::shared_ptr<BitmapFont> font, const QString& initString, FontAlign initAlign) :
     stringText(initString), align(initAlign), textFont(font), isAnimated(false), isColoured(false),
-    varianceX(0.0), varianceY(0.0), phase(0.0), animationSpeed(0.0), angleOffset(0.0), spacing(-1) {
+    varianceX(0.0), varianceY(0.0), phase(0.0), animationSpeed(0.0), angleOffset(0.0), spacing(font->getDefaultSpacing()) {
     updateWidth();
 }
 
@@ -105,7 +105,7 @@ void BitmapString::drawString(sf::RenderTarget* canvas, std::shared_ptr<BitmapFo
             sprite->setPosition(currentX + differenceX, y + differenceY);
             sprite->setColor(sf::Color::White);
             canvas->draw(*(sprite));
-            currentX += sprite->getTextureRect().width - 1;
+            currentX += sprite->getTextureRect().width + font->getDefaultSpacing();
         }
     }
 }
@@ -116,7 +116,7 @@ unsigned BitmapString::getStaticWidth(QString text, std::shared_ptr<BitmapFont> 
         sum += font->getCharacterWidth(ch);
     }
 
-    return sum - (text.length() - 1);
+    return sum - (text.length() - 1) * font->getDefaultSpacing();
 }
 
 void BitmapString::setColoured(bool state) {
