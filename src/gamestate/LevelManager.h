@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-
+#include <functional>
 #include <QVector>
 #include <QString>
 #include <QObject>
@@ -79,6 +79,7 @@ private:
     void setLevelName(const QString& name);
     void cleanUpLevel();
     void processControlEvents(const ControlEventList& events);
+    std::function<void(QString)> drawLoadingScreen(const QString& levelName);
 
     QVector<std::shared_ptr<CommonActor>> actors;
     QVector<std::shared_ptr<DestructibleDebris>> debris;

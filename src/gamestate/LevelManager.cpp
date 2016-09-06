@@ -50,15 +50,8 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     api = std::make_shared<ActorAPI>(root, this);
 
     setLevelName(level_config.value("Level/FormalName", "Unnamed level").toString());
-
-    // Show loading screen
-    sf::Texture loadingScreenTexture;
-    loadingScreenTexture.loadFromFile("Data/Assets/screen_loading.png");
-    sf::Sprite loadingScreenSprite(loadingScreenTexture);
-    loadingScreenSprite.setPosition(80, 60);
-    root->getCanvas()->draw(loadingScreenSprite);
-    BitmapString::drawString(root->getCanvas(), root->getFont(), levelName, 400, 360, FONT_ALIGN_CENTER);
-    root->getCanvas()->updateContents();
+    auto updateLoadingScreenTextFunc = drawLoadingScreen(levelName);
+    updateLoadingScreenTextFunc("Loading settings...");
 
     QString tileset = level_config.value("Level/Tileset", "").toString();
 
@@ -71,37 +64,46 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     }
 
     // Read the tileset and the sprite layer
+    updateLoadingScreenTextFunc("Loading tileset...");
     gameTiles = std::make_shared<TileMap>(this,
         tileset_dir.absoluteFilePath("tiles.png"),
         tileset_dir.absoluteFilePath("mask.png"),
         levelDir.absoluteFilePath("spr.layer"));
 
+    QStringList bgLayers = levelFiles.filter(".bg.layer");
+    QStringList fgLayers = levelFiles.filter(".fg.layer");
+    QString layerCount = QString::number(bgLayers.length() + fgLayers.length() + 2);
+
     // Read the sky layer if it exists
+    updateLoadingScreenTextFunc("Loading layers... 2 / " + layerCount);
     if (levelFiles.contains("sky.layer")) {
         gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), level_config, 0);
     }
 
     // Read the background layers
-    QStringList bgLayers = levelFiles.filter(".bg.layer");
     for (int i = 0; i < bgLayers.size(); ++i) {
+        updateLoadingScreenTextFunc("Loading layers... " + QString::number(i + 3) + " / " + layerCount);
         gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), level_config, i);
     }
 
     // Read the foreground layers
-    QStringList fgLayers = levelFiles.filter(".fg.layer");
     for (int i = 0; i < fgLayers.size(); ++i) {
+        updateLoadingScreenTextFunc("Loading layers... " + QString::number(bgLayers.length() + i + 3) + " / " + layerCount);
         gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), level_config, i);
     }
 
+    updateLoadingScreenTextFunc("Loading animated tiles...");
     if (levelDir.entryList().contains("animtiles.dat")) {
         gameTiles->readAnimatedTiles(levelDir.absoluteFilePath("animtiles.dat"));
     }
 
+    updateLoadingScreenTextFunc("Loading events...");
     gameEvents = std::make_shared<EventMap>(this, gameTiles->getLevelWidth(), gameTiles->getLevelHeight());
     if (levelFiles.contains("event.layer")) {
         gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat", 1).toUInt());
     }
 
+    updateLoadingScreenTextFunc("Initializing...");
     gameTiles->saveInitialSpriteLayer();
 
     if (players[0] == nullptr) {
@@ -141,6 +143,63 @@ void LevelManager::cleanUpLevel() {
     std::fill_n(players, 32, nullptr);
 
     views.clear();
+}
+
+std::function<void(QString)> LevelManager::drawLoadingScreen(const QString& levelName) {
+    auto canvas = root->getCanvas();
+    auto size = sf::Vector2f(canvas->getSize());
+
+    sf::Texture stripTexture;
+    stripTexture.loadFromFile("Data/Textures/horizontal_stripe.png");
+    sf::Sprite stripSprite(stripTexture);
+    stripSprite.setOrigin(400.0, 0.0);
+    stripSprite.setPosition(size.x / 2, 0);
+    stripSprite.setScale(size.x / 800.0, 4.1);
+    stripSprite.setColor(sf::Color(243, 117, 15, 80));
+    canvas->draw(stripSprite);
+
+    stripSprite.setScale(size.x / -800.0, 12.0 * size.y / 600.0);
+    stripSprite.setColor(sf::Color(67, 149, 0, 80));
+    stripSprite.setPosition(size.x / 2, 200.0);
+    canvas->draw(stripSprite);
+
+    sf::Texture logoTexture;
+    logoTexture.loadFromFile("Data/PCLogo.png");
+    sf::Sprite logoSprite(logoTexture);
+    logoSprite.setPosition(20, 10);
+    logoSprite.setScale(0.2, 0.2);
+    canvas->draw(logoSprite);
+    BitmapString::drawString(canvas, root->getFont(LARGE),
+        levelName,
+        canvas->getSize().x / 2,
+        canvas->getSize().y / 2 + 50,
+        FONT_ALIGN_CENTER);
+    BitmapString::drawString(canvas, root->getFont(),
+        "Now loading...",
+        canvas->getSize().x / 2 - BitmapString(root->getFont(LARGE), levelName).getWidth() / 2,
+        canvas->getSize().y / 2 + 10,
+        FONT_ALIGN_LEFT);
+    canvas->updateContents();
+    canvas->display();
+
+    // Capture the background before any text has been put onto it
+    sf::Texture cleanScreenshot;
+    cleanScreenshot.create(canvas->getSize().x, canvas->getSize().y);
+    cleanScreenshot.update(*canvas);
+
+    // The return value is a function that can be called multiple times 
+    // to set a different text to display progress of loading the level
+    return [=](const QString& updateText) mutable {
+        canvas->clear();
+        canvas->draw(sf::Sprite(cleanScreenshot));
+        BitmapString::drawString(canvas, root->getFont(),
+            updateText,
+            canvas->getSize().x / 2,
+            canvas->getSize().y - 30,
+            FONT_ALIGN_CENTER);
+
+        canvas->updateContents();
+    };
 }
 
 void LevelManager::processControlEvents(const ControlEventList& events) {
