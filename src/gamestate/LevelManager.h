@@ -64,6 +64,7 @@ public:
     void initLevelChange(ExitType e = NEXT_NORMAL);
     std::shared_ptr<ActorAPI> getActorAPI();
     void processCarryOver(const LevelCarryOver carryOver);
+    QString getLevelText(int idx);
 
 #ifdef CARROT_DEBUG
 public slots:
@@ -94,4 +95,5 @@ private:
     bool exiting;
     uint defaultLightingLevel;
     double gravity;
+    QMap<int, QString> levelTexts;
 };

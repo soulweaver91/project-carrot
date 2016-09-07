@@ -27,6 +27,7 @@ public:
     unsigned long getFrame();
     std::shared_ptr<BitmapString> makeString(const QString& initString = "", BitmapFontSize size = NORMAL, FontAlign initAlign = FONT_ALIGN_LEFT);
     uint getStringWidth(const QString& text, BitmapFontSize size = NORMAL);
+    QString getLevelText(int idx);
 
 #ifdef CARROT_DEBUG
     DebugConfig getDebugConfig();

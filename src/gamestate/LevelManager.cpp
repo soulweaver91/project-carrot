@@ -20,6 +20,7 @@
 #include <QInputDialog>
 #include <QStringList>
 #include <QSettings>
+#include <QRegularExpression>
 #include <exception>
 
 LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode) :
@@ -44,22 +45,22 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
         throw std::runtime_error(std::string("Sprite layer file (spr.layer) or configuration file (config.dat) missing!"));
     }
 
-    QSettings level_config(levelDir.absoluteFilePath("config.ini"), QSettings::IniFormat);
+    QSettings levelConfig(levelDir.absoluteFilePath("config.ini"), QSettings::IniFormat);
 
-    if (level_config.value("Version/LayerFormat", 1).toUInt() > LAYERFORMATVERSION) {
+    if (levelConfig.value("Version/LayerFormat", 1).toUInt() > LAYERFORMATVERSION) {
         throw std::runtime_error(std::string("The level is using a too recent layer format. You might need to update to a newer game version."));
     }
 
     api = std::make_shared<ActorAPI>(root, this);
 
-    setLevelName(level_config.value("Level/FormalName", "Unnamed level").toString());
+    setLevelName(levelConfig.value("Level/FormalName", "Unnamed level").toString());
     auto updateLoadingScreenTextFunc = drawLoadingScreen(levelName);
     updateLoadingScreenTextFunc("Loading settings...");
 
-    QString tileset = level_config.value("Level/Tileset", "").toString();
+    QString tileset = levelConfig.value("Level/Tileset", "").toString();
 
-    nextLevel = level_config.value("Level/Next", "").toString();
-    defaultLightingLevel = level_config.value("Level/LightInit", 100).toInt();
+    nextLevel = levelConfig.value("Level/Next", "").toString();
+    defaultLightingLevel = levelConfig.value("Level/LightInit", 100).toInt();
 
     QDir tileset_dir(QDir::currentPath() + QString::fromStdString("/Tilesets/") + tileset);
     if (!tileset_dir.exists()) {
@@ -80,19 +81,19 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     // Read the sky layer if it exists
     updateLoadingScreenTextFunc("Loading layers... 2 / " + layerCount);
     if (levelFiles.contains("sky.layer")) {
-        gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), level_config, 0);
+        gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), levelConfig, 0);
     }
 
     // Read the background layers
     for (int i = 0; i < bgLayers.size(); ++i) {
         updateLoadingScreenTextFunc("Loading layers... " + QString::number(i + 3) + " / " + layerCount);
-        gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), level_config, i);
+        gameTiles->readLayerConfiguration(LAYER_BACKGROUND_LAYER, levelDir.absoluteFilePath(bgLayers.at(i)), levelConfig, i);
     }
 
     // Read the foreground layers
     for (int i = 0; i < fgLayers.size(); ++i) {
         updateLoadingScreenTextFunc("Loading layers... " + QString::number(bgLayers.length() + i + 3) + " / " + layerCount);
-        gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), level_config, i);
+        gameTiles->readLayerConfiguration(LAYER_FOREGROUND_LAYER, levelDir.absoluteFilePath(fgLayers.at(i)), levelConfig, i);
     }
 
     updateLoadingScreenTextFunc("Loading animated tiles...");
@@ -103,7 +104,23 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     updateLoadingScreenTextFunc("Loading events...");
     gameEvents = std::make_shared<EventMap>(this, gameTiles->getLevelWidth(), gameTiles->getLevelHeight());
     if (levelFiles.contains("event.layer")) {
-        gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), level_config.value("Version/LayerFormat", 1).toUInt());
+        gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), levelConfig.value("Version/LayerFormat", 1).toUInt());
+    }
+    
+    if (levelConfig.childGroups().contains("TextEvent")) {
+        levelConfig.beginGroup("TextEvent");
+        const QStringList strs = levelConfig.childKeys();
+        const QRegularExpression captureRegex("^Str(\\d+)$");
+
+        for (const auto& str : strs) {
+            bool ok = false;
+            int idx = captureRegex.match(str).captured(1).toInt(&ok);
+
+            if (ok) {
+                levelTexts.insert(idx, levelConfig.value(str, "").toString());
+            }
+        }
+        levelConfig.endGroup();
     }
 
     updateLoadingScreenTextFunc("Initializing...");
@@ -133,7 +150,7 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
         view->setLighting(defaultLightingLevel, true);
     }
 
-    root->getSoundSystem()->setMusic(("Music/" + level_config.value("Level/MusicDefault", "").toString().toUtf8()).data());
+    root->getSoundSystem()->setMusic(("Music/" + levelConfig.value("Level/MusicDefault", "").toString().toUtf8()).data());
     setSavePoint();
 }
 
@@ -609,6 +626,13 @@ void LevelManager::processCarryOver(const LevelCarryOver carryOver) {
     if (carryOver.exitType != NEXT_NONE) {
         players[0]->receiveLevelCarryOver(carryOver);
     }
+}
+
+QString LevelManager::getLevelText(int idx) {
+    if (levelTexts.contains(idx)) {
+        return levelTexts.find(idx).value();
+    }
+    return "";
 }
 
 #ifdef CARROT_DEBUG

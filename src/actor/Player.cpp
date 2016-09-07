@@ -504,6 +504,12 @@ void Player::tickEvent() {
                 }
                 controllable = false;
                 break;
+            case PC_AREA_TEXT:
+                osd->setLevelText(p[0]);
+                if (p[1] != 0) {
+                    api->getGameEvents().lock()->storeTileEvent(static_cast<int>(posX) / 32, static_cast<int>(posY) / 32, PC_EMPTY);
+                }
+                break;
             default:
                 break;
         }

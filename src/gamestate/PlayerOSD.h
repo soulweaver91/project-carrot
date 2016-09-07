@@ -36,6 +36,7 @@ public:
     void setScore(unsigned long newScore);
     void setLives(unsigned lives);
     void setSugarRushActive();
+    void setLevelText(int idx);
 
 private:
     std::weak_ptr<Player> owner;
@@ -67,4 +68,8 @@ private:
 
     uint sugarRushLeft;
     std::shared_ptr<BitmapString> sugarRushText;
+
+    std::shared_ptr<BitmapString> levelTextString;
+    uint levelTextFrame;
+    int levelTextIdx;
 };

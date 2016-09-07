@@ -71,6 +71,10 @@ uint ActorAPI::getStringWidth(const QString& text, BitmapFontSize size) {
     return BitmapString(mainClass->getFont(size), text).getWidth();
 }
 
+QString ActorAPI::getLevelText(int idx) {
+    return levelManager->getLevelText(idx);
+}
+
 #ifdef CARROT_DEBUG
 DebugConfig ActorAPI::getDebugConfig() {
     return mainClass->getDebugConfig();
