@@ -329,6 +329,9 @@
     <ClCompile Include="src\graphics\BitmapString.cpp">
       <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\EventSpawner.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -563,6 +566,9 @@
     </ClInclude>
     <ClInclude Include="src\graphics\BitmapString.h">
       <Filter>Header Files\Graphics system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestate\EventSpawner.h">
+      <Filter>Header Files\Game manager headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

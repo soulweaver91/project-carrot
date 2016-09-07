@@ -37,6 +37,7 @@
 class MenuScreen;
 class ModeManager;
 class LevelManager;
+class EventSpawner;
 
 class CarrotQt5 : public QMainWindow, public std::enable_shared_from_this<CarrotQt5> {
 
@@ -53,6 +54,7 @@ public:
     std::shared_ptr<BitmapFont> getFont(BitmapFontSize size = NORMAL);
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& actorType);
     float getCurrentFPS();
+    EventSpawner* getEventSpawner();
 
 #ifdef CARROT_DEBUG
     DebugConfig debugConfig;
@@ -96,6 +98,10 @@ private:
     std::function<void()> afterTickCallback;
     QTime lastTimestamp;
     float fps;
+
+    // The event spawner is related to the gameplay, but it is located in this class
+    // mainly to prevent the need to reload it on every new level.
+    std::unique_ptr<EventSpawner> eventSpawner;
 
 private slots:
     void tick();

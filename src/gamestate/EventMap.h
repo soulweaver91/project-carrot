@@ -13,6 +13,7 @@
 #include "../struct/CoordinatePair.h"
 
 class CarrotQt5;
+class EventSpawner;
 
 struct EventTile {
     PCEvent storedEvent;
@@ -22,7 +23,7 @@ struct EventTile {
 
 class EventMap {
 public:
-    EventMap(LevelManager* root, unsigned int width, unsigned int height);
+    EventMap(LevelManager* root, const EventSpawner* const spawner, unsigned int width, unsigned int height);
     ~EventMap();
     void storeTileEvent(int x, int y, PCEvent e = PC_EMPTY, int flags = 0, const QVector<quint16>& params = QVector<quint16>());
     void activateEvents(const CoordinatePair& center, int tileDistance = 32);
@@ -45,7 +46,5 @@ private:
     LevelManager* root;
     QVector<QVector<std::shared_ptr<EventTile>>> eventLayout;
     QMultiMap<unsigned, CoordinatePair> warpTargets;
-
-    template<typename T, typename... P>
-    void createCommonActorEvent(const double& x, const double& y, P... params);
+    const EventSpawner* const spawner;
 };

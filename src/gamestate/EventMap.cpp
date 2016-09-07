@@ -2,35 +2,11 @@
 #include <cmath>
 #include <QList>
 #include "../gamestate/LevelManager.h"
-#include "../actor/SolidObject.h"
-#include "../actor/collectible/Collectible.h"
-#include "../actor/collectible/AmmoCollectible.h"
-#include "../actor/collectible/CoinCollectible.h"
-#include "../actor/collectible/FastFireCollectible.h"
-#include "../actor/collectible/FoodCollectible.h"
-#include "../actor/collectible/CarrotCollectible.h"
-#include "../actor/enemy/Enemy.h"
-#include "../actor/enemy/NormalTurtle.h"
-#include "../actor/enemy/LabRat.h"
-#include "../actor/enemy/Lizard.h"
-#include "../actor/enemy/TurtleShell.h"
-#include "../actor/enemy/Sucker.h"
-#include "../actor/enemy/SuckerFloat.h"
-#include "../actor/lighting/StaticLight.h"
-#include "../actor/lighting/PulsatingLight.h"
 #include "../actor/Player.h"
-#include "../actor/PushBox.h"
-#include "../actor/TriggerCrate.h"
-#include "../actor/Bridge.h"
-#include "../actor/SavePoint.h"
-#include "../actor/Spring.h"
-#include "../actor/MovingPlatform.h"
-#include "../actor/BonusWarp.h"
-#include "../actor/PowerUpMonitor.h"
-#include "../struct/WeaponTypes.h"
+#include "EventSpawner.h"
 
-EventMap::EventMap(LevelManager* root, unsigned int width, unsigned int height)
-    : root(root) {
+EventMap::EventMap(LevelManager* root, const EventSpawner* const spawner, unsigned int width, unsigned int height)
+    : root(root), spawner(spawner) {
     for (unsigned int y = 0; y <= height; ++y) {
         QVector<std::shared_ptr<EventTile>> n;
         for (unsigned int x = 0; x <= width; ++x) {
@@ -99,141 +75,11 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
             }
 
             if (!tile->isEventActive && tile->storedEvent != PC_EMPTY) {
-                switch (tile->storedEvent) {
-                    case PC_AMMO_TOASTER:
-                    case PC_AMMO_BOUNCER:
-                    case PC_AMMO_FREEZER:
-                    case PC_AMMO_SEEKER:
-                    case PC_AMMO_RF:
-                    case PC_AMMO_TNT:
-                    case PC_AMMO_PEPPER:
-                    case PC_AMMO_ELECTRO:
-                        createCommonActorEvent<AmmoCollectible>(x, y, static_cast<WeaponType>(tile->storedEvent - (uint)PC_AMMO_BOUNCER + 1));
-                        break;
-                    case PC_GEM_RED:
-                    case PC_GEM_GREEN:
-                    case PC_GEM_BLUE:
-                    case PC_GEM_PURPLE:
-                        createCommonActorEvent<GemCollectible>(x, y, static_cast<GemType>(tile->storedEvent - (uint)PC_GEM_RED));
-                        break;
-                    case PC_COIN_SILVER:
-                    case PC_COIN_GOLD:
-                        createCommonActorEvent<CoinCollectible>(x, y, static_cast<CoinType>(tile->storedEvent - (uint)PC_COIN_SILVER));
-                        break;
-                    case PC_FAST_FIRE:
-                        createCommonActorEvent<FastFireCollectible>(x, y);
-                        break;
-                    case PC_ENEMY_TURTLE_NORMAL:
-                        createCommonActorEvent<EnemyNormalTurtle>(x, y);
-                        break;
-                    case PC_ENEMY_LIZARD:
-                        createCommonActorEvent<EnemyLizard>(x, y);
-                        break;
-                    case PC_ENEMY_SUCKER_FLOAT:
-                        createCommonActorEvent<EnemySuckerFloat>(x, y);
-                        break;
-                    case PC_ENEMY_SUCKER:
-                        createCommonActorEvent<EnemySucker>(x, y);
-                        break;
-                    case PC_ENEMY_LAB_RAT:
-                        createCommonActorEvent<EnemyLabRat>(x, y);
-                        break;
-                    case PC_SAVE_POINT:
-                        createCommonActorEvent<SavePoint>(x, y);
-                        break;
-                    case PC_PUSHABLE_ROCK:
-                        createCommonActorEvent<PushBox>(x, y, tile->eventParams[0]);
-                        break;
-                    case PC_TRIGGER_CRATE:
-                        createCommonActorEvent<TriggerCrate>(x, y, tile->eventParams[0]);
-                        break;
-                    case PC_BRIDGE:
-                        createCommonActorEvent<DynamicBridge>(x, y, tile->eventParams[0],
-                            static_cast<DynamicBridgeType>(tile->eventParams[1]), tile->eventParams[2]);
-                        break;
-                    case PC_SPRING_RED:
-                    case PC_SPRING_GREEN:
-                    case PC_SPRING_BLUE:
-                        createCommonActorEvent<Spring>(x, y,
-                            (SpringType)(1 + (tile->storedEvent - PC_SPRING_RED)),
-                            (unsigned char)tile->eventParams[0]);
-                        break;
-                    case PC_MOVING_PLATFORM:
-                        createCommonActorEvent<MovingPlatform>(x, y,
-                            static_cast<PlatformType>(tile->eventParams[0]),
-                            tile->eventParams[3], (qint16)tile->eventParams[2], tile->eventParams[1],
-                            tile->eventParams[4] != 0);
-                        break;
-                    case PC_FOOD_APPLE:
-                    case PC_FOOD_BANANA:
-                    case PC_FOOD_CHERRY:
-                    case PC_FOOD_ORANGE:
-                    case PC_FOOD_PEAR:
-                    case PC_FOOD_PRETZEL:
-                    case PC_FOOD_STRAWBERRY:
-                    case PC_FOOD_LEMON:
-                    case PC_FOOD_LIME:
-                    case PC_FOOD_THING:
-                    case PC_FOOD_WATERMELON:
-                    case PC_FOOD_PEACH:
-                    case PC_FOOD_GRAPES:
-                    case PC_FOOD_LETTUCE:
-                    case PC_FOOD_EGGPLANT:
-                    case PC_FOOD_CUCUMBER:
-                    case PC_FOOD_PEPSI:
-                    case PC_FOOD_COKE:
-                    case PC_FOOD_MILK:
-                    case PC_FOOD_PIE:
-                    case PC_FOOD_CAKE:
-                    case PC_FOOD_DONUT:
-                    case PC_FOOD_CUPCAKE:
-                    case PC_FOOD_CHIPS:
-                    case PC_FOOD_CANDY:
-                    case PC_FOOD_CHOCOLATE:
-                    case PC_FOOD_ICE_CREAM:
-                    case PC_FOOD_BURGER:
-                    case PC_FOOD_PIZZA:
-                    case PC_FOOD_FRIES:
-                    case PC_FOOD_CHICKEN_LEG:
-                    case PC_FOOD_SANDWICH:
-                    case PC_FOOD_TACO:
-                    case PC_FOOD_HOT_DOG:
-                    case PC_FOOD_HAM:
-                    case PC_FOOD_CHEESE:
-                        createCommonActorEvent<FoodCollectible>(x, y, tile->storedEvent);
-                        break;
-                    case PC_TURTLE_SHELL:
-                        createCommonActorEvent<TurtleShell>(x, y, 0.0, 0.0);
-                        break;
-                    case PC_CARROT:
-                        createCommonActorEvent<CarrotCollectible>(x, y, false);
-                        break;
-                    case PC_CARROT_FULL:
-                        createCommonActorEvent<CarrotCollectible>(x, y, true);
-                        break;
-                    case PC_WARP_COIN_BONUS:
-                        createCommonActorEvent<BonusWarp>(x, y, tile->eventParams);
-                        break;
-                    case PC_POWERUP_BLASTER:
-                    case PC_POWERUP_BOUNCER:
-                    case PC_POWERUP_FREEZER:
-                    case PC_POWERUP_SEEKER:
-                    case PC_POWERUP_RF:
-                    case PC_POWERUP_TNT:
-                    case PC_POWERUP_TOASTER:
-                    case PC_POWERUP_PEPPER:
-                    case PC_POWERUP_ELECTRO:
-                        createCommonActorEvent<PowerUpMonitor>(x, y, static_cast<WeaponType>(tile->storedEvent - (uint)PC_POWERUP_BLASTER));
-                        break;
-                    case PC_LIGHT_STEADY:
-                        createCommonActorEvent<StaticLight>(x, y, tile->eventParams[0]);
-                        break;
-                    case PC_LIGHT_PULSE:
-                        createCommonActorEvent<PulsatingLight>(x, y, tile->eventParams[0], tile->eventParams[1], tile->eventParams[2]);
-                        break;
-                    default:
-                        break;
+                auto ev = spawner->spawnEvent(tile->storedEvent, x, y, tile->eventParams);
+                if (ev != nullptr) {
+                    root->addActor(ev);
                 }
+
                 tile->isEventActive = true;
             }
         }
@@ -398,10 +244,4 @@ CoordinatePair EventMap::getWarpTarget(unsigned id) {
     } else {
         return { -1.0, -1.0 };
     }
-}
-
-template<typename T, typename... P>
-void EventMap::createCommonActorEvent(const double& x, const double& y, P... params) {
-    auto e = std::make_shared<T>(root->getActorAPI(), 32.0 * x + 16.0, 32.0 * y + 16.0, *&params...);
-    root->addActor(e);
 }
