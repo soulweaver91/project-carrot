@@ -9,7 +9,7 @@
 
 #include "../ModeManager.h"
 #include "../CarrotQt5.h"
-#include "../graphics/BitmapFont.h"
+#include "../graphics/BitmapString.h"
 
 class MenuScreen;
 class CarrotQt5;

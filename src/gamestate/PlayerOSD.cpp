@@ -5,11 +5,16 @@
 #include "GameView.h"
 #include "../actor/Player.h"
 #include "../graphics/ShaderSource.h"
+#include "../graphics/BitmapString.h"
+
+#define LEVEL_TEXT_STILL_FRAMES 350
+#define LEVEL_TEXT_TRANSITION_FRAMES 100
+#define LEVEL_TEXT_TOTAL_FRAMES LEVEL_TEXT_STILL_FRAMES + LEVEL_TEXT_TRANSITION_FRAMES * 2
 
 PlayerOSD::PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player)
     : AnimationUser(api), owner(player), collectionMessageType(OSD_NONE), messageTimer(-1l), messageOffsetAmount(0),
     collectibleIconOffset(32.0f), currentWeapon(WEAPON_BLASTER), score(0), health(0),
-    gemCounter(0), sugarRushLeft(0) {
+    gemCounter(0), sugarRushLeft(0), levelTextFrame(LEVEL_TEXT_TOTAL_FRAMES), levelTextIdx(0) {
 
     heartTexture = sf::Texture();
     heartTexture.loadFromFile("Data/Assets/ui/heart.png");
@@ -50,13 +55,16 @@ PlayerOSD::PlayerOSD(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> player
     auto charIconGfx = animationBank.value("UI_CHARACTER_ICON_JAZZ");
     charIcon->setAnimation(charIconGfx);
 
-    collectionMessage = std::make_unique<BitmapString>(api->getFont(), "", FONT_ALIGN_CENTER);
-    livesString       = std::make_unique<BitmapString>(api->getFont(), "x3", FONT_ALIGN_LEFT);
-    scoreString       = std::make_unique<BitmapString>(api->getFont(), "00000000", FONT_ALIGN_LEFT);
-    ammoString        = std::make_unique<BitmapString>(api->getFont(), "x^", FONT_ALIGN_LEFT);
-    sugarRushText     = std::make_unique<BitmapString>(api->getFont(), "", FONT_ALIGN_CENTER);
+    collectionMessage = api->makeString("", NORMAL, FONT_ALIGN_CENTER);
+    livesString       = api->makeString("x3", NORMAL, FONT_ALIGN_LEFT);
+    scoreString       = api->makeString("00000000", NORMAL, FONT_ALIGN_LEFT);
+    ammoString        = api->makeString("x^", NORMAL, FONT_ALIGN_LEFT);
+    sugarRushText     = api->makeString("", NORMAL, FONT_ALIGN_CENTER);
     sugarRushText->setColoured(true);
     sugarRushText->setAnimation(true, -3.0, 3.0, 0.05, 0.95);
+
+    levelTextString = api->makeString("", SMALL, FONT_ALIGN_CENTER);
+    levelTextString->setAnimation(true, 0.8, 0.8, 0.03, 0.72);
 }
 
 PlayerOSD::~PlayerOSD() {
@@ -124,6 +132,19 @@ void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
         }
     }
 
+    if (levelTextFrame < LEVEL_TEXT_TOTAL_FRAMES) {
+        int offset = 0;
+        if (levelTextFrame < LEVEL_TEXT_TRANSITION_FRAMES) {
+            offset = std::pow((LEVEL_TEXT_TRANSITION_FRAMES - levelTextFrame) / 12.0, 3);
+        }
+        if (levelTextFrame > LEVEL_TEXT_TRANSITION_FRAMES + LEVEL_TEXT_STILL_FRAMES) {
+            offset = -std::pow((levelTextFrame - LEVEL_TEXT_TRANSITION_FRAMES - LEVEL_TEXT_STILL_FRAMES) / 12.0, 3);
+        }
+        levelTextString->drawString(canvasPtr, vw / 2 + offset, 10);
+
+        levelTextFrame++;
+    }
+
     if (sugarRushLeft > 0) {
         if (sugarRushLeft % 70 == 0) {
             sugarRushText->setText("Sugar  RUSH  " + QString::number(sugarRushLeft / 70 - 1));
@@ -184,7 +205,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
         case OSD_BONUS_WARP_NOT_ENOUGH_COINS:
             collectionMessage->setText("need    x" + QString::number(param.toInt()) + " more");
             collectibleGraphics = animationBank.value("PICKUP_COIN_SILVER", nullptr);
-            collectibleIconOffset = 32.0f + BitmapString(api->getFont(), "need  ").getWidth();
+            collectibleIconOffset = 32.0f + api->getStringWidth("need  ");
             api->getSoundSystem()->playSFX(notEnoughCoinsSound, false);
             break;
         case OSD_CUSTOM_TEXT:
@@ -236,5 +257,15 @@ void PlayerOSD::setLives(unsigned lives) {
 
 void PlayerOSD::setSugarRushActive() {
     sugarRushLeft = 21 * 70;
+}
+
+void PlayerOSD::setLevelText(int idx) {
+    if (idx == levelTextIdx && levelTextFrame < LEVEL_TEXT_TOTAL_FRAMES) {
+        return;
+    }
+
+    levelTextIdx = idx;
+    levelTextFrame = 0;
+    levelTextString->setText(api->getLevelText(idx));
 }
 

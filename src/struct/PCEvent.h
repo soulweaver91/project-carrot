@@ -104,4 +104,5 @@ enum PCEvent {
     PC_ENEMY_LAB_RAT        = 0x018B,
     PC_LIGHT_STEADY         = 0x0121,
     PC_LIGHT_PULSE          = 0x0122,
+    PC_AREA_TEXT            = 0x014A,
 };

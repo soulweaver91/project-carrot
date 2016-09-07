@@ -92,7 +92,9 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false),
     }
 
     // Read the main font
-    mainFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256);
+    smallFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_small.png",  17, 18, 15, 32, 256, -2);
+    mainFont  = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256, -1);
+    largeFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_large.png",  57, 63, 15, 32, 256, -1);
     
     installEventFilter(this);
 
@@ -422,8 +424,20 @@ CarrotCanvas* CarrotQt5::getCanvas() {
     return windowCanvas.get();
 }
 
-std::shared_ptr<BitmapFont> CarrotQt5::getFont() {
-    return mainFont;
+std::shared_ptr<BitmapFont> CarrotQt5::getFont(BitmapFontSize size) {
+    switch (size) {
+        case LARGE:
+            return largeFont;
+            break;
+        case NORMAL:
+            return mainFont;
+            break;
+        case SMALL:
+            return smallFont;
+            break;
+    }
+    
+    return nullptr;
 }
 
 SoundSystem* CarrotQt5::getSoundSystem() {

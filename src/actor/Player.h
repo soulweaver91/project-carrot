@@ -6,7 +6,6 @@
 #include "InteractiveActor.h"
 #include "lighting/RadialLightSource.h"
 #include "../gamestate/PlayerOSD.h"
-#include "../graphics/BitmapFont.h"
 #include "../struct/Controls.h"
 #include "../struct/WeaponTypes.h"
 #include "../struct/Constants.h"

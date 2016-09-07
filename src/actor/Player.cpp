@@ -504,6 +504,12 @@ void Player::tickEvent() {
                 }
                 controllable = false;
                 break;
+            case PC_AREA_TEXT:
+                osd->setLevelText(p[0]);
+                if (p[1] != 0) {
+                    api->getGameEvents().lock()->storeTileEvent(static_cast<int>(posX) / 32, static_cast<int>(posY) / 32, PC_EMPTY);
+                }
+                break;
             default:
                 break;
         }
@@ -661,19 +667,6 @@ unsigned Player::getHealth() {
 
 void Player::drawUIOverlay() {
     osd->drawOSD(assignedView);
-
-    auto canvas = assignedView->getCanvas().lock();
-    if (canvas == nullptr) {
-        return;
-    }
-
-#ifdef CARROT_DEBUG
-    if (api->getDebugConfig().dbgOverlaysActive) {
-        BitmapString::drawString(canvas.get(), api->getFont(), "P1: " + QString::number(posX) + "," + QString::number(posY), 6, 86);
-        BitmapString::drawString(canvas.get(), api->getFont(), "  Hsp " + QString::number(speedX), 6, 116);
-        BitmapString::drawString(canvas.get(), api->getFont(), "  Vsp " + QString::number(speedY), 6, 146);
-    }
-#endif
 }
 
 bool Player::selectWeapon(enum WeaponType new_type) {
