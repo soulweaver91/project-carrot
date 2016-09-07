@@ -978,8 +978,8 @@ void Player::initialPoleStage(bool horizontal) {
         positive = (speedY > 0);
     }
 
-    posX = std::floor(qRound(posX) / 32) * 32 + 16;
-    posY = std::floor(qRound(posY) / 32) * 32 + 16;
+    posX = static_cast<int>(posX / 32) * 32 + 16;
+    posY = static_cast<int>(posY / 32) * 32 + 16;
     speedX = 0;
     speedY = 0;
     externalForceX = 0;
