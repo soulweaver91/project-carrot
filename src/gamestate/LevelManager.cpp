@@ -9,6 +9,7 @@
 #include "TileMap.h"
 #include "EventMap.h"
 #include "ActorAPI.h"
+#include "EventSpawner.h"
 #include "../sound/SoundSystem.h"
 #include "../actor/LightSource.h"
 #ifdef CARROT_DEBUG
@@ -102,9 +103,17 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     }
 
     updateLoadingScreenTextFunc("Loading events...");
-    gameEvents = std::make_shared<EventMap>(this, gameTiles->getLevelWidth(), gameTiles->getLevelHeight());
+    root->getEventSpawner()->setApi(api);
+    gameEvents = std::make_shared<EventMap>(this, root->getEventSpawner(), gameTiles->getLevelWidth(), gameTiles->getLevelHeight());
     if (levelFiles.contains("event.layer")) {
         gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), levelConfig.value("Version/LayerFormat", 1).toUInt());
+    }
+
+    updateLoadingScreenTextFunc("Preloading resources...");
+    root->loadActorTypeResources("Interactive/Player");
+    root->loadActorTypeResources("Common/Scenery");
+    for (auto name : gameEvents->getResourceNameList()) {
+        root->loadActorTypeResources(name);
     }
     
     if (levelConfig.childGroups().contains("TextEvent")) {

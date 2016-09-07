@@ -90,9 +90,6 @@
     <Filter Include="Actor Resource Manifests\Interactive">
       <UniqueIdentifier>{7472114f-4fe7-4526-b387-8fece97a2217}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Actor Resource Manifests\Pickup">
-      <UniqueIdentifier>{a678effc-be85-497e-9282-6dc23df21a66}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Actor Resource Manifests\UI">
       <UniqueIdentifier>{55b0d629-cdf2-4929-98b4-fed156a5f7c7}</UniqueIdentifier>
     </Filter>
@@ -329,6 +326,9 @@
     <ClCompile Include="src\graphics\BitmapString.cpp">
       <Filter>Source Files\Graphics system</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamestate\EventSpawner.cpp">
+      <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -564,6 +564,9 @@
     <ClInclude Include="src\graphics\BitmapString.h">
       <Filter>Header Files\Graphics system headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\gamestate\EventSpawner.h">
+      <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -680,6 +683,12 @@
     </None>
     <None Include="Data\Manifests\Enemy\LabRat.json">
       <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Interactive\Player.json">
+      <Filter>Actor Resource Manifests\Interactive</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\NoResources.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

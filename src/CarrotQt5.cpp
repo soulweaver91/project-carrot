@@ -1,5 +1,6 @@
 #include "CarrotQt5.h"
 #include "gamestate/LevelManager.h"
+#include "gamestate/EventSpawner.h"
 #include "graphics/QSFMLCanvas.h"
 #include "graphics/CarrotCanvas.h"
 #include "menu/MenuScreen.h"
@@ -95,6 +96,10 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false),
     smallFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_small.png",  17, 18, 15, 32, 256, -2);
     mainFont  = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256, -1);
     largeFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_large.png",  57, 63, 15, 32, 256, -1);
+
+    // Initialize the spawner
+    eventSpawner = std::make_unique<EventSpawner>();
+    eventSpawner->initializeSpawnableList();
     
     installEventFilter(this);
 
@@ -411,6 +416,10 @@ std::shared_ptr<ResourceSet> CarrotQt5::loadActorTypeResources(const QString& ac
 
 float CarrotQt5::getCurrentFPS() {
     return fps;
+}
+
+EventSpawner* CarrotQt5::getEventSpawner() {
+    return eventSpawner.get();
 }
 
 void CarrotQt5::quitFromMainMenu() {

@@ -43,6 +43,7 @@ HEADERS += ./src/ModeManager.h \
     ./src/actor/lighting/PulsatingLight.h \
     ./src/actor/lighting/RadialLightSource.h \
     ./src/actor/lighting/StaticLight.h \
+    ./src/graphics/BitmapString.h \
     ./src/graphics/ShaderSource.h \
     ./src/graphics/Tileset.h \
     ./src/graphics/GraphicsCache.h \
@@ -73,12 +74,13 @@ HEADERS += ./src/ModeManager.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
     ./src/struct/WeaponTypes.h \
-    ./src/graphics/BitmapString.h
+    ./src/gamestate/EventSpawner.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/ModeManager.cpp \
     ./src/graphics/AnimatedTile.cpp \
     ./src/graphics/BitmapFont.cpp \
+    ./src/graphics/BitmapString.cpp \
     ./src/graphics/CarrotCanvas.cpp \
     ./src/graphics/ShaderSource.cpp \
     ./src/graphics/GraphicsCache.cpp \
@@ -132,7 +134,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp \
-    ./src/graphics/BitmapString.cpp
+    ./src/gamestate/EventSpawner.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc
