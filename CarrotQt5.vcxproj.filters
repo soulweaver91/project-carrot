@@ -90,9 +90,6 @@
     <Filter Include="Actor Resource Manifests\Interactive">
       <UniqueIdentifier>{7472114f-4fe7-4526-b387-8fece97a2217}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Actor Resource Manifests\Pickup">
-      <UniqueIdentifier>{a678effc-be85-497e-9282-6dc23df21a66}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Actor Resource Manifests\UI">
       <UniqueIdentifier>{55b0d629-cdf2-4929-98b4-fed156a5f7c7}</UniqueIdentifier>
     </Filter>
@@ -686,6 +683,12 @@
     </None>
     <None Include="Data\Manifests\Enemy\LabRat.json">
       <Filter>Actor Resource Manifests\Enemy</Filter>
+    </None>
+    <None Include="Data\Manifests\Interactive\Player.json">
+      <Filter>Actor Resource Manifests\Interactive</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\NoResources.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

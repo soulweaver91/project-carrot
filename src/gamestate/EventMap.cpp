@@ -1,4 +1,5 @@
 #include "EventMap.h"
+#include <algorithm>
 #include <cmath>
 #include <QList>
 #include "../gamestate/LevelManager.h"
@@ -7,14 +8,7 @@
 
 EventMap::EventMap(LevelManager* root, const EventSpawner* const spawner, unsigned int width, unsigned int height)
     : root(root), spawner(spawner) {
-    for (unsigned int y = 0; y <= height; ++y) {
-        QVector<std::shared_ptr<EventTile>> n;
-        for (unsigned int x = 0; x <= width; ++x) {
-            // std::fill_n doesn't seem to work here
-            n << nullptr;
-        }
-        eventLayout << n;
-    }
+    eventLayout = QVector<QVector<std::shared_ptr<EventTile>>>(height, QVector<std::shared_ptr<EventTile>>(width, nullptr));
 }
 
 EventMap::~EventMap() {
@@ -154,6 +148,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
         QByteArray eventMapData = qUncompress(eventMapHandle.readAll());
         if (eventMapData.size() > 0) {
             QDataStream eventMapStream(eventMapData);
+            QSet<PCEvent> encounteredEvents;
             unsigned y = 0;
             while (!eventMapStream.atEnd()) {
                 unsigned x = 0;
@@ -166,6 +161,8 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                     }
                     quint8 eventFlags = 0;
                     QVector<quint16> eventParams(8);
+
+                    encounteredEvents << (PCEvent)eventID;
 
                     if (layoutVersion > 3) {
                         eventMapStream >> eventFlags;
@@ -219,6 +216,10 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                 }
                 y++;
             }
+
+            for (auto event : encounteredEvents) {
+                resourceNames << spawner->getEventResourceName(event);
+            }
         } else {
             // TODO: uncompress fail, what do?
         }
@@ -244,4 +245,8 @@ CoordinatePair EventMap::getWarpTarget(unsigned id) {
     } else {
         return { -1.0, -1.0 };
     }
+}
+
+QSet<QString> EventMap::getResourceNameList() {
+    return resourceNames;
 }

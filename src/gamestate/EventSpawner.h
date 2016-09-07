@@ -22,6 +22,7 @@ public:
     void setApi(apiHandle newApi);
     void registerSpawnable(PCEvent type, const QString& resourceName, std::function<std::shared_ptr<CommonActor>(int, int, const quint16[8])> spawner);
     std::shared_ptr<CommonActor> spawnEvent(PCEvent type, int x, int y, const quint16 params[8]) const;
+    QString getEventResourceName(PCEvent type) const;
 
     template<typename T, typename... P>
     void registerTrivialSpawnable(PCEvent type, const QString& resourceName, P... params);

@@ -39,6 +39,7 @@ public:
     void setTileParam(int x, int y, unsigned char idx, quint16 value);
     void readEvents(const QString& filename, unsigned layoutVersion);
     CoordinatePair getWarpTarget(unsigned id);
+    QSet<QString> getResourceNameList();
 
 private:
     void addWarpTarget(unsigned id, unsigned x, unsigned y);
@@ -47,4 +48,5 @@ private:
     QVector<QVector<std::shared_ptr<EventTile>>> eventLayout;
     QMultiMap<unsigned, CoordinatePair> warpTargets;
     const EventSpawner* const spawner;
+    QSet<QString> resourceNames;
 };

@@ -1,0 +1,11 @@
+{
+  "graphics": {
+
+  },
+  "sounds": {
+
+  },
+  "children": [
+    "Interactive/PlayerJazz", "UI/PlayerOSD"
+  ]
+}

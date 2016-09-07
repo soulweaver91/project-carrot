@@ -129,6 +129,14 @@ std::shared_ptr<CommonActor> EventSpawner::spawnEvent(PCEvent type, int x, int y
     return nullptr;
 }
 
+QString EventSpawner::getEventResourceName(PCEvent type) const {
+    if (spawnableEvents.contains(type)) {
+        return spawnableEvents.value(type).identifier;
+    }
+
+    return "Object/NoResources";
+}
+
 template<typename T, typename... P>
 void EventSpawner::registerTrivialSpawnable(PCEvent type, const QString& resourceName, P... params) {
     registerSpawnable(type, resourceName, [this, params...](int x, int y, const quint16[]) {

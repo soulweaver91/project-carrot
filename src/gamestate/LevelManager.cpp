@@ -108,6 +108,13 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     if (levelFiles.contains("event.layer")) {
         gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), levelConfig.value("Version/LayerFormat", 1).toUInt());
     }
+
+    updateLoadingScreenTextFunc("Preloading resources...");
+    root->loadActorTypeResources("Interactive/Player");
+    root->loadActorTypeResources("Common/Scenery");
+    for (auto name : gameEvents->getResourceNameList()) {
+        root->loadActorTypeResources(name);
+    }
     
     if (levelConfig.childGroups().contains("TextEvent")) {
         levelConfig.beginGroup("TextEvent");

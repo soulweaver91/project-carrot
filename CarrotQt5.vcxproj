@@ -461,12 +461,14 @@
     <None Include="Data\Manifests\Enemy\Lizard.json" />
     <None Include="Data\Manifests\Enemy\Turtle.json" />
     <None Include="Data\Manifests\Enemy\TurtleShell.json" />
+    <None Include="Data\Manifests\Interactive\Player.json" />
     <None Include="Data\Manifests\Interactive\PlayerJazz.json" />
     <None Include="Data\Manifests\Object\BonusWarp.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />
     <None Include="Data\Manifests\Object\FrozenBlock.json" />
     <None Include="Data\Manifests\Object\MovingPlatform.json" />
+    <None Include="Data\Manifests\Object\NoResources.json" />
     <None Include="Data\Manifests\Object\PowerUpMonitor.json" />
     <None Include="Data\Manifests\Object\PushBox.json" />
     <None Include="Data\Manifests\Object\SavePoint.json" />
