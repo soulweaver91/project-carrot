@@ -663,8 +663,8 @@ void LevelManager::debugSetPosition() {
         return;
     }
 
-    int x = QInputDialog::getInt(root, "Move player", "X position", player->getPosition().x, 0, gameTiles->getLevelWidth() * 32);
-    int y = QInputDialog::getInt(root, "Move player", "Y position", player->getPosition().y, 0, gameTiles->getLevelHeight() * 32);
+    int x = QInputDialog::getInt(root, "Move player", "X position", player->getPosition().x, 0, (gameTiles->getLevelWidth() - 1) * 32);
+    int y = QInputDialog::getInt(root, "Move player", "Y position", player->getPosition().y, 0, (gameTiles->getLevelHeight() - 1) * 32);
     player->moveInstantly({ x * 1.0, y * 1.0 }, true);
 }
 

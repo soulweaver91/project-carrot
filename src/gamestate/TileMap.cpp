@@ -32,8 +32,8 @@ TileMap::TileMap(LevelManager* root, const QString& tilesetFilename,
     // The sprite layer has no settings to apply to it, so just pass an empty set instead.
     QSettings dummySettings;
     readLayerConfiguration(LayerType::LAYER_SPRITE_LAYER, sprLayerFilename, dummySettings);
-    levelHeight = levelLayout.at(0).tileLayout.size() - 1;
-    levelWidth = levelLayout.at(0).tileLayout.at(0).size() - 1;
+    levelHeight = levelLayout.at(0).tileLayout.size();
+    levelWidth = levelLayout.at(0).tileLayout.at(0).size();
 
     sceneryResources = root->getActorAPI()->loadActorTypeResources("Common/Scenery");
 }
@@ -523,7 +523,7 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
 
 bool TileMap::isTileEmpty(unsigned x, unsigned y) {
     // Consider out-of-level coordinates as solid walls
-    if ((x >= levelWidth * 32) || (y >= levelHeight * 32)) {
+    if (x >= levelWidth || y >= levelHeight) {
         return false;
     }
 
@@ -542,7 +542,7 @@ bool TileMap::isTileEmpty(unsigned x, unsigned y) {
 
 bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     // Consider out-of-level coordinates as solid walls
-    if ((hitbox.right >= levelWidth * 32) || (hitbox.bottom >= (levelHeight + 1) * 32)
+    if ((hitbox.right >= levelWidth * 32) || (hitbox.bottom >= levelHeight * 32)
      || (hitbox.left <= 0) || (hitbox.top <= 0)) {
         return false;
     }
@@ -550,9 +550,9 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     // check all covered tiles for collisions; if all are empty, no need to do pixel level collision checking
     bool all_empty = true;
     int hx1 = floor(hitbox.left);
-    int hx2 = ceil(hitbox.right);
+    int hx2 = std::min(ceil(hitbox.right), levelWidth * 32.0 - 1.0);
     int hy1 = floor(hitbox.top);
-    int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 + 31.0);
+    int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 - 1.0);
 
     const auto& sprLayerLayout = levelLayout.at(sprLayerIdx).tileLayout;
 
@@ -726,7 +726,7 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
 
-    if (ty >= static_cast<int>(levelHeight) || tx >= static_cast<int>(levelWidth)) {
+    if (ty >= static_cast<int>(levelHeight) || tx >= static_cast<int>(levelWidth) || tx < 0 || ty < 0) {
         return false;
     }
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
@@ -747,10 +747,10 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
 }
 
 uint TileMap::checkSpecialDestructible(const Hitbox& hitbox) {
-    int x1 = hitbox.left / 32;
-    int x2 = std::min((uint)(hitbox.right / 32), levelWidth);
-    int y1 = hitbox.top / 32;
-    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight);
+    int x1 = std::max(0.0, hitbox.left / 32);
+    int x2 = std::min((uint)(hitbox.right / 32), levelWidth - 1);
+    int y1 = std::max(0.0, hitbox.top / 32);
+    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight - 1);
     int hit = 0;
     for (int tx = x1; tx <= x2; ++tx) {
         for (int ty = y1; ty <= y2; ++ty) {
@@ -766,10 +766,10 @@ uint TileMap::checkSpecialDestructible(const Hitbox& hitbox) {
 }
 
 uint TileMap::checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& speed) {
-    int x1 = hitbox.left / 32;
-    int x2 = std::min((uint)(hitbox.right / 32), levelWidth);
-    int y1 = hitbox.top / 32;
-    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight);
+    int x1 = std::max(0.0, hitbox.left / 32);
+    int x2 = std::min((uint)(hitbox.right / 32), levelWidth - 1);
+    int y1 = std::max(0.0, hitbox.top / 32);
+    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight - 1);
     uint hit = 0;
     for (int tx = x1; tx <= x2; ++tx) {
         for (int ty = y1; ty <= y2; ++ty) {
@@ -785,10 +785,10 @@ uint TileMap::checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& 
 }
 
 uint TileMap::checkCollapseDestructible(const Hitbox& hitbox) {
-    int x1 = hitbox.left / 32;
-    int x2 = std::min((uint)(hitbox.right / 32), levelWidth);
-    int y1 = hitbox.top / 32;
-    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight);
+    int x1 = std::max(0.0, hitbox.left / 32);
+    int x2 = std::min((uint)(hitbox.right / 32), levelWidth - 1);
+    int y1 = std::max(0.0, hitbox.top / 32);
+    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight - 1);
     uint hit = 0;
     for (int tx = x1; tx <= x2; ++tx) {
         for (int ty = y1; ty <= y2; ++ty) {
