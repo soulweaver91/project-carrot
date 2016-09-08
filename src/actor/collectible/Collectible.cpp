@@ -68,7 +68,7 @@ void Collectible::handleCollision(std::shared_ptr<CommonActor> other) {
 }
 
 void Collectible::setFacingDirection() {
-    if ((qRound(posX + posY) / 32) % 2 == 1) {
+    if ((qRound(posX + posY) / 32) % 2 == 0) {
         isFacingLeft = true;
     }
 }
