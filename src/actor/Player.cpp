@@ -82,8 +82,10 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.downButton) {
         if (controllable) {
-            if (canJump && (std::abs(speedX) < EPSILON)) {
-                setAnimation(AnimState::CROUCH);
+            if (canJump) {
+                if (std::abs(speedX) < EPSILON) {
+                    setAnimation(AnimState::CROUCH);
+                }
             } else {
                 if (suspendType != SuspendType::SUSPEND_NONE) {
                     moveInstantly({ 0, 10 }, false);
