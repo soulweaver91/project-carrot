@@ -1,12 +1,13 @@
 #include "BitmapFont.h"
 
 #include <QFile>
+#include <exception>
 
 BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
     unsigned cols, unsigned first, unsigned last, int defaultSpacing)
     : charHeight(height), defaultSpacing(defaultSpacing) {
     if (!(fontTexture.loadFromFile(filename.toUtf8().data()))) {
-        throw 0;
+        throw std::runtime_error("Font image '" + filename.toStdString() + "' could not be loaded!");
     }
 
     char widthFromFileTable[256];
@@ -14,9 +15,11 @@ BitmapFont::BitmapFont(const QString& filename, unsigned width, unsigned height,
 
     QFile widthFile(filename + ".config");
     if (!(widthFile.open(QIODevice::ReadOnly))) {
-        // oops, something went wrong
+        // Could not open the character width file.
+        // As a result, each character is considered to be the same width as
+        // the horizontal offset of characters on the image file.
     } else {
-        widthFile.read(widthFromFileTable,256);
+        widthFile.read(widthFromFileTable, 256);
     }
     widthFile.close();
 
