@@ -93,9 +93,19 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false),
     }
 
     // Read the main font
-    smallFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_small.png",  17, 18, 15, 32, 256, -2);
-    mainFont  = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256, -1);
-    largeFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_large.png",  57, 63, 15, 32, 256, -1);
+    try {
+        smallFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_small.png",  17, 18, 15, 32, 256, -2);
+        mainFont  = std::make_shared<BitmapFont>("Data/Assets/ui/font_medium.png", 29, 31, 15, 32, 256, -1);
+        largeFont = std::make_shared<BitmapFont>("Data/Assets/ui/font_large.png",  57, 63, 15, 32, 256, -1);
+    } catch (const std::exception& ex) {
+        QMessageBox::critical(nullptr, "Could not load core bitmap fonts", QString(
+            "One or more of the three core fonts could not be loaded! Verify that you have extracted the resources "
+            "from your Jazz Jackrabbit 2 installation with Project Carrot Anims Extractor.\n\n"
+            "%1"
+        ).arg(ex.what()));
+        exit(EXIT_FAILURE);
+        return;
+    }
 
     // Initialize the spawner
     eventSpawner = std::make_unique<EventSpawner>();

@@ -37,24 +37,43 @@ provisionally supported and builds on the listed versions are automatically eval
 Download and extract the BASS and BASS FX Linux archives from their homepage and set
 Set the `BASS_DIR` and `BASS_FX_DIR` to point into that directory, and also add them
 to your `CPATH`. Additionally, install the other dependencies if you haven't done so
-already, for example in Ubuntu:
+already. Then, configure and build the project, using the `spec` value corresponding 
+to the compiler in use.
 
-```
-sudo apt-get install qt5-default libsfml-dev
-```
+For example, a full set of commands that should get you started on a fresh Ubuntu Xenial
+installation:
 
-Then, configure and build the project, using the `spec` value corresponding to the compiler in use:
-```
-qmake -spec=linux-g++-64
-make release
-```
-
-or
-
-```
+```shell
+# Add a Qt 5.7 repository to APT
+sudo add-apt-repository ppa:beineri/opt-qt57-xenial
+# Refresh package lists and install required packages
+sudo apt-get update
+sudo apt-get install git clang qt57base qt57gamepad libsfml-dev
+# Download BASS and BASS FX and uncompress them to your home folder
+cd ~
+curl -o bass24.zip http://us.un4seen.com/files/bass24-linux.zip
+curl -o bassfx24.zip http://us.un4seen.com/files/z/0/bass_fx24-linux.zip
+unzip bass24.zip -d bass
+unzip bassfx24.zip -d bassfx
+rm bass24.zip bassfx24.zip
+# Set up the necessary environment
+. /opt/qt57/bin/qt57-env.sh
+export BASS_DIR=~/bass
+export BASS_FX_DIR=~/bassfx
+# Clone this repository and compile the code
+git clone https://github.com/soulweaver91/project-carrot.git
+cd project-carrot
 qmake -spec=linux-clang
 make release
+# Move to the release folder and copy the BASS and BASS FX library files
+cd Release
+cp $BASS_DIR/libbass.so .
+cp $BASS_FX_DIR/libbass_fx.so .
 ```
+
+Assuming you got through these steps without any errors, you should now have an executable file
+called CarrotQt5 in the Release folder almost ready to go. The only thing left to do is to
+copy over the asset, level, music and tileset files you converted with the other tools.
 
 If in doubt, take a look at the [Travis configuration file](https://github.com/soulweaver91/project-carrot/blob/master/.travis.yml)
 and see if it can help you.

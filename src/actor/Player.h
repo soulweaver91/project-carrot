@@ -109,4 +109,8 @@ private:
 
     bool isSugarRush;
     static const uint SUGAR_RUSH_THRESHOLD;
+    static const double MAX_DASHING_SPEED;
+    static const double MAX_RUNNING_SPEED;
+    static const double ACCELERATION;
+    static const double DECELERATION;
 };

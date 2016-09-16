@@ -82,8 +82,10 @@ void Player::processControlDownEvent(const ControlEvent& e) {
 
     if (control == controls.downButton) {
         if (controllable) {
-            if (canJump && (std::abs(speedX) < EPSILON)) {
-                setAnimation(AnimState::CROUCH);
+            if (canJump) {
+                if (std::abs(speedX) < EPSILON) {
+                    setAnimation(AnimState::CROUCH);
+                }
             } else {
                 if (suspendType != SuspendType::SUSPEND_NONE) {
                     moveInstantly({ 0, 10 }, false);
@@ -203,13 +205,13 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
         isFacingLeft = !e.contains(controls.rightButton);
 
         if (suspendType == SuspendType::SUSPEND_NONE && (e.contains(controls.dashButton))) {
-            speedX = std::max(std::min(speedX + 0.2 * (isFacingLeft ? -1 : 1), 9.0), -9.0);
+            speedX = std::max(std::min(speedX + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_DASHING_SPEED), -MAX_DASHING_SPEED);
         } else if (suspendType != SuspendType::SUSPEND_HOOK) {
-            speedX = std::max(std::min(speedX + 0.2 * (isFacingLeft ? -1 : 1), 3.0), -3.0);
+            speedX = std::max(std::min(speedX + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_RUNNING_SPEED), -MAX_RUNNING_SPEED);
         }
 
     } else {
-        speedX = std::max((std::abs(speedX) - 0.25), 0.0) * (speedX < -EPSILON ? -1 : 1);
+        speedX = std::max((std::abs(speedX) - DECELERATION), 0.0) * (speedX < -EPSILON ? -1 : 1);
     }
 
     if (e.contains(controls.jumpButton)) {
@@ -1146,3 +1148,7 @@ template<typename T> std::shared_ptr<T> Player::fireWeapon(bool poweredUp) {
 }
 
 const uint Player::SUGAR_RUSH_THRESHOLD = 100;
+const double Player::MAX_DASHING_SPEED = 9.0;
+const double Player::MAX_RUNNING_SPEED = 3.0;
+const double Player::ACCELERATION = 0.2;
+const double Player::DECELERATION = 0.25;
