@@ -18,5 +18,5 @@ void main() {
   gl_FragColor = vec4(originalColor.r + color.r * strength,
 					  originalColor.g + color.g * strength,
 					  originalColor.b + color.b * strength,
-					  originalColor.a * (1 - strength) + color.a * strength);
+					  originalColor.a * (1.0 - strength) + color.a * strength);
 }
