@@ -11,18 +11,28 @@ CONFIG += c++14 debug_and_release
 
 INCLUDEPATH += $(BASS_DIR) \
     $(BASS_FX_DIR)/C \
+    $(BASS_FX_DIR) \
     $(SFML_DIR)/include \
     ./GeneratedFiles \
     .
 
+win32 || unix:!macx {
+    LIBS += -L"$(BASS_DIR)/x64" \
+    -L"$(BASS_FX_DIR)/x64"
+}
+macx {
+    LIBS += -L"$(BASS_DIR)" \
+    -L"$(BASS_FX_DIR)"
+}
+
 LIBS += -L"$(SFML_DIR)/lib" \
-    -L"$(BASS_DIR)/x64" \
-    -L"$(BASS_FX_DIR)/x64" \
     -lbass \
     -lbass_fx \
     -lsfml-graphics \
     -lsfml-window \
     -lsfml-system
+
+
 DEPENDPATH += .
 
 UI_DIR += ./GeneratedFiles
