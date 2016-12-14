@@ -25,12 +25,22 @@
 #include <QStringList>
 #include <exception>
 #include <bass.h>
+#ifdef Q_OS_MAC
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false), paused(false),
     frame(0), menuObject(nullptr), isMenu(false), fps(0) {
+#ifdef Q_OS_MAC
+    CFURLRef url = (CFURLRef)CFAutorelease((CFURLRef)CFBundleCopyBundleURL(CFBundleGetMainBundle()));
+    QDir dir = QDir(QUrl::fromCFURL(url).path());
+    dir.cdUp();
+    QDir::setCurrent(dir.path());
+#else
 #ifndef CARROT_DEBUG
     // Set application location as the working directory
     QDir::setCurrent(QCoreApplication::applicationDirPath());
+#endif
 #endif
 
     // Apply the UI file, set window flags and connect menu items to class slots

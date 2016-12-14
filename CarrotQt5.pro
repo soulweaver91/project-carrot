@@ -21,8 +21,11 @@ win32 || unix:!macx {
     -L"$(BASS_FX_DIR)/x64"
 }
 macx {
+    MAKE_LFLAGS += -F /System/Library/Frameworks/CoreFoundation.framework/
+    
     LIBS += -L"$(BASS_DIR)" \
-    -L"$(BASS_FX_DIR)"
+    -L"$(BASS_FX_DIR)" \
+    -framework CoreFoundation
 }
 
 LIBS += -L"$(SFML_DIR)/lib" \
