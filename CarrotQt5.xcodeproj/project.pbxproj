@@ -1,0 +1,1153 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		D4A1886015E582F8852788EF /* Qt Preprocess */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "CarrotQt5" */;
+			buildPhases = (
+				5E618435888B9D49F8540165 /* Qt Qmake */,
+				7EF0942E79C014DCEC8976BC /* Qt Preprocessors */,
+			);
+			dependencies = (
+			);
+			name = "Qt Preprocess";
+			productName = "Qt Preprocess";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		005DFC2FBE929AAECBB6CCAA /* BonusWarp.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 766A3521063388CF4E1518D4 /* BonusWarp.cpp */; settings = {ATTRIBUTES = (); }; };
+		05F3D01DF92CEB077A180C9C /* Sucker.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 00395741C0122426D5C69C6A /* Sucker.cpp */; settings = {ATTRIBUTES = (); }; };
+		06D3A088B05D4B6BAB48F767 /* GemCollectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 944E01CCF139B4ED5F7D6D6D /* GemCollectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		08854C7728F6F91E8CF3AC78 /* EventMap.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 0AE2D1B7E99B835AD4DCE75E /* EventMap.cpp */; settings = {ATTRIBUTES = (); }; };
+		1CBD813B8E3D87B10CF2D7E0 /* moc_LevelManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E3F26325A6D4B2E2375A47D8 /* moc_LevelManager.cpp */; settings = {ATTRIBUTES = (); }; };
+		274F22A8E157A5F4D6BF27E6 /* TimerUser.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 6D55F43A0A66C74477A39A73 /* TimerUser.cpp */; settings = {ATTRIBUTES = (); }; };
+		2C42019E18D489604E3F3DAC /* StaticLight.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 928DEC9C69CE9EA7A644A5A5 /* StaticLight.cpp */; settings = {ATTRIBUTES = (); }; };
+		2D52BCB1679737C74BBC9756 /* CarrotCollectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 0AC9C01F7955BC6FAF371BEB /* CarrotCollectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		2EEA1A435C45061A05B726E6 /* BitmapString.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 27E1C8A926B861426445C697 /* BitmapString.cpp */; settings = {ATTRIBUTES = (); }; };
+		31005E8B96C5E646858C3C23 /* ShaderSource.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 28C2989682E27E2C55FBAE9B /* ShaderSource.cpp */; settings = {ATTRIBUTES = (); }; };
+		343E94E0290D0FF319588D95 /* LabRat.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E87F76A85899F32A02CBAEAE /* LabRat.cpp */; settings = {ATTRIBUTES = (); }; };
+		35DE4C925C13FD2D5CE072BB /* AnimationUser.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = D0BD7A81CD46F69C181C2A77 /* AnimationUser.cpp */; settings = {ATTRIBUTES = (); }; };
+		3AF4B3C7767546FECDB6AD55 /* QtGamepad.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 410B7C7FC328143692666413 /* QtGamepad.framework */; };
+		435AFDC11890B4F1FD8685B8 /* SavePoint.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 96839376F6F84FF93B29CC0A /* SavePoint.cpp */; settings = {ATTRIBUTES = (); }; };
+		45FF7A2E7D4A34AB51229A3D /* AmmoFreezer.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 752DDA65706FB688518C82BC /* AmmoFreezer.cpp */; settings = {ATTRIBUTES = (); }; };
+		4A8140CA1EDDF0C71822AB57 /* moc_Player.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 1261A9B4167BFFE905F67A7A /* moc_Player.cpp */; settings = {ATTRIBUTES = (); }; };
+		4FFD0F18C359EEDA3F6113E5 /* qrc_CarrotQt5.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 324385DFD414D4AEFEFE9B3F /* qrc_CarrotQt5.cpp */; settings = {ATTRIBUTES = (); }; };
+		516086C038BC82E9FC237727 /* Bridge.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 238861A4C80375F54835DC0A /* Bridge.cpp */; settings = {ATTRIBUTES = (); }; };
+		55ED0E2CBF27AAF451358DF8 /* ActorAPI.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 43F56B4B60C1058F0E23C283 /* ActorAPI.cpp */; settings = {ATTRIBUTES = (); }; };
+		56CCA0B7842A4702B13F18B3 /* CarrotQt5.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 9646DBBDA4E2CB5965E2AA36 /* CarrotQt5.cpp */; settings = {ATTRIBUTES = (); }; };
+		594B78D4435F96832DA21956 /* ModeManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = ADD77302B906980A8EB380D3 /* ModeManager.cpp */; settings = {ATTRIBUTES = (); }; };
+		59D0C199C8D9CFC4636C901B /* CarrotCanvas.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A23E77319F8CA51C9854B17B /* CarrotCanvas.cpp */; settings = {ATTRIBUTES = (); }; };
+		5A71EC84FA10A0BA403196ED /* FrozenBlock.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 42DFEC274750948721C54F39 /* FrozenBlock.cpp */; settings = {ATTRIBUTES = (); }; };
+		5DF2BAA4F0F2CC0D3E80E60B /* GraphicsCache.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 54E42252D458E4873BEA5D04 /* GraphicsCache.cpp */; settings = {ATTRIBUTES = (); }; };
+		5F8B4DA4091A23105795EC0B /* GameView.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C9A5EA208E2C44A29CF5DDDF /* GameView.cpp */; settings = {ATTRIBUTES = (); }; };
+		60B8982FCBD6C57A87EE5F21 /* TileMap.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = D0E2A66CC4EF08432FA5DD51 /* TileMap.cpp */; settings = {ATTRIBUTES = (); }; };
+		60B8AA19153DCD323BCC1270 /* AnimatedTile.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = EA0BCD236BA6CD6D59BE37F2 /* AnimatedTile.cpp */; settings = {ATTRIBUTES = (); }; };
+		62349A7FB363018211447F77 /* TurtleShell.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 2AD4F6BA2DB8A57BDA899E54 /* TurtleShell.cpp */; settings = {ATTRIBUTES = (); }; };
+		6DF3E96A7099B02F2B2F2443 /* AmmoCollectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 9B53FBE86AC6B394FE477241 /* AmmoCollectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		6E9793043C7480857DE5E697 /* CommonActor.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A1625395578C00A305C4C0FC /* CommonActor.cpp */; settings = {ATTRIBUTES = (); }; };
+		6F561FA3A5C847A1F260C608 /* SuckerFloat.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 169720A52EBC3FBA637D68A7 /* SuckerFloat.cpp */; settings = {ATTRIBUTES = (); }; };
+		7B61C92B0D756FD9703B0C41 /* QtGui.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = CD829298CA2038092A51A0F6 /* QtGui.framework */; };
+		82D35A82D6DD4329A60448DE /* Player.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 5CC9F20041FB8F33D57E4140 /* Player.cpp */; settings = {ATTRIBUTES = (); }; };
+		85DE5F336EF9A75FB44D2860 /* CoinCollectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F4DD6CD133A4DEEBA284E09B /* CoinCollectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		8771A8C96E9C391044035D99 /* OpenGL.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D4B32C2222F82AC56BADEB21 /* OpenGL.framework */; };
+		8993B00A15CCDCA24108ECC8 /* Ammo.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 36D465A9AF78D2ADE768CE5A /* Ammo.cpp */; settings = {ATTRIBUTES = (); }; };
+		8A0A76F5AF2F492178EC2C88 /* Collectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B7434B63833868021F0D9DFF /* Collectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		8A556375B3D0E0EE2B1FE808 /* TriggerCrate.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3CFD490DDF0AB444F8E343EB /* TriggerCrate.cpp */; settings = {ATTRIBUTES = (); }; };
+		8BB262068214F4E4E87A9C1D /* RadialLightSource.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F4455B8BBD6CFC15BDCA1610 /* RadialLightSource.cpp */; settings = {ATTRIBUTES = (); }; };
+		8D267F2E4776F0ECA2F49DC8 /* IOKit.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = A1A67BEAA744704B29168D39 /* IOKit.framework */; };
+		8F0E222BF5F15F5AF1203064 /* AmmoToaster.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = ACBA8279F249DB9874E71918 /* AmmoToaster.cpp */; settings = {ATTRIBUTES = (); }; };
+		91EC3357FAB30CA398544E63 /* MenuScreen.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3982E201E95B3208551E636E /* MenuScreen.cpp */; settings = {ATTRIBUTES = (); }; };
+		97296A1926C6B71DC34B4E3A /* ResourceManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E60F0880DD9882EF4F764C7D /* ResourceManager.cpp */; settings = {ATTRIBUTES = (); }; };
+		97DDBF632015753E3AFBA485 /* PlayerOSD.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 1D2D019F978E71D1C491053A /* PlayerOSD.cpp */; settings = {ATTRIBUTES = (); }; };
+		98181E714EBFEBD89F3C81A5 /* EventSpawner.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = AB97BB62D244BF0001F2C609 /* EventSpawner.cpp */; settings = {ATTRIBUTES = (); }; };
+		9F439E2B2737319DDE0E6AD7 /* BitmapFont.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F78D40DC67BC675580EA2D6F /* BitmapFont.cpp */; settings = {ATTRIBUTES = (); }; };
+		A18335176B1370E96DEE6857 /* PowerUpMonitor.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 0776048270C5CD5265DD02E5 /* PowerUpMonitor.cpp */; settings = {ATTRIBUTES = (); }; };
+		A2270071F9C49AF736EB6F99 /* Spring.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 7A4109C6386942C87E38C98E /* Spring.cpp */; settings = {ATTRIBUTES = (); }; };
+		A7116467924F2352D3DFA4BB /* Enemy.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 35D046D3C87C19FCD7EE43F0 /* Enemy.cpp */; settings = {ATTRIBUTES = (); }; };
+		A99B2AA0F9CBBDD12BA126A4 /* DiskArbitration.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 2B774D8E4178765CE52EAAF5 /* DiskArbitration.framework */; };
+		AC3C5FD656FC068FC1F54974 /* SolidObject.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 727F6DFD60C6843870C66F29 /* SolidObject.cpp */; settings = {ATTRIBUTES = (); }; };
+		B1FD449BA9A24D8FBFD6B918 /* QtWidgets.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 17DDAFE5E52515581D095F18 /* QtWidgets.framework */; };
+		B24F800F1EAB93E62226B9B8 /* Tileset.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 83C17204B77EB02666653C83 /* Tileset.cpp */; settings = {ATTRIBUTES = (); }; };
+		B4A3D848401E85EE95D64147 /* FoodCollectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = DEF3168FC7DA4CFB15762F40 /* FoodCollectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		B9022EBEF92F0067E1ABC468 /* AmmoBlaster.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 27EA35A1254C4637CFF7ACC3 /* AmmoBlaster.cpp */; settings = {ATTRIBUTES = (); }; };
+		BA3864EE6B7790F9E43E316F /* AmmoBouncer.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = CD087D514D4877D1AAB536A7 /* AmmoBouncer.cpp */; settings = {ATTRIBUTES = (); }; };
+		BB49FD12BD7CB558B741F84D /* MovingPlatform.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 83F3B7D53A1EF1945257015F /* MovingPlatform.cpp */; settings = {ATTRIBUTES = (); }; };
+		BC52899E16CF8CFBE79BFE37 /* FastFireCollectible.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 9E5A56CD278199CFFD7C8644 /* FastFireCollectible.cpp */; settings = {ATTRIBUTES = (); }; };
+		BF00A307C50743C16D9E04BE /* Lizard.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3CEBDE0BF067C6FDF585A9D2 /* Lizard.cpp */; settings = {ATTRIBUTES = (); }; };
+		C0EE78A2040DCFD613EAEDA0 /* PushBox.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 27D0DF5B287C86FC4D7863C2 /* PushBox.cpp */; settings = {ATTRIBUTES = (); }; };
+		C153D8FEB6F4CF1B000246D1 /* NormalTurtle.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 8F408ED9C82BF8E533640E50 /* NormalTurtle.cpp */; settings = {ATTRIBUTES = (); }; };
+		C84F6641750DEA422CFD9277 /* JJ2Format.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E22BDD07D6EA605C53B4C404 /* JJ2Format.cpp */; settings = {ATTRIBUTES = (); }; };
+		CF5D7BFBE58C7156705F6F87 /* moc_CarrotQt5.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 6CA1CF50CFBBF985794EF2CD /* moc_CarrotQt5.cpp */; settings = {ATTRIBUTES = (); }; };
+		D34B037247F1243EB0EA4F44 /* InteractiveActor.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 52D10C2D4834372FB141F0E5 /* InteractiveActor.cpp */; settings = {ATTRIBUTES = (); }; };
+		DEDE958D75348D6739151DEA /* LevelManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F4304750D28DFC564D27C0D6 /* LevelManager.cpp */; settings = {ATTRIBUTES = (); }; };
+		E18D32281E01E61100258924 /* libsfml-graphics.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32251E01E61100258924 /* libsfml-graphics.2.4.1.dylib */; };
+		E18D32291E01E61100258924 /* libsfml-system.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32261E01E61100258924 /* libsfml-system.2.4.1.dylib */; };
+		E18D322A1E01E61100258924 /* libsfml-window.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32271E01E61100258924 /* libsfml-window.2.4.1.dylib */; };
+		E18D322C1E01E62C00258924 /* libbass_fx.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D322B1E01E62C00258924 /* libbass_fx.dylib */; };
+		E18D322E1E01E64900258924 /* libbass.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D322D1E01E64900258924 /* libbass.dylib */; };
+		E18D32321E01F7C000258924 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E18D322D1E01E64900258924 /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E18D32331E01F7C000258924 /* libbass_fx.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E18D322B1E01E62C00258924 /* libbass_fx.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E18D32351E01FDC500258924 /* CoreFoundation.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32341E01FDC500258924 /* CoreFoundation.framework */; };
+		E18D32391E02079D00258924 /* CarrotQt5.xcassets in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = E18D32381E02079D00258924 /* CarrotQt5.xcassets */; };
+		E45E51A644D5FC9F942ECE55 /* AGL.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */; };
+		E7706FEE40050DB4E52BFC15 /* QSFMLCanvas.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C3AAA81066E1F70CCDF4B1FF /* QSFMLCanvas.cpp */; settings = {ATTRIBUTES = (); }; };
+		E8CEE9A2D81662520C72B099 /* QtCore.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 820A25BF0A1A2242F14E2A0A /* QtCore.framework */; };
+		F3E538E9013C9E4050610251 /* ControlManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 77BF6934B971AED42278D165 /* ControlManager.cpp */; settings = {ATTRIBUTES = (); }; };
+		F51074F51D5C8455ACD38BDC /* SoundSystem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 5CF00AE4F139BE7694CC57FF /* SoundSystem.cpp */; settings = {ATTRIBUTES = (); }; };
+		F658A7054745D83CAA2CA3C1 /* PulsatingLight.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C6A3CACD0C5DB865D523700B /* PulsatingLight.cpp */; settings = {ATTRIBUTES = (); }; };
+		FD9DD279CB38755F399FC968 /* LightSource.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 79092B33B8BABA81BC77EF57 /* LightSource.cpp */; settings = {ATTRIBUTES = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E18D32241E01E3C800258924 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DB9C3763D02B1415CD9D565 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D4A1886015E582F8852788EF;
+			remoteInfo = "Qt Preprocess";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E18D32311E01F7AE00258924 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				E18D32321E01F7C000258924 /* libbass.dylib in CopyFiles */,
+				E18D32331E01F7C000258924 /* libbass_fx.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		00395741C0122426D5C69C6A /* Sucker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Sucker.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/Sucker.cpp"; sourceTree = "<absolute>"; };
+		00B977E42590984B860C7678 /* MenuScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MenuScreen.h; path = "/Users/soulweaver/Documents/project-carrot/src/menu/MenuScreen.h"; sourceTree = "<absolute>"; };
+		06FB7175B138D5AEF7F3617C /* CarrotQt5.pri */ = {isa = PBXFileReference; lastKnownFileType = text; name = CarrotQt5.pri; path = "/Users/soulweaver/Documents/project-carrot/CarrotQt5.pri"; sourceTree = "<absolute>"; };
+		077177E159A90991CA7333AD /* GameView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GameView.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/GameView.h"; sourceTree = "<absolute>"; };
+		0776048270C5CD5265DD02E5 /* PowerUpMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PowerUpMonitor.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/PowerUpMonitor.cpp"; sourceTree = "<absolute>"; };
+		0AC9C01F7955BC6FAF371BEB /* CarrotCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CarrotCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/CarrotCollectible.cpp"; sourceTree = "<absolute>"; };
+		0AE2D1B7E99B835AD4DCE75E /* EventMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = EventMap.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/EventMap.cpp"; sourceTree = "<absolute>"; };
+		0B1D007404750B83BBA1399D /* BonusWarp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BonusWarp.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/BonusWarp.h"; sourceTree = "<absolute>"; };
+		0B957556D208C0625BF91753 /* Sucker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Sucker.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/Sucker.h"; sourceTree = "<absolute>"; };
+		0EBFC00D21C9E42118F72AD4 /* TriggerCrate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TriggerCrate.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/TriggerCrate.h"; sourceTree = "<absolute>"; };
+		1261A9B4167BFFE905F67A7A /* moc_Player.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_Player.cpp; path = "/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release/moc_Player.cpp"; sourceTree = "<absolute>"; };
+		160F3EFCA7674D29E1D2CB7E /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = "/Users/soulweaver/Documents/project-carrot/src/Version.h"; sourceTree = "<absolute>"; };
+		169720A52EBC3FBA637D68A7 /* SuckerFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SuckerFloat.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/SuckerFloat.cpp"; sourceTree = "<absolute>"; };
+		16C8692D6440AD1C9C4A0860 /* LightSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LightSource.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/LightSource.h"; sourceTree = "<absolute>"; };
+		17AEAF2017FC9256EE9655AD /* ActorAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ActorAPI.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ActorAPI.h"; sourceTree = "<absolute>"; };
+		17DDAFE5E52515581D095F18 /* QtWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtWidgets.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework; sourceTree = "<absolute>"; };
+		1B2569B1933E9DDDFAC61930 /* ui_AboutCarrotDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ui_AboutCarrotDialog.h; path = "/Users/soulweaver/Documents/project-carrot/GeneratedFiles/ui_AboutCarrotDialog.h"; sourceTree = "<absolute>"; };
+		1C830CB2404AC69D9D5B5A77 /* PowerUpMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PowerUpMonitor.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/PowerUpMonitor.h"; sourceTree = "<absolute>"; };
+		1CDB1FCCC6F8D023A4C40FB7 /* EventSpawner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EventSpawner.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/EventSpawner.h"; sourceTree = "<absolute>"; };
+		1D2D019F978E71D1C491053A /* PlayerOSD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PlayerOSD.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/PlayerOSD.cpp"; sourceTree = "<absolute>"; };
+		1D5BC33B0FCCC08BF13C04CC /* SoundSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SoundSystem.h; path = "/Users/soulweaver/Documents/project-carrot/src/sound/SoundSystem.h"; sourceTree = "<absolute>"; };
+		1EE8EF4C4C9BF56660DA709D /* Lizard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Lizard.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/Lizard.h"; sourceTree = "<absolute>"; };
+		238861A4C80375F54835DC0A /* Bridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Bridge.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/Bridge.cpp"; sourceTree = "<absolute>"; };
+		2715D231799CFD0A0F1F32F2 /* PulsatingLight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PulsatingLight.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/PulsatingLight.h"; sourceTree = "<absolute>"; };
+		27D0DF5B287C86FC4D7863C2 /* PushBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PushBox.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/PushBox.cpp"; sourceTree = "<absolute>"; };
+		27E1C8A926B861426445C697 /* BitmapString.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapString.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/BitmapString.cpp"; sourceTree = "<absolute>"; };
+		27EA35A1254C4637CFF7ACC3 /* AmmoBlaster.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AmmoBlaster.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoBlaster.cpp"; sourceTree = "<absolute>"; };
+		28C2989682E27E2C55FBAE9B /* ShaderSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderSource.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/ShaderSource.cpp"; sourceTree = "<absolute>"; };
+		2AD4F6BA2DB8A57BDA899E54 /* TurtleShell.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TurtleShell.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/TurtleShell.cpp"; sourceTree = "<absolute>"; };
+		2B774D8E4178765CE52EAAF5 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = /System/Library/Frameworks/DiskArbitration.framework; sourceTree = "<absolute>"; };
+		2EF2D1AAC70E479DE5554CC7 /* RadialLightSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RadialLightSource.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/RadialLightSource.h"; sourceTree = "<absolute>"; };
+		30692C6B79B3D5EC50EC83DB /* Project Carrot (Debug).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Project Carrot (Debug).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		324385DFD414D4AEFEFE9B3F /* qrc_CarrotQt5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = qrc_CarrotQt5.cpp; path = "/Users/soulweaver/Documents/project-carrot/GeneratedFiles/qrc_CarrotQt5.cpp"; sourceTree = "<absolute>"; };
+		327BD4B7CBEADF2FEBECDEF3 /* TileMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TileMap.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/TileMap.h"; sourceTree = "<absolute>"; };
+		344B544BB70BBA5EE7D63E59 /* Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Player.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/Player.h"; sourceTree = "<absolute>"; };
+		35B6D4BFC9DEF7EFB37C13FF /* CoinCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CoinCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/CoinCollectible.h"; sourceTree = "<absolute>"; };
+		35D046D3C87C19FCD7EE43F0 /* Enemy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Enemy.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/Enemy.cpp"; sourceTree = "<absolute>"; };
+		36D465A9AF78D2ADE768CE5A /* Ammo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Ammo.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/Ammo.cpp"; sourceTree = "<absolute>"; };
+		38FC5A75D1B6B163DC871134 /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = "/Users/soulweaver/Documents/project-carrot/src/Resources.h"; sourceTree = "<absolute>"; };
+		3982E201E95B3208551E636E /* MenuScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MenuScreen.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/menu/MenuScreen.cpp"; sourceTree = "<absolute>"; };
+		3AF2B81395670C3293B59198 /* FoodCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FoodCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/FoodCollectible.h"; sourceTree = "<absolute>"; };
+		3B653C079AA70864613216E7 /* SuckerFloat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SuckerFloat.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/SuckerFloat.h"; sourceTree = "<absolute>"; };
+		3CEBDE0BF067C6FDF585A9D2 /* Lizard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Lizard.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/Lizard.cpp"; sourceTree = "<absolute>"; };
+		3CFD490DDF0AB444F8E343EB /* TriggerCrate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TriggerCrate.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/TriggerCrate.cpp"; sourceTree = "<absolute>"; };
+		410B7C7FC328143692666413 /* QtGamepad.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGamepad.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtGamepad.framework; sourceTree = "<absolute>"; };
+		41D8BAA66A72162122144124 /* AnimState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnimState.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/AnimState.h"; sourceTree = "<absolute>"; };
+		42DFEC274750948721C54F39 /* FrozenBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FrozenBlock.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/FrozenBlock.cpp"; sourceTree = "<absolute>"; };
+		43F56B4B60C1058F0E23C283 /* ActorAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ActorAPI.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ActorAPI.cpp"; sourceTree = "<absolute>"; };
+		495569221F1C8BA1F8A3998C /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/Resources.h"; sourceTree = "<absolute>"; };
+		4C11DD0E43A5B0C679FEF2AE /* GraphicsCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GraphicsCache.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/GraphicsCache.h"; sourceTree = "<absolute>"; };
+		4C41ACB583F15CA87E60EBF1 /* LabRat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LabRat.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/LabRat.h"; sourceTree = "<absolute>"; };
+		4DCCD141C18D097F8AE9B36F /* AmmoToaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AmmoToaster.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoToaster.h"; sourceTree = "<absolute>"; };
+		4EA1EC3B2EDE877EC5DA2837 /* CarrotQt5.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CarrotQt5.qrc; path = "/Users/soulweaver/Documents/project-carrot/CarrotQt5.qrc"; sourceTree = "<absolute>"; };
+		4F21654D9934A6C006762E1B /* JJ2Format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JJ2Format.h; path = "/Users/soulweaver/Documents/project-carrot/src/JJ2Format.h"; sourceTree = "<absolute>"; };
+		4F9700CE5D48A6CD9B92FFBA /* EventMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EventMap.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/EventMap.h"; sourceTree = "<absolute>"; };
+		525D8A1C445412E30697A697 /* AmmoCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AmmoCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/AmmoCollectible.h"; sourceTree = "<absolute>"; };
+		52D10C2D4834372FB141F0E5 /* InteractiveActor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InteractiveActor.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/InteractiveActor.cpp"; sourceTree = "<absolute>"; };
+		54E42252D458E4873BEA5D04 /* GraphicsCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsCache.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/GraphicsCache.cpp"; sourceTree = "<absolute>"; };
+		55FB3594D63DA96257AB77A0 /* Enemy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enemy.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/Enemy.h"; sourceTree = "<absolute>"; };
+		579371376FB28BB06B1E7127 /* AmmoBlaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AmmoBlaster.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoBlaster.h"; sourceTree = "<absolute>"; };
+		5C4508117D8876EDD01A918E /* CoordinatePair.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CoordinatePair.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/CoordinatePair.h"; sourceTree = "<absolute>"; };
+		5CC9F20041FB8F33D57E4140 /* Player.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Player.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/Player.cpp"; sourceTree = "<absolute>"; };
+		5CF00AE4F139BE7694CC57FF /* SoundSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SoundSystem.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/sound/SoundSystem.cpp"; sourceTree = "<absolute>"; };
+		66098CF18DD7025CEC92FFDE /* MovingPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MovingPlatform.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/MovingPlatform.h"; sourceTree = "<absolute>"; };
+		677FE4276850EB15A601E977 /* PushBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PushBox.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/PushBox.h"; sourceTree = "<absolute>"; };
+		6C66D03B7560ABE8AAEF075E /* CommonActor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonActor.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/CommonActor.h"; sourceTree = "<absolute>"; };
+		6CA1CF50CFBBF985794EF2CD /* moc_CarrotQt5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_CarrotQt5.cpp; path = "/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release/moc_CarrotQt5.cpp"; sourceTree = "<absolute>"; };
+		6D55F43A0A66C74477A39A73 /* TimerUser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TimerUser.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/TimerUser.cpp"; sourceTree = "<absolute>"; };
+		70E419F14EB859CB1D3E18CD /* Ammo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Ammo.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/Ammo.h"; sourceTree = "<absolute>"; };
+		70F1914C38F0316855B34000 /* AboutCarrotDialog.ui */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = AboutCarrotDialog.ui; path = "/Users/soulweaver/Documents/project-carrot/src/ui/AboutCarrotDialog.ui"; sourceTree = "<absolute>"; };
+		71D7ACC45EBC229BACB2E0D6 /* ResourceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ResourceManager.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ResourceManager.h"; sourceTree = "<absolute>"; };
+		727F6DFD60C6843870C66F29 /* SolidObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SolidObject.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/SolidObject.cpp"; sourceTree = "<absolute>"; };
+		73014EE660B776631E6A797C /* TurtleShell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TurtleShell.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/TurtleShell.h"; sourceTree = "<absolute>"; };
+		744D110D6BFFF046CBA6E152 /* .qmake.stash */ = {isa = PBXFileReference; lastKnownFileType = text; name = .qmake.stash; path = "/Users/soulweaver/Documents/project-carrot/.qmake.stash"; sourceTree = "<absolute>"; };
+		752DDA65706FB688518C82BC /* AmmoFreezer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AmmoFreezer.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoFreezer.cpp"; sourceTree = "<absolute>"; };
+		766A3521063388CF4E1518D4 /* BonusWarp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BonusWarp.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/BonusWarp.cpp"; sourceTree = "<absolute>"; };
+		77BF6934B971AED42278D165 /* ControlManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ControlManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ControlManager.cpp"; sourceTree = "<absolute>"; };
+		79092B33B8BABA81BC77EF57 /* LightSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LightSource.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/LightSource.cpp"; sourceTree = "<absolute>"; };
+		7A4109C6386942C87E38C98E /* Spring.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Spring.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/Spring.cpp"; sourceTree = "<absolute>"; };
+		7C70C24C4EB46BD6917C1ED3 /* CarrotCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CarrotCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/CarrotCollectible.h"; sourceTree = "<absolute>"; };
+		80E78D1D8E9AF5C506A078FD /* AnimatedTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnimatedTile.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/AnimatedTile.h"; sourceTree = "<absolute>"; };
+		820A25BF0A1A2242F14E2A0A /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework; sourceTree = "<absolute>"; };
+		82D30E23F902F9EDE927ED97 /* FastFireCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FastFireCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/FastFireCollectible.h"; sourceTree = "<absolute>"; };
+		83C17204B77EB02666653C83 /* Tileset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Tileset.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/Tileset.cpp"; sourceTree = "<absolute>"; };
+		83F3B7D53A1EF1945257015F /* MovingPlatform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MovingPlatform.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/MovingPlatform.cpp"; sourceTree = "<absolute>"; };
+		8794103A2C0AEC9FACB3E4AD /* SavePoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SavePoint.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/SavePoint.h"; sourceTree = "<absolute>"; };
+		8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
+		8E9A0B59D4E33D802EF99095 /* CarrotQt5.ui */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = CarrotQt5.ui; path = "/Users/soulweaver/Documents/project-carrot/src/ui/CarrotQt5.ui"; sourceTree = "<absolute>"; };
+		8F408ED9C82BF8E533640E50 /* NormalTurtle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NormalTurtle.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/NormalTurtle.cpp"; sourceTree = "<absolute>"; };
+		9275FC81604994EEF7ECD043 /* QSFMLCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = QSFMLCanvas.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/QSFMLCanvas.h"; sourceTree = "<absolute>"; };
+		928DEC9C69CE9EA7A644A5A5 /* StaticLight.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StaticLight.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/StaticLight.cpp"; sourceTree = "<absolute>"; };
+		944E01CCF139B4ED5F7D6D6D /* GemCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GemCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/GemCollectible.cpp"; sourceTree = "<absolute>"; };
+		947FA24478C4C77B4BA18315 /* WeaponTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WeaponTypes.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/WeaponTypes.h"; sourceTree = "<absolute>"; };
+		9646DBBDA4E2CB5965E2AA36 /* CarrotQt5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CarrotQt5.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/CarrotQt5.cpp"; sourceTree = "<absolute>"; };
+		96839376F6F84FF93B29CC0A /* SavePoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SavePoint.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/SavePoint.cpp"; sourceTree = "<absolute>"; };
+		9B53FBE86AC6B394FE477241 /* AmmoCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AmmoCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/AmmoCollectible.cpp"; sourceTree = "<absolute>"; };
+		9CD1024891D75FDAACBBAEAE /* ui_CarrotQt5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ui_CarrotQt5.h; path = "/Users/soulweaver/Documents/project-carrot/GeneratedFiles/ui_CarrotQt5.h"; sourceTree = "<absolute>"; };
+		9E5A56CD278199CFFD7C8644 /* FastFireCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FastFireCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/FastFireCollectible.cpp"; sourceTree = "<absolute>"; };
+		9FF35E4A1E83115BAD90E750 /* NormalTurtle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NormalTurtle.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/NormalTurtle.h"; sourceTree = "<absolute>"; };
+		A1625395578C00A305C4C0FC /* CommonActor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CommonActor.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/CommonActor.cpp"; sourceTree = "<absolute>"; };
+		A1A67BEAA744704B29168D39 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		A23E77319F8CA51C9854B17B /* CarrotCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CarrotCanvas.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/CarrotCanvas.cpp"; sourceTree = "<absolute>"; };
+		A28CC09005C9CA0186A5389C /* DebugConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DebugConfig.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/DebugConfig.h"; sourceTree = "<absolute>"; };
+		AB97BB62D244BF0001F2C609 /* EventSpawner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = EventSpawner.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/EventSpawner.cpp"; sourceTree = "<absolute>"; };
+		AC2A6B7C2A724C9F397F6344 /* GemCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GemCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/GemCollectible.h"; sourceTree = "<absolute>"; };
+		ACBA8279F249DB9874E71918 /* AmmoToaster.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AmmoToaster.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoToaster.cpp"; sourceTree = "<absolute>"; };
+		ADD77302B906980A8EB380D3 /* ModeManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ModeManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/ModeManager.cpp"; sourceTree = "<absolute>"; };
+		ADF0A633A9DBA14F4FF6C81A /* LevelManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LevelManager.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/LevelManager.h"; sourceTree = "<absolute>"; };
+		B2325C54E77248C4491751BB /* NextLevelData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NextLevelData.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/NextLevelData.h"; sourceTree = "<absolute>"; };
+		B233C12B261E6B53755571B9 /* Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Controls.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/Controls.h"; sourceTree = "<absolute>"; };
+		B334C70D003702BB363A5356 /* TimerUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TimerUser.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/TimerUser.h"; sourceTree = "<absolute>"; };
+		B4A7BDF621029DAB4F0EE6FF /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Bridge.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/Bridge.h"; sourceTree = "<absolute>"; };
+		B7434B63833868021F0D9DFF /* Collectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Collectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/Collectible.cpp"; sourceTree = "<absolute>"; };
+		B7C5A854C0641958F6914588 /* AmmoBouncer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AmmoBouncer.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoBouncer.h"; sourceTree = "<absolute>"; };
+		BE6C25C93DFB9637C7377F7B /* Layers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Layers.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/Layers.h"; sourceTree = "<absolute>"; };
+		BF56327E69EC2339893EFDE7 /* CarrotQt5.pro */ = {isa = PBXFileReference; lastKnownFileType = text; name = CarrotQt5.pro; path = "/Users/soulweaver/Documents/project-carrot/CarrotQt5.pro"; sourceTree = "<absolute>"; };
+		BF6206513B6D8D7B8020DD30 /* PlayerOSD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlayerOSD.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/PlayerOSD.h"; sourceTree = "<absolute>"; };
+		BFA598AB8854AB17AB6E7E05 /* Hitbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Hitbox.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/Hitbox.h"; sourceTree = "<absolute>"; };
+		C3AAA81066E1F70CCDF4B1FF /* QSFMLCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = QSFMLCanvas.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/QSFMLCanvas.cpp"; sourceTree = "<absolute>"; };
+		C44B035BCAB00DBFCCC6F99B /* FrozenBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FrozenBlock.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/FrozenBlock.h"; sourceTree = "<absolute>"; };
+		C6A3CACD0C5DB865D523700B /* PulsatingLight.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PulsatingLight.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/PulsatingLight.cpp"; sourceTree = "<absolute>"; };
+		C85DC3AEA972F57F3284AAC9 /* ControlManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ControlManager.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ControlManager.h"; sourceTree = "<absolute>"; };
+		C9A5EA208E2C44A29CF5DDDF /* GameView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/GameView.cpp"; sourceTree = "<absolute>"; };
+		CD087D514D4877D1AAB536A7 /* AmmoBouncer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AmmoBouncer.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoBouncer.cpp"; sourceTree = "<absolute>"; };
+		CD829298CA2038092A51A0F6 /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework; sourceTree = "<absolute>"; };
+		D0527BC2E55BC2C08326C6D9 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/Constants.h"; sourceTree = "<absolute>"; };
+		D0BD7A81CD46F69C181C2A77 /* AnimationUser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationUser.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/AnimationUser.cpp"; sourceTree = "<absolute>"; };
+		D0E2A66CC4EF08432FA5DD51 /* TileMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TileMap.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/TileMap.cpp"; sourceTree = "<absolute>"; };
+		D326E4582616A10D6436BC95 /* Collectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Collectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/Collectible.h"; sourceTree = "<absolute>"; };
+		D4B32C2222F82AC56BADEB21 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		D8931DFB0E0E3A8227E7C701 /* Spring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Spring.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/Spring.h"; sourceTree = "<absolute>"; };
+		D9AD6021E523807DB5267D3D /* ShaderSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShaderSource.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/ShaderSource.h"; sourceTree = "<absolute>"; };
+		DB10E3AC9C075C722D4FBE22 /* SolidObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SolidObject.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/SolidObject.h"; sourceTree = "<absolute>"; };
+		DC2D212FEEEEEB5FE366A2B1 /* Tileset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tileset.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/Tileset.h"; sourceTree = "<absolute>"; };
+		DEF3168FC7DA4CFB15762F40 /* FoodCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FoodCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/FoodCollectible.cpp"; sourceTree = "<absolute>"; };
+		E18D32251E01E61100258924 /* libsfml-graphics.2.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libsfml-graphics.2.4.1.dylib"; path = "../../../../usr/local/Cellar/sfml/2.4.1/lib/libsfml-graphics.2.4.1.dylib"; sourceTree = "<group>"; };
+		E18D32261E01E61100258924 /* libsfml-system.2.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libsfml-system.2.4.1.dylib"; path = "../../../../usr/local/Cellar/sfml/2.4.1/lib/libsfml-system.2.4.1.dylib"; sourceTree = "<group>"; };
+		E18D32271E01E61100258924 /* libsfml-window.2.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libsfml-window.2.4.1.dylib"; path = "../../../../usr/local/Cellar/sfml/2.4.1/lib/libsfml-window.2.4.1.dylib"; sourceTree = "<group>"; };
+		E18D322B1E01E62C00258924 /* libbass_fx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbass_fx.dylib; path = "../bass_fx24-osx/libbass_fx.dylib"; sourceTree = "<group>"; };
+		E18D322D1E01E64900258924 /* libbass.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbass.dylib; path = "../bass24-osx/libbass.dylib"; sourceTree = "<group>"; };
+		E18D32341E01FDC500258924 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		E18D32381E02079D00258924 /* CarrotQt5.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CarrotQt5.xcassets; sourceTree = "<group>"; };
+		E22BDD07D6EA605C53B4C404 /* JJ2Format.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JJ2Format.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/JJ2Format.cpp"; sourceTree = "<absolute>"; };
+		E2D1A72583580DC31DC2F123 /* InteractiveActor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InteractiveActor.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/InteractiveActor.h"; sourceTree = "<absolute>"; };
+		E3F26325A6D4B2E2375A47D8 /* moc_LevelManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_LevelManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release/moc_LevelManager.cpp"; sourceTree = "<absolute>"; };
+		E5F7474A1FDC45F6EB4F01A1 /* AnimationUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnimationUser.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/AnimationUser.h"; sourceTree = "<absolute>"; };
+		E60F0880DD9882EF4F764C7D /* ResourceManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ResourceManager.cpp"; sourceTree = "<absolute>"; };
+		E87F76A85899F32A02CBAEAE /* LabRat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LabRat.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/LabRat.cpp"; sourceTree = "<absolute>"; };
+		E94A6101DDFCCB47F257A290 /* ModeManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ModeManager.h; path = "/Users/soulweaver/Documents/project-carrot/src/ModeManager.h"; sourceTree = "<absolute>"; };
+		EA0BCD236BA6CD6D59BE37F2 /* AnimatedTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AnimatedTile.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/AnimatedTile.cpp"; sourceTree = "<absolute>"; };
+		EDB1BCF6930FBF479C53C609 /* StaticLight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StaticLight.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/StaticLight.h"; sourceTree = "<absolute>"; };
+		F02D67771DC5E45765AA6A96 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BitmapFont.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/BitmapFont.h"; sourceTree = "<absolute>"; };
+		F15F2650EFD5B54A4DEA6926 /* CarrotCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CarrotCanvas.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/CarrotCanvas.h"; sourceTree = "<absolute>"; };
+		F2C5677932BC7A2E2D592369 /* AmmoFreezer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AmmoFreezer.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoFreezer.h"; sourceTree = "<absolute>"; };
+		F4304750D28DFC564D27C0D6 /* LevelManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LevelManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/LevelManager.cpp"; sourceTree = "<absolute>"; };
+		F4455B8BBD6CFC15BDCA1610 /* RadialLightSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RadialLightSource.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/RadialLightSource.cpp"; sourceTree = "<absolute>"; };
+		F4DD6CD133A4DEEBA284E09B /* CoinCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CoinCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/CoinCollectible.cpp"; sourceTree = "<absolute>"; };
+		F560FA1590DB221020817289 /* CarrotQt5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CarrotQt5.h; path = "/Users/soulweaver/Documents/project-carrot/src/CarrotQt5.h"; sourceTree = "<absolute>"; };
+		F56D86F517F17DB5DE0B702B /* BitmapString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BitmapString.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/BitmapString.h"; sourceTree = "<absolute>"; };
+		F78D40DC67BC675580EA2D6F /* BitmapFont.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapFont.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/BitmapFont.cpp"; sourceTree = "<absolute>"; };
+		FCC34917C626ED6FEA973AE3 /* PCEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PCEvent.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/PCEvent.h"; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D1C883685E82D5676953459A /* Link Binary With Libraries */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E18D32351E01FDC500258924 /* CoreFoundation.framework in Link Binary With Libraries */,
+				E18D322E1E01E64900258924 /* libbass.dylib in Link Binary With Libraries */,
+				E18D322C1E01E62C00258924 /* libbass_fx.dylib in Link Binary With Libraries */,
+				E18D32281E01E61100258924 /* libsfml-graphics.2.4.1.dylib in Link Binary With Libraries */,
+				E18D32291E01E61100258924 /* libsfml-system.2.4.1.dylib in Link Binary With Libraries */,
+				E18D322A1E01E61100258924 /* libsfml-window.2.4.1.dylib in Link Binary With Libraries */,
+				B1FD449BA9A24D8FBFD6B918 /* QtWidgets.framework in Link Binary With Libraries */,
+				7B61C92B0D756FD9703B0C41 /* QtGui.framework in Link Binary With Libraries */,
+				E8CEE9A2D81662520C72B099 /* QtCore.framework in Link Binary With Libraries */,
+				A99B2AA0F9CBBDD12BA126A4 /* DiskArbitration.framework in Link Binary With Libraries */,
+				8D267F2E4776F0ECA2F49DC8 /* IOKit.framework in Link Binary With Libraries */,
+				3AF4B3C7767546FECDB6AD55 /* QtGamepad.framework in Link Binary With Libraries */,
+				8771A8C96E9C391044035D99 /* OpenGL.framework in Link Binary With Libraries */,
+				E45E51A644D5FC9F942ECE55 /* AGL.framework in Link Binary With Libraries */,
+			);
+			name = "Link Binary With Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0530BBC6B5DFBDFC8F08215B /* collectible */ = {
+			isa = PBXGroup;
+			children = (
+				9B53FBE86AC6B394FE477241 /* AmmoCollectible.cpp */,
+				0AC9C01F7955BC6FAF371BEB /* CarrotCollectible.cpp */,
+				F4DD6CD133A4DEEBA284E09B /* CoinCollectible.cpp */,
+				9E5A56CD278199CFFD7C8644 /* FastFireCollectible.cpp */,
+				DEF3168FC7DA4CFB15762F40 /* FoodCollectible.cpp */,
+				944E01CCF139B4ED5F7D6D6D /* GemCollectible.cpp */,
+				B7434B63833868021F0D9DFF /* Collectible.cpp */,
+				525D8A1C445412E30697A697 /* AmmoCollectible.h */,
+				7C70C24C4EB46BD6917C1ED3 /* CarrotCollectible.h */,
+				35B6D4BFC9DEF7EFB37C13FF /* CoinCollectible.h */,
+				82D30E23F902F9EDE927ED97 /* FastFireCollectible.h */,
+				3AF2B81395670C3293B59198 /* FoodCollectible.h */,
+				AC2A6B7C2A724C9F397F6344 /* GemCollectible.h */,
+				D326E4582616A10D6436BC95 /* Collectible.h */,
+			);
+			name = collectible;
+			sourceTree = "<group>";
+		};
+		1166EEC47F3C749299B27B11 /* menu */ = {
+			isa = PBXGroup;
+			children = (
+				3982E201E95B3208551E636E /* MenuScreen.cpp */,
+				00B977E42590984B860C7678 /* MenuScreen.h */,
+			);
+			name = menu;
+			sourceTree = "<group>";
+		};
+		12E908B8A1C3C07C115504F5 /* Sources [uic] */ = {
+			isa = PBXGroup;
+			children = (
+				FB3C908FA6A710AAAE4CE3AA /* src */,
+			);
+			name = "Sources [uic]";
+			sourceTree = "<group>";
+		};
+		1A13224269FA67145B3D1309 /* sound */ = {
+			isa = PBXGroup;
+			children = (
+				5CF00AE4F139BE7694CC57FF /* SoundSystem.cpp */,
+				1D5BC33B0FCCC08BF13C04CC /* SoundSystem.h */,
+			);
+			name = sound;
+			sourceTree = "<group>";
+		};
+		25B08E2869634E9BCBA333A2 /* Generated Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D0B536A85E53302E4F66CE23 /* GeneratedFiles */,
+			);
+			name = "Generated Sources";
+			sourceTree = "<group>";
+		};
+		2EB56BE3C2D93CDAB0C52E67 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				921315FAA7F261D737F4F4C7 /* src */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		2F733327CFBF788C2D53B055 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				70F1914C38F0316855B34000 /* AboutCarrotDialog.ui */,
+				8E9A0B59D4E33D802EF99095 /* CarrotQt5.ui */,
+			);
+			name = ui;
+			sourceTree = "<group>";
+		};
+		314980272422D8FFCB7FF94D /* gamestate */ = {
+			isa = PBXGroup;
+			children = (
+				43F56B4B60C1058F0E23C283 /* ActorAPI.cpp */,
+				77BF6934B971AED42278D165 /* ControlManager.cpp */,
+				C9A5EA208E2C44A29CF5DDDF /* GameView.cpp */,
+				F4304750D28DFC564D27C0D6 /* LevelManager.cpp */,
+				E60F0880DD9882EF4F764C7D /* ResourceManager.cpp */,
+				D0BD7A81CD46F69C181C2A77 /* AnimationUser.cpp */,
+				0AE2D1B7E99B835AD4DCE75E /* EventMap.cpp */,
+				1D2D019F978E71D1C491053A /* PlayerOSD.cpp */,
+				D0E2A66CC4EF08432FA5DD51 /* TileMap.cpp */,
+				6D55F43A0A66C74477A39A73 /* TimerUser.cpp */,
+				AB97BB62D244BF0001F2C609 /* EventSpawner.cpp */,
+				17AEAF2017FC9256EE9655AD /* ActorAPI.h */,
+				C85DC3AEA972F57F3284AAC9 /* ControlManager.h */,
+				077177E159A90991CA7333AD /* GameView.h */,
+				71D7ACC45EBC229BACB2E0D6 /* ResourceManager.h */,
+				E5F7474A1FDC45F6EB4F01A1 /* AnimationUser.h */,
+				BF6206513B6D8D7B8020DD30 /* PlayerOSD.h */,
+				327BD4B7CBEADF2FEBECDEF3 /* TileMap.h */,
+				B334C70D003702BB363A5356 /* TimerUser.h */,
+				4F9700CE5D48A6CD9B92FFBA /* EventMap.h */,
+				ADF0A633A9DBA14F4FF6C81A /* LevelManager.h */,
+				1CDB1FCCC6F8D023A4C40FB7 /* EventSpawner.h */,
+			);
+			name = gamestate;
+			sourceTree = "<group>";
+		};
+		651D0ACE425B66921C1CFE4D /* enemy */ = {
+			isa = PBXGroup;
+			children = (
+				E87F76A85899F32A02CBAEAE /* LabRat.cpp */,
+				00395741C0122426D5C69C6A /* Sucker.cpp */,
+				169720A52EBC3FBA637D68A7 /* SuckerFloat.cpp */,
+				2AD4F6BA2DB8A57BDA899E54 /* TurtleShell.cpp */,
+				35D046D3C87C19FCD7EE43F0 /* Enemy.cpp */,
+				3CEBDE0BF067C6FDF585A9D2 /* Lizard.cpp */,
+				8F408ED9C82BF8E533640E50 /* NormalTurtle.cpp */,
+				4C41ACB583F15CA87E60EBF1 /* LabRat.h */,
+				0B957556D208C0625BF91753 /* Sucker.h */,
+				3B653C079AA70864613216E7 /* SuckerFloat.h */,
+				73014EE660B776631E6A797C /* TurtleShell.h */,
+				55FB3594D63DA96257AB77A0 /* Enemy.h */,
+				1EE8EF4C4C9BF56660DA709D /* Lizard.h */,
+				9FF35E4A1E83115BAD90E750 /* NormalTurtle.h */,
+			);
+			name = enemy;
+			sourceTree = "<group>";
+		};
+		74B182DB50CB5611B5C1C297 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BF56327E69EC2339893EFDE7 /* CarrotQt5.pro */,
+				744D110D6BFFF046CBA6E152 /* .qmake.stash */,
+				06FB7175B138D5AEF7F3617C /* CarrotQt5.pri */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		808003373704CB6D108FA3E4 /* graphics */ = {
+			isa = PBXGroup;
+			children = (
+				EA0BCD236BA6CD6D59BE37F2 /* AnimatedTile.cpp */,
+				F78D40DC67BC675580EA2D6F /* BitmapFont.cpp */,
+				27E1C8A926B861426445C697 /* BitmapString.cpp */,
+				A23E77319F8CA51C9854B17B /* CarrotCanvas.cpp */,
+				28C2989682E27E2C55FBAE9B /* ShaderSource.cpp */,
+				54E42252D458E4873BEA5D04 /* GraphicsCache.cpp */,
+				C3AAA81066E1F70CCDF4B1FF /* QSFMLCanvas.cpp */,
+				83C17204B77EB02666653C83 /* Tileset.cpp */,
+				F56D86F517F17DB5DE0B702B /* BitmapString.h */,
+				D9AD6021E523807DB5267D3D /* ShaderSource.h */,
+				DC2D212FEEEEEB5FE366A2B1 /* Tileset.h */,
+				4C11DD0E43A5B0C679FEF2AE /* GraphicsCache.h */,
+				80E78D1D8E9AF5C506A078FD /* AnimatedTile.h */,
+				F02D67771DC5E45765AA6A96 /* BitmapFont.h */,
+				F15F2650EFD5B54A4DEA6926 /* CarrotCanvas.h */,
+				9275FC81604994EEF7ECD043 /* QSFMLCanvas.h */,
+			);
+			name = graphics;
+			sourceTree = "<group>";
+		};
+		87DF60DE337FB58864343E39 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4EA1EC3B2EDE877EC5DA2837 /* CarrotQt5.qrc */,
+				E18D32381E02079D00258924 /* CarrotQt5.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		921315FAA7F261D737F4F4C7 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				9646DBBDA4E2CB5965E2AA36 /* CarrotQt5.cpp */,
+				E22BDD07D6EA605C53B4C404 /* JJ2Format.cpp */,
+				ADD77302B906980A8EB380D3 /* ModeManager.cpp */,
+				808003373704CB6D108FA3E4 /* graphics */,
+				EFB239A6A921A5399F7A366C /* actor */,
+				1166EEC47F3C749299B27B11 /* menu */,
+				1A13224269FA67145B3D1309 /* sound */,
+				314980272422D8FFCB7FF94D /* gamestate */,
+				E94A6101DDFCCB47F257A290 /* ModeManager.h */,
+				160F3EFCA7674D29E1D2CB7E /* Version.h */,
+				4F21654D9934A6C006762E1B /* JJ2Format.h */,
+				38FC5A75D1B6B163DC871134 /* Resources.h */,
+				F560FA1590DB221020817289 /* CarrotQt5.h */,
+				AE3C8CA5FEC18C430B20E72C /* struct */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		AE3C8CA5FEC18C430B20E72C /* struct */ = {
+			isa = PBXGroup;
+			children = (
+				41D8BAA66A72162122144124 /* AnimState.h */,
+				D0527BC2E55BC2C08326C6D9 /* Constants.h */,
+				B233C12B261E6B53755571B9 /* Controls.h */,
+				5C4508117D8876EDD01A918E /* CoordinatePair.h */,
+				A28CC09005C9CA0186A5389C /* DebugConfig.h */,
+				BFA598AB8854AB17AB6E7E05 /* Hitbox.h */,
+				BE6C25C93DFB9637C7377F7B /* Layers.h */,
+				B2325C54E77248C4491751BB /* NextLevelData.h */,
+				FCC34917C626ED6FEA973AE3 /* PCEvent.h */,
+				495569221F1C8BA1F8A3998C /* Resources.h */,
+				947FA24478C4C77B4BA18315 /* WeaponTypes.h */,
+			);
+			name = struct;
+			sourceTree = "<group>";
+		};
+		AF39DD055C3EF8226FBE929D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E18D32341E01FDC500258924 /* CoreFoundation.framework */,
+				E18D322D1E01E64900258924 /* libbass.dylib */,
+				E18D322B1E01E62C00258924 /* libbass_fx.dylib */,
+				E18D32251E01E61100258924 /* libsfml-graphics.2.4.1.dylib */,
+				E18D32261E01E61100258924 /* libsfml-system.2.4.1.dylib */,
+				E18D32271E01E61100258924 /* libsfml-window.2.4.1.dylib */,
+				17DDAFE5E52515581D095F18 /* QtWidgets.framework */,
+				CD829298CA2038092A51A0F6 /* QtGui.framework */,
+				820A25BF0A1A2242F14E2A0A /* QtCore.framework */,
+				2B774D8E4178765CE52EAAF5 /* DiskArbitration.framework */,
+				A1A67BEAA744704B29168D39 /* IOKit.framework */,
+				410B7C7FC328143692666413 /* QtGamepad.framework */,
+				D4B32C2222F82AC56BADEB21 /* OpenGL.framework */,
+				8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BA5B1A16A1F3BBC50C32DFDC /* weapon */ = {
+			isa = PBXGroup;
+			children = (
+				752DDA65706FB688518C82BC /* AmmoFreezer.cpp */,
+				36D465A9AF78D2ADE768CE5A /* Ammo.cpp */,
+				27EA35A1254C4637CFF7ACC3 /* AmmoBlaster.cpp */,
+				CD087D514D4877D1AAB536A7 /* AmmoBouncer.cpp */,
+				ACBA8279F249DB9874E71918 /* AmmoToaster.cpp */,
+				F2C5677932BC7A2E2D592369 /* AmmoFreezer.h */,
+				70E419F14EB859CB1D3E18CD /* Ammo.h */,
+				579371376FB28BB06B1E7127 /* AmmoBlaster.h */,
+				B7C5A854C0641958F6914588 /* AmmoBouncer.h */,
+				4DCCD141C18D097F8AE9B36F /* AmmoToaster.h */,
+			);
+			name = weapon;
+			sourceTree = "<group>";
+		};
+		D06E490786B0D995137B1DDC /* Release */ = {
+			isa = PBXGroup;
+			children = (
+				6CA1CF50CFBBF985794EF2CD /* moc_CarrotQt5.cpp */,
+				1261A9B4167BFFE905F67A7A /* moc_Player.cpp */,
+				E3F26325A6D4B2E2375A47D8 /* moc_LevelManager.cpp */,
+			);
+			name = Release;
+			sourceTree = "<group>";
+		};
+		D0B536A85E53302E4F66CE23 /* GeneratedFiles */ = {
+			isa = PBXGroup;
+			children = (
+				324385DFD414D4AEFEFE9B3F /* qrc_CarrotQt5.cpp */,
+				D06E490786B0D995137B1DDC /* Release */,
+				1B2569B1933E9DDDFAC61930 /* ui_AboutCarrotDialog.h */,
+				9CD1024891D75FDAACBBAEAE /* ui_CarrotQt5.h */,
+			);
+			name = GeneratedFiles;
+			sourceTree = "<group>";
+		};
+		E8C543AB96796ECAA2E65C57 /* CarrotQt5 */ = {
+			isa = PBXGroup;
+			children = (
+				2EB56BE3C2D93CDAB0C52E67 /* Sources */,
+				25B08E2869634E9BCBA333A2 /* Generated Sources */,
+				74B182DB50CB5611B5C1C297 /* Supporting Files */,
+				87DF60DE337FB58864343E39 /* Resources */,
+				12E908B8A1C3C07C115504F5 /* Sources [uic] */,
+				AF39DD055C3EF8226FBE929D /* Frameworks */,
+				FE0A091FDBFB3E9C31B7A1BD /* Products */,
+			);
+			name = CarrotQt5;
+			sourceTree = "<group>";
+		};
+		EFB239A6A921A5399F7A366C /* actor */ = {
+			isa = PBXGroup;
+			children = (
+				766A3521063388CF4E1518D4 /* BonusWarp.cpp */,
+				42DFEC274750948721C54F39 /* FrozenBlock.cpp */,
+				52D10C2D4834372FB141F0E5 /* InteractiveActor.cpp */,
+				79092B33B8BABA81BC77EF57 /* LightSource.cpp */,
+				83F3B7D53A1EF1945257015F /* MovingPlatform.cpp */,
+				0776048270C5CD5265DD02E5 /* PowerUpMonitor.cpp */,
+				238861A4C80375F54835DC0A /* Bridge.cpp */,
+				A1625395578C00A305C4C0FC /* CommonActor.cpp */,
+				5CC9F20041FB8F33D57E4140 /* Player.cpp */,
+				27D0DF5B287C86FC4D7863C2 /* PushBox.cpp */,
+				96839376F6F84FF93B29CC0A /* SavePoint.cpp */,
+				727F6DFD60C6843870C66F29 /* SolidObject.cpp */,
+				7A4109C6386942C87E38C98E /* Spring.cpp */,
+				3CFD490DDF0AB444F8E343EB /* TriggerCrate.cpp */,
+				651D0ACE425B66921C1CFE4D /* enemy */,
+				BA5B1A16A1F3BBC50C32DFDC /* weapon */,
+				0530BBC6B5DFBDFC8F08215B /* collectible */,
+				FC967BE9F124789B1955087A /* lighting */,
+				0B1D007404750B83BBA1399D /* BonusWarp.h */,
+				C44B035BCAB00DBFCCC6F99B /* FrozenBlock.h */,
+				E2D1A72583580DC31DC2F123 /* InteractiveActor.h */,
+				16C8692D6440AD1C9C4A0860 /* LightSource.h */,
+				66098CF18DD7025CEC92FFDE /* MovingPlatform.h */,
+				1C830CB2404AC69D9D5B5A77 /* PowerUpMonitor.h */,
+				B4A7BDF621029DAB4F0EE6FF /* Bridge.h */,
+				D8931DFB0E0E3A8227E7C701 /* Spring.h */,
+				6C66D03B7560ABE8AAEF075E /* CommonActor.h */,
+				677FE4276850EB15A601E977 /* PushBox.h */,
+				8794103A2C0AEC9FACB3E4AD /* SavePoint.h */,
+				DB10E3AC9C075C722D4FBE22 /* SolidObject.h */,
+				0EBFC00D21C9E42118F72AD4 /* TriggerCrate.h */,
+				344B544BB70BBA5EE7D63E59 /* Player.h */,
+			);
+			name = actor;
+			sourceTree = "<group>";
+		};
+		FB3C908FA6A710AAAE4CE3AA /* src */ = {
+			isa = PBXGroup;
+			children = (
+				2F733327CFBF788C2D53B055 /* ui */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		FC967BE9F124789B1955087A /* lighting */ = {
+			isa = PBXGroup;
+			children = (
+				C6A3CACD0C5DB865D523700B /* PulsatingLight.cpp */,
+				F4455B8BBD6CFC15BDCA1610 /* RadialLightSource.cpp */,
+				928DEC9C69CE9EA7A644A5A5 /* StaticLight.cpp */,
+				2715D231799CFD0A0F1F32F2 /* PulsatingLight.h */,
+				2EF2D1AAC70E479DE5554CC7 /* RadialLightSource.h */,
+				EDB1BCF6930FBF479C53C609 /* StaticLight.h */,
+			);
+			name = lighting;
+			sourceTree = "<group>";
+		};
+		FE0A091FDBFB3E9C31B7A1BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				30692C6B79B3D5EC50EC83DB /* Project Carrot (Debug).app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F0815C2C59B88897B9855F0B /* CarrotQt5 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "CarrotQt5" */;
+			buildPhases = (
+				F7E50F631C51CD5B5DC0BC43 /* Compile Sources */,
+				D1C883685E82D5676953459A /* Link Binary With Libraries */,
+				9C316F444A62BF296E3E1F25 /* Project Copy */,
+				30414803F31797EB689AE508 /* Copy Bundle Resources */,
+				E18D32311E01F7AE00258924 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B14EF043A8E4DF143B5061EC /* PBXTargetDependency */,
+			);
+			name = CarrotQt5;
+			productInstallPath = Release/;
+			productName = CarrotQt5;
+			productReference = 30692C6B79B3D5EC50EC83DB /* Project Carrot (Debug).app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6DB9C3763D02B1415CD9D565 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+			};
+			buildConfigurationList = DAC4C1AA5EDEA1C85E9CA5E6 /* Build configuration list for PBXProject "CarrotQt5" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E8C543AB96796ECAA2E65C57 /* CarrotQt5 */;
+			productRefGroup = FE0A091FDBFB3E9C31B7A1BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F0815C2C59B88897B9855F0B /* CarrotQt5 */,
+				D4A1886015E582F8852788EF /* Qt Preprocess */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		30414803F31797EB689AE508 /* Copy Bundle Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E18D32391E02079D00258924 /* CarrotQt5.xcassets in Copy Bundle Resources */,
+			);
+			name = "Copy Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5E618435888B9D49F8540165 /* Qt Qmake */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Qt Qmake";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/soulweaver/Documents/project-carrot/ -f CarrotQt5.xcodeproj/qt_makeqmake.mak";
+			showEnvVarsInLog = 0;
+		};
+		7EF0942E79C014DCEC8976BC /* Qt Preprocessors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Qt Preprocessors";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/soulweaver/Documents/project-carrot/ -f CarrotQt5.xcodeproj/qt_preprocess.mak";
+			showEnvVarsInLog = 0;
+		};
+		9C316F444A62BF296E3E1F25 /* Project Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Project Copy";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#cp -r \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME\" /Users/soulweaver/Documents/project-carrot/Release";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F7E50F631C51CD5B5DC0BC43 /* Compile Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56CCA0B7842A4702B13F18B3 /* CarrotQt5.cpp in Compile Sources */,
+				C84F6641750DEA422CFD9277 /* JJ2Format.cpp in Compile Sources */,
+				594B78D4435F96832DA21956 /* ModeManager.cpp in Compile Sources */,
+				60B8AA19153DCD323BCC1270 /* AnimatedTile.cpp in Compile Sources */,
+				9F439E2B2737319DDE0E6AD7 /* BitmapFont.cpp in Compile Sources */,
+				2EEA1A435C45061A05B726E6 /* BitmapString.cpp in Compile Sources */,
+				59D0C199C8D9CFC4636C901B /* CarrotCanvas.cpp in Compile Sources */,
+				31005E8B96C5E646858C3C23 /* ShaderSource.cpp in Compile Sources */,
+				5DF2BAA4F0F2CC0D3E80E60B /* GraphicsCache.cpp in Compile Sources */,
+				E7706FEE40050DB4E52BFC15 /* QSFMLCanvas.cpp in Compile Sources */,
+				B24F800F1EAB93E62226B9B8 /* Tileset.cpp in Compile Sources */,
+				005DFC2FBE929AAECBB6CCAA /* BonusWarp.cpp in Compile Sources */,
+				5A71EC84FA10A0BA403196ED /* FrozenBlock.cpp in Compile Sources */,
+				D34B037247F1243EB0EA4F44 /* InteractiveActor.cpp in Compile Sources */,
+				FD9DD279CB38755F399FC968 /* LightSource.cpp in Compile Sources */,
+				BB49FD12BD7CB558B741F84D /* MovingPlatform.cpp in Compile Sources */,
+				A18335176B1370E96DEE6857 /* PowerUpMonitor.cpp in Compile Sources */,
+				516086C038BC82E9FC237727 /* Bridge.cpp in Compile Sources */,
+				6E9793043C7480857DE5E697 /* CommonActor.cpp in Compile Sources */,
+				82D35A82D6DD4329A60448DE /* Player.cpp in Compile Sources */,
+				C0EE78A2040DCFD613EAEDA0 /* PushBox.cpp in Compile Sources */,
+				435AFDC11890B4F1FD8685B8 /* SavePoint.cpp in Compile Sources */,
+				AC3C5FD656FC068FC1F54974 /* SolidObject.cpp in Compile Sources */,
+				A2270071F9C49AF736EB6F99 /* Spring.cpp in Compile Sources */,
+				8A556375B3D0E0EE2B1FE808 /* TriggerCrate.cpp in Compile Sources */,
+				343E94E0290D0FF319588D95 /* LabRat.cpp in Compile Sources */,
+				05F3D01DF92CEB077A180C9C /* Sucker.cpp in Compile Sources */,
+				6F561FA3A5C847A1F260C608 /* SuckerFloat.cpp in Compile Sources */,
+				62349A7FB363018211447F77 /* TurtleShell.cpp in Compile Sources */,
+				A7116467924F2352D3DFA4BB /* Enemy.cpp in Compile Sources */,
+				BF00A307C50743C16D9E04BE /* Lizard.cpp in Compile Sources */,
+				C153D8FEB6F4CF1B000246D1 /* NormalTurtle.cpp in Compile Sources */,
+				45FF7A2E7D4A34AB51229A3D /* AmmoFreezer.cpp in Compile Sources */,
+				8993B00A15CCDCA24108ECC8 /* Ammo.cpp in Compile Sources */,
+				B9022EBEF92F0067E1ABC468 /* AmmoBlaster.cpp in Compile Sources */,
+				BA3864EE6B7790F9E43E316F /* AmmoBouncer.cpp in Compile Sources */,
+				8F0E222BF5F15F5AF1203064 /* AmmoToaster.cpp in Compile Sources */,
+				6DF3E96A7099B02F2B2F2443 /* AmmoCollectible.cpp in Compile Sources */,
+				2D52BCB1679737C74BBC9756 /* CarrotCollectible.cpp in Compile Sources */,
+				85DE5F336EF9A75FB44D2860 /* CoinCollectible.cpp in Compile Sources */,
+				BC52899E16CF8CFBE79BFE37 /* FastFireCollectible.cpp in Compile Sources */,
+				B4A3D848401E85EE95D64147 /* FoodCollectible.cpp in Compile Sources */,
+				06D3A088B05D4B6BAB48F767 /* GemCollectible.cpp in Compile Sources */,
+				8A0A76F5AF2F492178EC2C88 /* Collectible.cpp in Compile Sources */,
+				F658A7054745D83CAA2CA3C1 /* PulsatingLight.cpp in Compile Sources */,
+				8BB262068214F4E4E87A9C1D /* RadialLightSource.cpp in Compile Sources */,
+				2C42019E18D489604E3F3DAC /* StaticLight.cpp in Compile Sources */,
+				91EC3357FAB30CA398544E63 /* MenuScreen.cpp in Compile Sources */,
+				F51074F51D5C8455ACD38BDC /* SoundSystem.cpp in Compile Sources */,
+				55ED0E2CBF27AAF451358DF8 /* ActorAPI.cpp in Compile Sources */,
+				F3E538E9013C9E4050610251 /* ControlManager.cpp in Compile Sources */,
+				5F8B4DA4091A23105795EC0B /* GameView.cpp in Compile Sources */,
+				DEDE958D75348D6739151DEA /* LevelManager.cpp in Compile Sources */,
+				97296A1926C6B71DC34B4E3A /* ResourceManager.cpp in Compile Sources */,
+				35DE4C925C13FD2D5CE072BB /* AnimationUser.cpp in Compile Sources */,
+				08854C7728F6F91E8CF3AC78 /* EventMap.cpp in Compile Sources */,
+				97DDBF632015753E3AFBA485 /* PlayerOSD.cpp in Compile Sources */,
+				60B8982FCBD6C57A87EE5F21 /* TileMap.cpp in Compile Sources */,
+				274F22A8E157A5F4D6BF27E6 /* TimerUser.cpp in Compile Sources */,
+				98181E714EBFEBD89F3C81A5 /* EventSpawner.cpp in Compile Sources */,
+				4FFD0F18C359EEDA3F6113E5 /* qrc_CarrotQt5.cpp in Compile Sources */,
+				CF5D7BFBE58C7156705F6F87 /* moc_CarrotQt5.cpp in Compile Sources */,
+				4A8140CA1EDDF0C71822AB57 /* moc_Player.cpp in Compile Sources */,
+				1CBD813B8E3D87B10CF2D7E0 /* moc_LevelManager.cpp in Compile Sources */,
+			);
+			name = "Compile Sources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B14EF043A8E4DF143B5061EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D4A1886015E582F8852788EF /* Qt Preprocess */;
+			targetProxy = E18D32241E01E3C800258924 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		339EE1B2CC4FC24589A0EA95 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BASS_DIR = "";
+				BASS_FX_DIR = "";
+				CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/usr/local/Cellar/qt5/5.7.0/lib,
+					/usr/local/Cellar/qt5/5.7.0/lib,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					"$(BASS_DIR)",
+					"$(BASS_FX_DIR)/C",
+					"$(BASS_FX_DIR)",
+					"$(SFML_DIR)/include",
+					GeneratedFiles,
+					.,
+					GeneratedFiles/Release,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtGamepad.framework/Headers,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers,
+					GeneratedFiles/Release,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers,
+					GeneratedFiles,
+					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang",
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_DIR = "/Users/soulweaver/Documents/project-carrot//Release/";
+				LDPLUSPLUS = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++";
+				LIBRARY_SEARCH_PATHS = (
+					"$(BASS_DIR)",
+					"$(BASS_FX_DIR)",
+					"$(SFML_DIR)/lib",
+					/usr/local/Cellar/qt5/5.7.0/lib,
+					/System/Library/Frameworks/,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OBJROOT = Build/;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DNOMINMAX",
+					"-DQT_DLL",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_NO_DEBUG",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_GAMEPAD_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-stdlib=libc++",
+					"-O2",
+					"-std=gnu++1y",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DNOMINMAX",
+					"-DQT_DLL",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_NO_DEBUG",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_GAMEPAD_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-stdlib=libc++",
+					"-Wl,-rpath,'$$ORIGIN'",
+					"-F/usr/local/Cellar/qt5/5.7.0/lib",
+					"-L$(BASS_DIR)",
+					"-L$(BASS_FX_DIR)",
+					"-lbass",
+					"-lbass_fx",
+					"-lsfml-graphics",
+					"-lsfml-window",
+					"-lsfml-system",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = fi.soulweaver.ProjectCarrot;
+				PRODUCT_NAME = "Project Carrot";
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = macosx;
+				SFML_DIR = "";
+				SYMROOT = "/Users/soulweaver/Documents/project-carrot/";
+			};
+			name = Release;
+		};
+		3AA6C32AC930069E80220CF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BASS_DIR = "";
+				BASS_FX_DIR = "";
+				CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/usr/local/Cellar/qt5/5.7.0/lib,
+					/usr/local/Cellar/qt5/5.7.0/lib,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = CARROT_DEBUG;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					"$(BASS_DIR)",
+					"$(BASS_FX_DIR)/C",
+					"$(BASS_FX_DIR)",
+					"$(SFML_DIR)/include",
+					GeneratedFiles,
+					.,
+					GeneratedFiles/Release,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtGamepad.framework/Headers,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers,
+					/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers,
+					GeneratedFiles/Release,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers,
+					GeneratedFiles,
+					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang",
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_DIR = "/Users/soulweaver/Documents/project-carrot//Release/";
+				LDPLUSPLUS = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++";
+				LIBRARY_SEARCH_PATHS = (
+					"$(BASS_DIR)",
+					"$(BASS_FX_DIR)",
+					"$(SFML_DIR)/lib",
+					/usr/local/Cellar/qt5/5.7.0/lib,
+					/System/Library/Frameworks/,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OBJROOT = Build/;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DNOMINMAX",
+					"-DQT_DLL",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_NO_DEBUG",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_GAMEPAD_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-stdlib=libc++",
+					"-O2",
+					"-std=gnu++1y",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DNOMINMAX",
+					"-DQT_DLL",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_NO_DEBUG",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_GAMEPAD_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-stdlib=libc++",
+					"-Wl,-rpath,'$$ORIGIN'",
+					"-F/usr/local/Cellar/qt5/5.7.0/lib",
+					"-L$(BASS_DIR)",
+					"-L$(BASS_FX_DIR)",
+					"-lbass",
+					"-lbass_fx",
+					"-lsfml-graphics",
+					"-lsfml-window",
+					"-lsfml-system",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = fi.soulweaver.ProjectCarrot;
+				PRODUCT_NAME = "Project Carrot (Debug)";
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = macosx;
+				SFML_DIR = "";
+				SYMROOT = "/Users/soulweaver/Documents/project-carrot/";
+			};
+			name = Debug;
+		};
+		6666AA5E688052234F6758D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BASS_DIR = "/Users/soulweaver/Documents/bass24-osx";
+				BASS_FX_DIR = "/Users/soulweaver/Documents/bass_fx24-osx";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = macosx;
+				SFML_DIR = /usr/local/Cellar/sfml/2.4.1;
+			};
+			name = Release;
+		};
+		77418F46922677BB04ED38DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BASS_DIR = "/Users/soulweaver/Documents/bass24-osx";
+				BASS_FX_DIR = "/Users/soulweaver/Documents/bass_fx24-osx";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = macosx;
+				SFML_DIR = /usr/local/Cellar/sfml/2.4.1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "CarrotQt5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				77418F46922677BB04ED38DD /* Debug */,
+				6666AA5E688052234F6758D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DAC4C1AA5EDEA1C85E9CA5E6 /* Build configuration list for PBXProject "CarrotQt5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AA6C32AC930069E80220CF1 /* Debug */,
+				339EE1B2CC4FC24589A0EA95 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6DB9C3763D02B1415CD9D565 /* Project object */;
+}
