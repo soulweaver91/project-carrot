@@ -16,6 +16,8 @@
 	<string>????</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.action-games</string>
+	<key>NSHighResolutionCapable</key>
+	<false/>
 	<key>NSHumanReadableCopyright</key>
 	<string>(c) 2013–2016 Project Carrot Team</string>
 	<key>NSPrincipalClass</key>
