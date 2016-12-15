@@ -87,15 +87,15 @@
 		CF5D7BFBE58C7156705F6F87 /* moc_CarrotQt5.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 6CA1CF50CFBBF985794EF2CD /* moc_CarrotQt5.cpp */; settings = {ATTRIBUTES = (); }; };
 		D34B037247F1243EB0EA4F44 /* InteractiveActor.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 52D10C2D4834372FB141F0E5 /* InteractiveActor.cpp */; settings = {ATTRIBUTES = (); }; };
 		DEDE958D75348D6739151DEA /* LevelManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F4304750D28DFC564D27C0D6 /* LevelManager.cpp */; settings = {ATTRIBUTES = (); }; };
-		E18D32281E01E61100258924 /* libsfml-graphics.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32251E01E61100258924 /* libsfml-graphics.2.4.1.dylib */; };
-		E18D32291E01E61100258924 /* libsfml-system.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32261E01E61100258924 /* libsfml-system.2.4.1.dylib */; };
-		E18D322A1E01E61100258924 /* libsfml-window.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32271E01E61100258924 /* libsfml-window.2.4.1.dylib */; };
 		E18D322C1E01E62C00258924 /* libbass_fx.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D322B1E01E62C00258924 /* libbass_fx.dylib */; };
 		E18D322E1E01E64900258924 /* libbass.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D322D1E01E64900258924 /* libbass.dylib */; };
 		E18D32321E01F7C000258924 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E18D322D1E01E64900258924 /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E18D32331E01F7C000258924 /* libbass_fx.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E18D322B1E01E62C00258924 /* libbass_fx.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E18D32351E01FDC500258924 /* CoreFoundation.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32341E01FDC500258924 /* CoreFoundation.framework */; };
 		E18D32391E02079D00258924 /* CarrotQt5.xcassets in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = E18D32381E02079D00258924 /* CarrotQt5.xcassets */; };
+		E1F49A201E032DE200A0042F /* libsfml-graphics.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32251E01E61100258924 /* libsfml-graphics.2.4.1.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
+		E1F49A211E032DE200A0042F /* libsfml-system.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32261E01E61100258924 /* libsfml-system.2.4.1.dylib */; };
+		E1F49A221E032DE200A0042F /* libsfml-window.2.4.1.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D32271E01E61100258924 /* libsfml-window.2.4.1.dylib */; };
 		E45E51A644D5FC9F942ECE55 /* AGL.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */; };
 		E7706FEE40050DB4E52BFC15 /* QSFMLCanvas.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C3AAA81066E1F70CCDF4B1FF /* QSFMLCanvas.cpp */; settings = {ATTRIBUTES = (); }; };
 		E8CEE9A2D81662520C72B099 /* QtCore.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 820A25BF0A1A2242F14E2A0A /* QtCore.framework */; };
@@ -298,12 +298,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1F49A201E032DE200A0042F /* libsfml-graphics.2.4.1.dylib in Link Binary With Libraries */,
+				E1F49A211E032DE200A0042F /* libsfml-system.2.4.1.dylib in Link Binary With Libraries */,
+				E1F49A221E032DE200A0042F /* libsfml-window.2.4.1.dylib in Link Binary With Libraries */,
 				E18D32351E01FDC500258924 /* CoreFoundation.framework in Link Binary With Libraries */,
 				E18D322E1E01E64900258924 /* libbass.dylib in Link Binary With Libraries */,
 				E18D322C1E01E62C00258924 /* libbass_fx.dylib in Link Binary With Libraries */,
-				E18D32281E01E61100258924 /* libsfml-graphics.2.4.1.dylib in Link Binary With Libraries */,
-				E18D32291E01E61100258924 /* libsfml-system.2.4.1.dylib in Link Binary With Libraries */,
-				E18D322A1E01E61100258924 /* libsfml-window.2.4.1.dylib in Link Binary With Libraries */,
 				B1FD449BA9A24D8FBFD6B918 /* QtWidgets.framework in Link Binary With Libraries */,
 				7B61C92B0D756FD9703B0C41 /* QtGui.framework in Link Binary With Libraries */,
 				E8CEE9A2D81662520C72B099 /* QtCore.framework in Link Binary With Libraries */,
@@ -857,8 +857,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BASS_DIR = "";
-				BASS_FX_DIR = "";
+				BASS_DIR = "/Users/soulweaver/Documents/bass24-osx";
+				BASS_FX_DIR = "/Users/soulweaver/Documents/bass_fx24-osx";
 				CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -874,10 +874,7 @@
 				DYLIB_CURRENT_VERSION = 1.0.0;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					/usr/local/Cellar/qt5/5.7.0/lib,
-					/usr/local/Cellar/qt5/5.7.0/lib,
-				);
+				FRAMEWORK_SEARCH_PATHS = /usr/local/lib;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -889,22 +886,22 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					/usr/local/include,
 					"$(BASS_DIR)",
 					"$(BASS_FX_DIR)/C",
 					"$(BASS_FX_DIR)",
-					"$(SFML_DIR)/include",
 					GeneratedFiles,
 					.,
 					GeneratedFiles/Release,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtGamepad.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers,
+					/usr/local/lib/QtWidgets.framework/Headers,
+					/usr/local/lib/QtGamepad.framework/Headers,
+					/usr/local/lib/QtGui.framework/Headers,
+					/usr/local/lib/QtCore.framework/Headers,
 					GeneratedFiles/Release,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers,
 					GeneratedFiles,
-					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang",
+					"/usr/local/mkspecs/macx-clang",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_DIR = "/Users/soulweaver/Documents/project-carrot//Release/";
@@ -912,8 +909,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(BASS_DIR)",
 					"$(BASS_FX_DIR)",
-					"$(SFML_DIR)/lib",
-					/usr/local/Cellar/qt5/5.7.0/lib,
+					/usr/local/lib,
 					/System/Library/Frameworks/,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -954,7 +950,7 @@
 					"-headerpad_max_install_names",
 					"-stdlib=libc++",
 					"-Wl,-rpath,'$$ORIGIN'",
-					"-F/usr/local/Cellar/qt5/5.7.0/lib",
+					"-F/usr/local/lib",
 					"-L$(BASS_DIR)",
 					"-L$(BASS_FX_DIR)",
 					"-lbass",
@@ -967,7 +963,6 @@
 				PRODUCT_NAME = "Project Carrot";
 				QT_LIBRARY_SUFFIX = "";
 				SDKROOT = macosx;
-				SFML_DIR = "";
 				SYMROOT = "/Users/soulweaver/Documents/project-carrot/";
 			};
 			name = Release;
@@ -976,8 +971,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BASS_DIR = "";
-				BASS_FX_DIR = "";
+				BASS_DIR = "/Users/soulweaver/Documents/bass24-osx";
+				BASS_FX_DIR = "/Users/soulweaver/Documents/bass_fx24-osx";
 				CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -994,10 +989,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					/usr/local/Cellar/qt5/5.7.0/lib,
-					/usr/local/Cellar/qt5/5.7.0/lib,
-				);
+				FRAMEWORK_SEARCH_PATHS = /usr/local/lib;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1011,22 +1003,22 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					/usr/local/include,
 					"$(BASS_DIR)",
 					"$(BASS_FX_DIR)/C",
 					"$(BASS_FX_DIR)",
-					"$(SFML_DIR)/include",
 					GeneratedFiles,
 					.,
 					GeneratedFiles/Release,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtGamepad.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers,
+					/usr/local/lib/QtWidgets.framework/Headers,
+					/usr/local/lib/QtGamepad.framework/Headers,
+					/usr/local/lib/QtGui.framework/Headers,
+					/usr/local/lib/QtCore.framework/Headers,
 					GeneratedFiles/Release,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers,
 					GeneratedFiles,
-					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang",
+					"/usr/local/mkspecs/macx-clang",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_DIR = "/Users/soulweaver/Documents/project-carrot//Release/";
@@ -1034,8 +1026,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(BASS_DIR)",
 					"$(BASS_FX_DIR)",
-					"$(SFML_DIR)/lib",
-					/usr/local/Cellar/qt5/5.7.0/lib,
+					/usr/local/lib,
 					/System/Library/Frameworks/,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -1077,7 +1068,7 @@
 					"-headerpad_max_install_names",
 					"-stdlib=libc++",
 					"-Wl,-rpath,'$$ORIGIN'",
-					"-F/usr/local/Cellar/qt5/5.7.0/lib",
+					"-F/usr/local/lib",
 					"-L$(BASS_DIR)",
 					"-L$(BASS_FX_DIR)",
 					"-lbass",
@@ -1090,7 +1081,6 @@
 				PRODUCT_NAME = "Project Carrot (Debug)";
 				QT_LIBRARY_SUFFIX = "";
 				SDKROOT = macosx;
-				SFML_DIR = "";
 				SYMROOT = "/Users/soulweaver/Documents/project-carrot/";
 			};
 			name = Debug;
@@ -1099,14 +1089,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BASS_DIR = "/Users/soulweaver/Documents/bass24-osx";
-				BASS_FX_DIR = "/Users/soulweaver/Documents/bass_fx24-osx";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				QT_LIBRARY_SUFFIX = "";
 				SDKROOT = macosx;
-				SFML_DIR = /usr/local/Cellar/sfml/2.4.1;
 			};
 			name = Release;
 		};
@@ -1114,15 +1101,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BASS_DIR = "/Users/soulweaver/Documents/bass24-osx";
-				BASS_FX_DIR = "/Users/soulweaver/Documents/bass_fx24-osx";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				QT_LIBRARY_SUFFIX = "";
 				SDKROOT = macosx;
-				SFML_DIR = /usr/local/Cellar/sfml/2.4.1;
 			};
 			name = Debug;
 		};
