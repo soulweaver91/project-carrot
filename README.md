@@ -78,9 +78,8 @@ copy over the asset, level, music and tileset files you converted with the other
 If in doubt, take a look at the [Travis configuration file](https://github.com/soulweaver91/project-carrot/blob/master/.travis.yml)
 and see if it can help you.
 
-### Mac OS X
-Not currently officially supported due to various reasons, including the complete lack of an
-Apple device, but may work in a similar fashion as Linux does.
+### macOS
+macOS support is under work! Check out the [dedicated branch](https://github.com/soulweaver91/project-carrot/tree/macos-support) and issue #56 for more information.
 
 ##Running the game
 To be able to run Project Carrot, you are required to extract the Jazz Jackrabbit 2 assets from
