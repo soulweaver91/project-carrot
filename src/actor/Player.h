@@ -35,12 +35,12 @@ public:
     void processControlUpEvent(const ControlEvent& e) override;
     void processControlHeldEvent(const ControlEvent& e) override;
     void processAllControlHeldEvents(const QMap<Control, ControlState>& e) override;
-    void tickEvent();
+    void tickEvent() override;
     void drawUIOverlay();
     unsigned getHealth();
     unsigned getLives();
     bool getPowerUp(WeaponType type) const;
-    bool perish();
+    bool perish() override;
     void updateHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
         bool setSpecial = false, AnimationCallbackFunc callback = []() {});
@@ -67,9 +67,9 @@ public slots:
 #endif
 
 private:
-    void onHitFloorHook();
-    void onHitCeilingHook();
-    void onHitWallHook();
+    void onHitFloorHook() override;
+    void onHitCeilingHook() override;
+    void onHitWallHook() override;
     bool selectWeapon(enum WeaponType newType);
     void setupOSD(OSDMessageType type, int param = 0);
     template<typename T> std::shared_ptr<T> fireWeapon(bool poweredUp);
