@@ -741,6 +741,9 @@ void Player::addCoins(CoinType type, unsigned amount) {
 }
 
 void Player::addFastFire(unsigned amount) {
+    if (fastfires < 10) {
+        osd->setMessage(OSD_CUSTOM_TEXT, "fastfire");
+    }
     fastfires = std::min(fastfires + amount, 10u);
     playSound("PLAYER_PICKUP_AMMO");
 }

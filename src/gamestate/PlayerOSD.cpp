@@ -172,6 +172,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     collectionMessageType = type;
     collectibleIcon->setColor({ 0, 0, 0 });
     collectibleIconOffset = 32.0f;
+    collectibleGraphics = nullptr;
 
     switch (type) {
         case OSD_GEM_RED:
