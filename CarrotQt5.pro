@@ -11,18 +11,37 @@ CONFIG += c++14 debug_and_release
 
 INCLUDEPATH += $(BASS_DIR) \
     $(BASS_FX_DIR)/C \
-    $(SFML_DIR)/include \
+    $(BASS_FX_DIR) \
     ./GeneratedFiles \
     .
 
-LIBS += -L"$(SFML_DIR)/lib" \
-    -L"$(BASS_DIR)/x64" \
-    -L"$(BASS_FX_DIR)/x64" \
-    -lbass \
+win32 {
+    INCLUDEPATH += $(SFML_DIR)/include
+    LIBS += -L"$(SFML_DIR)/lib"
+}
+
+win32 || unix:!macx {
+    LIBS += -L"$(BASS_DIR)/x64" \
+    -L"$(BASS_FX_DIR)/x64"
+}
+
+macx {
+    MAKE_LFLAGS += -F /System/Library/Frameworks/CoreFoundation.framework/
+
+    INCLUDEPATH += /usr/local/include
+    
+    LIBS += -L"$(BASS_DIR)" \
+    -L"$(BASS_FX_DIR)" \
+    -L"/usr/local/lib" \
+    -framework CoreFoundation
+}
+
+LIBS += -lbass \
     -lbass_fx \
     -lsfml-graphics \
     -lsfml-window \
     -lsfml-system
+
 DEPENDPATH += .
 
 UI_DIR += ./GeneratedFiles

@@ -41,7 +41,12 @@ Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveA
         Qt::Key::Key_Right,
         Qt::Key::Key_Up,
         Qt::Key::Key_Down,
+#ifdef Q_OS_MAC
+        // using control (Key_Meta) or command (Key_Control) causes all sorts of funny problems
+        Qt::Key::Key_Alt,
+#else
         Qt::Key::Key_Control,
+#endif
         Qt::Key::Key_Space,
         Qt::Key::Key_Shift,
         Qt::Key::Key_Return

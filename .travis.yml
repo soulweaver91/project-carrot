@@ -1,5 +1,3 @@
-dist: trusty
-sudo: required
 language: cpp
 
 matrix:
@@ -13,6 +11,9 @@ matrix:
           - p7zip-full
           - libsfml-dev
       env: BUILDTYPE=debug COMPILER=g++-5
+      os: linux
+      dist: trusty
+      sudo: required
     - addons: &clangaddons
         apt:
           sources:
@@ -23,10 +24,22 @@ matrix:
           - p7zip-full
           - libsfml-dev
       env: BUILDTYPE=debug COMPILER=clang++-3.7
+      os: linux
+      dist: trusty
+      sudo: required
     - addons: *gccaddons
       env: BUILDTYPE=release COMPILER=g++-5
+      os: linux
+      dist: trusty
+      sudo: required
     - addons: *clangaddons
       env: BUILDTYPE=release COMPILER=clang++-3.7
+      os: linux
+      dist: trusty
+      sudo: required
+    - os: osx
+      osx_image: xcode8.2
+      env: BUILDTYPE=release
 
 cache:
   directories:
@@ -34,33 +47,43 @@ cache:
   apt: true
 
 before_install:
-- sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
-- sudo apt-get update -qq
-- sudo apt-get install -qq qt57base qt57gamepad
+- >
+    if [[ ${TRAVIS_OS_NAME} = linux ]]; then
+        sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
+        sudo apt-get update -qq
+        sudo apt-get install -qq qt57base qt57gamepad
+        if [[ "$COMPILER" = "g++-5" ]]; then
+            export SPEC=linux-g++-64
+            sudo update-alternatives --remove-all gcc
+            sudo update-alternatives --remove-all g++
+            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 &&
+            sudo update-alternatives --config gcc &&
+            gcc --version &&
+            g++ --version
+        fi
+        if [[ "$COMPILER" = "clang++-3.7" ]]; then
+            export SPEC=linux-clang
+        fi
+        . /opt/qt57/bin/qt57-env.sh
+    fi
+- >
+    if [[ ${TRAVIS_OS_NAME} = osx ]]; then
+        brew install qt5 sfml p7zip
+        brew link qt5 --force
+        export SPEC=macx-clang
+    fi
 - export BASS_VER=24
 - export BASS_DIR=$HOME/bass
 - export BASS_FX_DIR=$HOME/bassfx
 - export CPATH=$CPATH:$BASS_DIR:$BASS_FX_DIR
-- test "$COMPILER" != "g++-5" || export SPEC=linux-g++-64
-- test "$COMPILER" != "clang++-3.7" || export SPEC=linux-clang
-- >
-    test "${COMPILER}" != "g++-5" || (
-    sudo update-alternatives --remove-all gcc ;
-    sudo update-alternatives --remove-all g++ ;
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 &&
-    sudo update-alternatives --config gcc &&
-    gcc --version &&
-    g++ --version
-    )
-- . /opt/qt57/bin/qt57-env.sh
 - > 
-    test -f "${HOME}/archives/bass${BASS_VER}.zip" ||
-    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bass${BASS_VER}.zip" http://us.un4seen.com/files/bass${BASS_VER}-linux.zip
+    test -f "${HOME}/archives/bass${BASS_VER}-${TRAVIS_OS_NAME}.zip" ||
+    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bass${BASS_VER}-${TRAVIS_OS_NAME}.zip" http://us.un4seen.com/files/bass${BASS_VER}-${TRAVIS_OS_NAME}.zip
 - > 
-    test -f "${HOME}/archives/bassfx${BASS_VER}.zip" || 
-    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bassfx${BASS_VER}.zip" http://us.un4seen.com/files/z/0/bass_fx${BASS_VER}-linux.zip
-- 7z x "${HOME}/archives/bass${BASS_VER}.zip" -o"${BASS_DIR}" -y
-- 7z x "${HOME}/archives/bassfx${BASS_VER}.zip" -o"${BASS_FX_DIR}" -y
+    test -f "${HOME}/archives/bassfx${BASS_VER}-${TRAVIS_OS_NAME}.zip" ||
+    curl --fail --location --show-error -e ";auto" -o "${HOME}/archives/bassfx${BASS_VER}-${TRAVIS_OS_NAME}.zip" http://us.un4seen.com/files/z/0/bass_fx${BASS_VER}-${TRAVIS_OS_NAME}.zip
+- 7z x "${HOME}/archives/bass${BASS_VER}-${TRAVIS_OS_NAME}.zip" -o"${BASS_DIR}" -y
+- 7z x "${HOME}/archives/bassfx${BASS_VER}-${TRAVIS_OS_NAME}.zip" -o"${BASS_FX_DIR}" -y
 
 script:
 - qmake -v

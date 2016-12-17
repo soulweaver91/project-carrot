@@ -168,3 +168,10 @@ RunTimeConverted/*
 
 # Qt intermediate files
 GeneratedFiles/*
+
+Makefile
+Makefile.*
+.qmake.stash
+
+# Xcode personal settings
+xcuserdata/

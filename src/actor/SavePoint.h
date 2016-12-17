@@ -10,7 +10,7 @@ class SavePoint : public CommonActor {
 public:
     SavePoint(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
     ~SavePoint();
-    void tickEvent();
+    void tickEvent() override;
     void activateSavePoint();
     void updateHitbox() override;
 
