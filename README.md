@@ -79,7 +79,96 @@ If in doubt, take a look at the [Travis configuration file](https://github.com/s
 and see if it can help you.
 
 ### macOS
-macOS support is under work! Check out the [dedicated branch](https://github.com/soulweaver91/project-carrot/tree/macos-support) and issue #56 for more information.
+Project Carrot can be compiled and run on macOS. You can either use Qt tools directly from the
+command line or use the included Xcode project, though at the moment neither of these approaches is
+fully bullet-proof.
+
+#### Option one: Qt command line
+First, make sure you have Xcode and Homebrew installed. Then, follow this script:
+
+```shell
+# Install required packages
+brew install qt5 sfml
+brew link qt5 --force
+cd ~
+# Download BASS and BASS FX
+curl -o bass24.zip http://us.un4seen.com/files/bass24-osx.zip
+curl -o bassfx24.zip http://us.un4seen.com/files/z/0/bass_fx24-osx.zip
+unzip bass24.zip -d bass
+unzip bassfx24.zip -d bassfx
+rm bass24.zip bassfx24.zip
+# Set up the necessary environment
+export BASS_DIR=~/bass
+export BASS_FX_DIR=~/bassfx
+# Clone this repository and compile the code
+git clone https://github.com/soulweaver91/project-carrot.git
+cd project-carrot
+qmake -spec macx-clang
+make release
+# Copy Qt and SFML dependencies into the bundle (only necessary for distribution)
+macdeployqt Release/CarrotQt5.app
+# Copy other dependencies into the bundle
+cp $BASS_DIR/libbass.dylib Release/CarrotQt5.app/Contents/MacOS
+cp $BASS_FX_DIR/libbass_fx.dylib Release/CarrotQt5.app/Contents/MacOS
+```
+
+Following these steps should leave you with a bundle in the `Release` folder that you can run.
+The caveat to this approach is that the bundle completely lacks identity and at this time it
+is not clear what would be the best practice for generating a coherent `Info.plist` file to
+fix that. (Copying as-is the existing stub, used by Xcode, will just break the application.)
+If it was known, it'd go somewhat like
+
+```shell
+# Generate the icon file
+mkdir -p Release/CarrotQt5.app/Contents/Resources
+cp -r CarrotQt5.xcassets/AppIcon.appiconset ./tmp.iconset
+rm tmp.iconset/Contents.json
+iconutil -c icns tmp.iconset
+rm -r tmp.iconset
+cp tmp/AppIcon.icns Release/CarrotQt5.app/Contents/AppIcon.icns
+# Generate finished Info.plist
+# ...
+cp GeneratedInfo.plist Release/CarrotQt5.app/Contents/Info.plist
+```
+
+Due to the compilation being tightly woven with the Qt project files, the advantage of
+this method is that all builds that work on Linux (that is, hopefully all of them)
+also work with this method. Barring rare exceptions that involve OS-specific code bits,
+of course.
+
+#### Option two: Xcode
+The repository also contains an Xcode project that can be used to build Project Carrot.
+However, keeping these project files up to date would need a lot of unnecessary shuffling
+whenever any work was done in the main environment (VS in Windows), so for most of the time,
+***the Xcode project will likely not compile***. Please check out the branch `xcode-master` if
+you want to compile with Xcode and don't mind missing the latest features.
+
+Make sure you have Xcode and Homebrew installed, install Qt, SFML and BASS as above and
+open the project. Some filenames in the project might use hard-coded paths with too narrow
+assumptions about where files can be. This is sometimes unavoidable; you'll need to fix
+those for your own set-up first.
+
+Building with Xcode has the advantage that you don't need to deal with all the command line
+mumbo jumbo but can instead compile the whole thing by just clicking a button. The Xcode
+build also sets up the bundle properly so that it has its proper name, icon and other metadata.
+
+Ideally, qmake's tool that generates the project from the Qt .pro file (as was used)
+would also be able to update an existing project. Alas, it doesn't appear to be able to do so.
+
+#### Summary
+
+|                                     | `qmake` + `make` | Xcode         |
+| :---                                | :---:            | :---:         |
+| Can compile `master`?               | :+1:             | :no_entry:    |
+| Can compile `xcode-master`?         | :+1:             | :+1:          |
+| Assembly required?                  | Quite a bit      | A little      |
+| Problems with paths?                | Minimal          | Probable      |
+| Can build debug features?           | :+1:             | Some          |
+| Can build complete bundle metadata? | :no_entry:       | :+1:          |
+| Tested in Travis CI?                | :+1:             | :no_entry:    |
+
+So, if you are going to deploy a new version to the world (= be me), use Xcode;
+otherwise best to stick to command line unless you really know what you're doing.
 
 ##Running the game
 To be able to run Project Carrot, you are required to extract the Jazz Jackrabbit 2 assets from
