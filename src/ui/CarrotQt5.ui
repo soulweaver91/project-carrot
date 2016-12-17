@@ -150,10 +150,16 @@
    <property name="text">
     <string>About &amp;Qt 5...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
   </action>
   <action name="action_About_Project_Carrot">
    <property name="text">
     <string>&amp;About Project Carrot...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="action_Pause">
@@ -173,6 +179,9 @@
   <action name="action_Exit">
    <property name="text">
     <string>&amp;Exit</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
    </property>
   </action>
   <action name="action_pending">
