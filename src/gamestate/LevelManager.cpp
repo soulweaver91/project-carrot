@@ -83,6 +83,10 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     updateLoadingScreenTextFunc("Loading layers... 2 / " + layerCount);
     if (levelFiles.contains("sky.layer")) {
         gameTiles->readLayerConfiguration(LAYER_SKY_LAYER, levelDir.absoluteFilePath("sky.layer"), levelConfig, 0);
+
+        auto canvas = root->getCanvas();
+        auto size = sf::Vector2f(canvas->getSize());
+        gameTiles->initializeTexturedBackgroundFade(size.x, size.y);
     }
 
     // Read the background layers

@@ -411,10 +411,9 @@ bool CommonActor::playNonPositionalSound(const QString& id, P... params) {
 
 template<typename T, typename... P>
 bool CommonActor::callPlaySound(const QString& id, T coordOrBool, P... params) {
-    auto soundSystem = api->getSoundSystem();
     auto sounds = resources->sounds.values(id);
     if (sounds.length() > 0) {
-        soundSystem->playSFX(sounds.at(qrand() % sounds.length()).sound, coordOrBool, params...);
+        api->playSound(sounds.at(qrand() % sounds.length()).sound, coordOrBool, params...);
         return true;
     }
 

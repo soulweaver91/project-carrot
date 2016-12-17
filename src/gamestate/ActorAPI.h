@@ -29,6 +29,12 @@ public:
     uint getStringWidth(const QString& text, BitmapFontSize size = NORMAL);
     QString getLevelText(int idx);
 
+    template<typename... P>
+    void playSound(HSAMPLE sample, P... params);
+
+    void pauseMusic();
+    void resumeMusic();
+
 #ifdef CARROT_DEBUG
     DebugConfig getDebugConfig();
 #endif
@@ -36,9 +42,7 @@ public:
     // TODO: phase out with better API functions
     std::weak_ptr<TileMap> getGameTiles();
     std::weak_ptr<EventMap> getGameEvents();
-    SoundSystem* getSoundSystem();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& classId);
-    sf::Vector2u getCanvasSize();
 
 private:
     CarrotQt5* const mainClass;
