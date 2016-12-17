@@ -96,8 +96,3 @@ SoundSystem* ActorAPI::getSoundSystem() {
 std::shared_ptr<ResourceSet> ActorAPI::loadActorTypeResources(const QString& classId) {
     return mainClass->loadActorTypeResources(classId);
 }
-
-sf::Vector2u ActorAPI::getCanvasSize() {
-    return mainClass->getCanvas()->getSize();
-}
-

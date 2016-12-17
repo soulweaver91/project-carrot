@@ -508,10 +508,7 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
 
             if (type == LAYER_SKY_LAYER && newLayer.isTextured) {
                 texturedBackgroundColor = newLayer.texturedBackgroundColor;
-
-                auto size = root->getActorAPI()->getCanvasSize();
                 initializeBackgroundTexture(newLayer);
-                initializeTexturedBackgroundFade(size.x, size.y);
             }
         } else {
             // TODO: uncompress fail, what do?

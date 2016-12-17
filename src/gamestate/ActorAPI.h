@@ -38,7 +38,6 @@ public:
     std::weak_ptr<EventMap> getGameEvents();
     SoundSystem* getSoundSystem();
     std::shared_ptr<ResourceSet> loadActorTypeResources(const QString& classId);
-    sf::Vector2u getCanvasSize();
 
 private:
     CarrotQt5* const mainClass;
