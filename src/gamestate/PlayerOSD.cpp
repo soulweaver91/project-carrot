@@ -207,7 +207,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
             collectionMessage->setText("need    x" + QString::number(param.toInt()) + " more");
             collectibleGraphics = animationBank.value("PICKUP_COIN_SILVER", nullptr);
             collectibleIconOffset = 32.0f + api->getStringWidth("need  ");
-            api->getSoundSystem()->playSFX(notEnoughCoinsSound, false);
+            api->playSound(notEnoughCoinsSound, false);
             break;
         case OSD_CUSTOM_TEXT:
             collectionMessage->setText(param.toString());
@@ -221,7 +221,7 @@ void PlayerOSD::setMessage(OSDMessageType type, QVariant param) {
     }
 
     if (type == OSD_GEM_BLUE || type == OSD_GEM_GREEN || type == OSD_GEM_RED || type == OSD_GEM_PURPLE) {
-        api->getSoundSystem()->playSFX(gemSound, false, 1.0, 4.25 - std::abs(gemCounter % 16 - 8.25));
+        api->playSound(gemSound, false, 1.0f, static_cast<float>(4.25 - std::abs(gemCounter % 16 - 8.25)));
         gemCounter++;
     }
 }

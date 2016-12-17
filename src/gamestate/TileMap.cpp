@@ -900,9 +900,8 @@ bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile,
         tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
         if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
             // the tile was destroyed, create debris
-            auto soundSystem = root->getActorAPI()->getSoundSystem();
             if (sceneryResources->sounds.contains(soundName)) {
-                soundSystem->playSFX(sceneryResources->sounds.value(soundName).sound, { x * 32 + 16, y * 32 + 16 });
+                root->getActorAPI()->playSound(sceneryResources->sounds.value(soundName).sound, CoordinatePair({ x * 32 + 16, y * 32 + 16 }));
             }
             root->createDebris(animatedTiles.at(tile->destructAnimation)
                 ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),

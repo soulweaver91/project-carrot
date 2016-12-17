@@ -792,20 +792,14 @@ void Player::consumeFood(const bool& isDrinkable) {
     if (foodCounter >= SUGAR_RUSH_THRESHOLD) {
         foodCounter = foodCounter % SUGAR_RUSH_THRESHOLD;
         if (!isSugarRush) {
-            auto soundSystem = api->getSoundSystem();
-            if (soundSystem != nullptr) {
-                soundSystem->pauseMusic();
-                playNonPositionalSound("PLAYER_SUGAR_RUSH");
-            }
+            api->pauseMusic();
+            playNonPositionalSound("PLAYER_SUGAR_RUSH");
 
             isSugarRush = true;
             osd->setSugarRushActive();
             addTimer(21.548 * 70.0, false, [this]() {
                 isSugarRush = false;
-                auto soundSystem = api->getSoundSystem();
-                if (soundSystem != nullptr) {
-                    soundSystem->resumeMusic();
-                }
+                api->resumeMusic();
             });
         }
     }

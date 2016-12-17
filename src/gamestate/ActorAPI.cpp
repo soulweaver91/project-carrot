@@ -89,10 +89,29 @@ std::weak_ptr<EventMap> ActorAPI::getGameEvents() {
     return levelManager->getGameEvents();
 }
 
-SoundSystem* ActorAPI::getSoundSystem() {
-    return mainClass->getSoundSystem();
-}
-
 std::shared_ptr<ResourceSet> ActorAPI::loadActorTypeResources(const QString& classId) {
     return mainClass->loadActorTypeResources(classId);
+}
+
+template <typename... P>
+void ActorAPI::playSound(HSAMPLE sample, P... params) {
+    mainClass->getSoundSystem()->playSFX(sample, params...);
+}
+
+// Specify allowed template instantations
+template void ActorAPI::playSound(HSAMPLE, CoordinatePair);
+template void ActorAPI::playSound(HSAMPLE, CoordinatePair, float);
+template void ActorAPI::playSound(HSAMPLE, CoordinatePair, float, float);
+template void ActorAPI::playSound(HSAMPLE, CoordinatePair, float, float, float);
+template void ActorAPI::playSound(HSAMPLE, bool);
+template void ActorAPI::playSound(HSAMPLE, bool, float);
+template void ActorAPI::playSound(HSAMPLE, bool, float, float);
+template void ActorAPI::playSound(HSAMPLE, bool, float, float, float);
+
+void ActorAPI::pauseMusic() {
+    mainClass->getSoundSystem()->pauseMusic();
+}
+
+void ActorAPI::resumeMusic() {
+    mainClass->getSoundSystem()->resumeMusic();
 }
