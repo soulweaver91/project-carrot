@@ -378,7 +378,8 @@ void CarrotQt5::tick() {
         overlay.setFillColor(sf::Color(0, 0, 0, 120));
 
         if (isMenu) {
-            currentMode->tick({});
+            currentMode->logicTick({});
+            currentMode->renderTick();
             windowCanvas->draw(overlay);
         } else {
             windowCanvas->draw(*pausedScreenshotSprite);
@@ -389,7 +390,8 @@ void CarrotQt5::tick() {
     } else {
 
         auto events = controlManager->getPendingEvents();
-        currentMode->tick(events);
+        currentMode->logicTick(events);
+        currentMode->renderTick();
         controlManager->processFrame();
     }
 

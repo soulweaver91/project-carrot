@@ -7,7 +7,7 @@
 #include <QString>
 #include <SFML/Graphics.hpp>
 
-#include "../ModeManager.h"
+#include "../EngineState.h"
 #include "../CarrotQt5.h"
 #include "../graphics/BitmapString.h"
 
@@ -34,11 +34,14 @@ struct MenuItem {
     std::unique_ptr<BitmapString> text;
 };
 
-class MenuScreen : public ModeManager {
+class MenuScreen : public EngineState {
 public:
     MenuScreen(CarrotQt5* root, MenuEntryPoint entry = MENU_MAIN_MENU);
     ~MenuScreen();
-    void tick(const ControlEventList& events) override;
+
+    void logicTick(const ControlEventList& events) override;
+    void renderTick() override;
+
     void processControlEvents(const ControlEventList& events);
     void processControlDownEvent(const ControlEvent& e);
     void processControlHeldEvent(const ControlEvent& e);

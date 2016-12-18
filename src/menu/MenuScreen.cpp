@@ -104,9 +104,11 @@ void MenuScreen::processControlUpEvent(const ControlEvent&) {
     // No use at the moment, but defined for the sake of consistency.
 }
 
-void MenuScreen::tick(const ControlEventList& events) {
+void MenuScreen::logicTick(const ControlEventList& events) {
     processControlEvents(events);
+}
 
+void MenuScreen::renderTick() {
     auto canvas = root->getCanvas();
 
     unsigned int viewWidth = canvas->getView().getSize().x;

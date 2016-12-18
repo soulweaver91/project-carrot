@@ -239,7 +239,7 @@
     <ClCompile Include="src\graphics\Tileset.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
-    <ClCompile Include="src\ModeManager.cpp" />
+    <ClCompile Include="src\EngineState.cpp" />
     <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -297,7 +297,7 @@
     <ClInclude Include="src\graphics\BitmapString.h" />
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
-    <ClInclude Include="src\ModeManager.h" />
+    <ClInclude Include="src\EngineState.h" />
     <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\Constants.h" />
     <ClInclude Include="src\struct\Controls.h" />

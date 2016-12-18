@@ -35,7 +35,7 @@
 #include "struct/DebugConfig.h"
 
 class MenuScreen;
-class ModeManager;
+class EngineState;
 class LevelManager;
 class EventSpawner;
 
@@ -92,7 +92,7 @@ private:
 
     std::unique_ptr<MenuScreen> menuObject;
     std::unique_ptr<LevelManager> levelManager;
-    ModeManager* currentMode;
+    EngineState* currentMode;
 
     bool isMenu;
     std::function<void()> afterTickCallback;

@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QString>
 #include <QObject>
-#include "../ModeManager.h"
+#include "../EngineState.h"
 #include "../struct/CoordinatePair.h"
 #include "../struct/Hitbox.h"
 #include "../struct/NextLevelData.h"
@@ -33,7 +33,7 @@ struct SavedState {
     QVector<QVector<std::shared_ptr<LayerTile>>> spriteLayerState;
 };
 
-class LevelManager : public QObject, public ModeManager, public TimerUser, public std::enable_shared_from_this<LevelManager> {
+class LevelManager : public QObject, public EngineState, public TimerUser, public std::enable_shared_from_this<LevelManager> {
 
     Q_OBJECT
 
@@ -41,7 +41,8 @@ public:
     LevelManager(CarrotQt5* root, const QString& level, const QString& episode);
     ~LevelManager();
 
-    void tick(const ControlEventList& events) override;
+    void logicTick(const ControlEventList& events) override;
+    void renderTick() override;
 
     bool addActor(std::shared_ptr<CommonActor> actor);
     bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);

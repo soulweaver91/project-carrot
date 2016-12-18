@@ -287,9 +287,6 @@
     <ClCompile Include="src\gamestate\LevelManager.cpp">
       <Filter>Source Files\Game manager</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModeManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_LevelManager.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -328,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="src\gamestate\EventSpawner.cpp">
       <Filter>Source Files\Game manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineState.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -525,9 +525,6 @@
     <ClInclude Include="src\actor\InteractiveActor.h">
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\ModeManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\struct\NextLevelData.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
@@ -566,6 +563,9 @@
     </ClInclude>
     <ClInclude Include="src\gamestate\EventSpawner.h">
       <Filter>Header Files\Game manager headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EngineState.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

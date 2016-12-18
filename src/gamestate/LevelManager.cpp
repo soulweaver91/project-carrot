@@ -280,9 +280,7 @@ bool LevelManager::addPlayer(std::shared_ptr<Player> actor, short playerID) {
     return true;
 }
 
-void LevelManager::tick(const ControlEventList& events) {
-    auto canvas = root->getCanvas();
-
+void LevelManager::logicTick(const ControlEventList& events) {
     advanceTimers();
 
     // Deactivate far away instances, create near instances
@@ -327,6 +325,11 @@ void LevelManager::tick(const ControlEventList& events) {
     }
 
     processControlEvents(events);
+
+}
+
+void LevelManager::renderTick() {
+    auto canvas = root->getCanvas();
 
     for (auto view : views) {
         // Set player to the center of the view
