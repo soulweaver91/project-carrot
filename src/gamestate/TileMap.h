@@ -68,7 +68,7 @@ public:
     const std::shared_ptr<sf::Texture> getTilesetTexture();
     bool isTileEmpty(unsigned x, unsigned y);
     bool isTileEmpty(const Hitbox& hitbox, bool downwards = false);
-    void initializeTexturedBackgroundFade(int width, int height);
+    void resizeTexturedBackgroundSprite(int width, int height);
 
 private:
     LevelManager* root;
@@ -89,7 +89,7 @@ private:
     QVector<std::shared_ptr<AnimatedTile>> animatedTiles;
     bool triggerState[256];
     std::unique_ptr<sf::RenderTexture> texturedBackgroundTexture;
-    std::unique_ptr<sf::VertexArray> texturedBackgroundFadeArray;
+    std::unique_ptr<sf::Sprite> texturedBackgroundSprite;
     unsigned levelWidth;
     unsigned levelHeight;
     sf::Color texturedBackgroundColor;

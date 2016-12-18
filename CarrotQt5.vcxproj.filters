@@ -690,6 +690,9 @@
     <None Include="Data\Manifests\Object\NoResources.json">
       <Filter>Actor Resource Manifests\Object</Filter>
     </None>
+    <None Include="Shaders\TexturedBackgroundShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE">

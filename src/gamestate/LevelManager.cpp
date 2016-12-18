@@ -86,7 +86,7 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
 
         auto canvas = root->getCanvas();
         auto size = sf::Vector2f(canvas->getSize());
-        gameTiles->initializeTexturedBackgroundFade(size.x, size.y);
+        gameTiles->resizeTexturedBackgroundSprite(size.x, size.y);
     }
 
     // Read the background layers
@@ -603,7 +603,7 @@ double LevelManager::getGravity() {
 
 void LevelManager::resizeEvent(int w, int h) {
     if (gameTiles != nullptr) {
-        gameTiles->initializeTexturedBackgroundFade(w, h);
+        gameTiles->resizeTexturedBackgroundSprite(w, h);
     }
     for (auto view : views) {
         view->setSize(sf::Vector2f(w, h));

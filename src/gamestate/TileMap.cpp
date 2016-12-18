@@ -10,6 +10,7 @@
 #include "../struct/Constants.h"
 #include "../struct/DebugConfig.h"
 #include "../actor/FrozenBlock.h"
+#include "../graphics/ShaderSource.h"
 
 TileMap::TileMap(LevelManager* root, const QString& tilesetFilename, 
     const QString& maskFilename, const QString& sprLayerFilename) 
@@ -28,6 +29,8 @@ TileMap::TileMap(LevelManager* root, const QString& tilesetFilename,
     texturedBackgroundTexture = std::make_unique<sf::RenderTexture>();
     texturedBackgroundTexture->create(256, 256);
     texturedBackgroundTexture->setRepeated(true);
+    texturedBackgroundTexture->setSmooth(true);
+    texturedBackgroundSprite = std::make_unique<sf::Sprite>(texturedBackgroundTexture->getTexture());
     
     // The sprite layer has no settings to apply to it, so just pass an empty set instead.
     QSettings dummySettings;
@@ -104,70 +107,18 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
         }
     }
 
-    // not the prettiest algorithm but the SFML drawing surface we're using doesn't seem to work with 3D OpenGL so...
-    // at least this works, worry about performance later
+    texturedBackgroundTexture->display();
 
-    // TODO: set fitting constant values here and remove them from the runtime debug variable array
-        
-    // initialize 550 lines that we're going to texturize and draw on the screen
-    // from (400, 300), first 25 lines up and down are obscured by the fade effect,
-    // but the 275 other lines are at least partially visible
-    double viewHeightHalf = view->getViewHeight() / 2;
-    double viewWidth = view->getViewWidth();
-    sf::VertexArray primitiveLines(sf::PrimitiveType::Lines, viewHeightHalf * 4 - 50);
-
-#ifdef CARROT_DEBUG
-    auto debugConfig = root->getActorAPI()->getDebugConfig();
-    float perspectiveCurve        = debugConfig.tempModifier[0] / 10.0;
-    int perspectiveMultiplierNear = debugConfig.tempModifier[1];
-    int perspectiveMultiplierFar  = debugConfig.tempModifier[2];
-    int skyDepth                  = debugConfig.tempModifier[4];
-#else
-    float perspectiveCurve        = 2.0;
-    int perspectiveMultiplierNear = 1;
-    int perspectiveMultiplierFar  = 3;
-    int skyDepth                  = 1;
-#endif
-
-    for (int iy = 0; iy < viewHeightHalf - 25; ++iy) {
-        // line drawing y offset from the middle of the screen, up and down
-        int ly = 25 + iy;
-
-        // line drawing x offset from the middle of the screen on the given y distance,
-        // altered by both far and near layer factors
-        int lx = (viewWidth / 2) + (ly / viewHeightHalf) * 800.0 * (perspectiveMultiplierFar - perspectiveMultiplierNear);
-
-        // texture y coordinates for above and below draw areas,
-        // altered by sky copy count in the depth and perspective correction multiplier
-        int ty2 = pow(viewHeightHalf - iy, perspectiveCurve) * skyDepth * 256.0 / pow(viewHeightHalf, perspectiveCurve);
-        int ty = 256 * skyDepth - ty2;
-            
-        // set upper half line
-        primitiveLines[4 * iy].position      = sf::Vector2f(-lx, -ly);
-        primitiveLines[4 * iy].texCoords     = sf::Vector2f(0 + x, ty2 + y);
-        primitiveLines[4 * iy + 1].position  = sf::Vector2f(lx, -ly);
-        primitiveLines[4 * iy + 1].texCoords = sf::Vector2f(perspectiveMultiplierFar * 256 + x, ty2 + y);
-            
-        // set lower half line
-        primitiveLines[4 * iy + 2].position  = sf::Vector2f(-lx, ly);
-        primitiveLines[4 * iy + 2].texCoords = sf::Vector2f(0 + x, ty + y);
-        primitiveLines[4 * iy + 3].position  = sf::Vector2f(lx, ly);
-        primitiveLines[4 * iy + 3].texCoords = sf::Vector2f(perspectiveMultiplierFar * 256 + x, ty + y);
-    }
-
-    // translation to the center of the screen
-    sf::Transform transform;
-    auto viewCenter = view->getViewCenter();
-    transform.translate(viewCenter.x, viewCenter.y);
-
-    // combine translation to texture binding
     sf::RenderStates states;
-    states.texture = &texturedBackgroundTexture->getTexture();
-    states.transform = transform;
+    auto shader = ShaderSource::getShader("TexturedBackgroundShader");
+    shader->setParameter("horizonColor", texturedBackgroundColor);
+    shader->setParameter("shift", sf::Vector2f(x, y));
+    shader->setParameter("canvasDimensions", sf::Vector2f(view->getViewWidth(), view->getViewHeight()));
+    states.shader = shader.get();
 
-    // draw background and the fade effect
-    target->draw(primitiveLines, states);
-    target->draw(*texturedBackgroundFadeArray.get(), transform);
+    texturedBackgroundSprite->setPosition(view->getViewCenter().x - view->getViewWidth() / 2, view->getViewCenter().y - view->getViewHeight() / 2);
+    target->draw(*texturedBackgroundSprite, states);
+    return;
 }
 
 std::shared_ptr<LayerTile> TileMap::cloneDefaultLayerTile(int x, int y) {
@@ -614,34 +565,8 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     return true;
 }
 
-void TileMap::initializeTexturedBackgroundFade(int width, int) {
-    // initialize the render texture and fade vertices for textured background
-
-    texturedBackgroundFadeArray = std::make_unique<sf::VertexArray>();
-    texturedBackgroundFadeArray->resize(12);
-    texturedBackgroundFadeArray->setPrimitiveType(sf::PrimitiveType::Quads);
-    // top part of fade
-    (*texturedBackgroundFadeArray)[0].position  = sf::Vector2f(-width, -200);
-    (*texturedBackgroundFadeArray)[1].position  = sf::Vector2f( width, -200);
-    (*texturedBackgroundFadeArray)[2].position  = sf::Vector2f( width,  -25);
-    (*texturedBackgroundFadeArray)[3].position  = sf::Vector2f(-width,  -25);
-    // bottom part of fade
-    (*texturedBackgroundFadeArray)[4].position  = sf::Vector2f(-width,   25);
-    (*texturedBackgroundFadeArray)[5].position  = sf::Vector2f( width,   25);
-    (*texturedBackgroundFadeArray)[6].position  = sf::Vector2f( width,  200);
-    (*texturedBackgroundFadeArray)[7].position  = sf::Vector2f(-width,  200);
-    // middle solid color part
-    (*texturedBackgroundFadeArray)[8].position  = sf::Vector2f(-width,  -25);
-    (*texturedBackgroundFadeArray)[9].position  = sf::Vector2f( width,  -25);
-    (*texturedBackgroundFadeArray)[10].position = sf::Vector2f( width,   25);
-    (*texturedBackgroundFadeArray)[11].position = sf::Vector2f(-width,   25);
-
-    for (int i = 0; i < 12; ++i) {
-        (*texturedBackgroundFadeArray)[i].color = texturedBackgroundColor;
-        if (i < 2 || (i > 5 && i < 8)) {
-            (*texturedBackgroundFadeArray)[i].color.a = 0;
-        }
-    }
+void TileMap::resizeTexturedBackgroundSprite(int width, int height) {
+    texturedBackgroundSprite->setTextureRect(sf::IntRect(0, 0, width, height));
 }
 
 void TileMap::updateSprLayerIdx() {
