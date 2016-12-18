@@ -12,6 +12,7 @@ bool ShaderSource::initialize() {
     if (systemSupportsShaders) {
         loadShader("ColorizeShader");
         loadShader("LightingShader");
+        loadShader("TexturedBackgroundShader");
         loadDummyShader();
     }
 

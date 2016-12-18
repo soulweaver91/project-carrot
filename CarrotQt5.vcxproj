@@ -502,6 +502,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
     </CustomBuild>
     <None Include="Shaders\LightingShader.glsl" />
+    <None Include="Shaders\TexturedBackgroundShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE" />
