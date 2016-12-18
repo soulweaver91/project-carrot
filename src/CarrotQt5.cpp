@@ -30,7 +30,7 @@
 #endif
 
 CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false), paused(false),
-    frame(0), menuObject(nullptr), isMenu(false), fps(0) {
+    frame(0), isMenu(false), fps(0) {
 #ifdef Q_OS_MAC
     CFURLRef url = (CFURLRef)CFAutorelease((CFURLRef)CFBundleCopyBundleURL(CFBundleGetMainBundle()));
     QDir dir = QDir(QUrl::fromCFURL(url).path());
@@ -188,7 +188,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
         try {
             windowCanvas->clear();
 
-            levelManager = std::make_unique<LevelManager>(this, filename, episode);
+            auto levelManager = std::make_shared<LevelManager>(this, filename, episode);
 
 #ifdef CARROT_DEBUG
             auto player = levelManager->getPlayer(0).lock();
@@ -214,9 +214,9 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 
             levelManager->processCarryOver(carryOver);
 
-            currentMode = levelManager.get();
+            stateStack.clear();
+            stateStack.push(levelManager);
             isMenu = false;
-            menuObject = nullptr;
             afterTickCallback = []() {};
         } catch (const std::exception& ex) {
             QMessageBox::critical(this, "Error loading level", ex.what());
@@ -230,7 +230,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 
 void CarrotQt5::startMainMenu() {
     afterTickCallback = [this]() {
-        menuObject = std::make_unique<MenuScreen>(this);
+        auto menuObject = std::make_shared<MenuScreen>(this);
         setWindowTitle("Project Carrot");
 
         resourceManager->getSoundSystem()->clearSounds();
@@ -250,9 +250,9 @@ void CarrotQt5::startMainMenu() {
         ui.debug_rush->setDisabled(true);
 #endif
 
-        currentMode = menuObject.get();
+        stateStack.clear();
+        stateStack.push(menuObject);
         isMenu = true;
-        levelManager = nullptr;
 
         afterTickCallback = []() {};
     };
@@ -313,27 +313,6 @@ void CarrotQt5::keyPressEvent(QKeyEvent* event) {
         return;
     }
 
-    if (!isMenu) {
-        if (event->key() == Qt::Key::Key_Escape) {
-            startMainMenu();
-        }
-
-#ifdef CARROT_DEBUG
-        if (event->key() == Qt::Key::Key_Insert) {
-            debugConfig.tempModifier[debugConfig.currentTempModifier] += 1;
-        }
-        if (event->key() == Qt::Key::Key_Delete) {
-            debugConfig.tempModifier[debugConfig.currentTempModifier] -= 1;
-        }
-        if (event->key() == Qt::Key::Key_PageUp) {
-            debugConfig.currentTempModifier = (debugConfig.currentTempModifier + 1) % DEBUG_VARS_SIZE;
-        }
-        if (event->key() == Qt::Key::Key_PageDown) {
-            debugConfig.currentTempModifier = (debugConfig.currentTempModifier + DEBUG_VARS_SIZE - 1) % DEBUG_VARS_SIZE;
-        }
-#endif
-    }
-
     controlManager->setControlHeldDown(event->key());
 }
 
@@ -351,8 +330,8 @@ void CarrotQt5::resizeEvent(QResizeEvent*) {
 
     windowCanvas->setSize(sf::Vector2u(w, h));
     windowCanvas->setView(sf::View(sf::FloatRect(0, 0, w, h)));
-    if (!isMenu && levelManager != nullptr) {
-        levelManager->resizeEvent(w, h);
+    for (auto state : stateStack) {
+        state->resizeEvent(w, h);
     }
 
     pausedScreenshot->create(w, h);
@@ -378,8 +357,10 @@ void CarrotQt5::tick() {
         overlay.setFillColor(sf::Color(0, 0, 0, 120));
 
         if (isMenu) {
-            currentMode->logicTick({});
-            currentMode->renderTick();
+            stateStack.top()->logicTick({});
+            for (auto state : stateStack) {
+                state->renderTick();
+            }
             windowCanvas->draw(overlay);
         } else {
             windowCanvas->draw(*pausedScreenshotSprite);
@@ -390,8 +371,10 @@ void CarrotQt5::tick() {
     } else {
 
         auto events = controlManager->getPendingEvents();
-        currentMode->logicTick(events);
-        currentMode->renderTick();
+        stateStack.top()->logicTick(events);
+        for (auto state : stateStack) {
+            state->renderTick();
+        }
         controlManager->processFrame();
     }
 
@@ -403,8 +386,8 @@ void CarrotQt5::tick() {
 
 #ifdef CARROT_DEBUG
 
-DebugConfig CarrotQt5::getDebugConfig() {
-    return debugConfig;
+DebugConfig* CarrotQt5::getDebugConfig() {
+    return &debugConfig;
 }
 
 void CarrotQt5::debugShowMasks(bool show) {

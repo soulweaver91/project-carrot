@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QMap>
 #include <QVector>
+#include <QStack>
 #include <bass.h>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -58,7 +59,7 @@ public:
 
 #ifdef CARROT_DEBUG
     DebugConfig debugConfig;
-    DebugConfig getDebugConfig();
+    DebugConfig* getDebugConfig();
 #endif
 
     void startGame(const QString& filename);
@@ -90,9 +91,9 @@ private:
     std::shared_ptr<ControlManager> controlManager;
     unsigned long frame;
 
-    std::unique_ptr<MenuScreen> menuObject;
-    std::unique_ptr<LevelManager> levelManager;
-    EngineState* currentMode;
+    // Shared pointers, but never given to other objects, so effectively unique
+    // (Qt containers cannot hold unique pointers)
+    QStack<std::shared_ptr<EngineState>> stateStack;
 
     bool isMenu;
     std::function<void()> afterTickCallback;

@@ -40,7 +40,7 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
     }
 
 #ifdef CARROT_DEBUG
-    if (api->getDebugConfig().dbgShowMasked) {
+    if (api->getDebugConfig()->dbgShowMasked) {
         double len = sqrt(speedX * speedX + speedY * speedY);
         if (len > 0) {
             sf::RectangleShape line(sf::Vector2f(len * 4 + 5, 5));

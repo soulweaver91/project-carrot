@@ -76,7 +76,7 @@ QString ActorAPI::getLevelText(int idx) {
 }
 
 #ifdef CARROT_DEBUG
-DebugConfig ActorAPI::getDebugConfig() {
+DebugConfig* ActorAPI::getDebugConfig() {
     return mainClass->getDebugConfig();
 }
 #endif

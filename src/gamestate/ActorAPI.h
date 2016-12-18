@@ -36,7 +36,7 @@ public:
     void resumeMusic();
 
 #ifdef CARROT_DEBUG
-    DebugConfig getDebugConfig();
+    DebugConfig* getDebugConfig();
 #endif
 
     // TODO: phase out with better API functions

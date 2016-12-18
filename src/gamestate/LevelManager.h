@@ -43,6 +43,7 @@ public:
 
     void logicTick(const ControlEventList& events) override;
     void renderTick() override;
+    void resizeEvent(int w, int h) override;
 
     bool addActor(std::shared_ptr<CommonActor> actor);
     bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);
@@ -61,7 +62,6 @@ public:
     std::weak_ptr<EventMap> getGameEvents();
     uint getDefaultLightingLevel();
     double getGravity();
-    void resizeEvent(int w, int h);
     void initLevelChange(ExitType e = NEXT_NORMAL);
     std::shared_ptr<ActorAPI> getActorAPI();
     void processCarryOver(const LevelCarryOver carryOver);

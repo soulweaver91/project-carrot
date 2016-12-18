@@ -236,6 +236,31 @@ std::function<void(QString)> LevelManager::drawLoadingScreen(const QString& leve
 }
 
 void LevelManager::processControlEvents(const ControlEventList& events) {
+    for (const auto& pair : events.controlDownEvents) {
+        auto control = pair.first;
+
+        if (control == Qt::Key_Escape) {
+            root->startMainMenu();
+            return;
+        }
+
+#ifdef CARROT_DEBUG
+        auto debugConfig = root->getDebugConfig();
+        if (control == Qt::Key_Insert) {
+            debugConfig->tempModifier[debugConfig->currentTempModifier] += 1;
+        }
+        if (control == Qt::Key_Delete) {
+            debugConfig->tempModifier[debugConfig->currentTempModifier] -= 1;
+        }
+        if (control == Qt::Key_PageUp) {
+            debugConfig->currentTempModifier = (debugConfig->currentTempModifier + 1) % DEBUG_VARS_SIZE;
+        }
+        if (control == Qt::Key_PageDown) {
+            debugConfig->currentTempModifier = (debugConfig->currentTempModifier + DEBUG_VARS_SIZE - 1) % DEBUG_VARS_SIZE;
+        }
+#endif
+    }
+
     QVector<InteractiveActor*> interactiveActors;
     for (auto actor : actors) {
         if (auto ptr = dynamic_cast<InteractiveActor*>(actor.get())) {
@@ -364,7 +389,7 @@ void LevelManager::renderTick() {
 
 #ifdef CARROT_DEBUG
     auto debugConfig = root->getDebugConfig();
-    if (debugConfig.dbgOverlaysActive) {
+    if (debugConfig->dbgOverlaysActive) {
         float fps = root->getCurrentFPS();
         auto smallFont = root->getFont(SMALL);
         BitmapString::drawString(canvas, smallFont,
@@ -395,9 +420,9 @@ void LevelManager::renderTick() {
         BitmapString::drawString(canvas, smallFont, "Next: " + nextLevel, 6, 150);
 
         BitmapString::drawString(canvas, smallFont, "Mod-" +
-            QString::number(debugConfig.currentTempModifier) + " " +
-            debugConfig.tempModifierName[debugConfig.currentTempModifier] + ": " +
-            QString::number(debugConfig.tempModifier[debugConfig.currentTempModifier]), 6, views[0]->getViewHeight() - 60);
+            QString::number(debugConfig->currentTempModifier) + " " +
+            debugConfig->tempModifierName[debugConfig->currentTempModifier] + ": " +
+            QString::number(debugConfig->tempModifier[debugConfig->currentTempModifier]), 6, views[0]->getViewHeight() - 60);
     }
 #endif
 }

@@ -153,7 +153,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
 #ifdef CARROT_DEBUG
     auto debugConfig = root->getActorAPI()->getDebugConfig();
 
-    if (debugConfig.dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
+    if (debugConfig->dbgShowMasked && layer.type != LAYER_SPRITE_LAYER) {
         // only draw sprite layer in collision debug mode
         return;
     }
@@ -247,7 +247,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
 
     if (layer.isTextured && (lh == 8) && (lw == 8)) {
 #ifdef CARROT_DEBUG
-        float perspectiveSpeed = debugConfig.tempModifier[3] / 10.0;
+        float perspectiveSpeed = debugConfig->tempModifier[3] / 10.0;
 #else
         float perspectiveSpeed = 0.4;
 #endif
@@ -284,7 +284,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
                 if (idx == 0 && !ani) { continue; }
 
 #ifdef CARROT_DEBUG
-                if (debugConfig.dbgShowMasked) {
+                if (debugConfig->dbgShowMasked) {
                     // debug code for masks
                     sf::RectangleShape b(sf::Vector2f(32, 32));
                     b.setPosition(x2, y2);
