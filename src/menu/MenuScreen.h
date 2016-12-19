@@ -58,17 +58,11 @@ private:
     void loadMainMenu();
 
     CarrotQt5* root;
-    sf::Texture mainMenuCircularGlowTexture;
-    sf::Sprite mainMenuCircularGlowSprite;
-    sf::Texture mainMenuConicGlowTexture;
-    sf::Sprite mainMenuConicGlowSprite[4];
-    sf::Texture projectCarrotLogoTexture;
-    sf::Sprite projectCarrotLogoSprite;
     QVector<std::shared_ptr<MenuItem>> menuOptions;
     std::shared_ptr<MenuItem> cancelItem;
     int selectedItemIdx;
-    BitmapString attractionText;
     MenuLayout currentMenuType;
+    BitmapString attractionText;
 
     static const MenuFunctionCallback placeholderOption;
 };

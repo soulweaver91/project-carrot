@@ -3,6 +3,7 @@
 #include "gamestate/EventSpawner.h"
 #include "graphics/QSFMLCanvas.h"
 #include "graphics/CarrotCanvas.h"
+#include "menu/MainMenuRoot.h"
 #include "menu/MenuScreen.h"
 #include "menu/PauseScreen.h"
 #include "struct/Constants.h"
@@ -203,7 +204,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
             levelManager->processCarryOver(carryOver);
 
             stateStack.clear();
-            stateStack.push(levelManager);
+            pushState(levelManager);
             afterTickCallback = []() {};
         } catch (const std::exception& ex) {
             QMessageBox::critical(this, "Error loading level", ex.what());
@@ -217,13 +218,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 
 void CarrotQt5::startMainMenu() {
     afterTickCallback = [this]() {
-        auto menuObject = std::make_shared<MenuScreen>(this);
         setWindowTitle("Project Carrot");
-
-        resourceManager->getSoundSystem()->clearSounds();
-        resourceManager->getSoundSystem()->unregisterAllSoundListeners();
-        resourceManager->getSoundSystem()->setMusic("Music/Menu.it");
-
         windowCanvas->clear();
 
 #ifdef CARROT_DEBUG
@@ -238,7 +233,7 @@ void CarrotQt5::startMainMenu() {
 #endif
 
         stateStack.clear();
-        stateStack.push(menuObject);
+        pushState<MainMenuRoot>(false);
 
         afterTickCallback = []() {};
     };
@@ -284,13 +279,13 @@ bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
         if (stateStack.top()->getType() == "PAUSE_SCREEN") {
-            stateStack.pop();
+            popState();
         }
         resourceManager->getSoundSystem()->fadeMusicIn(1000);
     } else if (e->type() == QEvent::WindowDeactivate) {
         resourceManager->getSoundSystem()->fadeMusicOut(1000);
         if (stateStack.top()->getType() != "PAUSE_SCREEN") {
-            stateStack.push(std::make_shared<PauseScreen>(this, stateStack.top()->getType() == "LEVEL_MANAGER"));
+            pushState<PauseScreen>(false, stateStack.top()->getType() == "LEVEL_MANAGER");
         }
     }
     return FALSE;  // dispatch normally
@@ -351,6 +346,27 @@ void CarrotQt5::tick() {
     windowCanvas->updateContents();
 
     afterTickCallback();
+}
+
+void CarrotQt5::popState() {
+    if (stateStack.size() > 1) {
+        stateStack.pop();
+    }
+}
+
+template<typename T, typename... P>
+void CarrotQt5::pushState(bool replace, P... params) {
+    if (replace) {
+        stateStack.pop();
+    }
+
+    pushState(std::make_shared<T>(this, params...));
+}
+
+template void CarrotQt5::pushState<MenuScreen>(bool);
+
+void CarrotQt5::pushState(std::shared_ptr<EngineState> state) {
+    stateStack.push(state);
 }
 
 #ifdef CARROT_DEBUG

@@ -238,6 +238,7 @@
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
     <ClCompile Include="src\graphics\Tileset.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
+    <ClCompile Include="src\menu\MainMenuRoot.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
     <ClCompile Include="src\EngineState.cpp" />
     <ClCompile Include="src\menu\PauseScreen.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
     <ClInclude Include="src\EngineState.h" />
+    <ClInclude Include="src\menu\MainMenuRoot.h" />
     <ClInclude Include="src\menu\PauseScreen.h" />
     <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\Constants.h" />

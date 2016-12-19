@@ -57,6 +57,11 @@ public:
     float getCurrentFPS();
     EventSpawner* getEventSpawner();
 
+    template<typename T, typename... P>
+    void pushState(bool replace, P... params);
+
+    void popState();
+
 #ifdef CARROT_DEBUG
     DebugConfig debugConfig;
     DebugConfig* getDebugConfig();
@@ -90,6 +95,8 @@ private:
     // Shared pointers, but never given to other objects, so effectively unique
     // (Qt containers cannot hold unique pointers)
     QStack<std::shared_ptr<EngineState>> stateStack;
+
+    void pushState(std::shared_ptr<EngineState> state);
 
     std::function<void()> afterTickCallback;
     QTime lastTimestamp;
