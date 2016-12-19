@@ -40,7 +40,8 @@ public:
     ~MenuScreen();
 
     void logicTick(const ControlEventList& events) override;
-    void renderTick() override;
+    void renderTick(bool topmost) override;
+    QString getType() override;
 
     void processControlEvents(const ControlEventList& events);
     void processControlDownEvent(const ControlEvent& e);

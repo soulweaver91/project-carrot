@@ -79,10 +79,6 @@ private:
     Ui::CarrotQt5Class ui;
     QTimer myTimer;
     bool initialized;
-    bool paused;
-    std::unique_ptr<sf::Texture> pausedScreenshot;
-    std::unique_ptr<sf::Sprite> pausedScreenshotSprite;
-    std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> smallFont;
     std::shared_ptr<BitmapFont> mainFont;
@@ -95,7 +91,6 @@ private:
     // (Qt containers cannot hold unique pointers)
     QStack<std::shared_ptr<EngineState>> stateStack;
 
-    bool isMenu;
     std::function<void()> afterTickCallback;
     QTime lastTimestamp;
     float fps;

@@ -329,6 +329,9 @@
     <ClCompile Include="src\EngineState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\menu\PauseScreen.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -566,6 +569,9 @@
     </ClInclude>
     <ClInclude Include="src\EngineState.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\PauseScreen.h">
+      <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -74,7 +74,8 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/NextLevelData.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
-    ./src/struct/WeaponTypes.h
+    ./src/struct/WeaponTypes.h \
+    ./src/menu/PauseScreen.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -134,7 +135,8 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/EventMap.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
-    ./src/gamestate/TimerUser.cpp
+    ./src/gamestate/TimerUser.cpp \
+    ./src/menu/PauseScreen.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

@@ -4,6 +4,7 @@
 #include "graphics/QSFMLCanvas.h"
 #include "graphics/CarrotCanvas.h"
 #include "menu/MenuScreen.h"
+#include "menu/PauseScreen.h"
 #include "struct/Constants.h"
 #include "JJ2Format.h"
 
@@ -29,8 +30,7 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
-CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false), paused(false),
-    frame(0), isMenu(false), fps(0) {
+CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false), frame(0), fps(0) {
 #ifdef Q_OS_MAC
     CFURLRef url = (CFURLRef)CFAutorelease((CFURLRef)CFBundleCopyBundleURL(CFBundleGetMainBundle()));
     QDir dir = QDir(QUrl::fromCFURL(url).path());
@@ -123,18 +123,6 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false),
     
     installEventFilter(this);
 
-    // Define pause screen resources
-    pausedScreenshot = std::make_unique<sf::Texture>();
-    pausedScreenshot->create(DEFAULT_RESOLUTION_W, DEFAULT_RESOLUTION_H);
-    pausedScreenshot->update(*windowCanvas);
-
-    pausedScreenshotSprite = std::make_unique<sf::Sprite>();
-    pausedScreenshotSprite->setTexture(*pausedScreenshot);
-
-    // Define the pause text and add vertical bounce animation to it
-    pausedText = std::make_unique<BitmapString>(mainFont, "Pause", FONT_ALIGN_CENTER);
-    pausedText->setAnimation(true, 0.0, 6.0, 0.015, 1.25);
-
     lastTimestamp = QTime::currentTime();
 
     myTimer.setInterval(1000 / 70);
@@ -216,12 +204,11 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 
             stateStack.clear();
             stateStack.push(levelManager);
-            isMenu = false;
             afterTickCallback = []() {};
         } catch (const std::exception& ex) {
             QMessageBox::critical(this, "Error loading level", ex.what());
 
-            if (!isMenu) {
+            if (stateStack.top()->getType() != "MENU_SCREEN") {
                 startMainMenu();
             }
         }
@@ -252,7 +239,6 @@ void CarrotQt5::startMainMenu() {
 
         stateStack.clear();
         stateStack.push(menuObject);
-        isMenu = true;
 
         afterTickCallback = []() {};
     };
@@ -285,25 +271,27 @@ void CarrotQt5::closeEvent(QCloseEvent* event) {
 
     if (msg.exec() == QMessageBox::No) {
         event->ignore();
+    } else {
+        stateStack.clear();
     }
 }
 
 bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
+    if (stateStack.size() == 0) {
+        return TRUE;
+    }
+
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
-        if (!isMenu) {
-            windowCanvas->draw(*pausedScreenshotSprite);
-            windowCanvas->updateContents();
-            pausedScreenshot->update(*windowCanvas);
+        if (stateStack.top()->getType() == "PAUSE_SCREEN") {
+            stateStack.pop();
         }
-        paused = false;
         resourceManager->getSoundSystem()->fadeMusicIn(1000);
     } else if (e->type() == QEvent::WindowDeactivate) {
         resourceManager->getSoundSystem()->fadeMusicOut(1000);
-        if (!paused) {
-            pausedScreenshot->update(*windowCanvas);
+        if (stateStack.top()->getType() != "PAUSE_SCREEN") {
+            stateStack.push(std::make_shared<PauseScreen>(this, stateStack.top()->getType() == "LEVEL_MANAGER"));
         }
-        paused = true;
     }
     return FALSE;  // dispatch normally
 }
@@ -333,9 +321,6 @@ void CarrotQt5::resizeEvent(QResizeEvent*) {
     for (auto state : stateStack) {
         state->resizeEvent(w, h);
     }
-
-    pausedScreenshot->create(w, h);
-    pausedScreenshotSprite->setTextureRect(sf::IntRect(0, 0, w, h));
 }
 
 void CarrotQt5::tick() {
@@ -346,37 +331,21 @@ void CarrotQt5::tick() {
         lastTimestamp = now;
     }
 
+    if (stateStack.size() == 0) {
+        afterTickCallback();
+        return;
+    }
+
+    auto events = controlManager->getPendingEvents();
+    stateStack.top()->logicTick(events);
+
     // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
     windowCanvas->clear();
 
-    if (paused) {
-        // Set up a partially translucent black overlay
-        sf::Vector2u viewSize = windowCanvas->getSize();
-        sf::RectangleShape overlay;
-        overlay.setSize(sf::Vector2f(viewSize));
-        overlay.setFillColor(sf::Color(0, 0, 0, 120));
-
-        if (isMenu) {
-            stateStack.top()->logicTick({});
-            for (auto state : stateStack) {
-                state->renderTick();
-            }
-            windowCanvas->draw(overlay);
-        } else {
-            windowCanvas->draw(*pausedScreenshotSprite);
-            windowCanvas->draw(overlay);
-            pausedText->drawString(getCanvas(), viewSize.x / 2, viewSize.y / 2 - 20);
-        }
-
-    } else {
-
-        auto events = controlManager->getPendingEvents();
-        stateStack.top()->logicTick(events);
-        for (auto state : stateStack) {
-            state->renderTick();
-        }
-        controlManager->processFrame();
+    for (auto state : stateStack) {
+        state->renderTick(state == stateStack.top());
     }
+    controlManager->processFrame();
 
     // Update the drawn surface to the screen
     windowCanvas->updateContents();

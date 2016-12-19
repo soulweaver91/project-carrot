@@ -28,6 +28,8 @@ public:
     void centerToPlayer();
     void setSize(const sf::Vector2f& dimensions);
     std::weak_ptr<Player> getViewPlayer();
+    void drawLastFrame();
+    void updateLastFrame();
 private:
     void setLightingStep();
 
@@ -41,4 +43,7 @@ private:
     int lightingLevel;
     int targetLightingLevel;
     uint playerID;
+
+    std::unique_ptr<sf::RenderTexture> lastRenderedFrame;
+    std::unique_ptr<sf::Sprite> lastRenderedFrameSprite;
 };

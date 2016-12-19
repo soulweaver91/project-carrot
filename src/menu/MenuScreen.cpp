@@ -108,7 +108,7 @@ void MenuScreen::logicTick(const ControlEventList& events) {
     processControlEvents(events);
 }
 
-void MenuScreen::renderTick() {
+void MenuScreen::renderTick(bool) {
     auto canvas = root->getCanvas();
 
     unsigned int viewWidth = canvas->getView().getSize().x;
@@ -153,6 +153,10 @@ void MenuScreen::renderTick() {
             // ?
             break;
     }
+}
+
+QString MenuScreen::getType() {
+    return "MENU_SCREEN";
 }
 
 void MenuScreen::processControlEvents(const ControlEventList& events) {

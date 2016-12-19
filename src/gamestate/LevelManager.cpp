@@ -353,36 +353,45 @@ void LevelManager::logicTick(const ControlEventList& events) {
 
 }
 
-void LevelManager::renderTick() {
+void LevelManager::renderTick(bool topmost) {
     auto canvas = root->getCanvas();
+    if (!topmost) {
+        for (auto view : views) {
+            view->drawLastFrame();
+        }
+    } else {
+        for (auto view : views) {
+            // Set player to the center of the view
+            view->centerToPlayer();
+
+            // Draw the layers: first lower (background and sprite) levels...
+            gameTiles->drawLowerLevels(view);
+
+            // ...then draw all the actors...
+            for (auto& actor : actors) {
+                actor->drawUpdate(view);
+            }
+            // ...then all the debris elements...
+            for (auto& oneDebris : debris) {
+                oneDebris->drawUpdate(view);
+            }
+
+            // ...and finally the higher (foreground) levels
+            gameTiles->drawHigherLevels(view);
+
+            QVector<LightSource*> lightSources;
+            for (auto actor : actors) {
+                if (dynamic_cast<LightSource*>(actor.get()) != nullptr) {
+                    lightSources << dynamic_cast<LightSource*>(actor.get());
+                }
+            }
+            view->drawBackgroundEffects(lightSources);
+            view->drawLighting(lightSources);
+            view->updateLastFrame();
+        }
+    }
 
     for (auto view : views) {
-        // Set player to the center of the view
-        view->centerToPlayer();
-
-        // Draw the layers: first lower (background and sprite) levels...
-        gameTiles->drawLowerLevels(view);
-
-        // ...then draw all the actors...
-        for (auto& actor : actors) {
-            actor->drawUpdate(view);
-        }
-        // ...then all the debris elements...
-        for (auto& oneDebris : debris) {
-            oneDebris->drawUpdate(view);
-        }
-
-        // ...and finally the higher (foreground) levels
-        gameTiles->drawHigherLevels(view);
-
-        QVector<LightSource*> lightSources;
-        for (auto actor : actors) {
-            if (dynamic_cast<LightSource*>(actor.get()) != nullptr) {
-                lightSources << dynamic_cast<LightSource*>(actor.get());
-            }
-        }
-        view->drawBackgroundEffects(lightSources);
-        view->drawLighting(lightSources);
         view->drawUiElements();
         view->drawView(root->getCanvas());
     }
@@ -636,6 +645,10 @@ void LevelManager::resizeEvent(int w, int h) {
     for (auto view : views) {
         view->setSize(sf::Vector2f(w, h));
     }
+}
+
+QString LevelManager::getType() {
+    return "LEVEL_MANAGER";
 }
 
 void LevelManager::setLevelName(const QString& name) {

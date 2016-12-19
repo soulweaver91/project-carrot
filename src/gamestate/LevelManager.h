@@ -42,8 +42,9 @@ public:
     ~LevelManager();
 
     void logicTick(const ControlEventList& events) override;
-    void renderTick() override;
+    void renderTick(bool topmost) override;
     void resizeEvent(int w, int h) override;
+    QString getType() override;
 
     bool addActor(std::shared_ptr<CommonActor> actor);
     bool addPlayer(std::shared_ptr<Player> actor, short playerID = -1);

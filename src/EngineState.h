@@ -1,6 +1,9 @@
 #pragma once
 
 #include "struct/Controls.h"
+#include <SFML/Graphics.hpp>
+#include "graphics/CarrotCanvas.h"
+#include <memory>
 
 class EngineState {
 public:
@@ -8,6 +11,7 @@ public:
     ~EngineState();
 
     virtual void logicTick(const ControlEventList& events) = 0;
-    virtual void renderTick() {};
+    virtual void renderTick(bool) {};
     virtual void resizeEvent(int, int) {};
+    virtual QString getType() = 0;
 };

@@ -19,6 +19,10 @@ GameView::GameView(LevelManager* root, const uint& playerID, const sf::Vector2f&
     playerView = std::make_unique<sf::View>(sf::FloatRect(0, 0, dimensions.x, dimensions.y));
     uiView = std::make_unique<sf::View>(sf::FloatRect(0, 0, dimensions.x, dimensions.y));
     viewSprite = std::make_unique<sf::Sprite>(canvas->getTexture());
+
+    lastRenderedFrame = std::make_unique<sf::RenderTexture>();
+    lastRenderedFrame->create(dimensions.x, dimensions.y);
+    lastRenderedFrameSprite = std::make_unique<sf::Sprite>(lastRenderedFrame->getTexture());
 }
 
 void GameView::setLighting(int target, bool immediate) {
@@ -166,15 +170,28 @@ void GameView::setSize(const sf::Vector2f& dimensions) {
     canvas->create(dimensions.x, dimensions.y);
     renderAuxiliaryCanvas->create(dimensions.x, dimensions.y);
     lightingAuxiliaryCanvas->create(dimensions.x, dimensions.y);
+    lastRenderedFrame->create(dimensions.x, dimensions.y);
     playerView->setCenter(dimensions.x / 2, dimensions.y / 2);
     playerView->setSize(dimensions);
     uiView->setCenter(dimensions.x / 2, dimensions.y / 2);
     uiView->setSize(dimensions);
     viewSprite->setTextureRect(sf::IntRect(0, 0, std::ceil(dimensions.x), std::ceil(dimensions.y)));
+    lastRenderedFrameSprite->setTextureRect(sf::IntRect(0, 0, std::ceil(dimensions.x), std::ceil(dimensions.y)));
 }
 
 std::weak_ptr<Player> GameView::getViewPlayer() {
     return root->getPlayer(playerID);
+}
+
+void GameView::drawLastFrame() {
+    canvas->draw(*lastRenderedFrameSprite);
+}
+
+void GameView::updateLastFrame() {
+    lastRenderedFrame->clear();
+    lastRenderedFrame->draw(*viewSprite);
+    lastRenderedFrame->display();
+    //lastRenderedFrame->getTexture().copyToImage().saveToFile("test.png");
 }
 
 void GameView::centerView(const double& x, const double& y) {
