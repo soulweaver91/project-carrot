@@ -238,10 +238,14 @@
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
     <ClCompile Include="src\graphics\Tileset.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
+    <ClCompile Include="src\menu\EpisodeSelectMenu.cpp" />
+    <ClCompile Include="src\menu\LevelSelectMenu.cpp" />
+    <ClCompile Include="src\menu\MainMenuMenu.cpp" />
     <ClCompile Include="src\menu\MainMenuRoot.cpp" />
     <ClCompile Include="src\menu\MenuScreen.cpp" />
     <ClCompile Include="src\EngineState.cpp" />
     <ClCompile Include="src\menu\PauseScreen.cpp" />
+    <ClCompile Include="src\menu\VerticalItemListMenu.cpp" />
     <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -300,8 +304,12 @@
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
     <ClInclude Include="src\EngineState.h" />
+    <ClInclude Include="src\menu\EpisodeSelectMenu.h" />
+    <ClInclude Include="src\menu\LevelSelectMenu.h" />
+    <ClInclude Include="src\menu\MainMenuMenu.h" />
     <ClInclude Include="src\menu\MainMenuRoot.h" />
     <ClInclude Include="src\menu\PauseScreen.h" />
+    <ClInclude Include="src\menu\VerticalItemListMenu.h" />
     <ClInclude Include="src\struct\AnimState.h" />
     <ClInclude Include="src\struct\Constants.h" />
     <ClInclude Include="src\struct\Controls.h" />

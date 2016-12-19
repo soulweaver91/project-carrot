@@ -1,7 +1,7 @@
 #include "MainMenuRoot.h"
 
 #include "../CarrotQt5.h"
-#include "MenuScreen.h"
+#include "MainMenuMenu.h"
 
 MainMenuRoot::MainMenuRoot(CarrotQt5* root) : root(root) {
     mainMenuCircularGlowTexture.loadFromFile("Data/Textures/radialglow.png");
@@ -27,13 +27,13 @@ MainMenuRoot::~MainMenuRoot() {
 }
 
 void MainMenuRoot::logicTick(const ControlEventList& events) {
-    root->pushState<MenuScreen>(false);
+    root->pushState<MainMenuMenu>(false);
     root->getSoundSystem()->clearSounds();
     root->getSoundSystem()->unregisterAllSoundListeners();
     root->getSoundSystem()->setMusic("Music/Menu.it");
 }
 
-void MainMenuRoot::renderTick(bool topmost) {
+void MainMenuRoot::renderTick(bool topmost, bool) {
     auto canvas = root->getCanvas();
 
     unsigned int viewWidth = canvas->getView().getSize().x;

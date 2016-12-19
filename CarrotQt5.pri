@@ -76,7 +76,11 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/Resources.h \
     ./src/struct/WeaponTypes.h \
     ./src/menu/PauseScreen.h \
-    ./src/menu/MainMenuRoot.h
+    ./src/menu/MainMenuRoot.h \
+    ./src/menu/MainMenuMenu.h \
+    ./src/menu/EpisodeSelectMenu.h \
+    ./src/menu/LevelSelectMenu.h \
+    ./src/menu/VerticalItemListMenu.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -138,7 +142,11 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp \
     ./src/menu/PauseScreen.cpp \
-    ./src/menu/MainMenuRoot.cpp
+    ./src/menu/MainMenuRoot.cpp \
+    ./src/menu/MainMenuMenu.cpp \
+    ./src/menu/EpisodeSelectMenu.cpp \
+    ./src/menu/LevelSelectMenu.cpp \
+    ./src/menu/VerticalItemListMenu.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

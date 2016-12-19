@@ -335,6 +335,18 @@
     <ClCompile Include="src\menu\MainMenuRoot.cpp">
       <Filter>Source Files\Menu system</Filter>
     </ClCompile>
+    <ClCompile Include="src\menu\MainMenuMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu\EpisodeSelectMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu\LevelSelectMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu\VerticalItemListMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -577,6 +589,18 @@
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
     <ClInclude Include="src\menu\MainMenuRoot.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\MainMenuMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\EpisodeSelectMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\LevelSelectMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\VerticalItemListMenu.h">
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
   </ItemGroup>

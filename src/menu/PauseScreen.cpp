@@ -17,7 +17,7 @@ void PauseScreen::logicTick(const ControlEventList&) {
 
 }
 
-void PauseScreen::renderTick(bool) {
+void PauseScreen::renderTick(bool, bool) {
     auto canvas = root->getCanvas();
 
     // Set up a partially translucent black overlay

@@ -4,6 +4,9 @@
 #include "graphics/QSFMLCanvas.h"
 #include "graphics/CarrotCanvas.h"
 #include "menu/MainMenuRoot.h"
+#include "menu/MainMenuMenu.h"
+#include "menu/EpisodeSelectMenu.h"
+#include "menu/LevelSelectMenu.h"
 #include "menu/MenuScreen.h"
 #include "menu/PauseScreen.h"
 #include "struct/Constants.h"
@@ -26,6 +29,7 @@
 #include <QTransform>
 #include <QStringList>
 #include <exception>
+#include <iterator>
 #include <bass.h>
 #ifdef Q_OS_MAC
 #include "CoreFoundation/CoreFoundation.h"
@@ -337,8 +341,14 @@ void CarrotQt5::tick() {
     // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
     windowCanvas->clear();
 
+    bool isPaused = (stateStack.top()->getType() == "PAUSE_SCREEN");
+    std::shared_ptr<EngineState> secondToLast = nullptr;
+    if (isPaused && stateStack.size() > 1) {
+        secondToLast = *std::next(stateStack.rbegin());
+    }
+
     for (auto state : stateStack) {
-        state->renderTick(state == stateStack.top());
+        state->renderTick(state == stateStack.top(), state == secondToLast);
     }
     controlManager->processFrame();
 
@@ -363,7 +373,9 @@ void CarrotQt5::pushState(bool replace, P... params) {
     pushState(std::make_shared<T>(this, params...));
 }
 
-template void CarrotQt5::pushState<MenuScreen>(bool);
+template void CarrotQt5::pushState<MainMenuMenu>(bool);
+template void CarrotQt5::pushState<LevelSelectMenu>(bool);
+template void CarrotQt5::pushState<EpisodeSelectMenu>(bool);
 
 void CarrotQt5::pushState(std::shared_ptr<EngineState> state) {
     stateStack.push(state);

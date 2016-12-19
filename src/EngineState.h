@@ -11,7 +11,7 @@ public:
     ~EngineState();
 
     virtual void logicTick(const ControlEventList& events) = 0;
-    virtual void renderTick(bool) {};
+    virtual void renderTick(bool, bool) {};
     virtual void resizeEvent(int, int) {};
     virtual QString getType() = 0;
 };

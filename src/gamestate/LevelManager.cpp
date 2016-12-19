@@ -353,7 +353,7 @@ void LevelManager::logicTick(const ControlEventList& events) {
 
 }
 
-void LevelManager::renderTick(bool topmost) {
+void LevelManager::renderTick(bool topmost, bool) {
     auto canvas = root->getCanvas();
     if (!topmost) {
         for (auto view : views) {

@@ -42,7 +42,7 @@ public:
     ~LevelManager();
 
     void logicTick(const ControlEventList& events) override;
-    void renderTick(bool topmost) override;
+    void renderTick(bool topmost, bool topmostAfterPause) override;
     void resizeEvent(int w, int h) override;
     QString getType() override;
 

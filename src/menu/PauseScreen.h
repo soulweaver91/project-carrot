@@ -16,7 +16,7 @@ public:
     ~PauseScreen();
 
     void logicTick(const ControlEventList& events) override;
-    void renderTick(bool topmost) override;
+    void renderTick(bool topmost, bool topmostAfterPause) override;
     QString getType() override;
 
 private:
