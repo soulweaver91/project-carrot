@@ -16,23 +16,28 @@ void VerticalItemListMenu::renderTick(bool topmost, bool topmostAfterPause) {
 
     auto canvas = root->getCanvas();
 
-    unsigned int viewWidth = canvas->getView().getSize().x;
-    unsigned int viewHeight = canvas->getView().getSize().y;
+    uint viewWidth = canvas->getView().getSize().x;
+    uint viewHeight = canvas->getView().getSize().y;
+    int maxItemCount = (std::max(300u, viewHeight) - 300) / 26;
+    if (maxItemCount % 2 == 0) {
+        maxItemCount++;
+    }
+    int maxItemCountHalf = (maxItemCount + 1) / 2 - 1;
 
-    if (menuOptions.size() < 10) {
+    if (menuOptions.size() < maxItemCount) {
         for (int i = 0; i < menuOptions.size(); ++i) {
             menuOptions[i]->text->drawString(canvas, viewWidth / 2, 200 + ((viewHeight - 280) / menuOptions.size()) * i);
         }
     } else {
-        int j = 0 - std::min(0, selectedItemIdx - 5);
-        for (int i = std::max(0, selectedItemIdx - 5); i < std::min(menuOptions.size(), selectedItemIdx + 6); ++i, ++j) {
+        int j = 0 - std::min(0, selectedItemIdx - maxItemCountHalf);
+        for (int i = std::max(0, selectedItemIdx - maxItemCountHalf); i < std::min(menuOptions.size(), selectedItemIdx + (maxItemCountHalf + 1)); ++i, ++j) {
             menuOptions[i]->text->drawString(canvas, viewWidth / 2, 226 + 26 * j);
         }
-        if (selectedItemIdx > 5) {
+        if (selectedItemIdx > maxItemCountHalf) {
             BitmapString::drawString(canvas, root->getFont(), "-=...=-", viewWidth / 2 - 40, 200);
         }
-        if ((menuOptions.size() - selectedItemIdx - 1) > 5) {
-            BitmapString::drawString(canvas, root->getFont(), "-=...=-", viewWidth / 2 - 40, 512);
+        if ((menuOptions.size() - selectedItemIdx - 1) > maxItemCountHalf) {
+            BitmapString::drawString(canvas, root->getFont(), "-=...=-", viewWidth / 2 - 40, 200 + (maxItemCount + 1) * 26);
         }
     }
 }
