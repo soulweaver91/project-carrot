@@ -2,11 +2,19 @@
 
 #include "../CarrotQt5.h"
 #include "EpisodeSelectMenu.h"
+#include "ConfirmationMenu.h"
 
 InGameMenuMenu::InGameMenuMenu(CarrotQt5* mainClass) : VerticalItemListMenu(mainClass) {
     menuOptions.append(buildMenuItem([this]() {
-        root->startMainMenu();
-        root->pushState<EpisodeSelectMenu>(false);
+        auto delayedRootPtr = root;
+        root->pushState<ConfirmationMenu>(true, [delayedRootPtr](bool confirmed) {
+            if (confirmed) {
+                delayedRootPtr->startMainMenu();
+                delayedRootPtr->pushState<EpisodeSelectMenu>(false);
+            } else {
+                delayedRootPtr->popState();
+            }
+        }, "Are you sure?");
     }, "New Game"));
     menuOptions.append(buildMenuItem(placeholderOption, "Load Game"));
     menuOptions.append(buildMenuItem(placeholderOption, "Save Game"));

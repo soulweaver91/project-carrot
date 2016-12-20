@@ -11,6 +11,7 @@
 #include "menu/InGameMenuMenu.h"
 #include "menu/MenuScreen.h"
 #include "menu/PauseScreen.h"
+#include "menu/ConfirmationMenu.h"
 #include "struct/Constants.h"
 #include "JJ2Format.h"
 
@@ -368,21 +369,6 @@ void CarrotQt5::popState() {
         stateStack.pop();
     }
 }
-
-template<typename T, typename... P>
-void CarrotQt5::pushState(bool replace, P... params) {
-    if (replace) {
-        stateStack.pop();
-    }
-
-    pushState(std::make_shared<T>(this, params...));
-}
-
-template void CarrotQt5::pushState<MainMenuMenu>(bool);
-template void CarrotQt5::pushState<LevelSelectMenu>(bool);
-template void CarrotQt5::pushState<EpisodeSelectMenu>(bool);
-template void CarrotQt5::pushState<InGameMenuRoot>(bool);
-template void CarrotQt5::pushState<InGameMenuMenu>(bool);
 
 void CarrotQt5::pushState(std::shared_ptr<EngineState> state) {
     stateStack.push(state);

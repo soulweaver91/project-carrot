@@ -353,6 +353,9 @@
     <ClCompile Include="src\menu\InGameMenuMenu.cpp">
       <Filter>Source Files\Menu system</Filter>
     </ClCompile>
+    <ClCompile Include="src\menu\ConfirmationMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -613,6 +616,9 @@
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
     <ClInclude Include="src\menu\InGameMenuMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\ConfirmationMenu.h">
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
   </ItemGroup>

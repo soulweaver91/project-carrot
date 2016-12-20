@@ -238,6 +238,7 @@
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
     <ClCompile Include="src\graphics\Tileset.cpp" />
     <ClCompile Include="src\JJ2Format.cpp" />
+    <ClCompile Include="src\menu\ConfirmationMenu.cpp" />
     <ClCompile Include="src\menu\EpisodeSelectMenu.cpp" />
     <ClCompile Include="src\menu\InGameMenuMenu.cpp" />
     <ClCompile Include="src\menu\InGameMenuRoot.cpp" />
@@ -306,6 +307,7 @@
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
     <ClInclude Include="src\EngineState.h" />
+    <ClInclude Include="src\menu\ConfirmationMenu.h" />
     <ClInclude Include="src\menu\EpisodeSelectMenu.h" />
     <ClInclude Include="src\menu\InGameMenuMenu.h" />
     <ClInclude Include="src\menu\InGameMenuRoot.h" />

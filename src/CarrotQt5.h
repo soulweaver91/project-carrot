@@ -116,3 +116,12 @@ private slots:
     void debugSetOverlaysActive(bool active);
 #endif
 };
+
+template<typename T, typename... P>
+inline void CarrotQt5::pushState(bool replace, P... params) {
+    if (replace) {
+        stateStack.pop();
+    }
+
+    pushState(std::make_shared<T>(this, params...));
+}
