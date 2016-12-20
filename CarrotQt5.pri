@@ -80,7 +80,9 @@ HEADERS += ./src/EngineState.h \
     ./src/menu/MainMenuMenu.h \
     ./src/menu/EpisodeSelectMenu.h \
     ./src/menu/LevelSelectMenu.h \
-    ./src/menu/VerticalItemListMenu.h
+    ./src/menu/VerticalItemListMenu.h \
+    ./src/menu/InGameMenuRoot.h \
+    ./src/menu/InGameMenuMenu.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -146,7 +148,9 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/menu/MainMenuMenu.cpp \
     ./src/menu/EpisodeSelectMenu.cpp \
     ./src/menu/LevelSelectMenu.cpp \
-    ./src/menu/VerticalItemListMenu.cpp
+    ./src/menu/VerticalItemListMenu.cpp \
+    ./src/menu/InGameMenuRoot.cpp \
+    ./src/menu/InGameMenuMenu.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

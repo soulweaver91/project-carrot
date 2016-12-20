@@ -347,6 +347,12 @@
     <ClCompile Include="src\menu\VerticalItemListMenu.cpp">
       <Filter>Source Files\Menu system</Filter>
     </ClCompile>
+    <ClCompile Include="src\menu\InGameMenuRoot.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu\InGameMenuMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -601,6 +607,12 @@
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
     <ClInclude Include="src\menu\VerticalItemListMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\InGameMenuRoot.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\InGameMenuMenu.h">
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
   </ItemGroup>

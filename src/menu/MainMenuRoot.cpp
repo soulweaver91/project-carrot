@@ -21,6 +21,10 @@ MainMenuRoot::MainMenuRoot(CarrotQt5* root) : root(root) {
     projectCarrotLogoSprite.setTexture(projectCarrotLogoTexture);
     projectCarrotLogoSprite.setPosition(400, 10);
     projectCarrotLogoSprite.setOrigin(150, 0);
+
+    root->getSoundSystem()->clearSounds();
+    root->getSoundSystem()->unregisterAllSoundListeners();
+    root->getSoundSystem()->setMusic("Music/Menu.it");
 }
 
 MainMenuRoot::~MainMenuRoot() {
@@ -28,9 +32,6 @@ MainMenuRoot::~MainMenuRoot() {
 
 void MainMenuRoot::logicTick(const ControlEventList& events) {
     root->pushState<MainMenuMenu>(false);
-    root->getSoundSystem()->clearSounds();
-    root->getSoundSystem()->unregisterAllSoundListeners();
-    root->getSoundSystem()->setMusic("Music/Menu.it");
 }
 
 void MainMenuRoot::renderTick(bool topmost, bool) {

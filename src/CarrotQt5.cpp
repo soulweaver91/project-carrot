@@ -7,6 +7,8 @@
 #include "menu/MainMenuMenu.h"
 #include "menu/EpisodeSelectMenu.h"
 #include "menu/LevelSelectMenu.h"
+#include "menu/InGameMenuRoot.h"
+#include "menu/InGameMenuMenu.h"
 #include "menu/MenuScreen.h"
 #include "menu/PauseScreen.h"
 #include "struct/Constants.h"
@@ -221,26 +223,24 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 }
 
 void CarrotQt5::startMainMenu() {
-    afterTickCallback = [this]() {
-        setWindowTitle("Project Carrot");
-        windowCanvas->clear();
+    setWindowTitle("Project Carrot");
+    windowCanvas->clear();
 
 #ifdef CARROT_DEBUG
-        ui.debug_overlays->setDisabled(true);
-        ui.debug_masks->setDisabled(true);
-        ui.debug_health->setDisabled(true);
-        ui.debug_ammo->setDisabled(true);
-        ui.debug_gravity->setDisabled(true);
-        ui.debug_lighting->setDisabled(true);
-        ui.debug_position->setDisabled(true);
-        ui.debug_rush->setDisabled(true);
+    ui.debug_overlays->setDisabled(true);
+    ui.debug_masks->setDisabled(true);
+    ui.debug_health->setDisabled(true);
+    ui.debug_ammo->setDisabled(true);
+    ui.debug_gravity->setDisabled(true);
+    ui.debug_lighting->setDisabled(true);
+    ui.debug_position->setDisabled(true);
+    ui.debug_rush->setDisabled(true);
 #endif
 
-        stateStack.clear();
-        pushState<MainMenuRoot>(false);
+    stateStack.clear();
+    pushState<MainMenuRoot>(false);
 
-        afterTickCallback = []() {};
-    };
+    afterTickCallback = []() {};
 }
 
 void CarrotQt5::openAboutCarrot() {
@@ -335,6 +335,11 @@ void CarrotQt5::tick() {
         return;
     }
 
+    // Keep a copy of the stack for until the tick is completed
+    // (states that remove themselves won't like if the last reference to them goes away
+    // prematurely and they are gone)
+    auto stackCopy = stateStack;
+
     auto events = controlManager->getPendingEvents();
     stateStack.top()->logicTick(events);
 
@@ -376,6 +381,8 @@ void CarrotQt5::pushState(bool replace, P... params) {
 template void CarrotQt5::pushState<MainMenuMenu>(bool);
 template void CarrotQt5::pushState<LevelSelectMenu>(bool);
 template void CarrotQt5::pushState<EpisodeSelectMenu>(bool);
+template void CarrotQt5::pushState<InGameMenuRoot>(bool);
+template void CarrotQt5::pushState<InGameMenuMenu>(bool);
 
 void CarrotQt5::pushState(std::shared_ptr<EngineState> state) {
     stateStack.push(state);

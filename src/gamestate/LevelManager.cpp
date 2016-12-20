@@ -12,6 +12,7 @@
 #include "EventSpawner.h"
 #include "../sound/SoundSystem.h"
 #include "../actor/LightSource.h"
+#include "../menu/InGameMenuRoot.h"
 #ifdef CARROT_DEBUG
 #include <cmath>
 #endif
@@ -240,7 +241,7 @@ void LevelManager::processControlEvents(const ControlEventList& events) {
         auto control = pair.first;
 
         if (control == Qt::Key_Escape) {
-            root->startMainMenu();
+            root->pushState<InGameMenuRoot>(false);
             return;
         }
 
