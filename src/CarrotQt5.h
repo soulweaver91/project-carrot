@@ -69,7 +69,7 @@ public:
 
     void startGame(const QString& filename);
     void startGame(const QString& level, const QString& episode, const LevelCarryOver carryOver = {});
-    void quitFromMainMenu();
+    void tryQuit();
     
 protected:
     bool eventFilter(QObject* watched, QEvent* e);

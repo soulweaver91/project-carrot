@@ -417,7 +417,7 @@ EventSpawner* CarrotQt5::getEventSpawner() {
     return eventSpawner.get();
 }
 
-void CarrotQt5::quitFromMainMenu() {
+void CarrotQt5::tryQuit() {
     afterTickCallback = [this]() {
         close();
         afterTickCallback = []() {};

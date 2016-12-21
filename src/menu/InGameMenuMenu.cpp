@@ -20,7 +20,7 @@ InGameMenuMenu::InGameMenuMenu(CarrotQt5* mainClass) : VerticalItemListMenu(main
     menuOptions.append(buildMenuItem(placeholderOption, "Save Game"));
     menuOptions.append(buildMenuItem(placeholderOption, "Settings"));
     menuOptions.append(buildMenuItem([this]() {
-        root->quitFromMainMenu();
+        root->tryQuit();
     }, "Quit Game"));
     setMenuItemSelected(0);
     cancelItem->callback = [this]() {
