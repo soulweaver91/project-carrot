@@ -115,8 +115,8 @@ void BitmapString::drawString(sf::RenderTarget* canvas, std::shared_ptr<BitmapFo
         }
         double differenceX = 0.0;
         double differenceY = 0.0;
-        for (int i = 0; i < text.length(); ++i) {
-            auto sprite = font->getCharacterSprite(text.at(i));
+        for (int i = 0; i < line.length(); ++i) {
+            auto sprite = font->getCharacterSprite(line.at(i));
             if (sprite != nullptr) {
                 sprite->setPosition(currentX + differenceX, y + differenceY + lineIdx * lineHeight);
                 sprite->setColor(sf::Color::White);
