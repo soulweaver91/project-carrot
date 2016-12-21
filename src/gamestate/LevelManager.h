@@ -67,6 +67,7 @@ public:
     std::shared_ptr<ActorAPI> getActorAPI();
     void processCarryOver(const LevelCarryOver carryOver);
     QString getLevelText(int idx);
+    void handleGameOver();
 
 #ifdef CARROT_DEBUG
 public slots:
@@ -91,6 +92,7 @@ private:
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;
     QString levelName;
+    QString levelFileName;
     QString episodeName;
     QString nextLevel;
     SavedState lastSavePoint;

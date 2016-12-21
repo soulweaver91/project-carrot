@@ -841,7 +841,7 @@ bool Player::perish() {
                 // remove fast fires
                 fastfires = 0;
             } else {
-                // TODO: game over handling
+                api->handleGameOver();
             }
         });
     }

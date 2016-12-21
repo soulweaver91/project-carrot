@@ -13,6 +13,7 @@
 #include "../sound/SoundSystem.h"
 #include "../actor/LightSource.h"
 #include "../menu/InGameMenuRoot.h"
+#include "../menu/ConfirmationMenu.h"
 #ifdef CARROT_DEBUG
 #include <cmath>
 #endif
@@ -26,7 +27,7 @@
 #include <exception>
 
 LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode) :
-    root(root), levelName(level), episodeName(episode), nextLevel(""), exiting(false), defaultLightingLevel(100), gravity(0.3) {
+    root(root), levelName(level), levelFileName(level), episodeName(episode), nextLevel(""), exiting(false), defaultLightingLevel(100), gravity(0.3) {
 
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
@@ -425,8 +426,8 @@ void LevelManager::renderTick(bool topmost, bool) {
                 QString::number(player->getSpeedY(), 'f', 2), 126, 90);
         }
 
-        BitmapString::drawString(canvas, smallFont, "Level: " + levelName, 6, 120);
-        BitmapString::drawString(canvas, smallFont, "Episode: " + episodeName, 6, 135);
+        BitmapString::drawString(canvas, smallFont, "Episode: " + episodeName, 6, 120);
+        BitmapString::drawString(canvas, smallFont, "Level: " + levelFileName, 6, 135);
         BitmapString::drawString(canvas, smallFont, "Next: " + nextLevel, 6, 150);
 
         BitmapString::drawString(canvas, smallFont, "Mod-" +
@@ -688,6 +689,18 @@ QString LevelManager::getLevelText(int idx) {
         return levelTexts.find(idx).value();
     }
     return "";
+}
+
+void LevelManager::handleGameOver() {
+    root->pushState<InGameMenuRoot>(false);
+    root->pushState<ConfirmationMenu>(false, [this](bool confirmed) {
+        if (confirmed) {
+            root->popState();
+            root->startGame(levelFileName, episodeName);
+        } else {
+            root->startMainMenu();
+        }
+    }, "GAME OVER@Continue?");
 }
 
 #ifdef CARROT_DEBUG
