@@ -3,7 +3,15 @@
 #include "gamestate/EventSpawner.h"
 #include "graphics/QSFMLCanvas.h"
 #include "graphics/CarrotCanvas.h"
+#include "menu/MainMenuRoot.h"
+#include "menu/MainMenuMenu.h"
+#include "menu/EpisodeSelectMenu.h"
+#include "menu/LevelSelectMenu.h"
+#include "menu/InGameMenuRoot.h"
+#include "menu/InGameMenuMenu.h"
 #include "menu/MenuScreen.h"
+#include "menu/PauseScreen.h"
+#include "menu/ConfirmationMenu.h"
 #include "struct/Constants.h"
 #include "JJ2Format.h"
 
@@ -24,13 +32,13 @@
 #include <QTransform>
 #include <QStringList>
 #include <exception>
+#include <iterator>
 #include <bass.h>
 #ifdef Q_OS_MAC
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
-CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false), paused(false),
-    frame(0), menuObject(nullptr), isMenu(false), fps(0) {
+CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false), frame(0), fps(0) {
 #ifdef Q_OS_MAC
     CFURLRef url = (CFURLRef)CFAutorelease((CFURLRef)CFBundleCopyBundleURL(CFBundleGetMainBundle()));
     QDir dir = QDir(QUrl::fromCFURL(url).path());
@@ -123,18 +131,6 @@ CarrotQt5::CarrotQt5(QWidget *parent) : QMainWindow(parent), initialized(false),
     
     installEventFilter(this);
 
-    // Define pause screen resources
-    pausedScreenshot = std::make_unique<sf::Texture>();
-    pausedScreenshot->create(DEFAULT_RESOLUTION_W, DEFAULT_RESOLUTION_H);
-    pausedScreenshot->update(*windowCanvas);
-
-    pausedScreenshotSprite = std::make_unique<sf::Sprite>();
-    pausedScreenshotSprite->setTexture(*pausedScreenshot);
-
-    // Define the pause text and add vertical bounce animation to it
-    pausedText = std::make_unique<BitmapString>(mainFont, "Pause", FONT_ALIGN_CENTER);
-    pausedText->setAnimation(true, 0.0, 6.0, 0.015, 1.25);
-
     lastTimestamp = QTime::currentTime();
 
     myTimer.setInterval(1000 / 70);
@@ -188,7 +184,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
         try {
             windowCanvas->clear();
 
-            levelManager = std::make_unique<LevelManager>(this, filename, episode);
+            auto levelManager = std::make_shared<LevelManager>(this, filename, episode);
 
 #ifdef CARROT_DEBUG
             auto player = levelManager->getPlayer(0).lock();
@@ -214,14 +210,13 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 
             levelManager->processCarryOver(carryOver);
 
-            currentMode = levelManager.get();
-            isMenu = false;
-            menuObject = nullptr;
+            stateStack.clear();
+            pushState(levelManager);
             afterTickCallback = []() {};
         } catch (const std::exception& ex) {
             QMessageBox::critical(this, "Error loading level", ex.what());
 
-            if (!isMenu) {
+            if (stateStack.top()->getType() != "MENU_SCREEN") {
                 startMainMenu();
             }
         }
@@ -229,33 +224,24 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
 }
 
 void CarrotQt5::startMainMenu() {
-    afterTickCallback = [this]() {
-        menuObject = std::make_unique<MenuScreen>(this);
-        setWindowTitle("Project Carrot");
-
-        resourceManager->getSoundSystem()->clearSounds();
-        resourceManager->getSoundSystem()->unregisterAllSoundListeners();
-        resourceManager->getSoundSystem()->setMusic("Music/Menu.it");
-
-        windowCanvas->clear();
+    setWindowTitle("Project Carrot");
+    windowCanvas->clear();
 
 #ifdef CARROT_DEBUG
-        ui.debug_overlays->setDisabled(true);
-        ui.debug_masks->setDisabled(true);
-        ui.debug_health->setDisabled(true);
-        ui.debug_ammo->setDisabled(true);
-        ui.debug_gravity->setDisabled(true);
-        ui.debug_lighting->setDisabled(true);
-        ui.debug_position->setDisabled(true);
-        ui.debug_rush->setDisabled(true);
+    ui.debug_overlays->setDisabled(true);
+    ui.debug_masks->setDisabled(true);
+    ui.debug_health->setDisabled(true);
+    ui.debug_ammo->setDisabled(true);
+    ui.debug_gravity->setDisabled(true);
+    ui.debug_lighting->setDisabled(true);
+    ui.debug_position->setDisabled(true);
+    ui.debug_rush->setDisabled(true);
 #endif
 
-        currentMode = menuObject.get();
-        isMenu = true;
-        levelManager = nullptr;
+    stateStack.clear();
+    pushState<MainMenuRoot>(false);
 
-        afterTickCallback = []() {};
-    };
+    afterTickCallback = []() {};
 }
 
 void CarrotQt5::openAboutCarrot() {
@@ -285,25 +271,27 @@ void CarrotQt5::closeEvent(QCloseEvent* event) {
 
     if (msg.exec() == QMessageBox::No) {
         event->ignore();
+    } else {
+        stateStack.clear();
     }
 }
 
 bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
+    if (stateStack.size() == 0) {
+        return TRUE;
+    }
+
     // Catch focus events to mute the music when the window doesn't have it
     if (e->type() == QEvent::WindowActivate) {
-        if (!isMenu) {
-            windowCanvas->draw(*pausedScreenshotSprite);
-            windowCanvas->updateContents();
-            pausedScreenshot->update(*windowCanvas);
+        if (stateStack.top()->getType() == "PAUSE_SCREEN") {
+            popState();
         }
-        paused = false;
         resourceManager->getSoundSystem()->fadeMusicIn(1000);
     } else if (e->type() == QEvent::WindowDeactivate) {
         resourceManager->getSoundSystem()->fadeMusicOut(1000);
-        if (!paused) {
-            pausedScreenshot->update(*windowCanvas);
+        if (stateStack.top()->getType() != "PAUSE_SCREEN") {
+            pushState<PauseScreen>(false, stateStack.top()->getType() == "LEVEL_MANAGER");
         }
-        paused = true;
     }
     return FALSE;  // dispatch normally
 }
@@ -311,27 +299,6 @@ bool CarrotQt5::eventFilter(QObject*, QEvent* e) {
 void CarrotQt5::keyPressEvent(QKeyEvent* event) {
     if (event->isAutoRepeat()) {
         return;
-    }
-
-    if (!isMenu) {
-        if (event->key() == Qt::Key::Key_Escape) {
-            startMainMenu();
-        }
-
-#ifdef CARROT_DEBUG
-        if (event->key() == Qt::Key::Key_Insert) {
-            debugConfig.tempModifier[debugConfig.currentTempModifier] += 1;
-        }
-        if (event->key() == Qt::Key::Key_Delete) {
-            debugConfig.tempModifier[debugConfig.currentTempModifier] -= 1;
-        }
-        if (event->key() == Qt::Key::Key_PageUp) {
-            debugConfig.currentTempModifier = (debugConfig.currentTempModifier + 1) % DEBUG_VARS_SIZE;
-        }
-        if (event->key() == Qt::Key::Key_PageDown) {
-            debugConfig.currentTempModifier = (debugConfig.currentTempModifier + DEBUG_VARS_SIZE - 1) % DEBUG_VARS_SIZE;
-        }
-#endif
     }
 
     controlManager->setControlHeldDown(event->key());
@@ -351,12 +318,9 @@ void CarrotQt5::resizeEvent(QResizeEvent*) {
 
     windowCanvas->setSize(sf::Vector2u(w, h));
     windowCanvas->setView(sf::View(sf::FloatRect(0, 0, w, h)));
-    if (!isMenu && levelManager != nullptr) {
-        levelManager->resizeEvent(w, h);
+    for (auto state : stateStack) {
+        state->resizeEvent(w, h);
     }
-
-    pausedScreenshot->create(w, h);
-    pausedScreenshotSprite->setTextureRect(sf::IntRect(0, 0, w, h));
 }
 
 void CarrotQt5::tick() {
@@ -367,31 +331,32 @@ void CarrotQt5::tick() {
         lastTimestamp = now;
     }
 
+    if (stateStack.size() == 0) {
+        afterTickCallback();
+        return;
+    }
+
+    // Keep a copy of the stack for until the tick is completed
+    // (states that remove themselves won't like if the last reference to them goes away
+    // prematurely and they are gone)
+    auto stackCopy = stateStack;
+
+    auto events = controlManager->getPendingEvents();
+    stateStack.top()->logicTick(events);
+
     // Clear the drawing surface; we don't want to do this if we emulate the JJ2 behavior
     windowCanvas->clear();
 
-    if (paused) {
-        // Set up a partially translucent black overlay
-        sf::Vector2u viewSize = windowCanvas->getSize();
-        sf::RectangleShape overlay;
-        overlay.setSize(sf::Vector2f(viewSize));
-        overlay.setFillColor(sf::Color(0, 0, 0, 120));
-
-        if (isMenu) {
-            currentMode->tick({});
-            windowCanvas->draw(overlay);
-        } else {
-            windowCanvas->draw(*pausedScreenshotSprite);
-            windowCanvas->draw(overlay);
-            pausedText->drawString(getCanvas(), viewSize.x / 2, viewSize.y / 2 - 20);
-        }
-
-    } else {
-
-        auto events = controlManager->getPendingEvents();
-        currentMode->tick(events);
-        controlManager->processFrame();
+    bool isPaused = (stateStack.top()->getType() == "PAUSE_SCREEN");
+    std::shared_ptr<EngineState> secondToLast = nullptr;
+    if (isPaused && stateStack.size() > 1) {
+        secondToLast = *std::next(stateStack.rbegin());
     }
+
+    for (auto state : stateStack) {
+        state->renderTick(state == stateStack.top(), state == secondToLast);
+    }
+    controlManager->processFrame();
 
     // Update the drawn surface to the screen
     windowCanvas->updateContents();
@@ -399,10 +364,20 @@ void CarrotQt5::tick() {
     afterTickCallback();
 }
 
+void CarrotQt5::popState() {
+    if (stateStack.size() > 1) {
+        stateStack.pop();
+    }
+}
+
+void CarrotQt5::pushState(std::shared_ptr<EngineState> state) {
+    stateStack.push(state);
+}
+
 #ifdef CARROT_DEBUG
 
-DebugConfig CarrotQt5::getDebugConfig() {
-    return debugConfig;
+DebugConfig* CarrotQt5::getDebugConfig() {
+    return &debugConfig;
 }
 
 void CarrotQt5::debugShowMasks(bool show) {
@@ -442,7 +417,7 @@ EventSpawner* CarrotQt5::getEventSpawner() {
     return eventSpawner.get();
 }
 
-void CarrotQt5::quitFromMainMenu() {
+void CarrotQt5::tryQuit() {
     afterTickCallback = [this]() {
         close();
         afterTickCallback = []() {};

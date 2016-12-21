@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QMap>
 #include <QVector>
+#include <QStack>
 #include <bass.h>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -35,7 +36,7 @@
 #include "struct/DebugConfig.h"
 
 class MenuScreen;
-class ModeManager;
+class EngineState;
 class LevelManager;
 class EventSpawner;
 
@@ -56,14 +57,19 @@ public:
     float getCurrentFPS();
     EventSpawner* getEventSpawner();
 
+    template<typename T, typename... P>
+    void pushState(bool replace, P... params);
+
+    void popState();
+
 #ifdef CARROT_DEBUG
     DebugConfig debugConfig;
-    DebugConfig getDebugConfig();
+    DebugConfig* getDebugConfig();
 #endif
 
     void startGame(const QString& filename);
     void startGame(const QString& level, const QString& episode, const LevelCarryOver carryOver = {});
-    void quitFromMainMenu();
+    void tryQuit();
     
 protected:
     bool eventFilter(QObject* watched, QEvent* e);
@@ -78,10 +84,6 @@ private:
     Ui::CarrotQt5Class ui;
     QTimer myTimer;
     bool initialized;
-    bool paused;
-    std::unique_ptr<sf::Texture> pausedScreenshot;
-    std::unique_ptr<sf::Sprite> pausedScreenshotSprite;
-    std::unique_ptr<BitmapString> pausedText;
     std::shared_ptr<CarrotCanvas> windowCanvas;
     std::shared_ptr<BitmapFont> smallFont;
     std::shared_ptr<BitmapFont> mainFont;
@@ -90,11 +92,12 @@ private:
     std::shared_ptr<ControlManager> controlManager;
     unsigned long frame;
 
-    std::unique_ptr<MenuScreen> menuObject;
-    std::unique_ptr<LevelManager> levelManager;
-    ModeManager* currentMode;
+    // Shared pointers, but never given to other objects, so effectively unique
+    // (Qt containers cannot hold unique pointers)
+    QStack<std::shared_ptr<EngineState>> stateStack;
 
-    bool isMenu;
+    void pushState(std::shared_ptr<EngineState> state);
+
     std::function<void()> afterTickCallback;
     QTime lastTimestamp;
     float fps;
@@ -113,3 +116,12 @@ private slots:
     void debugSetOverlaysActive(bool active);
 #endif
 };
+
+template<typename T, typename... P>
+inline void CarrotQt5::pushState(bool replace, P... params) {
+    if (replace) {
+        stateStack.pop();
+    }
+
+    pushState(std::make_shared<T>(this, params...));
+}

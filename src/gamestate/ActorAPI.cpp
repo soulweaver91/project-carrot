@@ -75,8 +75,12 @@ QString ActorAPI::getLevelText(int idx) {
     return levelManager->getLevelText(idx);
 }
 
+void ActorAPI::handleGameOver() {
+    levelManager->handleGameOver();
+}
+
 #ifdef CARROT_DEBUG
-DebugConfig ActorAPI::getDebugConfig() {
+DebugConfig* ActorAPI::getDebugConfig() {
     return mainClass->getDebugConfig();
 }
 #endif

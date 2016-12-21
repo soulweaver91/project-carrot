@@ -12,6 +12,8 @@
 #include "EventSpawner.h"
 #include "../sound/SoundSystem.h"
 #include "../actor/LightSource.h"
+#include "../menu/InGameMenuRoot.h"
+#include "../menu/ConfirmationMenu.h"
 #ifdef CARROT_DEBUG
 #include <cmath>
 #endif
@@ -25,7 +27,7 @@
 #include <exception>
 
 LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode) :
-    root(root), levelName(level), episodeName(episode), nextLevel(""), exiting(false), defaultLightingLevel(100), gravity(0.3) {
+    root(root), levelName(level), levelFileName(level), episodeName(episode), nextLevel(""), exiting(false), defaultLightingLevel(100), gravity(0.3) {
 
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
@@ -236,6 +238,31 @@ std::function<void(QString)> LevelManager::drawLoadingScreen(const QString& leve
 }
 
 void LevelManager::processControlEvents(const ControlEventList& events) {
+    for (const auto& pair : events.controlDownEvents) {
+        auto control = pair.first;
+
+        if (control == Qt::Key_Escape) {
+            root->pushState<InGameMenuRoot>(false);
+            return;
+        }
+
+#ifdef CARROT_DEBUG
+        auto debugConfig = root->getDebugConfig();
+        if (control == Qt::Key_Insert) {
+            debugConfig->tempModifier[debugConfig->currentTempModifier] += 1;
+        }
+        if (control == Qt::Key_Delete) {
+            debugConfig->tempModifier[debugConfig->currentTempModifier] -= 1;
+        }
+        if (control == Qt::Key_PageUp) {
+            debugConfig->currentTempModifier = (debugConfig->currentTempModifier + 1) % DEBUG_VARS_SIZE;
+        }
+        if (control == Qt::Key_PageDown) {
+            debugConfig->currentTempModifier = (debugConfig->currentTempModifier + DEBUG_VARS_SIZE - 1) % DEBUG_VARS_SIZE;
+        }
+#endif
+    }
+
     QVector<InteractiveActor*> interactiveActors;
     for (auto actor : actors) {
         if (auto ptr = dynamic_cast<InteractiveActor*>(actor.get())) {
@@ -280,9 +307,7 @@ bool LevelManager::addPlayer(std::shared_ptr<Player> actor, short playerID) {
     return true;
 }
 
-void LevelManager::tick(const ControlEventList& events) {
-    auto canvas = root->getCanvas();
-
+void LevelManager::logicTick(const ControlEventList& events) {
     advanceTimers();
 
     // Deactivate far away instances, create near instances
@@ -328,40 +353,54 @@ void LevelManager::tick(const ControlEventList& events) {
 
     processControlEvents(events);
 
-    for (auto view : views) {
-        // Set player to the center of the view
-        view->centerToPlayer();
+}
 
-        // Draw the layers: first lower (background and sprite) levels...
-        gameTiles->drawLowerLevels(view);
-
-        // ...then draw all the actors...
-        for (auto& actor : actors) {
-            actor->drawUpdate(view);
+void LevelManager::renderTick(bool topmost, bool) {
+    auto canvas = root->getCanvas();
+    if (!topmost) {
+        for (auto view : views) {
+            view->drawLastFrame();
         }
-        // ...then all the debris elements...
-        for (auto& oneDebris : debris) {
-            oneDebris->drawUpdate(view);
-        }
+    } else {
+        for (auto view : views) {
+            // Set player to the center of the view
+            view->centerToPlayer();
 
-        // ...and finally the higher (foreground) levels
-        gameTiles->drawHigherLevels(view);
+            // Draw the layers: first lower (background and sprite) levels...
+            gameTiles->drawLowerLevels(view);
 
-        QVector<LightSource*> lightSources;
-        for (auto actor : actors) {
-            if (dynamic_cast<LightSource*>(actor.get()) != nullptr) {
-                lightSources << dynamic_cast<LightSource*>(actor.get());
+            // ...then draw all the actors...
+            for (auto& actor : actors) {
+                actor->drawUpdate(view);
             }
+            // ...then all the debris elements...
+            for (auto& oneDebris : debris) {
+                oneDebris->drawUpdate(view);
+            }
+
+            // ...and finally the higher (foreground) levels
+            gameTiles->drawHigherLevels(view);
+
+            QVector<LightSource*> lightSources;
+            for (auto actor : actors) {
+                if (dynamic_cast<LightSource*>(actor.get()) != nullptr) {
+                    lightSources << dynamic_cast<LightSource*>(actor.get());
+                }
+            }
+            view->drawBackgroundEffects(lightSources);
+            view->drawLighting(lightSources);
+            view->updateLastFrame();
         }
-        view->drawBackgroundEffects(lightSources);
-        view->drawLighting(lightSources);
+    }
+
+    for (auto view : views) {
         view->drawUiElements();
         view->drawView(root->getCanvas());
     }
 
 #ifdef CARROT_DEBUG
     auto debugConfig = root->getDebugConfig();
-    if (debugConfig.dbgOverlaysActive) {
+    if (debugConfig->dbgOverlaysActive) {
         float fps = root->getCurrentFPS();
         auto smallFont = root->getFont(SMALL);
         BitmapString::drawString(canvas, smallFont,
@@ -387,14 +426,14 @@ void LevelManager::tick(const ControlEventList& events) {
                 QString::number(player->getSpeedY(), 'f', 2), 126, 90);
         }
 
-        BitmapString::drawString(canvas, smallFont, "Level: " + levelName, 6, 120);
-        BitmapString::drawString(canvas, smallFont, "Episode: " + episodeName, 6, 135);
+        BitmapString::drawString(canvas, smallFont, "Episode: " + episodeName, 6, 120);
+        BitmapString::drawString(canvas, smallFont, "Level: " + levelFileName, 6, 135);
         BitmapString::drawString(canvas, smallFont, "Next: " + nextLevel, 6, 150);
 
         BitmapString::drawString(canvas, smallFont, "Mod-" +
-            QString::number(debugConfig.currentTempModifier) + " " +
-            debugConfig.tempModifierName[debugConfig.currentTempModifier] + ": " +
-            QString::number(debugConfig.tempModifier[debugConfig.currentTempModifier]), 6, views[0]->getViewHeight() - 60);
+            QString::number(debugConfig->currentTempModifier) + " " +
+            debugConfig->tempModifierName[debugConfig->currentTempModifier] + ": " +
+            QString::number(debugConfig->tempModifier[debugConfig->currentTempModifier]), 6, views[0]->getViewHeight() - 60);
     }
 #endif
 }
@@ -610,6 +649,10 @@ void LevelManager::resizeEvent(int w, int h) {
     }
 }
 
+QString LevelManager::getType() {
+    return "LEVEL_MANAGER";
+}
+
 void LevelManager::setLevelName(const QString& name) {
     levelName = name;
     root->setWindowTitle("Project Carrot - " + levelName);
@@ -646,6 +689,18 @@ QString LevelManager::getLevelText(int idx) {
         return levelTexts.find(idx).value();
     }
     return "";
+}
+
+void LevelManager::handleGameOver() {
+    root->pushState<InGameMenuRoot>(false);
+    root->pushState<ConfirmationMenu>(false, [this](bool confirmed) {
+        if (confirmed) {
+            root->popState();
+            root->startGame(levelFileName, episodeName);
+        } else {
+            root->startMainMenu();
+        }
+    }, "GAME OVER@Continue?");
 }
 
 #ifdef CARROT_DEBUG

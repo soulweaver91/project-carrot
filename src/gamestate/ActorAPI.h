@@ -28,6 +28,7 @@ public:
     std::shared_ptr<BitmapString> makeString(const QString& initString = "", BitmapFontSize size = NORMAL, FontAlign initAlign = FONT_ALIGN_LEFT);
     uint getStringWidth(const QString& text, BitmapFontSize size = NORMAL);
     QString getLevelText(int idx);
+    void handleGameOver();
 
     template<typename... P>
     void playSound(HSAMPLE sample, P... params);
@@ -36,7 +37,7 @@ public:
     void resumeMusic();
 
 #ifdef CARROT_DEBUG
-    DebugConfig getDebugConfig();
+    DebugConfig* getDebugConfig();
 #endif
 
     // TODO: phase out with better API functions

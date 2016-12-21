@@ -1,38 +1,11 @@
 #include "MenuScreen.h"
 #include <memory>
 #include <cmath>
-#include <QDir>
-#include <QSettings>
 
-MenuScreen::MenuScreen(CarrotQt5* root, MenuEntryPoint entry) : root(root), selectedItemIdx(0),
-    attractionText(root->getFont(), "", FONT_ALIGN_RIGHT), currentMenuType(MENU_PLAIN_LIST) {
-    mainMenuCircularGlowTexture.loadFromFile("Data/Textures/radialglow.png");
-    mainMenuCircularGlowSprite.setTexture(mainMenuCircularGlowTexture);
-    mainMenuCircularGlowSprite.setPosition(400, 100);
-    mainMenuCircularGlowSprite.setOrigin(313, 313);
-    
-    mainMenuConicGlowTexture.loadFromFile("Data/Textures/coneglow.png");
-    for (int i = 0; i < 4; ++i) {
-        mainMenuConicGlowSprite[i].setTexture(mainMenuConicGlowTexture);
-        mainMenuConicGlowSprite[i].setPosition(400, 100);
-        mainMenuConicGlowSprite[i].setOrigin(121, 78);
-        mainMenuConicGlowSprite[i].setRotation(i * 90);
-    }
-    
-    projectCarrotLogoTexture.loadFromFile("Data/PCLogo-300px.png");
-    projectCarrotLogoSprite.setTexture(projectCarrotLogoTexture);
-    projectCarrotLogoSprite.setPosition(400, 10);
-    projectCarrotLogoSprite.setOrigin(150, 0);
-
-    cancelItem = buildMenuItem(placeholderOption, "");
-    switch (entry) {
-        case MENU_MAIN_MENU:
-            loadMainMenu();
-            break;
-        case MENU_PAUSE_MENU:
-            break;
-    }
-
+MenuScreen::MenuScreen(CarrotQt5* mainClass) : root(mainClass), selectedItemIdx(0), attractionText(root->getFont(), "", FONT_ALIGN_RIGHT) {
+    cancelItem = buildMenuItem([this]() {
+        root->popState();
+    }, "");
 }
 
 MenuScreen::~MenuScreen() {
@@ -83,14 +56,6 @@ void MenuScreen::processControlDownEvent(const ControlEvent& e) {
             // Select the currently highlighted option and run its designated function
             menuOptions[selectedItemIdx]->callback();
             break;
-        case Qt::Key_Up:
-            // Move selection up
-            setMenuItemSelected(-1, true);
-            break;
-        case Qt::Key_Down:
-            // Move selection down
-            setMenuItemSelected(1, true);
-            break;
     }
 }
 
@@ -104,53 +69,25 @@ void MenuScreen::processControlUpEvent(const ControlEvent&) {
     // No use at the moment, but defined for the sake of consistency.
 }
 
-void MenuScreen::tick(const ControlEventList& events) {
+void MenuScreen::logicTick(const ControlEventList& events) {
     processControlEvents(events);
+}
+
+void MenuScreen::renderTick(bool topmost, bool topmostAfterPause) {
+    if (!topmost && !topmostAfterPause) {
+        return;
+    }
 
     auto canvas = root->getCanvas();
 
     unsigned int viewWidth = canvas->getView().getSize().x;
     unsigned int viewHeight = canvas->getView().getSize().y;
 
-    for (int i = 0; i < 4; ++i) {
-        mainMenuConicGlowSprite[i].rotate(0.4);
-        mainMenuConicGlowSprite[i].setPosition(sf::Vector2f(viewWidth / 2, 100));
-        canvas->draw(mainMenuConicGlowSprite[i]);
-    }
-    mainMenuCircularGlowSprite.setPosition(sf::Vector2f(viewWidth / 2, 100));
-    projectCarrotLogoSprite.setPosition(sf::Vector2f(viewWidth / 2, 10));
-    canvas->draw(mainMenuCircularGlowSprite);
-    canvas->draw(projectCarrotLogoSprite);
-    
-
-    BitmapString::drawString(canvas, root->getFont(SMALL), CP_VERSION + " v" + CP_VERSION_NUM +
-        " built on " + QString(__DATE__) + " " + QString(__TIME__), 10, viewHeight - 34);
-    BitmapString::drawString(canvas, root->getFont(SMALL), "(c) 2013-2016 Project Carrot Team", 10, viewHeight - 22);
     attractionText.drawString(canvas, viewWidth - 10, viewHeight - 30);
+}
 
-    switch (currentMenuType) {
-        case MENU_PLAIN_LIST:
-            if (menuOptions.size() < 10) {
-                for (int i = 0; i < menuOptions.size(); ++i) {
-                    menuOptions[i]->text->drawString(canvas, viewWidth / 2,200 + ((viewHeight - 280) / menuOptions.size()) * i);
-                }
-            } else {
-                int j = 0 - std::min(0, selectedItemIdx - 5);
-                for (int i = std::max(0, selectedItemIdx - 5); i < std::min(menuOptions.size(), selectedItemIdx + 6); ++i, ++j) {
-                    menuOptions[i]->text->drawString(canvas, viewWidth / 2, 226 + 26 * j);
-                }
-                if (selectedItemIdx > 5) {
-                    BitmapString::drawString(canvas, root->getFont(), "-=...=-", viewWidth / 2 - 40, 200);
-                }
-                if ((menuOptions.size() - selectedItemIdx - 1) > 5) {
-                    BitmapString::drawString(canvas, root->getFont(), "-=...=-", viewWidth / 2 - 40, 512);
-                }
-            }
-            break;
-        default:
-            // ?
-            break;
-    }
+QString MenuScreen::getType() {
+    return "MENU_SCREEN";
 }
 
 void MenuScreen::processControlEvents(const ControlEventList& events) {
@@ -167,89 +104,5 @@ void MenuScreen::processControlEvents(const ControlEventList& events) {
     }
 }
 
-void MenuScreen::loadLevelList() {
-    clearMenuList();
-    QDir levelDir("Levels");
-    if (levelDir.exists()) {
-        QStringList levels = levelDir.entryList();
-        for (int i = 0; i < levels.size(); ++i) {
-            if (levels.at(i) == "." || levels.at(i) == "..") {
-                continue;
-            }
-            if (QDir(levelDir.absoluteFilePath(levels.at(i))).exists()) {
-                QSettings levelData(levelDir.absoluteFilePath(levels.at(i) + "/config.ini"), QSettings::Format::IniFormat);
-                QString levelName = levels.at(i);
-                menuOptions.append(buildMenuItem(
-                    [this, levelName]() {
-                        root->startGame(levelName);
-                    },
-                    levelData.value("Level/FormalName").toString() + " ~ " + levelName)
-                );
-            }
-        }
-    } 
-    menuOptions.append(buildMenuItem([this]() {
-        loadMainMenu();
-    }, "Cancel"));
-    setMenuItemSelected(0);
-    cancelItem->callback = [this]() {
-        loadEpisodeList();
-    };
-    currentMenuType = MENU_PLAIN_LIST;
-    attractionText.setText("Select Level");
-}
-
-void MenuScreen::loadEpisodeList() {
-    clearMenuList();
-    QDir episodeDir("Episodes");
-    if (episodeDir.exists()) {
-        QStringList eps = episodeDir.entryList();
-        for (int i = 0; i < eps.size(); ++i) {
-            if (eps.at(i) == "." || eps.at(i) == "..") {
-                continue;
-            }
-            if (QDir(episodeDir.absoluteFilePath(eps.at(i))).exists()) {
-                QSettings level_data(episodeDir.absoluteFilePath(eps.at(i) + "/config.ini"), QSettings::Format::IniFormat);
-                QString epName = eps.at(i);
-                QString levelName = level_data.value("Episode/FirstLevel").toString();
-                menuOptions.append(buildMenuItem(
-                    [this, levelName, epName]() {
-                        root->startGame(levelName, epName);
-                    },
-                    level_data.value("Episode/FormalName").toString())
-                );
-            }
-        }
-    } 
-    menuOptions.append(buildMenuItem([this]() {
-        loadLevelList();
-    }, "Home Cooked Levels"));
-    setMenuItemSelected(0);
-    cancelItem->callback = [this]() {
-        loadMainMenu();
-    };
-    currentMenuType = MENU_PLAIN_LIST;
-    attractionText.setText("Select Episode");
-}
-
-void MenuScreen::loadMainMenu() {
-    clearMenuList();
-    
-    menuOptions.append(buildMenuItem([this]() {
-        loadEpisodeList();
-    }, "New Game"));
-    menuOptions.append(buildMenuItem(placeholderOption, "Load Game"));
-    menuOptions.append(buildMenuItem(placeholderOption, "Settings"));
-    menuOptions.append(buildMenuItem(placeholderOption, "High Scores"));
-    menuOptions.append(buildMenuItem([this]() {
-        root->quitFromMainMenu();
-    }, "Quit Game"));
-    setMenuItemSelected(0);
-    cancelItem->callback = [this]() {
-        setMenuItemSelected(-1, false);
-    };
-    currentMenuType = MENU_PLAIN_LIST;
-    attractionText.setText("Main Menu");
-}
-
 const MenuFunctionCallback MenuScreen::placeholderOption = []() {};
+
