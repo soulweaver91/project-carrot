@@ -15,7 +15,7 @@ LEXFLAGS  =
 YACC      = yacc
 YACCFLAGS = -d
 DEFINES       = -DNOMINMAX -DQT_DLL -DQT_WIDGETS_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_CORE_LIB
-INCPATH       = -I. -I$(BASS_DIR) -I$(BASS_FX_DIR)/C -I$(BASS_FX_DIR) -I$(SFML_DIR)/include -IGeneratedFiles -I. -IGeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -IGeneratedFiles/Release -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers -IGeneratedFiles -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -F/usr/local/lib
+INCPATH       = -I. -I$(BASS_DIR) -I$(BASS_FX_DIR)/C -I$(BASS_FX_DIR) -IGeneratedFiles -I. -I/usr/local/include -IGeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -IGeneratedFiles/Release -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers -IGeneratedFiles -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -F/usr/local/lib
 DEL_FILE  = rm -f
 MOVE      = mv -f
 
@@ -44,74 +44,501 @@ compiler_moc_header_clean:
 	-$(DEL_FILE) GeneratedFiles/Release/moc_CarrotQt5.cpp GeneratedFiles/Release/moc_Player.cpp GeneratedFiles/Release/moc_LevelManager.cpp
 GeneratedFiles/Release/moc_CarrotQt5.cpp: src/Version.h \
 		/usr/local/lib/QtWidgets.framework/Headers/QMainWindow \
+		/usr/local/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/usr/local/include/QtWidgets/qwidget.h \
+		/usr/local/include/QtGui/qwindowdefs.h \
+		/usr/local/include/QtCore/qglobal.h \
+		/usr/local/include/QtCore/qconfig.h \
+		/usr/local/include/QtCore/qfeatures.h \
+		/usr/local/include/QtCore/qsystemdetection.h \
+		/usr/local/include/QtCore/qprocessordetection.h \
+		/usr/local/include/QtCore/qcompilerdetection.h \
+		/usr/local/include/QtCore/qtypeinfo.h \
+		/usr/local/include/QtCore/qtypetraits.h \
+		/usr/local/include/QtCore/qisenum.h \
+		/usr/local/include/QtCore/qsysinfo.h \
+		/usr/local/include/QtCore/qlogging.h \
+		/usr/local/include/QtCore/qflags.h \
+		/usr/local/include/QtCore/qatomic.h \
+		/usr/local/include/QtCore/qbasicatomic.h \
+		/usr/local/include/QtCore/qatomic_bootstrap.h \
+		/usr/local/include/QtCore/qgenericatomic.h \
+		/usr/local/include/QtCore/qatomic_cxx11.h \
+		/usr/local/include/QtCore/qatomic_msvc.h \
+		/usr/local/include/QtCore/qglobalstatic.h \
+		/usr/local/include/QtCore/qmutex.h \
+		/usr/local/include/QtCore/qnumeric.h \
+		/usr/local/include/QtCore/qversiontagging.h \
+		/usr/local/include/QtCore/qobjectdefs.h \
+		/usr/local/include/QtCore/qnamespace.h \
+		/usr/local/include/QtCore/qobjectdefs_impl.h \
+		/usr/local/include/QtGui/qwindowdefs_win.h \
+		/usr/local/include/QtCore/qobject.h \
+		/usr/local/include/QtCore/qstring.h \
+		/usr/local/include/QtCore/qchar.h \
+		/usr/local/include/QtCore/qbytearray.h \
+		/usr/local/include/QtCore/qrefcount.h \
+		/usr/local/include/QtCore/qarraydata.h \
+		/usr/local/include/QtCore/qstringbuilder.h \
+		/usr/local/include/QtCore/qlist.h \
+		/usr/local/include/QtCore/qalgorithms.h \
+		/usr/local/include/QtCore/qiterator.h \
+		/usr/local/include/QtCore/qhashfunctions.h \
+		/usr/local/include/QtCore/qpair.h \
+		/usr/local/include/QtCore/qbytearraylist.h \
+		/usr/local/include/QtCore/qstringlist.h \
+		/usr/local/include/QtCore/qregexp.h \
+		/usr/local/include/QtCore/qstringmatcher.h \
+		/usr/local/include/QtCore/qcoreevent.h \
+		/usr/local/include/QtCore/qscopedpointer.h \
+		/usr/local/include/QtCore/qmetatype.h \
+		/usr/local/include/QtCore/qvarlengtharray.h \
+		/usr/local/include/QtCore/qcontainerfwd.h \
+		/usr/local/include/QtCore/qobject_impl.h \
+		/usr/local/include/QtCore/qmargins.h \
+		/usr/local/include/QtGui/qpaintdevice.h \
+		/usr/local/include/QtCore/qrect.h \
+		/usr/local/include/QtCore/qsize.h \
+		/usr/local/include/QtCore/qpoint.h \
+		/usr/local/include/QtGui/qpalette.h \
+		/usr/local/include/QtGui/qcolor.h \
+		/usr/local/include/QtGui/qrgb.h \
+		/usr/local/include/QtGui/qrgba64.h \
+		/usr/local/include/QtGui/qbrush.h \
+		/usr/local/include/QtCore/qvector.h \
+		/usr/local/include/QtGui/qmatrix.h \
+		/usr/local/include/QtGui/qpolygon.h \
+		/usr/local/include/QtGui/qregion.h \
+		/usr/local/include/QtCore/qdatastream.h \
+		/usr/local/include/QtCore/qiodevice.h \
+		/usr/local/include/QtCore/qline.h \
+		/usr/local/include/QtGui/qtransform.h \
+		/usr/local/include/QtGui/qpainterpath.h \
+		/usr/local/include/QtGui/qimage.h \
+		/usr/local/include/QtGui/qpixelformat.h \
+		/usr/local/include/QtGui/qpixmap.h \
+		/usr/local/include/QtCore/qsharedpointer.h \
+		/usr/local/include/QtCore/qshareddata.h \
+		/usr/local/include/QtCore/qhash.h \
+		/usr/local/include/QtCore/qsharedpointer_impl.h \
+		/usr/local/include/QtGui/qfont.h \
+		/usr/local/include/QtGui/qfontmetrics.h \
+		/usr/local/include/QtGui/qfontinfo.h \
+		/usr/local/include/QtWidgets/qsizepolicy.h \
+		/usr/local/include/QtGui/qcursor.h \
+		/usr/local/include/QtGui/qkeysequence.h \
+		/usr/local/include/QtGui/qevent.h \
+		/usr/local/include/QtCore/qvariant.h \
+		/usr/local/include/QtCore/qmap.h \
+		/usr/local/include/QtCore/qdebug.h \
+		/usr/local/include/QtCore/qtextstream.h \
+		/usr/local/include/QtCore/qlocale.h \
+		/usr/local/include/QtCore/qset.h \
+		/usr/local/include/QtCore/qcontiguouscache.h \
+		/usr/local/include/QtCore/qurl.h \
+		/usr/local/include/QtCore/qurlquery.h \
+		/usr/local/include/QtCore/qfile.h \
+		/usr/local/include/QtCore/qfiledevice.h \
+		/usr/local/include/QtGui/qvector2d.h \
+		/usr/local/include/QtGui/qtouchdevice.h \
+		/usr/local/include/QtWidgets/qtabwidget.h \
+		/usr/local/include/QtGui/qicon.h \
 		/usr/local/lib/QtGui.framework/Headers/QCloseEvent \
+		/usr/local/lib/QtGui.framework/Headers/qevent.h \
 		/usr/local/lib/QtGui.framework/Headers/QFocusEvent \
 		/usr/local/lib/QtGui.framework/Headers/QKeyEvent \
 		/usr/local/lib/QtCore.framework/Headers/QEvent \
+		/usr/local/lib/QtCore.framework/Headers/qcoreevent.h \
 		/usr/local/lib/QtCore.framework/Headers/QTimer \
+		/usr/local/lib/QtCore.framework/Headers/qtimer.h \
+		/usr/local/include/QtCore/qbasictimer.h \
 		/usr/local/lib/QtCore.framework/Headers/QTime \
+		/usr/local/lib/QtCore.framework/Headers/qdatetime.h \
 		/usr/local/lib/QtCore.framework/Headers/QString \
+		/usr/local/lib/QtCore.framework/Headers/qstring.h \
 		/usr/local/lib/QtWidgets.framework/Headers/QWidget \
+		/usr/local/lib/QtWidgets.framework/Headers/qwidget.h \
 		/usr/local/lib/QtCore.framework/Headers/QObject \
+		/usr/local/lib/QtCore.framework/Headers/qobject.h \
 		/usr/local/lib/QtCore.framework/Headers/QMap \
+		/usr/local/lib/QtCore.framework/Headers/qmap.h \
 		/usr/local/lib/QtCore.framework/Headers/QVector \
+		/usr/local/lib/QtCore.framework/Headers/qvector.h \
+		/usr/local/lib/QtCore.framework/Headers/QStack \
+		/usr/local/lib/QtCore.framework/Headers/qstack.h \
+		$(BASS_DIR)/bass.h \
+		/usr/local/include/SFML/System.hpp \
+		/usr/local/include/SFML/Config.hpp \
+		/usr/local/include/SFML/System/Clock.hpp \
+		/usr/local/include/SFML/System/Export.hpp \
+		/usr/local/include/SFML/System/Time.hpp \
+		/usr/local/include/SFML/System/Err.hpp \
+		/usr/local/include/SFML/System/FileInputStream.hpp \
+		/usr/local/include/SFML/System/InputStream.hpp \
+		/usr/local/include/SFML/System/NonCopyable.hpp \
+		/usr/local/include/SFML/System/Lock.hpp \
+		/usr/local/include/SFML/System/MemoryInputStream.hpp \
+		/usr/local/include/SFML/System/Mutex.hpp \
+		/usr/local/include/SFML/System/Sleep.hpp \
+		/usr/local/include/SFML/System/String.hpp \
+		/usr/local/include/SFML/System/Utf.hpp \
+		/usr/local/include/SFML/System/Utf.inl \
+		/usr/local/include/SFML/System/String.inl \
+		/usr/local/include/SFML/System/Thread.hpp \
+		/usr/local/include/SFML/System/Thread.inl \
+		/usr/local/include/SFML/System/ThreadLocal.hpp \
+		/usr/local/include/SFML/System/ThreadLocalPtr.hpp \
+		/usr/local/include/SFML/System/ThreadLocalPtr.inl \
+		/usr/local/include/SFML/System/Vector2.hpp \
+		/usr/local/include/SFML/System/Vector2.inl \
+		/usr/local/include/SFML/System/Vector3.hpp \
+		/usr/local/include/SFML/System/Vector3.inl \
+		/usr/local/include/SFML/Graphics.hpp \
+		/usr/local/include/SFML/Window.hpp \
+		/usr/local/include/SFML/Window/Context.hpp \
+		/usr/local/include/SFML/Window/Export.hpp \
+		/usr/local/include/SFML/Window/GlResource.hpp \
+		/usr/local/include/SFML/Window/ContextSettings.hpp \
+		/usr/local/include/SFML/Window/Event.hpp \
+		/usr/local/include/SFML/Window/Joystick.hpp \
+		/usr/local/include/SFML/Window/Keyboard.hpp \
+		/usr/local/include/SFML/Window/Mouse.hpp \
+		/usr/local/include/SFML/Window/Sensor.hpp \
+		/usr/local/include/SFML/Window/Touch.hpp \
+		/usr/local/include/SFML/Window/VideoMode.hpp \
+		/usr/local/include/SFML/Window/Window.hpp \
+		/usr/local/include/SFML/Window/WindowHandle.hpp \
+		/usr/local/include/SFML/Window/WindowStyle.hpp \
+		/usr/local/include/SFML/Graphics/BlendMode.hpp \
+		/usr/local/include/SFML/Graphics/Export.hpp \
+		/usr/local/include/SFML/Graphics/CircleShape.hpp \
+		/usr/local/include/SFML/Graphics/Shape.hpp \
+		/usr/local/include/SFML/Graphics/Drawable.hpp \
+		/usr/local/include/SFML/Graphics/RenderStates.hpp \
+		/usr/local/include/SFML/Graphics/Transform.hpp \
+		/usr/local/include/SFML/Graphics/Rect.hpp \
+		/usr/local/include/SFML/Graphics/Rect.inl \
+		/usr/local/include/SFML/Graphics/Transformable.hpp \
+		/usr/local/include/SFML/Graphics/VertexArray.hpp \
+		/usr/local/include/SFML/Graphics/Vertex.hpp \
+		/usr/local/include/SFML/Graphics/Color.hpp \
+		/usr/local/include/SFML/Graphics/PrimitiveType.hpp \
+		/usr/local/include/SFML/Graphics/ConvexShape.hpp \
+		/usr/local/include/SFML/Graphics/Font.hpp \
+		/usr/local/include/SFML/Graphics/Glyph.hpp \
+		/usr/local/include/SFML/Graphics/Texture.hpp \
+		/usr/local/include/SFML/Graphics/Image.hpp \
+		/usr/local/include/SFML/Graphics/RectangleShape.hpp \
+		/usr/local/include/SFML/Graphics/RenderTarget.hpp \
+		/usr/local/include/SFML/Graphics/View.hpp \
+		/usr/local/include/SFML/Graphics/RenderTexture.hpp \
+		/usr/local/include/SFML/Graphics/RenderWindow.hpp \
+		/usr/local/include/SFML/Graphics/Shader.hpp \
+		/usr/local/include/SFML/Graphics/Glsl.hpp \
+		/usr/local/include/SFML/Graphics/Glsl.inl \
+		/usr/local/include/SFML/Graphics/Sprite.hpp \
+		/usr/local/include/SFML/Graphics/Text.hpp \
 		GeneratedFiles/ui_CarrotQt5.h \
+		/usr/local/include/QtCore/QVariant \
+		/usr/local/include/QtWidgets/QAction \
+		/usr/local/include/QtWidgets/qaction.h \
+		/usr/local/include/QtWidgets/qactiongroup.h \
+		/usr/local/include/QtWidgets/QApplication \
+		/usr/local/include/QtWidgets/qapplication.h \
+		/usr/local/include/QtCore/qcoreapplication.h \
+		/usr/local/include/QtCore/qeventloop.h \
+		/usr/local/include/QtWidgets/qdesktopwidget.h \
+		/usr/local/include/QtGui/qguiapplication.h \
+		/usr/local/include/QtGui/qinputmethod.h \
+		/usr/local/include/QtWidgets/QButtonGroup \
+		/usr/local/include/QtWidgets/qbuttongroup.h \
+		/usr/local/include/QtWidgets/QHBoxLayout \
+		/usr/local/include/QtWidgets/qboxlayout.h \
+		/usr/local/include/QtWidgets/qlayout.h \
+		/usr/local/include/QtWidgets/qlayoutitem.h \
+		/usr/local/include/QtWidgets/qgridlayout.h \
+		/usr/local/include/QtWidgets/QHeaderView \
+		/usr/local/include/QtWidgets/qheaderview.h \
+		/usr/local/include/QtWidgets/qabstractitemview.h \
+		/usr/local/include/QtWidgets/qabstractscrollarea.h \
+		/usr/local/include/QtWidgets/qframe.h \
+		/usr/local/include/QtCore/qabstractitemmodel.h \
+		/usr/local/include/QtCore/qitemselectionmodel.h \
+		/usr/local/include/QtWidgets/qabstractitemdelegate.h \
+		/usr/local/include/QtWidgets/qstyleoption.h \
+		/usr/local/include/QtWidgets/qabstractspinbox.h \
+		/usr/local/include/QtGui/qvalidator.h \
+		/usr/local/include/QtCore/qregularexpression.h \
+		/usr/local/include/QtWidgets/qslider.h \
+		/usr/local/include/QtWidgets/qabstractslider.h \
+		/usr/local/include/QtWidgets/qstyle.h \
+		/usr/local/include/QtWidgets/qtabbar.h \
+		/usr/local/include/QtWidgets/qrubberband.h \
+		/usr/local/include/QtWidgets/QMainWindow \
+		/usr/local/include/QtWidgets/QMenu \
+		/usr/local/include/QtWidgets/qmenu.h \
+		/usr/local/include/QtWidgets/QMenuBar \
+		/usr/local/include/QtWidgets/qmenubar.h \
+		/usr/local/include/QtWidgets/QWidget \
 		src/graphics/BitmapFont.h \
 		src/graphics/BitmapString.h \
 		/usr/local/lib/QtCore.framework/Headers/QStringList \
+		/usr/local/lib/QtCore.framework/Headers/qstringlist.h \
 		src/graphics/CarrotCanvas.h \
 		/usr/local/lib/QtCore.framework/Headers/QPoint \
+		/usr/local/lib/QtCore.framework/Headers/qpoint.h \
 		/usr/local/lib/QtCore.framework/Headers/QSize \
+		/usr/local/lib/QtCore.framework/Headers/qsize.h \
 		src/graphics/QSFMLCanvas.h \
 		/usr/local/lib/QtGui.framework/Headers/QPaintEngine \
+		/usr/local/lib/QtGui.framework/Headers/qpaintengine.h \
+		/usr/local/include/QtGui/qpainter.h \
+		/usr/local/include/QtGui/qtextoption.h \
+		/usr/local/include/QtGui/qpen.h \
 		/usr/local/lib/QtGui.framework/Headers/QShowEvent \
 		/usr/local/lib/QtGui.framework/Headers/QPaintEvent \
 		src/graphics/ShaderSource.h \
 		src/gamestate/ControlManager.h \
 		src/struct/Controls.h \
 		/usr/local/lib/QtCore.framework/Headers/QPair \
+		/usr/local/lib/QtCore.framework/Headers/qpair.h \
 		src/gamestate/ResourceManager.h \
 		/usr/local/lib/QtCore.framework/Headers/QMultiMap \
 		src/sound/SoundSystem.h \
+		$(BASS_FX_DIR)/bass_fx.h \
 		src/struct/CoordinatePair.h \
 		src/graphics/GraphicsCache.h \
 		src/struct/Resources.h \
 		/usr/local/lib/QtCore.framework/Headers/QSet \
+		/usr/local/lib/QtCore.framework/Headers/qset.h \
 		/usr/local/lib/QtCore.framework/Headers/QBitArray \
+		/usr/local/lib/QtCore.framework/Headers/qbitarray.h \
 		src/struct/AnimState.h \
 		src/struct/Hitbox.h \
 		src/struct/NextLevelData.h \
 		src/struct/Constants.h \
 		src/struct/WeaponTypes.h \
 		/usr/local/lib/QtCore.framework/Headers/QtGlobal \
+		/usr/local/lib/QtCore.framework/Headers/qglobal.h \
 		src/struct/DebugConfig.h \
 		src/CarrotQt5.h \
 		/usr/local/bin/moc
-	/usr/local/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -I/Users/soulweaver/Documents/project-carrot -I'/Users/soulweaver/Documents/project-carrot/$(BASS_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)/C' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(SFML_DIR)/include' -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles -I/Users/soulweaver/Documents/project-carrot -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks (framework directory)' -F/usr/local/lib src/CarrotQt5.h -o GeneratedFiles/Release/moc_CarrotQt5.cpp
+	/usr/local/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -I/Users/soulweaver/Documents/project-carrot -I'/Users/soulweaver/Documents/project-carrot/$(BASS_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)/C' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)' -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles -I/Users/soulweaver/Documents/project-carrot -I/usr/local/include -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks (framework directory)' -F/usr/local/lib src/CarrotQt5.h -o GeneratedFiles/Release/moc_CarrotQt5.cpp
 
-GeneratedFiles/Release/moc_Player.cpp: src/actor/InteractiveActor.h \
+GeneratedFiles/Release/moc_Player.cpp: /usr/local/include/SFML/Graphics.hpp \
+		/usr/local/include/SFML/Window.hpp \
+		/usr/local/include/SFML/System.hpp \
+		/usr/local/include/SFML/Config.hpp \
+		/usr/local/include/SFML/System/Clock.hpp \
+		/usr/local/include/SFML/System/Export.hpp \
+		/usr/local/include/SFML/System/Time.hpp \
+		/usr/local/include/SFML/System/Err.hpp \
+		/usr/local/include/SFML/System/FileInputStream.hpp \
+		/usr/local/include/SFML/System/InputStream.hpp \
+		/usr/local/include/SFML/System/NonCopyable.hpp \
+		/usr/local/include/SFML/System/Lock.hpp \
+		/usr/local/include/SFML/System/MemoryInputStream.hpp \
+		/usr/local/include/SFML/System/Mutex.hpp \
+		/usr/local/include/SFML/System/Sleep.hpp \
+		/usr/local/include/SFML/System/String.hpp \
+		/usr/local/include/SFML/System/Utf.hpp \
+		/usr/local/include/SFML/System/Utf.inl \
+		/usr/local/include/SFML/System/String.inl \
+		/usr/local/include/SFML/System/Thread.hpp \
+		/usr/local/include/SFML/System/Thread.inl \
+		/usr/local/include/SFML/System/ThreadLocal.hpp \
+		/usr/local/include/SFML/System/ThreadLocalPtr.hpp \
+		/usr/local/include/SFML/System/ThreadLocalPtr.inl \
+		/usr/local/include/SFML/System/Vector2.hpp \
+		/usr/local/include/SFML/System/Vector2.inl \
+		/usr/local/include/SFML/System/Vector3.hpp \
+		/usr/local/include/SFML/System/Vector3.inl \
+		/usr/local/include/SFML/Window/Context.hpp \
+		/usr/local/include/SFML/Window/Export.hpp \
+		/usr/local/include/SFML/Window/GlResource.hpp \
+		/usr/local/include/SFML/Window/ContextSettings.hpp \
+		/usr/local/include/SFML/Window/Event.hpp \
+		/usr/local/include/SFML/Window/Joystick.hpp \
+		/usr/local/include/SFML/Window/Keyboard.hpp \
+		/usr/local/include/SFML/Window/Mouse.hpp \
+		/usr/local/include/SFML/Window/Sensor.hpp \
+		/usr/local/include/SFML/Window/Touch.hpp \
+		/usr/local/include/SFML/Window/VideoMode.hpp \
+		/usr/local/include/SFML/Window/Window.hpp \
+		/usr/local/include/SFML/Window/WindowHandle.hpp \
+		/usr/local/include/SFML/Window/WindowStyle.hpp \
+		/usr/local/include/SFML/Graphics/BlendMode.hpp \
+		/usr/local/include/SFML/Graphics/Export.hpp \
+		/usr/local/include/SFML/Graphics/CircleShape.hpp \
+		/usr/local/include/SFML/Graphics/Shape.hpp \
+		/usr/local/include/SFML/Graphics/Drawable.hpp \
+		/usr/local/include/SFML/Graphics/RenderStates.hpp \
+		/usr/local/include/SFML/Graphics/Transform.hpp \
+		/usr/local/include/SFML/Graphics/Rect.hpp \
+		/usr/local/include/SFML/Graphics/Rect.inl \
+		/usr/local/include/SFML/Graphics/Transformable.hpp \
+		/usr/local/include/SFML/Graphics/VertexArray.hpp \
+		/usr/local/include/SFML/Graphics/Vertex.hpp \
+		/usr/local/include/SFML/Graphics/Color.hpp \
+		/usr/local/include/SFML/Graphics/PrimitiveType.hpp \
+		/usr/local/include/SFML/Graphics/ConvexShape.hpp \
+		/usr/local/include/SFML/Graphics/Font.hpp \
+		/usr/local/include/SFML/Graphics/Glyph.hpp \
+		/usr/local/include/SFML/Graphics/Texture.hpp \
+		/usr/local/include/SFML/Graphics/Image.hpp \
+		/usr/local/include/SFML/Graphics/RectangleShape.hpp \
+		/usr/local/include/SFML/Graphics/RenderTarget.hpp \
+		/usr/local/include/SFML/Graphics/View.hpp \
+		/usr/local/include/SFML/Graphics/RenderTexture.hpp \
+		/usr/local/include/SFML/Graphics/RenderWindow.hpp \
+		/usr/local/include/SFML/Graphics/Shader.hpp \
+		/usr/local/include/SFML/Graphics/Glsl.hpp \
+		/usr/local/include/SFML/Graphics/Glsl.inl \
+		/usr/local/include/SFML/Graphics/Sprite.hpp \
+		/usr/local/include/SFML/Graphics/Text.hpp \
+		src/actor/InteractiveActor.h \
 		src/actor/CommonActor.h \
 		/usr/local/lib/QtCore.framework/Headers/QObject \
+		/usr/local/lib/QtCore.framework/Headers/qobject.h \
+		/usr/local/include/QtCore/qobjectdefs.h \
+		/usr/local/include/QtCore/qnamespace.h \
+		/usr/local/include/QtCore/qglobal.h \
+		/usr/local/include/QtCore/qconfig.h \
+		/usr/local/include/QtCore/qfeatures.h \
+		/usr/local/include/QtCore/qsystemdetection.h \
+		/usr/local/include/QtCore/qprocessordetection.h \
+		/usr/local/include/QtCore/qcompilerdetection.h \
+		/usr/local/include/QtCore/qtypeinfo.h \
+		/usr/local/include/QtCore/qtypetraits.h \
+		/usr/local/include/QtCore/qisenum.h \
+		/usr/local/include/QtCore/qsysinfo.h \
+		/usr/local/include/QtCore/qlogging.h \
+		/usr/local/include/QtCore/qflags.h \
+		/usr/local/include/QtCore/qatomic.h \
+		/usr/local/include/QtCore/qbasicatomic.h \
+		/usr/local/include/QtCore/qatomic_bootstrap.h \
+		/usr/local/include/QtCore/qgenericatomic.h \
+		/usr/local/include/QtCore/qatomic_cxx11.h \
+		/usr/local/include/QtCore/qatomic_msvc.h \
+		/usr/local/include/QtCore/qglobalstatic.h \
+		/usr/local/include/QtCore/qmutex.h \
+		/usr/local/include/QtCore/qnumeric.h \
+		/usr/local/include/QtCore/qversiontagging.h \
+		/usr/local/include/QtCore/qobjectdefs_impl.h \
+		/usr/local/include/QtCore/qstring.h \
+		/usr/local/include/QtCore/qchar.h \
+		/usr/local/include/QtCore/qbytearray.h \
+		/usr/local/include/QtCore/qrefcount.h \
+		/usr/local/include/QtCore/qarraydata.h \
+		/usr/local/include/QtCore/qstringbuilder.h \
+		/usr/local/include/QtCore/qlist.h \
+		/usr/local/include/QtCore/qalgorithms.h \
+		/usr/local/include/QtCore/qiterator.h \
+		/usr/local/include/QtCore/qhashfunctions.h \
+		/usr/local/include/QtCore/qpair.h \
+		/usr/local/include/QtCore/qbytearraylist.h \
+		/usr/local/include/QtCore/qstringlist.h \
+		/usr/local/include/QtCore/qregexp.h \
+		/usr/local/include/QtCore/qstringmatcher.h \
+		/usr/local/include/QtCore/qcoreevent.h \
+		/usr/local/include/QtCore/qscopedpointer.h \
+		/usr/local/include/QtCore/qmetatype.h \
+		/usr/local/include/QtCore/qvarlengtharray.h \
+		/usr/local/include/QtCore/qcontainerfwd.h \
+		/usr/local/include/QtCore/qobject_impl.h \
 		/usr/local/lib/QtGui.framework/Headers/QKeyEvent \
+		/usr/local/lib/QtGui.framework/Headers/qevent.h \
+		/usr/local/include/QtGui/qwindowdefs.h \
+		/usr/local/include/QtGui/qwindowdefs_win.h \
+		/usr/local/include/QtGui/qregion.h \
+		/usr/local/include/QtCore/qrect.h \
+		/usr/local/include/QtCore/qmargins.h \
+		/usr/local/include/QtCore/qsize.h \
+		/usr/local/include/QtCore/qpoint.h \
+		/usr/local/include/QtCore/qdatastream.h \
+		/usr/local/include/QtCore/qiodevice.h \
+		/usr/local/include/QtCore/qobject.h \
+		/usr/local/include/QtGui/qkeysequence.h \
+		/usr/local/include/QtCore/qvariant.h \
+		/usr/local/include/QtCore/qmap.h \
+		/usr/local/include/QtCore/qdebug.h \
+		/usr/local/include/QtCore/qhash.h \
+		/usr/local/include/QtCore/qtextstream.h \
+		/usr/local/include/QtCore/qlocale.h \
+		/usr/local/include/QtCore/qshareddata.h \
+		/usr/local/include/QtCore/qvector.h \
+		/usr/local/include/QtCore/qset.h \
+		/usr/local/include/QtCore/qcontiguouscache.h \
+		/usr/local/include/QtCore/qsharedpointer.h \
+		/usr/local/include/QtCore/qsharedpointer_impl.h \
+		/usr/local/include/QtCore/qurl.h \
+		/usr/local/include/QtCore/qurlquery.h \
+		/usr/local/include/QtCore/qfile.h \
+		/usr/local/include/QtCore/qfiledevice.h \
+		/usr/local/include/QtGui/qvector2d.h \
+		/usr/local/include/QtGui/qtouchdevice.h \
 		/usr/local/lib/QtCore.framework/Headers/QBitArray \
+		/usr/local/lib/QtCore.framework/Headers/qbitarray.h \
 		src/gamestate/AnimationUser.h \
 		/usr/local/lib/QtCore.framework/Headers/QString \
+		/usr/local/lib/QtCore.framework/Headers/qstring.h \
 		src/gamestate/TimerUser.h \
 		/usr/local/lib/QtCore.framework/Headers/QVector \
+		/usr/local/lib/QtCore.framework/Headers/qvector.h \
 		/usr/local/lib/QtCore.framework/Headers/QPair \
+		/usr/local/lib/QtCore.framework/Headers/qpair.h \
 		src/gamestate/LevelManager.h \
-		src/ModeManager.h \
+		src/EngineState.h \
 		src/struct/Controls.h \
 		/usr/local/lib/QtCore.framework/Headers/QMap \
+		/usr/local/lib/QtCore.framework/Headers/qmap.h \
+		src/graphics/CarrotCanvas.h \
+		/usr/local/lib/QtWidgets.framework/Headers/QWidget \
+		/usr/local/lib/QtWidgets.framework/Headers/qwidget.h \
+		/usr/local/include/QtGui/qpaintdevice.h \
+		/usr/local/include/QtGui/qpalette.h \
+		/usr/local/include/QtGui/qcolor.h \
+		/usr/local/include/QtGui/qrgb.h \
+		/usr/local/include/QtGui/qrgba64.h \
+		/usr/local/include/QtGui/qbrush.h \
+		/usr/local/include/QtGui/qmatrix.h \
+		/usr/local/include/QtGui/qpolygon.h \
+		/usr/local/include/QtCore/qline.h \
+		/usr/local/include/QtGui/qtransform.h \
+		/usr/local/include/QtGui/qpainterpath.h \
+		/usr/local/include/QtGui/qimage.h \
+		/usr/local/include/QtGui/qpixelformat.h \
+		/usr/local/include/QtGui/qpixmap.h \
+		/usr/local/include/QtGui/qfont.h \
+		/usr/local/include/QtGui/qfontmetrics.h \
+		/usr/local/include/QtGui/qfontinfo.h \
+		/usr/local/include/QtWidgets/qsizepolicy.h \
+		/usr/local/include/QtGui/qcursor.h \
+		/usr/local/include/QtGui/qevent.h \
+		/usr/local/lib/QtCore.framework/Headers/QPoint \
+		/usr/local/lib/QtCore.framework/Headers/qpoint.h \
+		/usr/local/lib/QtCore.framework/Headers/QSize \
+		/usr/local/lib/QtCore.framework/Headers/qsize.h \
+		src/graphics/QSFMLCanvas.h \
+		/usr/local/lib/QtGui.framework/Headers/QPaintEngine \
+		/usr/local/lib/QtGui.framework/Headers/qpaintengine.h \
+		/usr/local/include/QtGui/qpainter.h \
+		/usr/local/include/QtGui/qtextoption.h \
+		/usr/local/include/QtGui/qpen.h \
+		/usr/local/lib/QtGui.framework/Headers/QShowEvent \
+		/usr/local/lib/QtGui.framework/Headers/QPaintEvent \
 		src/struct/CoordinatePair.h \
 		src/struct/Hitbox.h \
 		src/struct/NextLevelData.h \
 		src/struct/Constants.h \
 		src/struct/WeaponTypes.h \
 		/usr/local/lib/QtCore.framework/Headers/QtGlobal \
+		/usr/local/lib/QtCore.framework/Headers/qglobal.h \
 		src/struct/Resources.h \
 		/usr/local/lib/QtCore.framework/Headers/QSet \
+		/usr/local/lib/QtCore.framework/Headers/qset.h \
 		/usr/local/lib/QtCore.framework/Headers/QMultiMap \
+		$(BASS_DIR)/bass.h \
 		src/struct/AnimState.h \
 		src/struct/DebugConfig.h \
 		src/struct/Layers.h \
@@ -119,6 +546,7 @@ GeneratedFiles/Release/moc_Player.cpp: src/actor/InteractiveActor.h \
 		src/actor/LightSource.h \
 		src/gamestate/PlayerOSD.h \
 		/usr/local/lib/QtCore.framework/Headers/QVariant \
+		/usr/local/lib/QtCore.framework/Headers/qvariant.h \
 		src/actor/MovingPlatform.h \
 		src/actor/SolidObject.h \
 		src/actor/collectible/GemCollectible.h \
@@ -126,31 +554,222 @@ GeneratedFiles/Release/moc_Player.cpp: src/actor/InteractiveActor.h \
 		src/actor/collectible/CoinCollectible.h \
 		src/actor/Player.h \
 		/usr/local/bin/moc
-	/usr/local/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -I/Users/soulweaver/Documents/project-carrot -I'/Users/soulweaver/Documents/project-carrot/$(BASS_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)/C' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(SFML_DIR)/include' -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles -I/Users/soulweaver/Documents/project-carrot -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks (framework directory)' -F/usr/local/lib src/actor/Player.h -o GeneratedFiles/Release/moc_Player.cpp
+	/usr/local/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -I/Users/soulweaver/Documents/project-carrot -I'/Users/soulweaver/Documents/project-carrot/$(BASS_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)/C' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)' -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles -I/Users/soulweaver/Documents/project-carrot -I/usr/local/include -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks (framework directory)' -F/usr/local/lib src/actor/Player.h -o GeneratedFiles/Release/moc_Player.cpp
 
 GeneratedFiles/Release/moc_LevelManager.cpp: /usr/local/lib/QtCore.framework/Headers/QVector \
+		/usr/local/lib/QtCore.framework/Headers/qvector.h \
+		/usr/local/include/QtCore/qalgorithms.h \
+		/usr/local/include/QtCore/qglobal.h \
+		/usr/local/include/QtCore/qconfig.h \
+		/usr/local/include/QtCore/qfeatures.h \
+		/usr/local/include/QtCore/qsystemdetection.h \
+		/usr/local/include/QtCore/qprocessordetection.h \
+		/usr/local/include/QtCore/qcompilerdetection.h \
+		/usr/local/include/QtCore/qtypeinfo.h \
+		/usr/local/include/QtCore/qtypetraits.h \
+		/usr/local/include/QtCore/qisenum.h \
+		/usr/local/include/QtCore/qsysinfo.h \
+		/usr/local/include/QtCore/qlogging.h \
+		/usr/local/include/QtCore/qflags.h \
+		/usr/local/include/QtCore/qatomic.h \
+		/usr/local/include/QtCore/qbasicatomic.h \
+		/usr/local/include/QtCore/qatomic_bootstrap.h \
+		/usr/local/include/QtCore/qgenericatomic.h \
+		/usr/local/include/QtCore/qatomic_cxx11.h \
+		/usr/local/include/QtCore/qatomic_msvc.h \
+		/usr/local/include/QtCore/qglobalstatic.h \
+		/usr/local/include/QtCore/qmutex.h \
+		/usr/local/include/QtCore/qnumeric.h \
+		/usr/local/include/QtCore/qversiontagging.h \
+		/usr/local/include/QtCore/qiterator.h \
+		/usr/local/include/QtCore/qlist.h \
+		/usr/local/include/QtCore/qrefcount.h \
+		/usr/local/include/QtCore/qarraydata.h \
+		/usr/local/include/QtCore/qhashfunctions.h \
+		/usr/local/include/QtCore/qchar.h \
+		/usr/local/include/QtCore/qpair.h \
+		/usr/local/include/QtCore/qbytearraylist.h \
+		/usr/local/include/QtCore/qbytearray.h \
+		/usr/local/include/QtCore/qnamespace.h \
+		/usr/local/include/QtCore/qstring.h \
+		/usr/local/include/QtCore/qstringbuilder.h \
+		/usr/local/include/QtCore/qstringlist.h \
+		/usr/local/include/QtCore/qregexp.h \
+		/usr/local/include/QtCore/qstringmatcher.h \
+		/usr/local/include/QtCore/qpoint.h \
 		/usr/local/lib/QtCore.framework/Headers/QString \
+		/usr/local/lib/QtCore.framework/Headers/qstring.h \
 		/usr/local/lib/QtCore.framework/Headers/QObject \
-		src/ModeManager.h \
+		/usr/local/lib/QtCore.framework/Headers/qobject.h \
+		/usr/local/include/QtCore/qobjectdefs.h \
+		/usr/local/include/QtCore/qobjectdefs_impl.h \
+		/usr/local/include/QtCore/qcoreevent.h \
+		/usr/local/include/QtCore/qscopedpointer.h \
+		/usr/local/include/QtCore/qmetatype.h \
+		/usr/local/include/QtCore/qvarlengtharray.h \
+		/usr/local/include/QtCore/qcontainerfwd.h \
+		/usr/local/include/QtCore/qobject_impl.h \
+		src/EngineState.h \
 		src/struct/Controls.h \
 		/usr/local/lib/QtCore.framework/Headers/QPair \
+		/usr/local/lib/QtCore.framework/Headers/qpair.h \
 		/usr/local/lib/QtCore.framework/Headers/QMap \
+		/usr/local/lib/QtCore.framework/Headers/qmap.h \
+		/usr/local/include/QtCore/qdebug.h \
+		/usr/local/include/QtCore/qhash.h \
+		/usr/local/include/QtCore/qmap.h \
+		/usr/local/include/QtCore/qtextstream.h \
+		/usr/local/include/QtCore/qiodevice.h \
+		/usr/local/include/QtCore/qobject.h \
+		/usr/local/include/QtCore/qlocale.h \
+		/usr/local/include/QtCore/qvariant.h \
+		/usr/local/include/QtCore/qshareddata.h \
+		/usr/local/include/QtCore/qvector.h \
+		/usr/local/include/QtCore/qset.h \
+		/usr/local/include/QtCore/qcontiguouscache.h \
+		/usr/local/include/QtCore/qsharedpointer.h \
+		/usr/local/include/QtCore/qsharedpointer_impl.h \
+		/usr/local/include/SFML/Graphics.hpp \
+		/usr/local/include/SFML/Window.hpp \
+		/usr/local/include/SFML/System.hpp \
+		/usr/local/include/SFML/Config.hpp \
+		/usr/local/include/SFML/System/Clock.hpp \
+		/usr/local/include/SFML/System/Export.hpp \
+		/usr/local/include/SFML/System/Time.hpp \
+		/usr/local/include/SFML/System/Err.hpp \
+		/usr/local/include/SFML/System/FileInputStream.hpp \
+		/usr/local/include/SFML/System/InputStream.hpp \
+		/usr/local/include/SFML/System/NonCopyable.hpp \
+		/usr/local/include/SFML/System/Lock.hpp \
+		/usr/local/include/SFML/System/MemoryInputStream.hpp \
+		/usr/local/include/SFML/System/Mutex.hpp \
+		/usr/local/include/SFML/System/Sleep.hpp \
+		/usr/local/include/SFML/System/String.hpp \
+		/usr/local/include/SFML/System/Utf.hpp \
+		/usr/local/include/SFML/System/Utf.inl \
+		/usr/local/include/SFML/System/String.inl \
+		/usr/local/include/SFML/System/Thread.hpp \
+		/usr/local/include/SFML/System/Thread.inl \
+		/usr/local/include/SFML/System/ThreadLocal.hpp \
+		/usr/local/include/SFML/System/ThreadLocalPtr.hpp \
+		/usr/local/include/SFML/System/ThreadLocalPtr.inl \
+		/usr/local/include/SFML/System/Vector2.hpp \
+		/usr/local/include/SFML/System/Vector2.inl \
+		/usr/local/include/SFML/System/Vector3.hpp \
+		/usr/local/include/SFML/System/Vector3.inl \
+		/usr/local/include/SFML/Window/Context.hpp \
+		/usr/local/include/SFML/Window/Export.hpp \
+		/usr/local/include/SFML/Window/GlResource.hpp \
+		/usr/local/include/SFML/Window/ContextSettings.hpp \
+		/usr/local/include/SFML/Window/Event.hpp \
+		/usr/local/include/SFML/Window/Joystick.hpp \
+		/usr/local/include/SFML/Window/Keyboard.hpp \
+		/usr/local/include/SFML/Window/Mouse.hpp \
+		/usr/local/include/SFML/Window/Sensor.hpp \
+		/usr/local/include/SFML/Window/Touch.hpp \
+		/usr/local/include/SFML/Window/VideoMode.hpp \
+		/usr/local/include/SFML/Window/Window.hpp \
+		/usr/local/include/SFML/Window/WindowHandle.hpp \
+		/usr/local/include/SFML/Window/WindowStyle.hpp \
+		/usr/local/include/SFML/Graphics/BlendMode.hpp \
+		/usr/local/include/SFML/Graphics/Export.hpp \
+		/usr/local/include/SFML/Graphics/CircleShape.hpp \
+		/usr/local/include/SFML/Graphics/Shape.hpp \
+		/usr/local/include/SFML/Graphics/Drawable.hpp \
+		/usr/local/include/SFML/Graphics/RenderStates.hpp \
+		/usr/local/include/SFML/Graphics/Transform.hpp \
+		/usr/local/include/SFML/Graphics/Rect.hpp \
+		/usr/local/include/SFML/Graphics/Rect.inl \
+		/usr/local/include/SFML/Graphics/Transformable.hpp \
+		/usr/local/include/SFML/Graphics/VertexArray.hpp \
+		/usr/local/include/SFML/Graphics/Vertex.hpp \
+		/usr/local/include/SFML/Graphics/Color.hpp \
+		/usr/local/include/SFML/Graphics/PrimitiveType.hpp \
+		/usr/local/include/SFML/Graphics/ConvexShape.hpp \
+		/usr/local/include/SFML/Graphics/Font.hpp \
+		/usr/local/include/SFML/Graphics/Glyph.hpp \
+		/usr/local/include/SFML/Graphics/Texture.hpp \
+		/usr/local/include/SFML/Graphics/Image.hpp \
+		/usr/local/include/SFML/Graphics/RectangleShape.hpp \
+		/usr/local/include/SFML/Graphics/RenderTarget.hpp \
+		/usr/local/include/SFML/Graphics/View.hpp \
+		/usr/local/include/SFML/Graphics/RenderTexture.hpp \
+		/usr/local/include/SFML/Graphics/RenderWindow.hpp \
+		/usr/local/include/SFML/Graphics/Shader.hpp \
+		/usr/local/include/SFML/Graphics/Glsl.hpp \
+		/usr/local/include/SFML/Graphics/Glsl.inl \
+		/usr/local/include/SFML/Graphics/Sprite.hpp \
+		/usr/local/include/SFML/Graphics/Text.hpp \
+		src/graphics/CarrotCanvas.h \
+		/usr/local/lib/QtWidgets.framework/Headers/QWidget \
+		/usr/local/lib/QtWidgets.framework/Headers/qwidget.h \
+		/usr/local/include/QtGui/qwindowdefs.h \
+		/usr/local/include/QtGui/qwindowdefs_win.h \
+		/usr/local/include/QtCore/qmargins.h \
+		/usr/local/include/QtGui/qpaintdevice.h \
+		/usr/local/include/QtCore/qrect.h \
+		/usr/local/include/QtCore/qsize.h \
+		/usr/local/include/QtGui/qpalette.h \
+		/usr/local/include/QtGui/qcolor.h \
+		/usr/local/include/QtGui/qrgb.h \
+		/usr/local/include/QtGui/qrgba64.h \
+		/usr/local/include/QtGui/qbrush.h \
+		/usr/local/include/QtGui/qmatrix.h \
+		/usr/local/include/QtGui/qpolygon.h \
+		/usr/local/include/QtGui/qregion.h \
+		/usr/local/include/QtCore/qdatastream.h \
+		/usr/local/include/QtCore/qline.h \
+		/usr/local/include/QtGui/qtransform.h \
+		/usr/local/include/QtGui/qpainterpath.h \
+		/usr/local/include/QtGui/qimage.h \
+		/usr/local/include/QtGui/qpixelformat.h \
+		/usr/local/include/QtGui/qpixmap.h \
+		/usr/local/include/QtGui/qfont.h \
+		/usr/local/include/QtGui/qfontmetrics.h \
+		/usr/local/include/QtGui/qfontinfo.h \
+		/usr/local/include/QtWidgets/qsizepolicy.h \
+		/usr/local/include/QtGui/qcursor.h \
+		/usr/local/include/QtGui/qkeysequence.h \
+		/usr/local/include/QtGui/qevent.h \
+		/usr/local/include/QtCore/qurl.h \
+		/usr/local/include/QtCore/qurlquery.h \
+		/usr/local/include/QtCore/qfile.h \
+		/usr/local/include/QtCore/qfiledevice.h \
+		/usr/local/include/QtGui/qvector2d.h \
+		/usr/local/include/QtGui/qtouchdevice.h \
+		/usr/local/lib/QtCore.framework/Headers/QPoint \
+		/usr/local/lib/QtCore.framework/Headers/qpoint.h \
+		/usr/local/lib/QtCore.framework/Headers/QSize \
+		/usr/local/lib/QtCore.framework/Headers/qsize.h \
+		src/graphics/QSFMLCanvas.h \
+		/usr/local/lib/QtGui.framework/Headers/QPaintEngine \
+		/usr/local/lib/QtGui.framework/Headers/qpaintengine.h \
+		/usr/local/include/QtGui/qpainter.h \
+		/usr/local/include/QtGui/qtextoption.h \
+		/usr/local/include/QtGui/qpen.h \
+		/usr/local/lib/QtGui.framework/Headers/QShowEvent \
+		/usr/local/lib/QtGui.framework/Headers/qevent.h \
+		/usr/local/lib/QtGui.framework/Headers/QPaintEvent \
 		src/struct/CoordinatePair.h \
 		src/struct/Hitbox.h \
 		src/struct/NextLevelData.h \
 		src/struct/Constants.h \
 		src/struct/WeaponTypes.h \
 		/usr/local/lib/QtCore.framework/Headers/QtGlobal \
+		/usr/local/lib/QtCore.framework/Headers/qglobal.h \
 		src/struct/Resources.h \
 		/usr/local/lib/QtCore.framework/Headers/QSet \
+		/usr/local/lib/QtCore.framework/Headers/qset.h \
 		/usr/local/lib/QtCore.framework/Headers/QMultiMap \
 		/usr/local/lib/QtCore.framework/Headers/QBitArray \
+		/usr/local/lib/QtCore.framework/Headers/qbitarray.h \
+		$(BASS_DIR)/bass.h \
 		src/struct/AnimState.h \
 		src/struct/DebugConfig.h \
 		src/gamestate/TimerUser.h \
 		src/gamestate/LevelManager.h \
 		/usr/local/bin/moc
-	/usr/local/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -I/Users/soulweaver/Documents/project-carrot -I'/Users/soulweaver/Documents/project-carrot/$(BASS_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)/C' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(SFML_DIR)/include' -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles -I/Users/soulweaver/Documents/project-carrot -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks (framework directory)' -F/usr/local/lib src/gamestate/LevelManager.h -o GeneratedFiles/Release/moc_LevelManager.cpp
+	/usr/local/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang -I/Users/soulweaver/Documents/project-carrot -I'/Users/soulweaver/Documents/project-carrot/$(BASS_DIR)' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)/C' -I'/Users/soulweaver/Documents/project-carrot/$(BASS_FX_DIR)' -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles -I/Users/soulweaver/Documents/project-carrot -I/usr/local/include -I/Users/soulweaver/Documents/project-carrot/GeneratedFiles/Release -I/usr/local/lib/QtWidgets.framework/Headers -I/usr/local/lib/QtGamepad.framework/Headers -I/usr/local/lib/QtGui.framework/Headers -I/usr/local/lib/QtCore.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks (framework directory)' -F/usr/local/lib src/gamestate/LevelManager.h -o GeneratedFiles/Release/moc_LevelManager.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:

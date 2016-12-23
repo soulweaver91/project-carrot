@@ -42,7 +42,6 @@
 		516086C038BC82E9FC237727 /* Bridge.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 238861A4C80375F54835DC0A /* Bridge.cpp */; settings = {ATTRIBUTES = (); }; };
 		55ED0E2CBF27AAF451358DF8 /* ActorAPI.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 43F56B4B60C1058F0E23C283 /* ActorAPI.cpp */; settings = {ATTRIBUTES = (); }; };
 		56CCA0B7842A4702B13F18B3 /* CarrotQt5.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 9646DBBDA4E2CB5965E2AA36 /* CarrotQt5.cpp */; settings = {ATTRIBUTES = (); }; };
-		594B78D4435F96832DA21956 /* ModeManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = ADD77302B906980A8EB380D3 /* ModeManager.cpp */; settings = {ATTRIBUTES = (); }; };
 		59D0C199C8D9CFC4636C901B /* CarrotCanvas.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A23E77319F8CA51C9854B17B /* CarrotCanvas.cpp */; settings = {ATTRIBUTES = (); }; };
 		5A71EC84FA10A0BA403196ED /* FrozenBlock.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 42DFEC274750948721C54F39 /* FrozenBlock.cpp */; settings = {ATTRIBUTES = (); }; };
 		5DF2BAA4F0F2CC0D3E80E60B /* GraphicsCache.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 54E42252D458E4873BEA5D04 /* GraphicsCache.cpp */; settings = {ATTRIBUTES = (); }; };
@@ -87,6 +86,16 @@
 		CF5D7BFBE58C7156705F6F87 /* moc_CarrotQt5.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 6CA1CF50CFBBF985794EF2CD /* moc_CarrotQt5.cpp */; settings = {ATTRIBUTES = (); }; };
 		D34B037247F1243EB0EA4F44 /* InteractiveActor.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 52D10C2D4834372FB141F0E5 /* InteractiveActor.cpp */; settings = {ATTRIBUTES = (); }; };
 		DEDE958D75348D6739151DEA /* LevelManager.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F4304750D28DFC564D27C0D6 /* LevelManager.cpp */; settings = {ATTRIBUTES = (); }; };
+		E188CF841E0D5218004600E3 /* ConfirmationMenu.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF721E0D5218004600E3 /* ConfirmationMenu.cpp */; };
+		E188CF851E0D5218004600E3 /* EpisodeSelectMenu.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF741E0D5218004600E3 /* EpisodeSelectMenu.cpp */; };
+		E188CF861E0D5218004600E3 /* InGameMenuMenu.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF761E0D5218004600E3 /* InGameMenuMenu.cpp */; };
+		E188CF871E0D5218004600E3 /* InGameMenuRoot.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF781E0D5218004600E3 /* InGameMenuRoot.cpp */; };
+		E188CF881E0D5218004600E3 /* LevelSelectMenu.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF7A1E0D5218004600E3 /* LevelSelectMenu.cpp */; };
+		E188CF891E0D5218004600E3 /* MainMenuMenu.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF7C1E0D5218004600E3 /* MainMenuMenu.cpp */; };
+		E188CF8A1E0D5218004600E3 /* MainMenuRoot.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF7E1E0D5218004600E3 /* MainMenuRoot.cpp */; };
+		E188CF8B1E0D5218004600E3 /* PauseScreen.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF801E0D5218004600E3 /* PauseScreen.cpp */; };
+		E188CF8C1E0D5218004600E3 /* VerticalItemListMenu.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF821E0D5218004600E3 /* VerticalItemListMenu.cpp */; };
+		E188CF8F1E0D5239004600E3 /* EngineState.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E188CF8D1E0D5239004600E3 /* EngineState.cpp */; };
 		E18D322C1E01E62C00258924 /* libbass_fx.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D322B1E01E62C00258924 /* libbass_fx.dylib */; };
 		E18D322E1E01E64900258924 /* libbass.dylib in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = E18D322D1E01E64900258924 /* libbass.dylib */; };
 		E18D32321E01F7C000258924 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E18D322D1E01E64900258924 /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -236,7 +245,6 @@
 		AB97BB62D244BF0001F2C609 /* EventSpawner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = EventSpawner.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/EventSpawner.cpp"; sourceTree = "<absolute>"; };
 		AC2A6B7C2A724C9F397F6344 /* GemCollectible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GemCollectible.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/GemCollectible.h"; sourceTree = "<absolute>"; };
 		ACBA8279F249DB9874E71918 /* AmmoToaster.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AmmoToaster.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/weapon/AmmoToaster.cpp"; sourceTree = "<absolute>"; };
-		ADD77302B906980A8EB380D3 /* ModeManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ModeManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/ModeManager.cpp"; sourceTree = "<absolute>"; };
 		ADF0A633A9DBA14F4FF6C81A /* LevelManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LevelManager.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/LevelManager.h"; sourceTree = "<absolute>"; };
 		B2325C54E77248C4491751BB /* NextLevelData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NextLevelData.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/NextLevelData.h"; sourceTree = "<absolute>"; };
 		B233C12B261E6B53755571B9 /* Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Controls.h; path = "/Users/soulweaver/Documents/project-carrot/src/struct/Controls.h"; sourceTree = "<absolute>"; };
@@ -265,6 +273,26 @@
 		DB10E3AC9C075C722D4FBE22 /* SolidObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SolidObject.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/SolidObject.h"; sourceTree = "<absolute>"; };
 		DC2D212FEEEEEB5FE366A2B1 /* Tileset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tileset.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/Tileset.h"; sourceTree = "<absolute>"; };
 		DEF3168FC7DA4CFB15762F40 /* FoodCollectible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FoodCollectible.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/collectible/FoodCollectible.cpp"; sourceTree = "<absolute>"; };
+		E188CF721E0D5218004600E3 /* ConfirmationMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfirmationMenu.cpp; path = src/menu/ConfirmationMenu.cpp; sourceTree = "<group>"; };
+		E188CF731E0D5218004600E3 /* ConfirmationMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfirmationMenu.h; path = src/menu/ConfirmationMenu.h; sourceTree = "<group>"; };
+		E188CF741E0D5218004600E3 /* EpisodeSelectMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EpisodeSelectMenu.cpp; path = src/menu/EpisodeSelectMenu.cpp; sourceTree = "<group>"; };
+		E188CF751E0D5218004600E3 /* EpisodeSelectMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EpisodeSelectMenu.h; path = src/menu/EpisodeSelectMenu.h; sourceTree = "<group>"; };
+		E188CF761E0D5218004600E3 /* InGameMenuMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InGameMenuMenu.cpp; path = src/menu/InGameMenuMenu.cpp; sourceTree = "<group>"; };
+		E188CF771E0D5218004600E3 /* InGameMenuMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InGameMenuMenu.h; path = src/menu/InGameMenuMenu.h; sourceTree = "<group>"; };
+		E188CF781E0D5218004600E3 /* InGameMenuRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InGameMenuRoot.cpp; path = src/menu/InGameMenuRoot.cpp; sourceTree = "<group>"; };
+		E188CF791E0D5218004600E3 /* InGameMenuRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InGameMenuRoot.h; path = src/menu/InGameMenuRoot.h; sourceTree = "<group>"; };
+		E188CF7A1E0D5218004600E3 /* LevelSelectMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LevelSelectMenu.cpp; path = src/menu/LevelSelectMenu.cpp; sourceTree = "<group>"; };
+		E188CF7B1E0D5218004600E3 /* LevelSelectMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LevelSelectMenu.h; path = src/menu/LevelSelectMenu.h; sourceTree = "<group>"; };
+		E188CF7C1E0D5218004600E3 /* MainMenuMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMenuMenu.cpp; path = src/menu/MainMenuMenu.cpp; sourceTree = "<group>"; };
+		E188CF7D1E0D5218004600E3 /* MainMenuMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainMenuMenu.h; path = src/menu/MainMenuMenu.h; sourceTree = "<group>"; };
+		E188CF7E1E0D5218004600E3 /* MainMenuRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMenuRoot.cpp; path = src/menu/MainMenuRoot.cpp; sourceTree = "<group>"; };
+		E188CF7F1E0D5218004600E3 /* MainMenuRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainMenuRoot.h; path = src/menu/MainMenuRoot.h; sourceTree = "<group>"; };
+		E188CF801E0D5218004600E3 /* PauseScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PauseScreen.cpp; path = src/menu/PauseScreen.cpp; sourceTree = "<group>"; };
+		E188CF811E0D5218004600E3 /* PauseScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PauseScreen.h; path = src/menu/PauseScreen.h; sourceTree = "<group>"; };
+		E188CF821E0D5218004600E3 /* VerticalItemListMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VerticalItemListMenu.cpp; path = src/menu/VerticalItemListMenu.cpp; sourceTree = "<group>"; };
+		E188CF831E0D5218004600E3 /* VerticalItemListMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalItemListMenu.h; path = src/menu/VerticalItemListMenu.h; sourceTree = "<group>"; };
+		E188CF8D1E0D5239004600E3 /* EngineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EngineState.cpp; path = src/EngineState.cpp; sourceTree = "<group>"; };
+		E188CF8E1E0D5239004600E3 /* EngineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EngineState.h; path = src/EngineState.h; sourceTree = "<group>"; };
 		E18D32251E01E61100258924 /* libsfml-graphics.2.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libsfml-graphics.2.4.1.dylib"; path = "../../../../usr/local/Cellar/sfml/2.4.1/lib/libsfml-graphics.2.4.1.dylib"; sourceTree = "<group>"; };
 		E18D32261E01E61100258924 /* libsfml-system.2.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libsfml-system.2.4.1.dylib"; path = "../../../../usr/local/Cellar/sfml/2.4.1/lib/libsfml-system.2.4.1.dylib"; sourceTree = "<group>"; };
 		E18D32271E01E61100258924 /* libsfml-window.2.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libsfml-window.2.4.1.dylib"; path = "../../../../usr/local/Cellar/sfml/2.4.1/lib/libsfml-window.2.4.1.dylib"; sourceTree = "<group>"; };
@@ -278,7 +306,6 @@
 		E5F7474A1FDC45F6EB4F01A1 /* AnimationUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnimationUser.h; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/AnimationUser.h"; sourceTree = "<absolute>"; };
 		E60F0880DD9882EF4F764C7D /* ResourceManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceManager.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/gamestate/ResourceManager.cpp"; sourceTree = "<absolute>"; };
 		E87F76A85899F32A02CBAEAE /* LabRat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LabRat.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/actor/enemy/LabRat.cpp"; sourceTree = "<absolute>"; };
-		E94A6101DDFCCB47F257A290 /* ModeManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ModeManager.h; path = "/Users/soulweaver/Documents/project-carrot/src/ModeManager.h"; sourceTree = "<absolute>"; };
 		EA0BCD236BA6CD6D59BE37F2 /* AnimatedTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AnimatedTile.cpp; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/AnimatedTile.cpp"; sourceTree = "<absolute>"; };
 		EDB1BCF6930FBF479C53C609 /* StaticLight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StaticLight.h; path = "/Users/soulweaver/Documents/project-carrot/src/actor/lighting/StaticLight.h"; sourceTree = "<absolute>"; };
 		F02D67771DC5E45765AA6A96 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BitmapFont.h; path = "/Users/soulweaver/Documents/project-carrot/src/graphics/BitmapFont.h"; sourceTree = "<absolute>"; };
@@ -343,6 +370,24 @@
 		1166EEC47F3C749299B27B11 /* menu */ = {
 			isa = PBXGroup;
 			children = (
+				E188CF721E0D5218004600E3 /* ConfirmationMenu.cpp */,
+				E188CF731E0D5218004600E3 /* ConfirmationMenu.h */,
+				E188CF741E0D5218004600E3 /* EpisodeSelectMenu.cpp */,
+				E188CF751E0D5218004600E3 /* EpisodeSelectMenu.h */,
+				E188CF761E0D5218004600E3 /* InGameMenuMenu.cpp */,
+				E188CF771E0D5218004600E3 /* InGameMenuMenu.h */,
+				E188CF781E0D5218004600E3 /* InGameMenuRoot.cpp */,
+				E188CF791E0D5218004600E3 /* InGameMenuRoot.h */,
+				E188CF7A1E0D5218004600E3 /* LevelSelectMenu.cpp */,
+				E188CF7B1E0D5218004600E3 /* LevelSelectMenu.h */,
+				E188CF7C1E0D5218004600E3 /* MainMenuMenu.cpp */,
+				E188CF7D1E0D5218004600E3 /* MainMenuMenu.h */,
+				E188CF7E1E0D5218004600E3 /* MainMenuRoot.cpp */,
+				E188CF7F1E0D5218004600E3 /* MainMenuRoot.h */,
+				E188CF801E0D5218004600E3 /* PauseScreen.cpp */,
+				E188CF811E0D5218004600E3 /* PauseScreen.h */,
+				E188CF821E0D5218004600E3 /* VerticalItemListMenu.cpp */,
+				E188CF831E0D5218004600E3 /* VerticalItemListMenu.h */,
 				3982E201E95B3208551E636E /* MenuScreen.cpp */,
 				00B977E42590984B860C7678 /* MenuScreen.h */,
 			);
@@ -486,15 +531,15 @@
 		921315FAA7F261D737F4F4C7 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				E188CF8D1E0D5239004600E3 /* EngineState.cpp */,
+				E188CF8E1E0D5239004600E3 /* EngineState.h */,
 				9646DBBDA4E2CB5965E2AA36 /* CarrotQt5.cpp */,
 				E22BDD07D6EA605C53B4C404 /* JJ2Format.cpp */,
-				ADD77302B906980A8EB380D3 /* ModeManager.cpp */,
 				808003373704CB6D108FA3E4 /* graphics */,
 				EFB239A6A921A5399F7A366C /* actor */,
 				1166EEC47F3C749299B27B11 /* menu */,
 				1A13224269FA67145B3D1309 /* sound */,
 				314980272422D8FFCB7FF94D /* gamestate */,
-				E94A6101DDFCCB47F257A290 /* ModeManager.h */,
 				160F3EFCA7674D29E1D2CB7E /* Version.h */,
 				4F21654D9934A6C006762E1B /* JJ2Format.h */,
 				38FC5A75D1B6B163DC871134 /* Resources.h */,
@@ -776,7 +821,6 @@
 			files = (
 				56CCA0B7842A4702B13F18B3 /* CarrotQt5.cpp in Compile Sources */,
 				C84F6641750DEA422CFD9277 /* JJ2Format.cpp in Compile Sources */,
-				594B78D4435F96832DA21956 /* ModeManager.cpp in Compile Sources */,
 				60B8AA19153DCD323BCC1270 /* AnimatedTile.cpp in Compile Sources */,
 				9F439E2B2737319DDE0E6AD7 /* BitmapFont.cpp in Compile Sources */,
 				2EEA1A435C45061A05B726E6 /* BitmapString.cpp in Compile Sources */,
@@ -784,8 +828,11 @@
 				31005E8B96C5E646858C3C23 /* ShaderSource.cpp in Compile Sources */,
 				5DF2BAA4F0F2CC0D3E80E60B /* GraphicsCache.cpp in Compile Sources */,
 				E7706FEE40050DB4E52BFC15 /* QSFMLCanvas.cpp in Compile Sources */,
+				E188CF8C1E0D5218004600E3 /* VerticalItemListMenu.cpp in Compile Sources */,
 				B24F800F1EAB93E62226B9B8 /* Tileset.cpp in Compile Sources */,
 				005DFC2FBE929AAECBB6CCAA /* BonusWarp.cpp in Compile Sources */,
+				E188CF851E0D5218004600E3 /* EpisodeSelectMenu.cpp in Compile Sources */,
+				E188CF881E0D5218004600E3 /* LevelSelectMenu.cpp in Compile Sources */,
 				5A71EC84FA10A0BA403196ED /* FrozenBlock.cpp in Compile Sources */,
 				D34B037247F1243EB0EA4F44 /* InteractiveActor.cpp in Compile Sources */,
 				FD9DD279CB38755F399FC968 /* LightSource.cpp in Compile Sources */,
@@ -797,19 +844,24 @@
 				C0EE78A2040DCFD613EAEDA0 /* PushBox.cpp in Compile Sources */,
 				435AFDC11890B4F1FD8685B8 /* SavePoint.cpp in Compile Sources */,
 				AC3C5FD656FC068FC1F54974 /* SolidObject.cpp in Compile Sources */,
+				E188CF841E0D5218004600E3 /* ConfirmationMenu.cpp in Compile Sources */,
+				E188CF871E0D5218004600E3 /* InGameMenuRoot.cpp in Compile Sources */,
 				A2270071F9C49AF736EB6F99 /* Spring.cpp in Compile Sources */,
 				8A556375B3D0E0EE2B1FE808 /* TriggerCrate.cpp in Compile Sources */,
 				343E94E0290D0FF319588D95 /* LabRat.cpp in Compile Sources */,
 				05F3D01DF92CEB077A180C9C /* Sucker.cpp in Compile Sources */,
 				6F561FA3A5C847A1F260C608 /* SuckerFloat.cpp in Compile Sources */,
+				E188CF8A1E0D5218004600E3 /* MainMenuRoot.cpp in Compile Sources */,
 				62349A7FB363018211447F77 /* TurtleShell.cpp in Compile Sources */,
 				A7116467924F2352D3DFA4BB /* Enemy.cpp in Compile Sources */,
 				BF00A307C50743C16D9E04BE /* Lizard.cpp in Compile Sources */,
 				C153D8FEB6F4CF1B000246D1 /* NormalTurtle.cpp in Compile Sources */,
 				45FF7A2E7D4A34AB51229A3D /* AmmoFreezer.cpp in Compile Sources */,
+				E188CF8F1E0D5239004600E3 /* EngineState.cpp in Compile Sources */,
 				8993B00A15CCDCA24108ECC8 /* Ammo.cpp in Compile Sources */,
 				B9022EBEF92F0067E1ABC468 /* AmmoBlaster.cpp in Compile Sources */,
 				BA3864EE6B7790F9E43E316F /* AmmoBouncer.cpp in Compile Sources */,
+				E188CF861E0D5218004600E3 /* InGameMenuMenu.cpp in Compile Sources */,
 				8F0E222BF5F15F5AF1203064 /* AmmoToaster.cpp in Compile Sources */,
 				6DF3E96A7099B02F2B2F2443 /* AmmoCollectible.cpp in Compile Sources */,
 				2D52BCB1679737C74BBC9756 /* CarrotCollectible.cpp in Compile Sources */,
@@ -822,6 +874,7 @@
 				8BB262068214F4E4E87A9C1D /* RadialLightSource.cpp in Compile Sources */,
 				2C42019E18D489604E3F3DAC /* StaticLight.cpp in Compile Sources */,
 				91EC3357FAB30CA398544E63 /* MenuScreen.cpp in Compile Sources */,
+				E188CF8B1E0D5218004600E3 /* PauseScreen.cpp in Compile Sources */,
 				F51074F51D5C8455ACD38BDC /* SoundSystem.cpp in Compile Sources */,
 				55ED0E2CBF27AAF451358DF8 /* ActorAPI.cpp in Compile Sources */,
 				F3E538E9013C9E4050610251 /* ControlManager.cpp in Compile Sources */,
@@ -837,6 +890,7 @@
 				4FFD0F18C359EEDA3F6113E5 /* qrc_CarrotQt5.cpp in Compile Sources */,
 				CF5D7BFBE58C7156705F6F87 /* moc_CarrotQt5.cpp in Compile Sources */,
 				4A8140CA1EDDF0C71822AB57 /* moc_Player.cpp in Compile Sources */,
+				E188CF891E0D5218004600E3 /* MainMenuMenu.cpp in Compile Sources */,
 				1CBD813B8E3D87B10CF2D7E0 /* moc_LevelManager.cpp in Compile Sources */,
 			);
 			name = "Compile Sources";
