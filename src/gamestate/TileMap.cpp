@@ -387,6 +387,7 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
                     bool isFlippedX = (flags & 0x01) > 0;
                     bool isFlippedY = (flags & 0x02) > 0;
                     bool isAnimated = (flags & 0x04) > 0;
+                    bool legacyTranslucent = (flags & 0x80) > 0;
 
                     // Invalid tile numbers (higher than tileset tile amount) are silently changed to empty tiles
                     if (type > levelTileset->getSize() && !isAnimated) {
@@ -408,7 +409,7 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
                     tile->isFlippedY = isFlippedY;
                     tile->isAnimated = isAnimated;
 
-                    if (tile->isFlippedX || tile->isAnimated) {
+                    if (tile->isFlippedX || tile->isAnimated || legacyTranslucent) {
                         tile->sprite = std::make_shared<sf::Sprite>(*tile->sprite);
                     }
 
@@ -417,6 +418,10 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
                         tile->sprite = std::make_shared<sf::Sprite>(*tile->sprite);
                         tile->sprite->setScale(-1.0, 1.0);
                         tile->sprite->setOrigin(32.0, 0.0);
+                    }
+
+                    if (legacyTranslucent) {
+                        tile->sprite->setColor(sf::Color(255, 255, 255, 127));
                     }
 
                     newTileRow.push_back(tile);
@@ -593,13 +598,16 @@ void TileMap::readAnimatedTiles(const QString& filename) {
 
             // Read data until no more data available
             while (!animStream.atEnd()) {
-                QVector<unsigned short> frames;
+                QVector<quint16> frames;
+                QVector<quint8> flags;
                 // Read type short from the stream
                 for (int i = 0; i < 64; ++i) {
                     quint16 tile;
-                    animStream >> tile;
+                    quint8 tileFlags;
+                    animStream >> tile >> tileFlags;
                     if (tile != 0xFFFF) {
                         frames << tile;
+                        flags << tileFlags;
                     }
                 }
 
@@ -608,7 +616,7 @@ void TileMap::readAnimatedTiles(const QString& filename) {
                 animStream >> speed >> delay >> delayJitter >> pingPong >> pingPongDelay;
 
                 if (frames.size() > 0) {
-                    auto ani = std::make_shared<AnimatedTile>(getTilesetTexture(), frames, speed, 
+                    auto ani = std::make_shared<AnimatedTile>(getTilesetTexture(), frames, flags, speed,
                         delay, delayJitter, (pingPong > 0), pingPongDelay);
                     animatedTiles << ani;
                 }
