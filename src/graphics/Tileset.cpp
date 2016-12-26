@@ -1,20 +1,23 @@
 #include "Tileset.h"
 #include "../struct/Layers.h"
+#include <exception>
 
 Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : isValid(false) {
     texture = std::make_shared<sf::Texture>();
 
     texture->loadFromFile(tilesFilename.toUtf8().data());
 
+    if (texture->getSize().x == 0) {
+        // Loading the tileset failed for some reason, texture is empty.
+        throw std::runtime_error(QString("Tileset texture could not be loaded!").toStdString());
+    }
+
     sf::Image maskfile;
     maskfile.loadFromFile(maskFilename.toUtf8().data());
     if (texture->getSize() != maskfile.getSize()) {
-        // mask doesn't match the tiles in size
-        return;
-    }
-    if (texture->getSize().x == 0) {
-        // TODO: loading the tileset failed for some reason, texture is empty
-        return;
+        // Mask could not be loaded or it didn't match the texture.
+        // As a fallback, get mask from texture image itself.
+        maskfile = texture->copyToImage();
     }
 
     uint width = texture->getSize().x / 32;

@@ -1,6 +1,7 @@
 #include "TileMap.h"
 
 #include <cmath>
+#include <exception>
 #include "EventMap.h"
 #include "GameView.h"
 #include "LevelManager.h"
@@ -18,7 +19,7 @@ TileMap::TileMap(LevelManager* root, const QString& tilesetFilename,
     // Reserve textures for tileset and its mask counterpart
     levelTileset = std::make_unique<Tileset>(tilesetFilename, maskFilename);
     if (!levelTileset->getIsValid()) {
-        return;
+        throw std::runtime_error(QString("Unknown error loading the tileset!").toStdString());
     }
 
     // initialize the trigger store
