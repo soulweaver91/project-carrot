@@ -181,6 +181,8 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
         resourceManager->getSoundSystem()->unregisterAllSoundListeners();
         resourceManager->getGraphicsCache()->flush();
 
+        controlManager->releaseAllKeys();
+
         try {
             windowCanvas->clear();
 
@@ -216,9 +218,9 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
         } catch (const std::exception& ex) {
             QMessageBox::critical(this, "Error loading level", ex.what());
 
-            if (stateStack.top()->getType() != "MENU_SCREEN") {
-                startMainMenu();
-            }
+            afterTickCallback = [this]() {
+                startMainMenu(); 
+            };
         }
     };
 }

@@ -87,3 +87,9 @@ ControlEventList ControlManager::getPendingEvents() {
 
     return events;
 }
+
+void ControlManager::releaseAllKeys() {
+    for (auto control : controlStates.keys()) {
+        setControlReleased(control);
+    }
+}
