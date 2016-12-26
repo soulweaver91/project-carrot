@@ -10,8 +10,8 @@
 class AnimatedTile {
 public:
     AnimatedTile(std::shared_ptr<sf::Texture> tilesTexture, const QVector<unsigned short>& tileIDs,
-        int fps = 10, int delay = 0, int delayJitter = 0, bool pingPong = false, 
-        int pingPongDelay = 0);
+        const QVector<quint8>& tileFlags, int fps = 10, int delay = 0, int delayJitter = 0,
+        bool pingPong = false, int pingPongDelay = 0);
     ~AnimatedTile();
     std::shared_ptr<LayerTile> getCurrentTile();
     unsigned getFrameCanonicalIndex(unsigned idx);

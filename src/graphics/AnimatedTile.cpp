@@ -1,10 +1,11 @@
 #include "AnimatedTile.h"
 #include <cmath>
 
-AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<unsigned short>& tileIDs, int fps, int delay,
-    int delayJitter, bool pingPong, int pingPongDelay)
+AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector<quint16>& tileIDs,
+    const QVector<quint8>& tileFlags, int fps, int delay, int delayJitter, bool pingPong, int pingPongDelay)
     : fps(fps), delay(delay), delayJitter(delayJitter), pingPong(pingPong), pingPongDelay(pingPongDelay), currentTileIdx(0),
     forwards(true), framesLeft(0), framesRemainder(0.0), frameDuration(0.0) {
+    quint8 idx = 0;
     for (unsigned tidx : tileIDs) {
         auto pseudotile = std::make_shared<LayerTile>();
         pseudotile->isAnimated = false;
@@ -15,10 +16,16 @@ AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector
 
         auto sprite = std::make_shared<sf::Sprite>(*tiles_tex);
         sprite->setTextureRect(sf::IntRect((tidx % 10) * 32, (tidx / 10) * 32, 32, 32));
+
+        if (tileFlags.size() > idx && ((tileFlags.at(idx) & 0x80) > 0)) {
+            sprite->setColor(sf::Color(255, 255, 255, 127));
+        }
+
         pseudotile->sprite = sprite;
         pseudotile->suspendType = SuspendType::SUSPEND_NONE;
         pseudotile->tileId = tidx;
         animationTiles << pseudotile;
+        idx++;
     }
     if (fps > 0) {
         frameDuration = 70.0 / fps;
