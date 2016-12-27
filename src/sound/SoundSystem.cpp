@@ -3,7 +3,7 @@
 #include <QList>
 #include <cassert>
 
-SoundSystem::SoundSystem() : initialized(false) {
+SoundSystem::SoundSystem() : initialized(false), isModMusic(false) {
     // Attempt to start up the sound system, using the default audio device
     if (!BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, NULL) || !BASS_PluginLoad("bassfx.dll", 0)) {
         return;
@@ -99,11 +99,11 @@ HSAMPLE SoundSystem::addSFX(const QString& id, const QString& path) {
 }
 
 void SoundSystem::fadeMusicOut(uint ms) {
-    BASS_ChannelSlideAttribute(currentMusic, BASS_ATTRIB_MUSIC_VOL_GLOBAL, 0, ms);
+    BASS_ChannelSlideAttribute(currentMusic, BASS_ATTRIB_VOL, 0.0f, ms);
 }
 
 void SoundSystem::fadeMusicIn(uint ms) {
-    BASS_ChannelSlideAttribute(currentMusic, BASS_ATTRIB_MUSIC_VOL_GLOBAL, 128, ms);
+    BASS_ChannelSlideAttribute(currentMusic, BASS_ATTRIB_VOL, 1.0f, ms);
 }
 
 void SoundSystem::pauseMusic() {
@@ -162,13 +162,28 @@ bool SoundSystem::setMusic(const QString& filename) {
     // Stop the current music track and free its resources
     if (BASS_ChannelIsActive(currentMusic)) {
         BASS_ChannelStop(currentMusic);
-        BASS_MusicFree(currentMusic);
+        if (isModMusic) {
+            BASS_MusicFree(currentMusic);
+        } else {
+            BASS_StreamFree(currentMusic);
+        }
     }
 
     // Load the new track and start playing it
     currentMusic = BASS_MusicLoad(false, filename.toUtf8().data(), 0, 0, BASS_SAMPLE_LOOP, 1);
-    BASS_ChannelPlay(currentMusic, true);
+    if (currentMusic != 0) {
+        BASS_ChannelPlay(currentMusic, true);
+        isModMusic = true;
+        return true;
+    }
 
-    return true;
+    currentMusic = BASS_StreamCreateFile(false, filename.toUtf8().data(), 0, 0, BASS_SAMPLE_LOOP);
+    if (currentMusic != 0) {
+        BASS_ChannelPlay(currentMusic, true);
+        isModMusic = false;
+        return true;
+    }
+
+    return false;
 }
 
