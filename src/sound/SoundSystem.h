@@ -57,5 +57,6 @@ private:
     QMap<uint, std::shared_ptr<SoundListener>> listeners;
     uint nextListenerID;
     bool initialized;
-    HMUSIC currentMusic;
+    DWORD currentMusic;
+    bool isModMusic;
 };
