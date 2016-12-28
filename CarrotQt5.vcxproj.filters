@@ -747,6 +747,9 @@
     <None Include="Shaders\TexturedBackgroundShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include=".gitattributes">
+      <Filter>Configuration</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE">

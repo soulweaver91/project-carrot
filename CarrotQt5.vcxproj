@@ -466,6 +466,7 @@
     <ResourceCompile Include="CarrotQt5.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include=".travis.yml" />
     <None Include="appveyor.yml" />
