@@ -53,7 +53,7 @@ void MainMenuRoot::renderTick(bool topmost, bool) {
 
     BitmapString::drawString(canvas, root->getFont(SMALL), CP_VERSION + " v" + CP_VERSION_NUM +
                              " built on " + QString(__DATE__) + " " + QString(__TIME__), 10, viewHeight - 34);
-    BitmapString::drawString(canvas, root->getFont(SMALL), "(c) 2013-2016 Project Carrot Team", 10, viewHeight - 22);
+    BitmapString::drawString(canvas, root->getFont(SMALL), "(c) 2013-2017 Project Carrot Team", 10, viewHeight - 22);
 
 }
 
