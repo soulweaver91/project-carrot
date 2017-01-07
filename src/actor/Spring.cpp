@@ -16,20 +16,20 @@ Spring::Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType typ
     int orientationBit = 0;
     switch (orientation) {
         case 0:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 }, true);
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 }, true, true);
             break;
         case 1:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 }, true);
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 }, true, true);
             orientationBit = 1;
             isGravityAffected = false;
             break;
         case 2:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 }, true);
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 8 }, true, true);
             orientationBit = 2;
             isGravityAffected = false;
             break;
         case 3:
-            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 }, true);
+            moveInstantly({ tileCorner.x + 16, tileCorner.y + 16 }, true, true);
             orientationBit = 1;
             isGravityAffected = false;
             isFacingLeft = true;

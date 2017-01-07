@@ -38,7 +38,7 @@ void MovingPlatform::tickEvent() {
         phase += BASE_CYCLE_FRAMES;
     }
 
-    moveInstantly(getPhasePosition(false, length), true);
+    moveInstantly(getPhasePosition(false, length), true, true);
 
     Hitbox hitbox = Hitbox(currentHitbox);
     hitbox.top -= 2;

@@ -10,11 +10,11 @@ InGameMenuRoot::InGameMenuRoot(CarrotQt5* root) : root(root) {
 InGameMenuRoot::~InGameMenuRoot() {
 }
 
-void InGameMenuRoot::logicTick(const ControlEventList& events) {
+void InGameMenuRoot::logicTick(const ControlEventList&) {
     root->pushState<InGameMenuMenu>(false);
 }
 
-void InGameMenuRoot::renderTick(bool topmost, bool) {
+void InGameMenuRoot::renderTick(bool, bool) {
     auto canvas = root->getCanvas();
     sf::Vector2u viewSize = canvas->getSize();
     overlay.setSize(sf::Vector2f(viewSize));

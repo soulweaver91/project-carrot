@@ -20,7 +20,7 @@ ConfirmationMenu::ConfirmationMenu(CarrotQt5* mainClass, std::function<void(bool
 ConfirmationMenu::~ConfirmationMenu() {
 }
 
-void ConfirmationMenu::renderTick(bool topmost, bool topmostAfterPause) {
+void ConfirmationMenu::renderTick(bool, bool) {
     auto canvas = root->getCanvas();
     uint viewWidth = canvas->getView().getSize().x;
     uint viewHeight = canvas->getView().getSize().y;

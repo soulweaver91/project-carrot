@@ -37,7 +37,7 @@ public:
     virtual bool perish();
     virtual bool deactivate(int x, int y, int tileDistance);
     virtual void handleCollision(std::shared_ptr<CommonActor> other);
-    void moveInstantly(CoordinatePair location, bool absolute);
+    bool moveInstantly(CoordinatePair location, bool absolute, bool force = false);
     void deleteFromEventMap();
     void updateGraphicState();
     void setInvulnerability(uint frames = 210u, bool blink = false);
@@ -52,6 +52,7 @@ protected:
     virtual void onHitCeilingHook();
     virtual void onHitWallHook();
     bool loadResources(const QString& classId);
+    virtual void tryStandardMovement();
 
     template<typename... P>
     bool playSound(const QString& id, P... params);
@@ -91,4 +92,6 @@ protected:
 private:
     template<typename T, typename... P>
     bool callPlaySound(const QString& id, T coordOrBool, P... params);
+    
+    static const double COLLISION_CHECK_STEP;
 };

@@ -356,7 +356,6 @@ void LevelManager::logicTick(const ControlEventList& events) {
 }
 
 void LevelManager::renderTick(bool topmost, bool) {
-    auto canvas = root->getCanvas();
     if (!topmost) {
         for (auto view : views) {
             view->drawLastFrame();
@@ -400,6 +399,7 @@ void LevelManager::renderTick(bool topmost, bool) {
 
 #ifdef CARROT_DEBUG
     auto debugConfig = root->getDebugConfig();
+    auto canvas = root->getCanvas();
     if (debugConfig->dbgOverlaysActive) {
         float fps = root->getCurrentFPS();
         auto smallFont = root->getFont(SMALL);
@@ -542,7 +542,7 @@ void LevelManager::setSavePoint() {
 void LevelManager::loadSavePoint() {
     clearActors();
     gameEvents->deactivateAll();
-    players[0]->moveInstantly(lastSavePoint.playerPosition, true);
+    players[0]->moveInstantly(lastSavePoint.playerPosition, true, true);
     gameTiles->loadSavePointLayer(lastSavePoint.spriteLayerState);
 }
 
@@ -724,7 +724,7 @@ void LevelManager::debugSetPosition() {
 
     int x = QInputDialog::getInt(root, "Move player", "X position", player->getPosition().x, 0, (gameTiles->getLevelWidth() - 1) * 32);
     int y = QInputDialog::getInt(root, "Move player", "Y position", player->getPosition().y, 0, (gameTiles->getLevelHeight() - 1) * 32);
-    player->moveInstantly({ x * 1.0, y * 1.0 }, true);
+    player->moveInstantly({ x * 1.0, y * 1.0 }, true, true);
 }
 
 void LevelManager::debugSugarRush() {

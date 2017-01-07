@@ -20,7 +20,7 @@ EnemySuckerFloat::~EnemySuckerFloat() {
 void EnemySuckerFloat::tickEvent() {
     if (frozenFramesLeft == 0) {
         phase = std::fmod(phase + 0.05, 2 * PI);
-        moveInstantly({ originX + 10 * std::cos(phase), originY + 10 * std::sin(phase) }, true);
+        moveInstantly({ originX + 10 * std::cos(phase), originY + 10 * std::sin(phase) }, true, true);
 
         isFacingLeft = phase < PI / 2 || phase > 3 * PI / 2;
     }

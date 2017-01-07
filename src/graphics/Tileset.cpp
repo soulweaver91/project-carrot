@@ -81,12 +81,12 @@ bool Tileset::getIsValid() {
     return isValid;
 }
 
-QBitArray Tileset::getTileMask(const uint& tileID) {
+const QBitArray& Tileset::getTileMask(const uint& tileID) {
     if (tileID < tileCount) {
         return masks.at(tileID);
     }
 
-    return QBitArray(1024);
+    return DEFAULT_MASK_BITARRAY;
 }
 
 std::shared_ptr<LayerTile> Tileset::getDefaultTile(const uint& tileID) {
@@ -134,3 +134,5 @@ uint Tileset::getSize() {
 QString Tileset::getName() {
     return name;
 }
+
+const QBitArray Tileset::DEFAULT_MASK_BITARRAY = QBitArray(1024);

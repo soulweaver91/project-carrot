@@ -22,7 +22,7 @@ AmmoBlaster::~AmmoBlaster() {
 
 void AmmoBlaster::tickEvent() {
     Ammo::tickEvent();
-    moveInstantly({ speedX, speedY }, false);
+    moveInstantly({ speedX, speedY }, false, true);
 
     std::weak_ptr<SolidObject> actor;
     if (!api->isPositionEmpty(currentHitbox, false, shared_from_this(), actor)) {
