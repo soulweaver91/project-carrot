@@ -512,14 +512,15 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
 
     for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
         for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
-            int idx = sprLayerLayout.at(y).at(x)->tileId;
-            if (sprLayerLayout.at(y).at(x)->isAnimated) {
+            auto tile = sprLayerLayout.at(y).at(x);
+            int idx = tile->tileId;
+            if (tile->isAnimated) {
                 idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
             }
 
             if (!levelTileset->isTileMaskEmpty(idx) &&
-                !(sprLayerLayout.at(y).at(x)->isOneWay && !downwards) &&
-                !(sprLayerLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE)) {
+                !(tile->isOneWay && !downwards) &&
+                !(tile->suspendType != SuspendType::SUSPEND_NONE)) {
                 all_empty = false;
                 break;
             }
@@ -536,19 +537,20 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     // check each tile pixel perfectly for collisions
     for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
         for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
-            bool fx = sprLayerLayout.at(y).at(x)->isFlippedX;
+            auto tile = sprLayerLayout.at(y).at(x);
+            bool fx = tile->isFlippedX;
             // bool fy = sprLayerLayout.at(y).at(x)->isFlippedY;
-            int idx = sprLayerLayout.at(y).at(x)->tileId;
-            if (sprLayerLayout.at(y).at(x)->isAnimated) {
+            int idx = tile->tileId;
+            if (tile->isAnimated) {
                 idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
             }
 
-            if ((sprLayerLayout.at(y).at(x)->isOneWay
-                && !downwards && (hy2 < ((y + 1) * 32)))
-                || sprLayerLayout.at(y).at(x)->suspendType != SuspendType::SUSPEND_NONE) {
+            if ((tile->isOneWay && !downwards && (hy2 < ((y + 1) * 32)))
+                || tile->suspendType != SuspendType::SUSPEND_NONE) {
                 continue;
             }
-            QBitArray mask = levelTileset->getTileMask(idx);
+            auto& mask = levelTileset->getTileMask(idx);
+            int px_idx;
             for (int i = 0; i < 1024; ++i) {
                 int nowx = (32 * x + i % 32);
                 int nowy = (32 * y + i / 32);
@@ -558,7 +560,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                 if (hy2 < nowy || hy1 >= nowy) {
                     continue;
                 }
-                int px_idx = i;
+                px_idx = i;
                 if (fx) { px_idx =      (i / 32)  * 32 + (31 - (i % 32)); }
                 //if (fy) { px_idx = (31 -(i / 32)) * 32 +        i % 32  ; }
                 // TODO: fix so that both flags work simultaneously

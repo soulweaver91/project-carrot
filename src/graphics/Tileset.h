@@ -12,7 +12,7 @@ class Tileset {
 public:
     Tileset(const QString& tilesFilename, const QString& maskFilename);
     bool getIsValid();
-    QBitArray getTileMask(const uint& tileID);
+    const QBitArray& getTileMask(const uint& tileID);
     std::shared_ptr<LayerTile> getDefaultTile(const uint& tileID);
     sf::IntRect getTileTextureRect(const uint& tileID);
     bool isTileMaskEmpty(const uint& tileID);
@@ -33,4 +33,6 @@ private:
     // to speed up collision checking so that not every tile needs to be pixel perfect checked
     QVector<bool> isMaskEmpty;
     QVector<bool> isMaskFilled;
+
+    static const QBitArray DEFAULT_MASK_BITARRAY;
 };
