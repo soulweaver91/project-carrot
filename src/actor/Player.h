@@ -98,6 +98,7 @@ private:
 
     bool isUsingDamagingMove;
     bool isAttachedToPole;
+    bool isActivelyPushing;
     int cameraShiftFramesCount;
     int copterFramesLeft;
 

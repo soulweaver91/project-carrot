@@ -72,174 +72,8 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
 }
 
 void CommonActor::tickEvent() {
-    double gravity = (isGravityAffected ? api->getGravity() : 0);
-   
-    speedX = std::min(std::max(speedX, -16.0), 16.0);
-    speedY = std::min(std::max(speedY + gravity - internalForceY - externalForceY, -16.0), 16.0);
-
-    auto thisPtr = shared_from_this();
-
-    if (!api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, speedY), speedY > 0, thisPtr)) {
-        if (std::abs(speedX + externalForceX) > EPSILON) {
-            // We are walking, thus having both vertical and horizontal speed
-            if (api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, 0.0), speedY > 0, thisPtr)) {
-                // We could go toward the horizontal direction only
-                // Chances are we're just casually strolling and gravity tries to pull us through,
-                // or we are falling diagonally and hit a floor
-                if (speedY > 0) {
-                    // Yep, that's it; just negate the gravity effect
-                    speedY = -(elasticity * speedY);
-                    onHitFloorHook();
-                    canJump = true;
-                } else {
-                    // Nope, hit a wall from below diagonally then. Let's bump back a bit
-                    speedY = 1;
-                    externalForceY = 0;
-                    internalForceY = 0;
-                    canJump = false;
-                    onHitCeilingHook();
-                }
-            } else {
-                // Nope, there's also some obstacle horizontally
-                // Let's figure out if we are going against an upward slope
-                if (api->isPositionEmpty(currentHitbox + CoordinatePair(speedX + externalForceX, -std::abs(speedX + externalForceX) - 5.0), false, thisPtr)) {
-                    // Yes, we indeed are
-                    speedY = -(elasticity * speedY);
-                    canJump = true;
-                    moveInstantly({ 0.0, -(std::abs(speedX + externalForceX) + 1) }, false);
-                    /*while (root->game_tiles->isTileEmpty(CarrotQt5::calcHitbox(getHitbox(),speedX,speedY-abs(speedX)-2))) {
-                        posY += 0.5;
-                    }
-                    posY -= 1;*/
-                    
-                    // TODO: position us vertically to a suitable position so that we won't raise up to the air needlessly
-                    // (applicable if the slope isn't exactly at 45 degrees)
-                } else {
-                    // Nope. Cannot move horizontally at all. Can we just go vertically then?
-                    speedX = -(elasticity * speedX);
-                    externalForceX *= -1;
-                    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), speedY > 0, thisPtr)) {
-                        // Yeah
-                        canJump = false;
-                        onHitWallHook();
-                    } else {
-                        // Nope
-                        if (speedY > 0) {
-                            canJump = true;
-                        }
-
-                        speedY = -(elasticity * speedY);
-                        externalForceY = 0;
-                        internalForceY = 0;
-                        // TODO: fix a problem with hurt getting player stuck in a wall here
-                        onHitWallHook();
-                        onHitFloorHook();
-                    }
-                }
-            }
-        } else {
-            // We are going directly vertically
-            if (speedY > 0) {
-                // We are falling, or we are on solid ground and gravity tries to push us through the floor
-                if (api->isPositionEmpty(currentHitbox, true, shared_from_this())) {
-                    // Let's just nullify that effect
-                    speedY = -(elasticity * speedY);
-                    while (api->isPositionEmpty(currentHitbox + CoordinatePair(speedX, speedY), true, thisPtr)) {
-                        moveInstantly({ 0.0, 0.5 }, false);
-                    }
-                    moveInstantly({ 0.0, -0.5 }, false);
-                    
-                    onHitFloorHook();
-                    canJump = true;
-                } else {
-                    // Nope, nothing else is going on
-                    speedY = -(elasticity * speedY);
-                    canJump = true;
-                }
-            } else {
-                // We are jumping
-                if (!api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, speedY), false, thisPtr)) {
-                    speedY = -(elasticity * speedY);
-                    externalForceY = 0;
-                    internalForceY = 0;
-                    onHitCeilingHook();
-                } else {
-                    // we can go vertically anyway
-                    //speedY = -(elasticity * speedY);
-                }
-            }
-        }
-    } else {
-        if (canJump) {
-            // Check if we are running on a downhill slope. If so, keep us attached to said slope instead of flying off.
-            if (!api->isPositionEmpty(
-                currentHitbox + CoordinatePair(speedX + externalForceX, speedY + std::abs(speedX + externalForceX) + 5),
-                false, thisPtr)
-            ) {
-                while (api->isPositionEmpty(
-                    currentHitbox + CoordinatePair(speedX + externalForceX, speedY + std::abs(speedX + externalForceX)),
-                    false, thisPtr)
-                ) {
-                    moveInstantly({ 0.0, 0.1 }, false);
-                }
-                moveInstantly({ 0.0, -0.1 }, false);
-            } else {
-                // That wasn't the case so forget about that
-                canJump = false;
-            }
-        }
-    }
-
-    if (std::abs(externalForceX) > EPSILON) {
-        // Reduce remaining push
-        if (externalForceX > 0) {
-            externalForceX = std::max(externalForceX - friction, 0.0);
-        } else {
-            externalForceX = std::min(externalForceX + friction, 0.0);
-        }
-    }
-    externalForceY = std::max(externalForceY - gravity / 3, 0.0);
-    internalForceY = std::max(internalForceY - gravity / 3, 0.0);
-    //speedX = sign * std::max((sign * speedX) - friction, 0.0);
-
-    bool frozen = frozenFramesLeft > 0;
-    posX += (frozen ? 0 : speedX) + externalForceX;
-    posY += speedY;
+    tryStandardMovement();
     updateHitbox();
-
-    // determine current animation last bits from speeds
-    // it's okay to call setAnimation on every tick because it doesn't do
-    // anything if the animation is the same as it was earlier
-
-    // only certain ones don't need to be preserved from earlier state, others should be set as expected
-    int composite = currentAnimation->getAnimationState() & 0xFFFFFFE0;
-    if (std::abs(speedX) > 3) {
-        // shift-running, speed is more than 3px/frame
-        composite += 3;
-    } else if (std::abs(speedX) > 1) {
-        // running, speed is between 1px and 3px/frame
-        composite += 2;
-    } else if (std::abs(speedX) > EPSILON) {
-        // walking, speed is less than 1px/frame (mostly a transition zone)
-        composite += 1;
-    }
-    
-    if (suspendType != SuspendType::SUSPEND_NONE) {
-        composite += 12;
-    } else {
-        if (canJump) {
-            // grounded, no vertical speed
-        } else if (speedY > EPSILON) {
-            // falling, ver. speed is positive
-            composite += 8;
-        } else if (speedY < -EPSILON) {
-            // jumping, ver. speed is negative
-            composite += 4;
-        }
-    }
-    
-    AnimStateT newState = AnimStateT(composite);
-    setAnimation(newState);
 
     // Make sure we stay within the level boundaries
     auto tiles = api->getGameTiles().lock();
@@ -399,6 +233,146 @@ bool CommonActor::loadResources(const QString& classId) {
     return false;
 }
 
+void CommonActor::tryStandardMovement() {
+    double gravity = (isGravityAffected ? api->getGravity() : 0);
+
+    speedX = std::min(std::max(speedX, -16.0), 16.0);
+    speedY = std::min(std::max(speedY - internalForceY - externalForceY, -16.0), 16.0);
+
+    bool frozen = frozenFramesLeft > 0;
+    double effectiveSpeedX = speedX + externalForceX;
+    double effectiveSpeedY = speedY;
+    if (frozen) {
+        effectiveSpeedX = std::min(std::max(externalForceX, -16.0), 16.0);
+        effectiveSpeedY = std::min(std::max(speedY + internalForceY, -16.0), 16.0);
+    }
+
+    auto thisPtr = shared_from_this();
+    bool success = false;
+
+    if (canJump) {
+        // All ground-bound movement is handled here. In the basic case, the actor
+        // moves horizontally, but it can also logically move up or down if it is
+        // moving across a slope. In here, angles between about 45 degrees down
+        // to 45 degrees up are attempted with some intervals to attempt to keep
+        // the actor attached to the slope in question.
+
+        // Always try values a bit over the 45 degree incline; subpixel coordinates
+        // may mean the actor actually needs to move a pixel up or down even though
+        // the speed wouldn't warrant that large of a change.
+        // Not doing this will cause hiccups with uphill slopes in particular.
+        // Beach tileset also has some spots where two properly set up adjacent
+        // tiles have a 2px jump, so adapt to that.
+        double maxYDiff = std::max(2.0, std::abs(effectiveSpeedX) + 2.5);
+        for (double yDiff = maxYDiff; yDiff >= -maxYDiff; yDiff -= 0.1) {
+            if (moveInstantly({ effectiveSpeedX, yDiff }, false, false)) {
+                success = true;
+                break;
+            }
+        }
+
+        // Also try to move horizontally as far as possible.
+        double maxDiff = std::abs(effectiveSpeedX);
+        double xDiff = maxDiff;
+        if (!success) {
+            short sign = effectiveSpeedX > 0 ? 1 : -1;
+            for (; xDiff >= -maxDiff; xDiff -= COLLISION_CHECK_STEP) {
+                if (moveInstantly({ xDiff * sign, 0.0 }, false, false)) {
+                    break;
+                }
+            }
+        }
+
+        // If no angle worked in the previous step, the actor is facing a wall.
+        if (!success) {
+            if (xDiff > COLLISION_CHECK_STEP || (xDiff > 0 && elasticity > 0)) {
+                speedX = -(elasticity * speedX);
+            }
+            onHitWallHook();
+        }
+
+        // Run all floor-related hooks, such as the player's check for hurting positions.
+        onHitFloorHook();
+    } else {
+        // Airborne movement is handled here.
+        // First, attempt to move directly based on the current speed values.
+        if (moveInstantly({ effectiveSpeedX, effectiveSpeedY }, false, false)) {
+            if (std::abs(effectiveSpeedY) < EPSILON) {
+                canJump = true;
+            }
+        } else if (!success) {
+            // There is an obstacle so we need to make compromises.
+            
+            // First, attempt to move horizontally as much as possible.
+            double maxDiff = std::abs(effectiveSpeedX);
+            short sign = effectiveSpeedX > 0 ? 1 : -1;
+            bool successX = false;
+            double xDiff = maxDiff;
+            for (; xDiff > EPSILON; xDiff -= COLLISION_CHECK_STEP) {
+                if (moveInstantly({ xDiff * sign, 0.0 }, false, false)) {
+                    successX = true;
+                    break;
+                }
+            }
+
+            // Then, try the same vertically.
+            maxDiff = std::abs(effectiveSpeedY);
+            sign = effectiveSpeedY > 0 ? 1 : -1;
+            bool successY = false;
+            double yDiff = maxDiff;
+            for (; yDiff > EPSILON; yDiff -= COLLISION_CHECK_STEP) {
+                if (moveInstantly({ 0.0, yDiff * sign }, false, false)) {
+                    successY = true;
+                    break;
+                }
+            }
+
+            // Place us to the ground only if no horizontal movement was
+            // involved (this prevents speeds resetting if the actor
+            // collides with a wall from the side while in the air)
+            if (yDiff < std::abs(effectiveSpeedY)) {
+                if (effectiveSpeedY > 0) {
+                    speedY = -(elasticity * effectiveSpeedY);
+                    if (speedY > -COLLISION_CHECK_STEP) {
+                        speedY = 0.0;
+                        canJump = true;
+                    }
+                    onHitFloorHook();
+                } else {
+                    speedY = 0;
+                    onHitCeilingHook();
+                }
+            }
+
+            // If the actor didn't move all the way horizontally,
+            // it hit a wall (or was already touching it)
+            if (xDiff < std::abs(effectiveSpeedX)) {
+                if (xDiff > COLLISION_CHECK_STEP || (xDiff > 0 && elasticity > 0)) {
+                    speedX = -(elasticity * speedX);
+                }
+                onHitWallHook();
+            }
+        }
+    }
+
+    // Set the actor as airborne if there seems to be enough space below it
+    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, api->getGravity()), effectiveSpeedY >= 0, thisPtr)) {
+        speedY += gravity;
+        canJump = false;
+    }
+
+    // Reduce all forces if they are present
+    if (std::abs(externalForceX) > EPSILON) {
+        if (externalForceX > 0) {
+            externalForceX = std::max(externalForceX - friction, 0.0);
+        } else {
+            externalForceX = std::min(externalForceX + friction, 0.0);
+        }
+    }
+    externalForceY = std::max(externalForceY - gravity / 3, 0.0);
+    internalForceY = std::max(internalForceY - gravity / 3, 0.0);
+}
+
 template<typename... P>
 bool CommonActor::playSound(const QString& id, P... params) {
     return callPlaySound(id, getPosition(), params...);
@@ -452,14 +426,22 @@ void CommonActor::handleCollision(std::shared_ptr<CommonActor> other) {
     }
 }
 
-void CommonActor::moveInstantly(CoordinatePair location, bool absolute) {
-    CoordinatePair newPos = {
-        (absolute ? 0 : posX) + location.x,
-        (absolute ? 0 : posY) + location.y
-    };
-    currentHitbox.add(newPos - CoordinatePair(posX, posY));
-    posX = newPos.x;
-    posY = newPos.y;
+bool CommonActor::moveInstantly(CoordinatePair location, bool absolute, bool force) {
+    if (!absolute && std::abs(location.x) < EPSILON && std::abs(location.y) < EPSILON) {
+        return true;
+    }
+
+    CoordinatePair newPos = (absolute ? location : location + CoordinatePair(posX, posY));
+    auto translatedHitbox = currentHitbox + newPos - CoordinatePair(posX, posY);
+
+    bool free = force || api->isPositionEmpty(translatedHitbox, speedY >= 0, shared_from_this());
+    if (free) {
+        currentHitbox = translatedHitbox;
+        posX = newPos.x;
+        posY = newPos.y;
+    }
+
+    return free;
 }
 
 void CommonActor::deleteFromEventMap() {
@@ -512,3 +494,5 @@ void CommonActor::advanceActorAnimationTimers() {
         --frozenFramesLeft;
     }
 }
+
+const double CommonActor::COLLISION_CHECK_STEP = 0.5;

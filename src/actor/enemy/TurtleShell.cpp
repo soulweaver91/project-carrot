@@ -81,8 +81,9 @@ void TurtleShell::tickEvent() {
 
                 if (std::abs(speedX) > std::abs(specializedPtr->speedX)) {
                     // Handle this only in the faster of the two.
+                    posX = specializedPtr->posX + (speedX > 0 ? 1 : -1) * (currentHitbox.right - currentHitbox.left);
                     speedX *= -1;
-                    posX = specializedPtr->posX + (speedX > 0 ? 1 : -1) * (currentHitbox.right - currentHitbox.left + 1);
+
                     specializedPtr->decreaseHealth(1);
                     playSound("ENEMY_TURTLE_SHELL_IMPACT_SHELL");
                 }
@@ -114,7 +115,8 @@ void TurtleShell::handleCollision(std::shared_ptr<CommonActor> other) {
             return;
         }
 
-        speedX = other->getSpeedX() / 2;
+        double otherSpeed = other->getSpeedX();
+        speedX = std::max(4.0, std::abs(otherSpeed)) * (otherSpeed < 0 ? -1 : 1) / 2;
     }
 }
 

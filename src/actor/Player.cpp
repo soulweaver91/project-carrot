@@ -22,9 +22,8 @@
 Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveActor(api, x, y, false),
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
-    weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), cameraShiftFramesCount(0),
-    copterFramesLeft(0), toasterAmmoSubticks(10),
-    isSugarRush(false) {
+    weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), isActivelyPushing(false),
+    cameraShiftFramesCount(0), copterFramesLeft(0), toasterAmmoSubticks(10), isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
@@ -93,7 +92,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                 }
             } else {
                 if (suspendType != SuspendType::SUSPEND_NONE) {
-                    moveInstantly({ 0, 10 }, false);
+                    moveInstantly({ 0, 10 }, false, true);
                     suspendType = SuspendType::SUSPEND_NONE;
                 } else {
                     controllable = false;
@@ -200,14 +199,11 @@ void Player::processControlUpEvent(const ControlEvent& e) {
 }
 
 void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
-    if (!controllable) {
-        return;
-    }
-
     const AnimStateT currentState = currentAnimation->getAnimationState();
 
-    if (e.contains(controls.leftButton) || e.contains(controls.rightButton)) {
+    if (controllable && (e.contains(controls.leftButton) || e.contains(controls.rightButton))) {
         isFacingLeft = !e.contains(controls.rightButton);
+        isActivelyPushing = true;
 
         if (suspendType == SuspendType::SUSPEND_NONE && (e.contains(controls.dashButton))) {
             speedX = std::max(std::min(speedX + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_DASHING_SPEED), -MAX_DASHING_SPEED);
@@ -217,11 +213,16 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
 
     } else {
         speedX = std::max((std::abs(speedX) - DECELERATION), 0.0) * (speedX < -EPSILON ? -1 : 1);
+        isActivelyPushing = false;
+    }
+
+    if (!controllable) {
+        return;
     }
 
     if (e.contains(controls.jumpButton)) {
         if (suspendType != SuspendType::SUSPEND_NONE) {
-            moveInstantly({ 0, -5 }, false);
+            moveInstantly({ 0, -5 }, false, true);
             canJump = true;
         }
         if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
@@ -323,45 +324,85 @@ void Player::tickEvent() {
     auto tiles = api->getGameTiles().lock();
     AnimStateT currentState = currentAnimation->getAnimationState();
 
-    // Check for pushing
-    if (canJump && controllable && std::abs(speedX) > EPSILON) {
-        std::weak_ptr<SolidObject> object;
-        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair(speedX < 0 ? -1 : 1, 0), false, shared_from_this(), object))) {
-            auto objectPtr = object.lock();
-
-            if (objectPtr != nullptr) {
-                objectPtr->push(speedX < 0);
-                setAnimation(currentState | AnimState::PUSH);
-            } else {
-                setAnimation(currentState & ~AnimState::PUSH);
-            }
-        } else {
-            setAnimation(currentState & ~AnimState::PUSH);
-        }
-    } else {
-        setAnimation(currentState & ~AnimState::PUSH);
-    }
-
     if (!carryingObject.expired()) {
-        if (speedY > EPSILON) {
+        if (std::abs(speedY) > EPSILON || !controllable || !isGravityAffected) {
             carryingObject = std::weak_ptr<MovingPlatform>();
         } else {
             auto platform = carryingObject.lock();
-            CoordinatePair delta = platform->getLocationDelta();
+            CoordinatePair delta = platform->getLocationDelta() - CoordinatePair(0.0, 1.0);
 
-            if (api->isPositionEmpty(currentHitbox + CoordinatePair(delta.x, delta.y), false, shared_from_this())) {
-                moveInstantly(delta, false);
-            } else if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, delta.y), false, shared_from_this())) {
-                moveInstantly({ 0.0, delta.y }, false);
-            } else {
+            // TODO: disregard the carrying object itself in this collision check to
+            // eliminate the need of the correction pixel removed from the delta
+            // and to make the ride even smoother (right now the pixel gap is clearly
+            // visible when platforms go down vertically)
+            if (
+                !moveInstantly(delta, false) &&
+                !moveInstantly({ 0.0, delta.y }, false)
+            ) {
                 carryingObject = std::weak_ptr<MovingPlatform>();
             }
         }
     }
 
+    double lastX = posX;
     CommonActor::tickEvent();
+
+    if (controllable) {
+        AnimStateT newState;
+        if (canJump && isActivelyPushing && std::abs(posX - lastX - speedX) > 0.1 && std::abs(externalForceX) < EPSILON && (isFacingLeft ^ (speedX > 0))) {
+            newState = AnimState::PUSH;
+        } else {
+
+            // determine current animation last bits from speeds
+            // it's okay to call setAnimation on every tick because it doesn't do
+            // anything if the animation is the same as it was earlier
+
+            // only certain ones don't need to be preserved from earlier state, others should be set as expected
+            int composite = currentAnimation->getAnimationState() & 0xFFFFBFE0;
+            if (std::abs(speedX) > 3 + EPSILON) {
+                // shift-running, speed is more than 3px/frame
+                composite += 3;
+            } else if (std::abs(speedX) > 1) {
+                // running, speed is between 1px and 3px/frame
+                composite += 2;
+            } else if (std::abs(speedX) > EPSILON) {
+                // walking, speed is less than 1px/frame (mostly a transition zone)
+                composite += 2;
+            }
+
+            if (suspendType != SuspendType::SUSPEND_NONE) {
+                composite += 12;
+            } else {
+                if (canJump) {
+                    // grounded, no vertical speed
+                } else if (speedY < -EPSILON) {
+                    // jumping, ver. speed is negative
+                    composite += 4;
+                } else {
+                    // falling, ver. speed is positive
+                    composite += 8;
+                }
+            }
+
+            newState = AnimStateT(composite);
+        }
+        setAnimation(newState);
+    }
+    
     currentState = currentAnimation->getAnimationState();
     double gravity = (isGravityAffected ? api->getGravity() : 0);
+
+    // Check for pushing
+    if (canJump && controllable && isActivelyPushing && std::abs(speedX) > EPSILON) {
+        std::weak_ptr<SolidObject> object;
+        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair((speedX < 0) ? -2.0 : 2.0, 0.0), false, shared_from_this(), object))) {
+            auto objectPtr = object.lock();
+
+            if (objectPtr != nullptr) {
+                objectPtr->push(speedX < 0);
+            }
+        }
+    }
 
     if (tiles != nullptr) {
         // Check if hitting a vine
@@ -384,9 +425,9 @@ void Player::tickEvent() {
 
             // move downwards until we're on the standard height
             while (tiles->getPosSuspendState(posX, posY - 5) != SuspendType::SUSPEND_NONE) {
-                moveInstantly({ 0, 1 }, false);
+                moveInstantly({ 0, 1 }, false, true);
             }
-            moveInstantly({ 0, -1 }, false);
+            moveInstantly({ 0, -1 }, false, true);
         } else {
             suspendType = SuspendType::SUSPEND_NONE;
             if ((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0 && !isAttachedToPole) {
@@ -1012,12 +1053,13 @@ void Player::nextPoleStage(bool horizontal, bool positive, ushort stagesLeft) {
         int mp = positive ? 1 : -1;
         if (horizontal) {
             speedX = 10 * mp;
+            moveInstantly({ speedX, 0.0 }, false, true);
             externalForceX = 10 * mp;
             isFacingLeft = !positive;
         } else {
-            moveInstantly({ 0, mp * 32 }, false);
-            speedY = 10 * mp;
-            externalForceY = -1 * mp;
+            moveInstantly({ 0.0, mp * 16.0 }, false, true);
+            speedY = 5 * mp;
+            externalForceY = -2 * mp;
         }
         controllable = true;
         isGravityAffected = true;
@@ -1117,7 +1159,7 @@ void Player::warpToPosition(const CoordinatePair& pos) {
             return;
         }
 
-        moveInstantly(pos, true);
+        moveInstantly(pos, true, true);
         playSound("COMMON_WARP_OUT");
 
         setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {

@@ -26,13 +26,13 @@ void AmmoBouncer::tickEvent() {
     Ammo::tickEvent();
     auto tiles = api->getGameTiles().lock();
     if (tiles == nullptr || tiles->isTileEmpty((posX + speedX) / 32, (posY + speedY) / 32)) {
-        moveInstantly({ speedX, speedY }, false);
+        moveInstantly({ speedX, speedY }, false, true);
     } else {
         CoordinatePair temp = {posX, posY};
         CoordinatePair next = {posX + speedX, posY + speedY};
-        moveInstantly(next, true);
+        moveInstantly(next, true, true);
         checkCollisions();
-        moveInstantly(temp, true);
+        moveInstantly(temp, true, true);
     }
 }
 

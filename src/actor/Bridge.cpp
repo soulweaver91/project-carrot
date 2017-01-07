@@ -116,7 +116,7 @@ void DynamicBridge::tickEvent() {
                     coords.y = originalY - 2;
                 }
 
-                bridgePieces.at(j)->moveInstantly(coords, true);
+                bridgePieces.at(j)->moveInstantly(coords, true, true);
             }
         }
 
@@ -126,7 +126,7 @@ void DynamicBridge::tickEvent() {
         for (int j = 0; j < bridgePieces.size(); ++j) {
             CoordinatePair coords = bridgePieces.at(j)->getPosition();
             coords.y = originalY;
-            bridgePieces.at(j)->moveInstantly(coords, true);
+            bridgePieces.at(j)->moveInstantly(coords, true, true);
         }
         posY = originalY;
     }

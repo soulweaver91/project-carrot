@@ -50,6 +50,7 @@ void EnemyLabRat::tickEvent() {
         if (canIdle && qrand() % 50 == 0) {
             speedX = 0;
             idling = true;
+            AnimationUser::setAnimation("ENEMY_LAB_RAT_IDLE");
             canIdle = false;
 
             addTimer(120u, false, [this]() {
@@ -58,6 +59,7 @@ void EnemyLabRat::tickEvent() {
 
             addTimer(240u, false, [this]() {
                 idling = false;
+                setAnimation(AnimState::WALK);
                 speedX = (isFacingLeft ? -1 : 1) * 1;
 
                 addTimer(420u + qrand() % 140u, false, [this]() {
