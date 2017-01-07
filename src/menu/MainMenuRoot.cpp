@@ -30,11 +30,11 @@ MainMenuRoot::MainMenuRoot(CarrotQt5* root) : root(root) {
 MainMenuRoot::~MainMenuRoot() {
 }
 
-void MainMenuRoot::logicTick(const ControlEventList& events) {
+void MainMenuRoot::logicTick(const ControlEventList&) {
     root->pushState<MainMenuMenu>(false);
 }
 
-void MainMenuRoot::renderTick(bool topmost, bool) {
+void MainMenuRoot::renderTick(bool, bool) {
     auto canvas = root->getCanvas();
 
     unsigned int viewWidth = canvas->getView().getSize().x;

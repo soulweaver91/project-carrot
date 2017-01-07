@@ -356,7 +356,6 @@ void LevelManager::logicTick(const ControlEventList& events) {
 }
 
 void LevelManager::renderTick(bool topmost, bool) {
-    auto canvas = root->getCanvas();
     if (!topmost) {
         for (auto view : views) {
             view->drawLastFrame();
@@ -400,6 +399,7 @@ void LevelManager::renderTick(bool topmost, bool) {
 
 #ifdef CARROT_DEBUG
     auto debugConfig = root->getDebugConfig();
+    auto canvas = root->getCanvas();
     if (debugConfig->dbgOverlaysActive) {
         float fps = root->getCurrentFPS();
         auto smallFont = root->getFont(SMALL);

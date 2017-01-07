@@ -354,7 +354,7 @@
       <Filter>Source Files\Menu system</Filter>
     </ClCompile>
     <ClCompile Include="src\menu\ConfirmationMenu.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Menu system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
