@@ -183,8 +183,11 @@ void AnimationInstance::clearCallback() {
     callback = nullptr;
 }
 
-void AnimationInstance::resetFrame() {
-    frame = animation->frameOffset;
+void AnimationInstance::resetFrame(int idx) {
+    if (idx == -1) {
+        idx = animation->frameOffset;
+    }
+    frame = idx;
     sprite.setTextureRect(sf::IntRect(
         (frame % animation->frameConfiguration.x) * animation->frameDimensions.x,
         (frame / animation->frameConfiguration.x) * animation->frameDimensions.y,

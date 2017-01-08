@@ -4,43 +4,50 @@
       "filename": "bridge/gem.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     },
     "OBJECT_BRIDGE_PIECE_LAB": {
       "filename": "bridge/lab.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     },
     "OBJECT_BRIDGE_PIECE_LOG": {
       "filename": "bridge/log.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     },
     "OBJECT_BRIDGE_PIECE_ROPE": {
       "filename": "bridge/rope.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     },
     "OBJECT_BRIDGE_PIECE_STONE": {
       "filename": "bridge/stone.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     },
     "OBJECT_BRIDGE_PIECE_STONE_RED": {
       "filename": "bridge/stone_red.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     },
     "OBJECT_BRIDGE_PIECE_VINE": {
       "filename": "bridge/vine.png",
       "states": [
         "0"
-      ]
+      ],
+      "fps": 0
     }
   },
   "sounds": {
