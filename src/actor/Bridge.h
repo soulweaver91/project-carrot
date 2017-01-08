@@ -2,31 +2,32 @@
 
 #include <memory>
 #include <QVector>
+#include <QMap>
 #include "SolidObject.h"
 #include "../struct/Hitbox.h"
 
 class ActorAPI;
 
 enum DynamicBridgeType {
-    BRIDGE_ROPE         = 0,
-    BRIDGE_ROCKS_GRAY   = 1,
-    BRIDGE_VINE         = 2,
-    BRIDGE_ROCKS_RED    = 3,
-    BRIDGE_LOGS         = 4,
-    BRIDGE_DIAMOND      = 5,
-    BRIDGE_LABRAT       = 6
+    BRIDGE_ROPE       = 0,
+    BRIDGE_STONE      = 1,
+    BRIDGE_VINE       = 2,
+    BRIDGE_STONE_RED  = 3,
+    BRIDGE_LOG        = 4,
+    BRIDGE_GEM        = 5,
+    BRIDGE_LAB        = 6
     // type 7 in JJ2 equals to 0
 };
 
 class DynamicBridgePiece : public SolidObject {
 public:
-    DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE);
+    DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE, uint idx = 0);
     ~DynamicBridgePiece();
     bool deactivate(int x, int y, int dist) override;
     Hitbox getHitboxForParent();
 
 private:
-    DynamicBridgeType bridgeType;
+    void tryStandardMovement() override;
 };
 
 class DynamicBridge : public CommonActor {
@@ -40,8 +41,10 @@ public:
 
 private:
     double originalY;
-    unsigned short toughness;
     DynamicBridgeType bridgeType;
-    unsigned int bridgeWidth;
+    uint bridgeWidth;
+    uint heightFactor;
     QVector<std::shared_ptr<DynamicBridgePiece>> bridgePieces;
+
+    static const QMap<DynamicBridgeType, QVector<uint>> BRIDGE_PIECE_WIDTHS;
 };

@@ -26,7 +26,7 @@ public:
     AnimStateT getAnimationState();
     std::shared_ptr<const GraphicResource> getAnimation();
     void clearCallback();
-    void resetFrame();
+    void resetFrame(int idx = -1);
     void resetAnimation();
     void setColor(const sf::Vector3i& newColor);
     sf::Vector3i getColor();
