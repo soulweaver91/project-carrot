@@ -263,8 +263,8 @@ void CommonActor::tryStandardMovement() {
         // Not doing this will cause hiccups with uphill slopes in particular.
         // Beach tileset also has some spots where two properly set up adjacent
         // tiles have a 2px jump, so adapt to that.
-        double maxYDiff = std::max(2.0, std::abs(effectiveSpeedX) + 2.5);
-        for (double yDiff = maxYDiff; yDiff >= -maxYDiff; yDiff -= 0.1) {
+        double maxYDiff = std::max(3.0, std::abs(effectiveSpeedX) + 2.5);
+        for (double yDiff = maxYDiff + effectiveSpeedY; yDiff >= -maxYDiff + effectiveSpeedY; yDiff -= COLLISION_CHECK_STEP) {
             if (moveInstantly({ effectiveSpeedX, yDiff }, false, false)) {
                 success = true;
                 break;
@@ -356,7 +356,7 @@ void CommonActor::tryStandardMovement() {
     }
 
     // Set the actor as airborne if there seems to be enough space below it
-    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, api->getGravity()), effectiveSpeedY >= 0, thisPtr)) {
+    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, COLLISION_CHECK_STEP), effectiveSpeedY >= 0, thisPtr)) {
         speedY += gravity;
         canJump = false;
     }
