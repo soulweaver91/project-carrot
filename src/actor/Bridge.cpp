@@ -51,7 +51,7 @@ void DynamicBridgePiece::tryStandardMovement() {
 
 DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, unsigned int width,
     DynamicBridgeType type, unsigned int toughness)
-    : CommonActor(api, x - 16.0, y - 16.0), originalY(y - 4.0), bridgeType(type), bridgeWidth(width),
+    : CommonActor(api, x - 16.0, y - 16.0), originalY(y - 8.0), bridgeType(type), bridgeWidth(width),
     heightFactor((16.0 - toughness) * bridgeWidth) {
     loadResources("Object/Bridge");
 
