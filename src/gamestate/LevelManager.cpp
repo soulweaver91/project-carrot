@@ -27,7 +27,8 @@
 #include <exception>
 
 LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode) :
-    root(root), levelName(level), levelFileName(level), episodeName(episode), nextLevel(""), exiting(false), defaultLightingLevel(100), gravity(0.3) {
+    root(root), levelName(level), levelFileName(level), episodeName(episode), nextLevel(""),
+    exiting(false), exitKeyUpEventsSent(false), defaultLightingLevel(100), gravity(0.3) {
 
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
@@ -238,7 +239,24 @@ std::function<void(QString)> LevelManager::drawLoadingScreen(const QString& leve
 }
 
 void LevelManager::processControlEvents(const ControlEventList& events) {
-    for (const auto& pair : events.controlDownEvents) {
+    ControlEventList apparentEvents(events);
+
+    if (exiting) {
+        if (!exitKeyUpEventsSent) {
+            for (auto control : apparentEvents.controlHeldEvents.keys()) {
+                apparentEvents.controlUpEvents.append({ control, apparentEvents.controlHeldEvents.value(control) });
+            }
+
+            exitKeyUpEventsSent = true;
+        } else {
+            apparentEvents.controlUpEvents.clear();
+        }
+
+        apparentEvents.controlDownEvents.clear();
+        apparentEvents.controlHeldEvents.clear();
+    }
+
+    for (const auto& pair : apparentEvents.controlDownEvents) {
         auto control = pair.first;
 
         if (control == Qt::Key_Escape) {
@@ -270,17 +288,17 @@ void LevelManager::processControlEvents(const ControlEventList& events) {
         }
     }
 
-    for (const auto& pair : events.controlDownEvents) {
+    for (const auto& pair : apparentEvents.controlDownEvents) {
         foreach(auto& actor, interactiveActors) {
             actor->processControlDownEvent(pair);
         }
     }
 
     foreach(auto& actor, interactiveActors) {
-        actor->processAllControlHeldEvents(events.controlHeldEvents);
+        actor->processAllControlHeldEvents(apparentEvents.controlHeldEvents);
     }
 
-    for (const auto& pair : events.controlUpEvents) {
+    for (const auto& pair : apparentEvents.controlUpEvents) {
         foreach(auto& actor, interactiveActors) {
             actor->processControlUpEvent(pair);
         }
@@ -665,6 +683,12 @@ void LevelManager::initLevelChange(ExitType e) {
     exiting = true;
 
     root->getSoundSystem()->setMusic("");
+
+    for (auto player : players) {
+        if (player != nullptr) {
+            player->setExiting();
+        }
+    }
 
     addTimer(435u, false, [this, e]() {
         LevelCarryOver nextLevelData = players[0]->prepareLevelCarryOver();

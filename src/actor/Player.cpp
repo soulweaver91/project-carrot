@@ -23,7 +23,7 @@ Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveA
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), isActivelyPushing(false),
-    cameraShiftFramesCount(0), copterFramesLeft(0), toasterAmmoSubticks(10), isSugarRush(false) {
+    cameraShiftFramesCount(0), copterFramesLeft(0), levelExiting(false), toasterAmmoSubticks(10), isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
@@ -546,11 +546,10 @@ void Player::tickEvent() {
                 }
                 break;
             case PC_AREA_EOL:
-                if (controllable) {
+                if (!levelExiting) {
                     playNonPositionalSound("PLAYER_JAZZ_EOL");
                     api->initLevelChange(NEXT_NORMAL);
                 }
-                controllable = false;
                 break;
             case PC_AREA_TEXT:
                 osd->setLevelText(p[0]);
@@ -957,7 +956,7 @@ void Player::onHitWallHook() {
 }
 
 void Player::takeDamage(double pushForce) {
-    if (!isInvulnerable) {
+    if (!isInvulnerable && !levelExiting) {
         health = static_cast<unsigned>(std::max(static_cast<int>(health - 1), 0));
         externalForceX = pushForce;
         internalForceY = 0;
@@ -1111,6 +1110,10 @@ void Player::setCarryingPlatform(std::weak_ptr<MovingPlatform> platform) {
 
 void Player::setView(std::shared_ptr<GameView> view) {
     assignedView = view;
+}
+
+void Player::setExiting() {
+    levelExiting = true;
 }
 
 void Player::setupOSD(OSDMessageType type, int param) {

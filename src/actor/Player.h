@@ -59,6 +59,7 @@ public:
     void consumeFood(const bool& isDrinkable);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
+    void setExiting();
 
 #ifdef CARROT_DEBUG
 public slots:
@@ -101,6 +102,7 @@ private:
     bool isActivelyPushing;
     int cameraShiftFramesCount;
     int copterFramesLeft;
+    bool levelExiting;
 
     // Counter for Toaster ammo subticks
     unsigned short toasterAmmoSubticks;

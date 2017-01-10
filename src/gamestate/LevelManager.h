@@ -97,6 +97,7 @@ private:
     QString nextLevel;
     SavedState lastSavePoint;
     bool exiting;
+    bool exitKeyUpEventsSent;
     uint defaultLightingLevel;
     double gravity;
     QMap<int, QString> levelTexts;
