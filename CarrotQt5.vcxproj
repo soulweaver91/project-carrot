@@ -326,6 +326,7 @@
     <ClInclude Include="src\struct\NextLevelData.h" />
     <ClInclude Include="src\struct\PCEvent.h" />
     <ClInclude Include="src\struct\Resources.h" />
+    <ClInclude Include="src\struct\SequentialIDList.h" />
     <ClInclude Include="src\struct\WeaponTypes.h" />
     <ClInclude Include="src\graphics\GraphicsCache.h" />
     <ClInclude Include="src\Version.h" />

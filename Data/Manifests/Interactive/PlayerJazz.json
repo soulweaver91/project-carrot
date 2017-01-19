@@ -242,6 +242,12 @@
         "16384", "16385"
       ],
       "fps": 7
+    },
+    "PLAYER_JAZZ_EOL": {
+      "filename": "jazz/eol.png",
+      "states": [
+        "1073741846"
+      ]
     }
   },
   "sounds": {
@@ -313,6 +319,12 @@
     },
     "PLAYER_JAZZ_CONSUME_MAX_CARROT": {
       "filename": "jazz/carrot.wav"
+    },
+    "PLAYER_EOL_1": {
+      "filename": "common/char_revup.wav"
+    },
+    "PLAYER_EOL_2": {
+      "filename": "weapon/ricochet_bullet_3.wav"
     }
   },
   "children": [

@@ -1114,6 +1114,15 @@ void Player::setView(std::shared_ptr<GameView> view) {
 
 void Player::setExiting() {
     levelExiting = true;
+    addTimer(285u, false, [this]() {
+        isFacingLeft = false;
+        setPlayerTransition(AnimState::TRANSITION_END_OF_LEVEL, false, true, false);
+        playNonPositionalSound("PLAYER_EOL_1");
+    });
+    addTimer(365u, false, [this]() {
+        playNonPositionalSound("PLAYER_EOL_2");
+    });
+    osd->initLevelCompletedOverlay(collectedGems[0], collectedGems[1], collectedGems[2], collectedGems[3]);
 }
 
 void Player::setupOSD(OSDMessageType type, int param) {

@@ -6,10 +6,11 @@
 #include "../gamestate/AnimationUser.h"
 #include "../struct/WeaponTypes.h"
 #include "../struct/Resources.h"
+#include "../struct/SequentialIDList.h"
+#include "../graphics/BitmapString.h"
 
 class CarrotQt5;
 class Player;
-class BitmapString;
 
 enum OSDMessageType {
     OSD_NONE,
@@ -21,6 +22,34 @@ enum OSDMessageType {
     OSD_COIN_SILVER,
     OSD_COIN_GOLD,
     OSD_BONUS_WARP_NOT_ENOUGH_COINS
+};
+
+struct SpecialOSDText {
+    // as percentages
+    sf::Vector2f position;
+    std::shared_ptr<BitmapString> text;
+    std::function<void(SpecialOSDText&)> updateFunc;
+    int frame;
+
+    SpecialOSDText(sf::Vector2f p, std::shared_ptr<BitmapString> t, std::function<void(SpecialOSDText&)> cb) : frame(0) {
+        position = p;
+        text = t;
+        updateFunc = cb;
+    }
+};
+
+struct SpecialOSDGraphics {
+    // as percentages
+    sf::Vector2f position;
+    std::shared_ptr<AnimationInstance> anim;
+    std::function<void(SpecialOSDGraphics&)> updateFunc;
+    int frame;
+
+    SpecialOSDGraphics(sf::Vector2f p, std::shared_ptr<AnimationInstance> a, std::function<void(SpecialOSDGraphics&)> cb) : frame(0) {
+        position = p;
+        anim = a;
+        updateFunc = cb;
+    }
 };
 
 class PlayerOSD : public AnimationUser {
@@ -37,6 +66,8 @@ public:
     void setLives(unsigned lives);
     void setSugarRushActive();
     void setLevelText(int idx);
+    void initLevelStartOverlay();
+    void initLevelCompletedOverlay(uint redGems, uint greenGems, uint blueGems, uint purpleGems);
 
 private:
     std::weak_ptr<Player> owner;
@@ -72,4 +103,17 @@ private:
     std::shared_ptr<BitmapString> levelTextString;
     uint levelTextFrame;
     int levelTextIdx;
+
+    int createOverlayText(uint lifetime, sf::Vector2f position, const QString& text, std::function<void(SpecialOSDText&)> updateFunc,
+                          FontAlign align = FONT_ALIGN_CENTER, double vx = 0.0, double vy = 0.0, double s = 0.0, double a = 0.0);
+    int createOverlayGraphics(uint lifetime, sf::Vector2f position, std::shared_ptr<GraphicResource> anim, std::function<void(SpecialOSDGraphics&)> updateFunc);
+
+    bool specialOverlay;
+    SequentialIDList<SpecialOSDText> specialOverlayTexts;
+    SequentialIDList<SpecialOSDGraphics> specialOverlayGraphics;
+
+    template<typename T>
+    std::function<void(T&)> getSlideInUpdateFunc(int startFrame, int endFrame, double finalX);
+
+    static const QStringList levelStartStrings;
 };
