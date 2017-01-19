@@ -621,6 +621,9 @@
     <ClInclude Include="src\menu\ConfirmationMenu.h">
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\struct\SequentialIDList.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">

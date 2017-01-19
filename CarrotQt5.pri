@@ -51,6 +51,15 @@ HEADERS += ./src/EngineState.h \
     ./src/graphics/BitmapFont.h \
     ./src/graphics/CarrotCanvas.h \
     ./src/graphics/QSFMLCanvas.h \
+    ./src/menu/ConfirmationMenu.h \
+    ./src/menu/EpisodeSelectMenu.h \
+    ./src/menu/InGameMenuMenu.h \
+    ./src/menu/InGameMenuRoot.h \
+    ./src/menu/LevelSelectMenu.h \
+    ./src/menu/MainMenuMenu.h \
+    ./src/menu/MainMenuRoot.h \
+    ./src/menu/PauseScreen.h \
+    ./src/menu/VerticalItemListMenu.h \
     ./src/menu/MenuScreen.h \
     ./src/sound/SoundSystem.h \
     ./src/gamestate/ActorAPI.h \
@@ -74,16 +83,8 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/NextLevelData.h \
     ./src/struct/PCEvent.h \
     ./src/struct/Resources.h \
-    ./src/struct/WeaponTypes.h \
-    ./src/menu/PauseScreen.h \
-    ./src/menu/MainMenuRoot.h \
-    ./src/menu/MainMenuMenu.h \
-    ./src/menu/EpisodeSelectMenu.h \
-    ./src/menu/LevelSelectMenu.h \
-    ./src/menu/VerticalItemListMenu.h \
-    ./src/menu/InGameMenuRoot.h \
-    ./src/menu/InGameMenuMenu.h \
-    ./src/menu/ConfirmationMenu.h
+    ./src/struct/SequentialIDList.h \
+    ./src/struct/WeaponTypes.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -131,7 +132,16 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/lighting/PulsatingLight.cpp \
     ./src/actor/lighting/RadialLightSource.cpp \
     ./src/actor/lighting/StaticLight.cpp \
+    ./src/menu/ConfirmationMenu.cpp \
+    ./src/menu/EpisodeSelectMenu.cpp \
+    ./src/menu/InGameMenuMenu.cpp \
+    ./src/menu/InGameMenuRoot.cpp \
+    ./src/menu/LevelSelectMenu.cpp \
+    ./src/menu/MainMenuMenu.cpp \
+    ./src/menu/MainMenuRoot.cpp \
     ./src/menu/MenuScreen.cpp \
+    ./src/menu/PauseScreen.cpp \
+    ./src/menu/VerticalItemListMenu.cpp \
     ./src/sound/SoundSystem.cpp \
     ./src/gamestate/ActorAPI.cpp \
     ./src/gamestate/ControlManager.cpp \
@@ -143,16 +153,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/EventMap.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
-    ./src/gamestate/TimerUser.cpp \
-    ./src/menu/PauseScreen.cpp \
-    ./src/menu/MainMenuRoot.cpp \
-    ./src/menu/MainMenuMenu.cpp \
-    ./src/menu/EpisodeSelectMenu.cpp \
-    ./src/menu/LevelSelectMenu.cpp \
-    ./src/menu/VerticalItemListMenu.cpp \
-    ./src/menu/InGameMenuRoot.cpp \
-    ./src/menu/InGameMenuMenu.cpp \
-    ./src/menu/ConfirmationMenu.cpp
+    ./src/gamestate/TimerUser.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

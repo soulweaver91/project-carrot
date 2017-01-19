@@ -39,6 +39,7 @@ protected:
     virtual unsigned long addTimer(unsigned frames, bool recurring, TimerLambdaCallbackFunc cb);
     virtual void invokeTimer(int idx);
     void cancelTimer(unsigned long idx);
+
     QVector<QPair<unsigned long, std::shared_ptr<TimerInstance>>> timers;
     unsigned long nextTimer;
 

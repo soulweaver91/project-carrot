@@ -23,7 +23,7 @@ Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveA
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), isActivelyPushing(false),
-    cameraShiftFramesCount(0), copterFramesLeft(0), toasterAmmoSubticks(10), isSugarRush(false) {
+    cameraShiftFramesCount(0), copterFramesLeft(0), levelExiting(false), toasterAmmoSubticks(10), isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
 
     maxHealth = 5;
@@ -546,11 +546,11 @@ void Player::tickEvent() {
                 }
                 break;
             case PC_AREA_EOL:
-                if (controllable) {
+                if (!levelExiting) {
                     playNonPositionalSound("PLAYER_JAZZ_EOL");
-                    api->initLevelChange(NEXT_NORMAL);
+                    api->initLevelChange(p[1] == 1 ? NEXT_WARP :
+                                         p[0] == 1 ? NEXT_BONUS : NEXT_NORMAL);
                 }
-                controllable = false;
                 break;
             case PC_AREA_TEXT:
                 osd->setLevelText(p[0]);
@@ -957,7 +957,7 @@ void Player::onHitWallHook() {
 }
 
 void Player::takeDamage(double pushForce) {
-    if (!isInvulnerable) {
+    if (!isInvulnerable && !levelExiting) {
         health = static_cast<unsigned>(std::max(static_cast<int>(health - 1), 0));
         externalForceX = pushForce;
         internalForceY = 0;
@@ -1091,6 +1091,16 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     score = o.score;
     foodCounter = o.foodCounter;
     currentWeapon = o.currentWeapon;
+
+    if (o.exitType == NEXT_WARP) {
+        playNonPositionalSound("COMMON_WARP_OUT");
+        isGravityAffected = false;
+        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {
+            isInvulnerable = false;
+            isGravityAffected = true;
+            controllable = true;
+        });
+    }
 }
 
 void Player::addScore(unsigned points) {
@@ -1111,6 +1121,32 @@ void Player::setCarryingPlatform(std::weak_ptr<MovingPlatform> platform) {
 
 void Player::setView(std::shared_ptr<GameView> view) {
     assignedView = view;
+}
+
+void Player::setExiting(ExitType e) {
+    levelExiting = true;
+    if (e == NEXT_WARP) {
+        addTimer(285u, false, [this]() {
+            isFacingLeft = false;
+            setPlayerTransition(AnimState::TRANSITION_WARP, false, true, false, [this]() {
+                isInvisible = true;
+            });
+            playNonPositionalSound("COMMON_WARP_IN");
+        });
+    } else {
+        addTimer(255u, false, [this]() {
+            isFacingLeft = false;
+            setPlayerTransition(AnimState::TRANSITION_END_OF_LEVEL, false, true, false, [this]() {
+                isInvisible = true;
+            });
+            playNonPositionalSound("PLAYER_EOL_1");
+        });
+        addTimer(335u, false, [this]() {
+            playNonPositionalSound("PLAYER_EOL_2");
+        });
+    }
+
+    osd->initLevelCompletedOverlay(collectedGems[0], collectedGems[1], collectedGems[2], collectedGems[3]);
 }
 
 void Player::setupOSD(OSDMessageType type, int param) {

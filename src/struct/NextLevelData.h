@@ -8,6 +8,7 @@
 enum ExitType {
     NEXT_NONE,
     NEXT_NORMAL,
+    NEXT_WARP,
     NEXT_BONUS,
     NEXT_SPECIAL
 };

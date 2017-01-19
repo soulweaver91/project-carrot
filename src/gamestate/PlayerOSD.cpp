@@ -154,6 +154,20 @@ void PlayerOSD::drawOSD(std::shared_ptr<GameView>& view) {
         }
         sugarRushLeft--;
     }
+
+    for (auto& text : specialOverlayTexts) {
+        text->text->drawString(canvasPtr, vw * text->position.x, vh * text->position.y);
+        text->updateFunc(*text);
+        text->frame++;
+    }
+
+    for (auto& anim : specialOverlayGraphics) {
+        anim->anim->setSpritePosition({ vw * anim->position.x, vh * anim->position.y });
+        anim->anim->drawCurrentFrame(*canvasPtr);
+        anim->anim->advanceTimers();
+        anim->updateFunc(*anim);
+        anim->frame++;
+    }
 }
 
 
@@ -254,6 +268,7 @@ void PlayerOSD::setScore(unsigned long newScore) {
 
 void PlayerOSD::setLives(unsigned lives) {
     livesString->setText(QString("x") + QString::number(lives));
+    initLevelStartOverlay();
 }
 
 void PlayerOSD::setSugarRushActive() {
@@ -270,3 +285,78 @@ void PlayerOSD::setLevelText(int idx) {
     levelTextString->setText(api->getLevelText(idx));
 }
 
+void PlayerOSD::initLevelStartOverlay() {
+    auto id = createOverlayText(350u, sf::Vector2f(0.5, 0.48), levelStartStrings.at(qrand() % levelStartStrings.length()), [](SpecialOSDText& text) {
+        if (text.frame >= 250u) {
+            text.position.x = 0.5 - std::pow((text.frame - 250u) / 100.0, 2.0) * 0.6;
+        }
+    }, FONT_ALIGN_CENTER, 0, 6, 0.05, 0.5);
+}
+
+void PlayerOSD::initLevelCompletedOverlay(uint redGems, uint greenGems, uint blueGems, uint) {
+    createOverlayText(440u, sf::Vector2f(3, 0.1), "LEVEL COMPLETE", getSlideInUpdateFunc<SpecialOSDText>(0, 35, 0.5), FONT_ALIGN_CENTER, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.4), QString::number(redGems),   getSlideInUpdateFunc<SpecialOSDText>(50,  85, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.5), QString::number(greenGems), getSlideInUpdateFunc<SpecialOSDText>(60,  95, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.6), QString::number(blueGems),  getSlideInUpdateFunc<SpecialOSDText>(70, 105, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.4), "x 1 ",                     getSlideInUpdateFunc<SpecialOSDText>(50,  85, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.5), "x 5 ",                     getSlideInUpdateFunc<SpecialOSDText>(60,  95, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.6), "x 10",                     getSlideInUpdateFunc<SpecialOSDText>(70, 105, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.75), "TOTAL      " + QString::number(redGems + greenGems * 5 + blueGems * 10),
+                      getSlideInUpdateFunc<SpecialOSDText>(80, 115, 0.7), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+
+    int id;
+    id = createOverlayGraphics(440u, sf::Vector2f(3, 0.42), animationBank.value("PICKUP_GEM", nullptr), getSlideInUpdateFunc<SpecialOSDGraphics>(50,  85, 0.65));
+    specialOverlayGraphics.at(id)->anim->setColor({ 512, 0, 0 });
+
+    id = createOverlayGraphics(440u, sf::Vector2f(3, 0.52), animationBank.value("PICKUP_GEM", nullptr), getSlideInUpdateFunc<SpecialOSDGraphics>(60,  95, 0.65));
+    specialOverlayGraphics.at(id)->anim->setColor({ 0, 512, 0 });
+
+    id = createOverlayGraphics(440u, sf::Vector2f(3, 0.62), animationBank.value("PICKUP_GEM", nullptr), getSlideInUpdateFunc<SpecialOSDGraphics>(70, 105, 0.65));
+    specialOverlayGraphics.at(id)->anim->setColor({ 0, 0, 512 });
+
+}
+
+int PlayerOSD::createOverlayText(uint lifetime, sf::Vector2f position, const QString& text, std::function<void(SpecialOSDText&)> updateFunc,
+                                 FontAlign align, double vx, double vy, double s, double a) {
+    int id = specialOverlayTexts.insertAndGetID(position, api->makeString(text, NORMAL, align), updateFunc);
+
+    addTimer(lifetime, false, [this, id]() {
+        specialOverlayTexts.remove(id);
+    });
+
+    specialOverlayTexts.at(id)->text->setAnimation(true, vx, vy, s, a);
+
+    return id;
+}
+
+int PlayerOSD::createOverlayGraphics(uint lifetime, sf::Vector2f position, std::shared_ptr<GraphicResource> anim, std::function<void(SpecialOSDGraphics&)> updateFunc) {
+    int id = specialOverlayGraphics.insertAndGetID(position, nullptr, updateFunc);
+
+    addTimer(lifetime, false, [this, id]() {
+        specialOverlayGraphics.remove(id);
+    });
+
+    specialOverlayGraphics.at(id)->anim = std::make_shared<AnimationInstance>(this);
+    specialOverlayGraphics.at(id)->anim->setAnimation(anim);
+
+    return id;
+}
+
+template<typename T>
+std::function<void(T&)> PlayerOSD::getSlideInUpdateFunc(int startFrame, int endFrame, double finalX) {
+    return [startFrame, endFrame, finalX](auto& item) {
+        if (item.frame > startFrame && item.frame <= endFrame) {
+            item.position.x = finalX + std::pow((endFrame - item.frame) / 35.0, 2.0) * 0.6;
+        }
+    };
+}
+
+
+const QStringList PlayerOSD::levelStartStrings = {
+    "LETS ROCK",
+    "GET READY",
+    "KICK SHELL",
+    "GET MOVING",
+    "SHAKE YOUR TAIL",
+    "BUST A MOVE"
+};
