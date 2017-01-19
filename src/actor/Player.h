@@ -59,7 +59,7 @@ public:
     void consumeFood(const bool& isDrinkable);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);
     void setView(std::shared_ptr<GameView> view);
-    void setExiting();
+    void setExiting(ExitType e);
 
 #ifdef CARROT_DEBUG
 public slots:

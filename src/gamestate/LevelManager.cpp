@@ -686,7 +686,7 @@ void LevelManager::initLevelChange(ExitType e) {
 
     for (auto player : players) {
         if (player != nullptr) {
-            player->setExiting();
+            player->setExiting(e);
         }
     }
 

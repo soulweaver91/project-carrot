@@ -548,7 +548,8 @@ void Player::tickEvent() {
             case PC_AREA_EOL:
                 if (!levelExiting) {
                     playNonPositionalSound("PLAYER_JAZZ_EOL");
-                    api->initLevelChange(NEXT_NORMAL);
+                    api->initLevelChange(p[1] == 1 ? NEXT_WARP :
+                                         p[0] == 1 ? NEXT_BONUS : NEXT_NORMAL);
                 }
                 break;
             case PC_AREA_TEXT:
@@ -1090,6 +1091,16 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     score = o.score;
     foodCounter = o.foodCounter;
     currentWeapon = o.currentWeapon;
+
+    if (o.exitType == NEXT_WARP) {
+        playNonPositionalSound("COMMON_WARP_OUT");
+        isGravityAffected = false;
+        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {
+            isInvulnerable = false;
+            isGravityAffected = true;
+            controllable = true;
+        });
+    }
 }
 
 void Player::addScore(unsigned points) {
@@ -1112,16 +1123,29 @@ void Player::setView(std::shared_ptr<GameView> view) {
     assignedView = view;
 }
 
-void Player::setExiting() {
+void Player::setExiting(ExitType e) {
     levelExiting = true;
-    addTimer(285u, false, [this]() {
-        isFacingLeft = false;
-        setPlayerTransition(AnimState::TRANSITION_END_OF_LEVEL, false, true, false);
-        playNonPositionalSound("PLAYER_EOL_1");
-    });
-    addTimer(365u, false, [this]() {
-        playNonPositionalSound("PLAYER_EOL_2");
-    });
+    if (e == NEXT_WARP) {
+        addTimer(285u, false, [this]() {
+            isFacingLeft = false;
+            setPlayerTransition(AnimState::TRANSITION_WARP, false, true, false, [this]() {
+                isInvisible = true;
+            });
+            playNonPositionalSound("COMMON_WARP_IN");
+        });
+    } else {
+        addTimer(255u, false, [this]() {
+            isFacingLeft = false;
+            setPlayerTransition(AnimState::TRANSITION_END_OF_LEVEL, false, true, false, [this]() {
+                isInvisible = true;
+            });
+            playNonPositionalSound("PLAYER_EOL_1");
+        });
+        addTimer(335u, false, [this]() {
+            playNonPositionalSound("PLAYER_EOL_2");
+        });
+    }
+
     osd->initLevelCompletedOverlay(collectedGems[0], collectedGems[1], collectedGems[2], collectedGems[3]);
 }
 

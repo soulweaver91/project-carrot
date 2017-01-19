@@ -78,6 +78,7 @@ protected:
     bool isInvulnerable;
     bool isBlinking;
     bool isCollidable;
+    bool isInvisible;
     uint frozenFramesLeft;
     double elasticity;
     double friction;

@@ -15,7 +15,7 @@ CommonActor::CommonActor(std::shared_ptr<ActorAPI> gameRoot, double x, double y,
     : AnimationUser(gameRoot), api(gameRoot), maxHealth(1), health(1), posX(x), posY(y),
     speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
     canJump(false), canBeFrozen(true), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
-    isInvulnerable(false), isBlinking(false), isCollidable(true), frozenFramesLeft(0), elasticity(0.0),
+    isInvulnerable(false), isBlinking(false), isCollidable(true), isInvisible(false), frozenFramesLeft(0), elasticity(0.0),
     friction(api->getGravity() / 3), suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
     originTileX = static_cast<int>(x) / 32;
     originTileY = static_cast<int>(y) / 32;
@@ -29,6 +29,10 @@ CommonActor::~CommonActor() {
 void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
     auto canvas = view->getCanvas().lock();
     if (canvas == nullptr) {
+        return;
+    }
+
+    if (isInvisible) {
         return;
     }
 
