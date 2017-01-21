@@ -665,7 +665,7 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
     if (tile->destructType == DESTRUCT_WEAPON) {
         if (weapon == WEAPON_FREEZER && (animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
-            auto e = std::make_shared<FrozenBlock>(root->getActorAPI(), 32 * tx + 16.0, 32.0 * ty + 16.0);
+            auto e = std::make_shared<FrozenBlock>(ActorInstantiationDetails(root->getActorAPI(), { 32 * tx + 16.0, 32.0 * ty + 16.0 }));
             root->addActor(e);
 
             return true;

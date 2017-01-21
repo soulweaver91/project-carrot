@@ -16,7 +16,7 @@ enum PlatformType {
 
 class MovingPlatform : public SolidObject {
 public:
-    MovingPlatform(std::shared_ptr<ActorAPI> api, double x, double y, PlatformType type,
+    MovingPlatform(const ActorInstantiationDetails& initData, PlatformType type,
         quint16 length, qint16 speed, ushort sync, bool swing);
     ~MovingPlatform();
     void tickEvent() override;

@@ -20,9 +20,21 @@ class TileMap;
 class GameView;
 class Ammo;
 
+// Common parameters that each actor type needs to pass down to the CommonActor constructor.
+// TODO: Carry the wanted resource type within this struct (prerequisite for fixing a part of issue #46)
+struct ActorInstantiationDetails {
+    std::shared_ptr<ActorAPI> api;
+    CoordinatePair coords;
+
+    ActorInstantiationDetails(std::shared_ptr<ActorAPI> api, CoordinatePair coords = { 0.0, 0.0 })
+        : api(api), coords(coords) {
+
+    }
+};
+
 class CommonActor : public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
-    CommonActor(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, bool fromEventMap = false);
+    CommonActor(const ActorInstantiationDetails& initData, bool fromEventMap = false);
     ~CommonActor();
     virtual void drawUpdate(std::shared_ptr<GameView>& view);
     virtual void tickEvent();

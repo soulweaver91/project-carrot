@@ -11,8 +11,8 @@
 #include "../../struct/Constants.h"
 
 
-TurtleShell::TurtleShell(std::shared_ptr<ActorAPI> api, double x, double y, double initSpeedX,
-    double initSpeedY, bool fromEventMap) : CommonActor(api, x, y, fromEventMap) {
+TurtleShell::TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX,
+    double initSpeedY, bool fromEventMap) : CommonActor(initData, fromEventMap) {
     loadResources("Enemy/TurtleShell");
     setAnimation(AnimState::IDLE);
 

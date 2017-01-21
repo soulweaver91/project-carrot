@@ -1,8 +1,8 @@
 #include "FastFireCollectible.h"
 #include "../Player.h"
 
-FastFireCollectible::FastFireCollectible(std::shared_ptr<ActorAPI> api, double x, double y, bool fromEventMap)
-    : Collectible(api, x, y, fromEventMap) {
+FastFireCollectible::FastFireCollectible(const ActorInstantiationDetails& initData, bool fromEventMap)
+    : Collectible(initData, fromEventMap) {
     scoreValue = 200;
     setFacingDirection();
 

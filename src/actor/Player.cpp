@@ -19,7 +19,7 @@
 #include "weapon/AmmoToaster.h"
 #include "weapon/AmmoFreezer.h"
 
-Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveActor(api, x, y, false),
+Player::Player(const ActorInstantiationDetails& initData) : InteractiveActor(initData, false),
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), currentSpecialMove(SPECIAL_MOVE_NONE), isAttachedToPole(false), isActivelyPushing(false),
@@ -1278,14 +1278,15 @@ void Player::warpToPosition(const CoordinatePair& pos) {
     playSound("COMMON_WARP_IN");
 }
 
-template<typename T> std::shared_ptr<T> Player::fireWeapon(bool poweredUp) {
+template<typename T>
+std::shared_ptr<T> Player::fireWeapon(bool poweredUp) {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
     bool lookup = ((currentAnimation->getAnimationState() & AnimState::LOOKUP) > 0);
     auto animation = currentAnimation->getAnimation();
     int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
     int fire_y =  animation->hotspot.y - animation->gunspot.y;
 
-    auto newAmmo = std::make_shared<T>(api, weakPtr, posX + fire_x, posY - fire_y, speedX, isFacingLeft, lookup, poweredUp);
+    auto newAmmo = std::make_shared<T>(ActorInstantiationDetails(api, { posX + fire_x, posY - fire_y }), weakPtr, speedX, isFacingLeft, lookup, poweredUp);
     api->addActor(newAmmo);
     return newAmmo;
 }

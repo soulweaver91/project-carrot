@@ -5,8 +5,8 @@
 #include "../../struct/Constants.h"
 #include "Sucker.h"
 
-EnemySuckerFloat::EnemySuckerFloat(std::shared_ptr<ActorAPI> api, double x, double y)
-    : Enemy(api, x, y), phase(0.0), originX(x), originY(y) {
+EnemySuckerFloat::EnemySuckerFloat(const ActorInstantiationDetails& initData)
+    : Enemy(initData), phase(0.0), originX(posX), originY(posY) {
     isGravityAffected = false;
 
     loadResources("Enemy/SuckerFloat");
@@ -30,7 +30,7 @@ void EnemySuckerFloat::tickEvent() {
 
 bool EnemySuckerFloat::perish() {
     if (health == 0) {
-        api->addActor(std::make_shared<EnemySucker>(api, posX, posY, lastHitDir));
+        api->addActor(std::make_shared<EnemySucker>(ActorInstantiationDetails(api, { posX, posY }), lastHitDir));
         return CommonActor::perish();
     }
 

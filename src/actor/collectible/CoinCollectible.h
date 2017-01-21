@@ -11,7 +11,7 @@ enum CoinType {
 
 class CoinCollectible : public Collectible {
 public:
-    CoinCollectible(std::shared_ptr<ActorAPI> api, double x, double y, CoinType type, bool fromEventMap = true);
+    CoinCollectible(const ActorInstantiationDetails& initData, CoinType type, bool fromEventMap = true);
     virtual void collect(std::shared_ptr<Player> player) override;
 
 private:

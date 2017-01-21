@@ -2,9 +2,9 @@
 #include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/TileMap.h"
 
-AmmoFreezer::AmmoFreezer(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
+AmmoFreezer::AmmoFreezer(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy,
     double speed, bool firedLeft, bool firedUp, bool poweredUp)
-    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 70, poweredUp) {
+    : Ammo(initData, firedBy, firedLeft, firedUp, 70, poweredUp) {
     isGravityAffected = false;
     strength = 0;
     loadResources("Weapon/Freezer");

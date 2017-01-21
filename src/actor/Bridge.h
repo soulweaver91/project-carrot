@@ -21,7 +21,7 @@ enum DynamicBridgeType {
 
 class DynamicBridgePiece : public SolidObject {
 public:
-    DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, DynamicBridgeType type = BRIDGE_ROPE, uint idx = 0);
+    DynamicBridgePiece(const ActorInstantiationDetails& initData, DynamicBridgeType type = BRIDGE_ROPE, uint idx = 0);
     ~DynamicBridgePiece();
     bool deactivate(int x, int y, int dist) override;
     Hitbox getHitboxForParent();
@@ -32,7 +32,7 @@ private:
 
 class DynamicBridge : public CommonActor {
 public:
-    DynamicBridge(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, unsigned int width = 1,
+    DynamicBridge(const ActorInstantiationDetails& initData, unsigned int width = 1,
         DynamicBridgeType type = BRIDGE_ROPE, unsigned int toughness = 0);
     ~DynamicBridge();
     bool deactivate(int x, int y, int dist) override;

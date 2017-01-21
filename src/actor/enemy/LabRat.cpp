@@ -5,8 +5,8 @@
 #include "../../struct/Constants.h"
 #include "../Player.h"
 
-EnemyLabRat::EnemyLabRat(std::shared_ptr<ActorAPI> api, double x, double y)
-    : Enemy(api, x, y), canAttack(true), idling(false), canIdle(false) {
+EnemyLabRat::EnemyLabRat(const ActorInstantiationDetails& initData)
+    : Enemy(initData), canAttack(true), idling(false), canIdle(false) {
     loadResources("Enemy/LabRat");
     setAnimation(AnimState::WALK);
     speedX = 1;

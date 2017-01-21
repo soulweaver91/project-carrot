@@ -6,8 +6,8 @@ const uint CoinCollectible::coinValues[2] = {
     1000
 };
 
-CoinCollectible::CoinCollectible(std::shared_ptr<ActorAPI> api, double x, double y, CoinType type, bool fromEventMap)
-    : Collectible(api, x, y, fromEventMap), coinType(type) {
+CoinCollectible::CoinCollectible(const ActorInstantiationDetails& initData, CoinType type, bool fromEventMap)
+    : Collectible(initData, fromEventMap), coinType(type) {
     scoreValue = coinValues[(uint)type % 2];
     switch (coinType) {
         case COIN_GOLD:    AnimationUser::setAnimation("PICKUP_COIN_GOLD");   break;

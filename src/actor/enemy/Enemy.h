@@ -19,7 +19,7 @@ enum LastHitDirection {
 
 class Enemy : public CommonActor {
 public:
-    Enemy(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    Enemy(const ActorInstantiationDetails& initData);
     ~Enemy();
     virtual void tickEvent() override;
     virtual bool perish() override;

@@ -2,8 +2,8 @@
 
 #include "weapon/Ammo.h"
 
-PowerUpMonitor::PowerUpMonitor(std::shared_ptr<ActorAPI> api, double x, double y, WeaponType type) 
-    : SolidObject(api, x, y, true), type(type) {
+PowerUpMonitor::PowerUpMonitor(const ActorInstantiationDetails& initData, WeaponType type)
+    : SolidObject(initData, true), type(type) {
     loadResources("Object/PowerUpMonitor");
 
     setAnimation(AnimState::IDLE);

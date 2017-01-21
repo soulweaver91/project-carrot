@@ -2,8 +2,8 @@
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/TileMap.h"
 
-TriggerCrate::TriggerCrate(std::shared_ptr<ActorAPI> api, double x, double y, int triggerID)
-    : SolidObject(api, x, y, true), triggerID(triggerID) {
+TriggerCrate::TriggerCrate(const ActorInstantiationDetails& initData, int triggerID)
+    : SolidObject(initData, true), triggerID(triggerID) {
     loadResources("Object/TriggerCrate");
     setAnimation(AnimState::IDLE);
 }

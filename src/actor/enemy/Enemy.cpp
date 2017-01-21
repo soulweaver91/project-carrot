@@ -8,8 +8,8 @@
 #include "../collectible/FastFireCollectible.h"
 #include "../weapon/Ammo.h"
 
-Enemy::Enemy(std::shared_ptr<ActorAPI> api, double x, double y)
-    : CommonActor(api, x, y), hurtPlayer(true), isAttacking(false), lastHitDir(NONE) {
+Enemy::Enemy(const ActorInstantiationDetails& initData)
+    : CommonActor(initData), hurtPlayer(true), isAttacking(false), lastHitDir(NONE) {
 
 }
 
@@ -51,17 +51,17 @@ void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable
             int i = 0;
             switch (pair.first) {
                 case PC_CARROT:
-                    api->addActor(std::make_shared<CarrotCollectible>(api, posX, posY, false, false));
+                    api->addActor(std::make_shared<CarrotCollectible>(ActorInstantiationDetails(api, { posX, posY }), false, false));
                     break;
                 case PC_FAST_FIRE:
-                    api->addActor(std::make_shared<FastFireCollectible>(api, posX, posY, false));
+                    api->addActor(std::make_shared<FastFireCollectible>(ActorInstantiationDetails(api, { posX, posY }), false));
                     break;
                 case PC_GEM_BLUE:
                     i++;
                 case PC_GEM_GREEN:
                     i++;
                 case PC_GEM_RED:
-                    api->addActor(std::make_shared<GemCollectible>(api, posX, posY, (GemType)((int)GEM_RED + i), false));
+                    api->addActor(std::make_shared<GemCollectible>(ActorInstantiationDetails(api, { posX, posY }), (GemType)((int)GEM_RED + i), false));
                     break;
                 default:
                     break;

@@ -5,8 +5,8 @@
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 
-DynamicBridgePiece::DynamicBridgePiece(std::shared_ptr<ActorAPI> api, double x, double y, DynamicBridgeType type, uint idx)
-    : SolidObject(api, x, y, false) {
+DynamicBridgePiece::DynamicBridgePiece(const ActorInstantiationDetails& initData, DynamicBridgeType type, uint idx)
+    : SolidObject(initData, false) {
     canBeFrozen = false;
     loadResources("Object/BridgePiece");
 
@@ -49,9 +49,9 @@ void DynamicBridgePiece::tryStandardMovement() {
     // The bridge piece doesn't move by itself.
 }
 
-DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, unsigned int width,
+DynamicBridge::DynamicBridge(const ActorInstantiationDetails& initData, unsigned int width,
     DynamicBridgeType type, unsigned int toughness)
-    : CommonActor(api, x - 16.0, y - 16.0), originalY(y - 8.0), bridgeType(type), bridgeWidth(width),
+    : CommonActor(initData), originalY(posY - 8.0), bridgeType(type), bridgeWidth(width),
     heightFactor((16.0 - toughness) * bridgeWidth) {
     loadResources("Object/Bridge");
 
@@ -62,7 +62,7 @@ DynamicBridge::DynamicBridge(std::shared_ptr<ActorAPI> api, double x, double y, 
     auto& widthList = BRIDGE_PIECE_WIDTHS.value(bridgeType, { 16 });
     uint widthCovered = widthList[0] / 2;
     for (uint i = 0; (widthCovered <= width * 16) || (i * 16 < width); ++i) {
-        auto piece_n = std::make_shared<DynamicBridgePiece>(api, x + widthCovered - 16, y - 20, type, i);
+        auto piece_n = std::make_shared<DynamicBridgePiece>(ActorInstantiationDetails(api, { posX + widthCovered - 16, posY - 20 }), type, i);
         api->addActor(piece_n);
         bridgePieces << piece_n;
         widthCovered += (widthList[i % widthList.size()] + widthList[(i + 1) % widthList.size()]) / 2;

@@ -36,7 +36,7 @@ class Player : public QObject, public InteractiveActor, public RadialLightSource
     Q_OBJECT
 
 public:
-    Player(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    Player(const ActorInstantiationDetails& initData);
     ~Player();
     void processControlDownEvent(const ControlEvent& e) override;
     void processControlUpEvent(const ControlEvent& e) override;

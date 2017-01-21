@@ -8,7 +8,7 @@ class ActorAPI;
 
 class EnemySuckerFloat : public Enemy {
 public:
-    EnemySuckerFloat(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    EnemySuckerFloat(const ActorInstantiationDetails& initData);
     ~EnemySuckerFloat();
     void tickEvent() override;
     bool perish() override;

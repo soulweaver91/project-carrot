@@ -7,10 +7,10 @@
 #include "../../struct/Constants.h"
 #include "../weapon/Ammo.h"
 
-Collectible::Collectible(std::shared_ptr<ActorAPI> api, double x, double y, bool fromEventMap)
-    : CommonActor(api, x, y, fromEventMap), untouched(true), scoreValue(100) {
+Collectible::Collectible(const ActorInstantiationDetails& initData, bool fromEventMap)
+    : CommonActor(initData, fromEventMap), untouched(true), scoreValue(100) {
     canBeFrozen = false;
-    phase = ((x / 100.0) + (y / 100.0));
+    phase = ((posX / 100.0) + (posY / 100.0));
     elasticity = 0.6;
     loadResources("Object/Collectible");
 }

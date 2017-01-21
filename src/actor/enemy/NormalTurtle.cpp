@@ -5,8 +5,8 @@
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
 
-EnemyNormalTurtle::EnemyNormalTurtle(std::shared_ptr<ActorAPI> api, double x, double y)
-    : Enemy(api, x, y), isTurning(false), isWithdrawn(false) {
+EnemyNormalTurtle::EnemyNormalTurtle(const ActorInstantiationDetails& initData)
+    : Enemy(initData), isTurning(false), isWithdrawn(false) {
     loadResources("Enemy/Turtle");
     setAnimation(AnimState::WALK);
     speedX = 1;
@@ -48,7 +48,7 @@ void EnemyNormalTurtle::updateHitbox() {
 bool EnemyNormalTurtle::perish() {
     bool goingToPerish = (health == 0);
     if (goingToPerish) {
-        api->addActor(std::make_shared<TurtleShell>(api, posX, posY, speedX, -5.0, false));
+        api->addActor(std::make_shared<TurtleShell>(ActorInstantiationDetails(api, { posX, posY }), speedX, -5.0, false));
         Enemy::perish();
     }
 

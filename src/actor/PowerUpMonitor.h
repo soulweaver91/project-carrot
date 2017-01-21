@@ -9,7 +9,7 @@ class Player;
 
 class PowerUpMonitor : public SolidObject {
 public:
-    PowerUpMonitor(std::shared_ptr<ActorAPI> api, double x, double y, WeaponType type);
+    PowerUpMonitor(const ActorInstantiationDetails& initData, WeaponType type);
     ~PowerUpMonitor();
     void handleCollision(std::shared_ptr<CommonActor> other) override;
     bool perish() override;

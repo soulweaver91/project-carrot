@@ -9,7 +9,7 @@ class ActorAPI;
 
 class EnemyLabRat : public Enemy {
 public:
-    EnemyLabRat(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    EnemyLabRat(const ActorInstantiationDetails& initData);
     ~EnemyLabRat();
     void tickEvent() override;
     void attack();

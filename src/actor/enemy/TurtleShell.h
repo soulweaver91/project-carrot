@@ -6,7 +6,7 @@ class ActorAPI;
 
 class TurtleShell : public CommonActor {
 public:
-    TurtleShell(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, double initSpeedX = 0.0,
+    TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX = 0.0,
         double initSpeedY = 0.0, bool fromEventMap = false);
     ~TurtleShell();
     void tickEvent() override;

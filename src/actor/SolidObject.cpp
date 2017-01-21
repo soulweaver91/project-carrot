@@ -1,8 +1,8 @@
 #include "SolidObject.h"
 #include "../gamestate/ActorAPI.h"
 
-SolidObject::SolidObject(std::shared_ptr<ActorAPI> api, double x, double y, bool movable)
-    : CommonActor(api, x, y), movable(movable), isOneWay(false) {
+SolidObject::SolidObject(const ActorInstantiationDetails& initData, bool movable)
+    : CommonActor(initData), movable(movable), isOneWay(false) {
 }
 
 SolidObject::~SolidObject() {

@@ -13,7 +13,7 @@ enum SpringType {
 
 class Spring : public CommonActor {
 public:
-    Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType type, unsigned char orient);
+    Spring(const ActorInstantiationDetails& initData, SpringType type, unsigned char orient);
     ~Spring();
     void updateHitbox() override;
     sf::Vector2f activate();

@@ -178,7 +178,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                             break;
                         case PC_JAZZ_LEVEL_START:
                             if (root->getPlayer(0).lock() == nullptr) {
-                                auto defaultplayer = std::make_shared<Player>(root->getActorAPI(), 32.0 * x + 16.0, 32.0 * y + 16.0);
+                                auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { 32.0 * x + 16.0, 32.0 * y + 16.0 }));
                                 root->addPlayer(defaultplayer, 0);
                             }
                             break;

@@ -1,8 +1,9 @@
 #include "Lizard.h"
 
-EnemyLizard::EnemyLizard(std::shared_ptr<ActorAPI> api, double x, double y) : Enemy(api, x, y - 6.0) {
+EnemyLizard::EnemyLizard(const ActorInstantiationDetails& initData) : Enemy(initData) {
     loadResources("Enemy/Lizard");
     setAnimation(AnimState::WALK);
+    posY -= 6.0;
     speedX = 1.0;
 }
 

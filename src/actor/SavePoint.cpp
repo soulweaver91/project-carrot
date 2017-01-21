@@ -1,7 +1,7 @@
 #include "SavePoint.h"
 #include "../gamestate/ActorAPI.h"
 
-SavePoint::SavePoint(std::shared_ptr<ActorAPI> api, double x, double y) : CommonActor(api, x, y, true), activated(false) {
+SavePoint::SavePoint(const ActorInstantiationDetails& initData) : CommonActor(initData, true), activated(false) {
     canBeFrozen = false;
     loadResources("Object/SavePoint");
     AnimationUser::setAnimation("OBJECT_SAVEPOINT_CLOSED");
