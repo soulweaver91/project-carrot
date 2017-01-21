@@ -144,89 +144,92 @@ void EventMap::setTileParam(int x, int y, unsigned char idx, quint16 value) {
 
 void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
     QFile eventMapHandle(filename);
-    if (eventMapHandle.open(QIODevice::ReadOnly)) {
-        QByteArray eventMapData = qUncompress(eventMapHandle.readAll());
-        if (eventMapData.size() > 0) {
-            QDataStream eventMapStream(eventMapData);
-            QSet<PCEvent> encounteredEvents;
-            unsigned y = 0;
-            while (!eventMapStream.atEnd()) {
-                unsigned x = 0;
-                while (!eventMapStream.atEnd()) {
-                    // Read byte pairs associated with this tile
-                    quint16 eventID;
-                    eventMapStream >> eventID;
-                    if (eventID == 0xFFFF) {
-                        break;
+    if (!eventMapHandle.open(QIODevice::ReadOnly)) {
+        // TODO: opening failed for some reason
+        return;
+    }
+
+    QByteArray eventMapData = qUncompress(eventMapHandle.readAll());
+    eventMapHandle.close();
+
+    if (eventMapData.size() == 0) {
+        // TODO: uncompress fail, what do?
+        return;
+    }
+
+    QDataStream eventMapStream(eventMapData);
+    QSet<PCEvent> encounteredEvents;
+    unsigned y = 0;
+    while (!eventMapStream.atEnd()) {
+        unsigned x = 0;
+        while (!eventMapStream.atEnd()) {
+            // Read byte pairs associated with this tile
+            quint16 eventID;
+            eventMapStream >> eventID;
+            if (eventID == 0xFFFF) {
+                break;
+            }
+            quint8 eventFlags = 0;
+            QVector<quint16> eventParams(8);
+
+            encounteredEvents << (PCEvent)eventID;
+
+            if (layoutVersion > 3) {
+                eventMapStream >> eventFlags;
+                for (int i = 0; i < 8; ++i) {
+                    quint16 j;
+                    eventMapStream >> j;
+                    eventParams[i] = j;
+                }
+            }
+
+            switch (eventID) {
+                case PC_EMPTY:
+                    break;
+                case PC_JAZZ_LEVEL_START:
+                    if (root->getPlayer(0).lock() == nullptr) {
+                        auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { 32.0 * x + 16.0, 32.0 * y + 16.0 }));
+                        root->addPlayer(defaultplayer, 0);
                     }
-                    quint8 eventFlags = 0;
-                    QVector<quint16> eventParams(8);
-
-                    encounteredEvents << (PCEvent)eventID;
-
-                    if (layoutVersion > 3) {
-                        eventMapStream >> eventFlags;
-                        for (int i = 0; i < 8; ++i) {
-                            quint16 j;
-                            eventMapStream >> j;
-                            eventParams[i] = j;
+                    break;
+                case PC_MODIFIER_ONE_WAY:
+                case PC_MODIFIER_VINE:
+                case PC_MODIFIER_HOOK:
+                case PC_MODIFIER_HURT:
+                case PC_SCENERY_DESTRUCT:
+                case PC_SCENERY_BUTTSTOMP:
+                case PC_TRIGGER_AREA:
+                case PC_SCENERY_DESTRUCT_SPD:
+                case PC_SCENERY_COLLAPSE:
+                case PC_MODIFIER_H_POLE:
+                case PC_MODIFIER_V_POLE:
+                    {
+                        storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
+                        auto tiles = root->getGameTiles().lock();
+                        if (tiles != nullptr) {
+                            tiles->setTileEventFlag(x, y, static_cast<PCEvent>(eventID));
                         }
                     }
-
-                    switch (eventID) {
-                        case PC_EMPTY:
-                            break;
-                        case PC_JAZZ_LEVEL_START:
-                            if (root->getPlayer(0).lock() == nullptr) {
-                                auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { 32.0 * x + 16.0, 32.0 * y + 16.0 }));
-                                root->addPlayer(defaultplayer, 0);
-                            }
-                            break;
-                        case PC_MODIFIER_ONE_WAY:
-                        case PC_MODIFIER_VINE:
-                        case PC_MODIFIER_HOOK:
-                        case PC_MODIFIER_HURT:
-                        case PC_SCENERY_DESTRUCT:
-                        case PC_SCENERY_BUTTSTOMP:
-                        case PC_TRIGGER_AREA:
-                        case PC_SCENERY_DESTRUCT_SPD:
-                        case PC_SCENERY_COLLAPSE:
-                        case PC_MODIFIER_H_POLE:
-                        case PC_MODIFIER_V_POLE:
-                            {
-                                storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
-                                auto tiles = root->getGameTiles().lock();
-                                if (tiles != nullptr) {
-                                    tiles->setTileEventFlag(x, y, static_cast<PCEvent>(eventID));
-                                }
-                            }
-                            break;
-                        case PC_WARP_TARGET:
-                            addWarpTarget(eventParams.at(0), x, y);
-                            break;
-                        case PC_LIGHT_RESET:
-                            eventParams[0] = root->getDefaultLightingLevel();
-                            storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
-                            break;
-                        default:
-                            storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
-                            break;
-                    }
-                    x++;
-                }
-                y++;
+                    break;
+                case PC_WARP_TARGET:
+                    addWarpTarget(eventParams.at(0), x, y);
+                    break;
+                case PC_LIGHT_RESET:
+                    eventParams[0] = root->getDefaultLightingLevel();
+                    storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
+                    break;
+                default:
+                    storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
+                    break;
             }
-
-            for (auto event : encounteredEvents) {
-                resourceNames << spawner->getEventResourceName(event);
-            }
-        } else {
-            // TODO: uncompress fail, what do?
+            x++;
         }
-    } else {
-        // TODO: opening failed for some reason
+        y++;
     }
-    eventMapHandle.close();
+
+    for (auto event : encounteredEvents) {
+        resourceNames << spawner->getEventResourceName(event);
+    }
 }
 
 void EventMap::addWarpTarget(unsigned id, unsigned x, unsigned y) {
