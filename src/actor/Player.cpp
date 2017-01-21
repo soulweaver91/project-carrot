@@ -701,7 +701,7 @@ void Player::checkDestructibleTiles() {
         return;
     }
 
-    auto tileCollisionHitbox = Hitbox(currentHitbox).extend(2 + std::abs(speedX), 2 + std::abs(speedY));
+    auto tileCollisionHitbox = Hitbox(currentHitbox).extend(-0.5).extend(-speedX, -speedY, speedX, speedY);
 
     // Buttstomp/etc. tiles checking
     if (currentSpecialMove != SPECIAL_MOVE_NONE || isSugarRush) {
@@ -725,6 +725,8 @@ void Player::checkDestructibleTiles() {
         }
     }
 
+    tileCollisionHitbox = Hitbox(currentHitbox).extend(std::abs(speedX), std::abs(speedY)).extend(3.0);
+
     // Speed tiles checking
     if (std::abs(speedX) > EPSILON || std::abs(speedY) > EPSILON || isSugarRush) {
         uint destroyedCount = tiles->checkSpecialSpeedDestructible(
@@ -733,7 +735,7 @@ void Player::checkDestructibleTiles() {
         addScore(destroyedCount * 50);
     }
 
-    tiles->checkCollapseDestructible(tileCollisionHitbox.add(0, 2));
+    tiles->checkCollapseDestructible(tileCollisionHitbox);
 }
 
 void Player::checkSuspendedStatus() {
