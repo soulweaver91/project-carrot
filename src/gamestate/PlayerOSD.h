@@ -29,7 +29,7 @@ struct SpecialOSDText {
     sf::Vector2f position;
     std::shared_ptr<BitmapString> text;
     std::function<void(SpecialOSDText&)> updateFunc;
-    int frame;
+    uint frame;
 
     SpecialOSDText(sf::Vector2f p, std::shared_ptr<BitmapString> t, std::function<void(SpecialOSDText&)> cb) : frame(0) {
         position = p;
@@ -43,7 +43,7 @@ struct SpecialOSDGraphics {
     sf::Vector2f position;
     std::shared_ptr<AnimationInstance> anim;
     std::function<void(SpecialOSDGraphics&)> updateFunc;
-    int frame;
+    uint frame;
 
     SpecialOSDGraphics(sf::Vector2f p, std::shared_ptr<AnimationInstance> a, std::function<void(SpecialOSDGraphics&)> cb) : frame(0) {
         position = p;
@@ -108,12 +108,11 @@ private:
                           FontAlign align = FONT_ALIGN_CENTER, double vx = 0.0, double vy = 0.0, double s = 0.0, double a = 0.0);
     int createOverlayGraphics(uint lifetime, sf::Vector2f position, std::shared_ptr<GraphicResource> anim, std::function<void(SpecialOSDGraphics&)> updateFunc);
 
-    bool specialOverlay;
     SequentialIDList<SpecialOSDText> specialOverlayTexts;
     SequentialIDList<SpecialOSDGraphics> specialOverlayGraphics;
 
     template<typename T>
-    std::function<void(T&)> getSlideInUpdateFunc(int startFrame, int endFrame, double finalX);
+    std::function<void(T&)> getSlideInUpdateFunc(uint startFrame, uint endFrame, double finalX);
 
     static const QStringList levelStartStrings;
 };

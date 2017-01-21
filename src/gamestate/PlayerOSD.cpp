@@ -286,7 +286,7 @@ void PlayerOSD::setLevelText(int idx) {
 }
 
 void PlayerOSD::initLevelStartOverlay() {
-    auto id = createOverlayText(350u, sf::Vector2f(0.5, 0.48), levelStartStrings.at(qrand() % levelStartStrings.length()), [](SpecialOSDText& text) {
+    createOverlayText(350u, sf::Vector2f(0.5, 0.48), levelStartStrings.at(qrand() % levelStartStrings.length()), [](SpecialOSDText& text) {
         if (text.frame >= 250u) {
             text.position.x = 0.5 - std::pow((text.frame - 250u) / 100.0, 2.0) * 0.6;
         }
@@ -295,12 +295,12 @@ void PlayerOSD::initLevelStartOverlay() {
 
 void PlayerOSD::initLevelCompletedOverlay(uint redGems, uint greenGems, uint blueGems, uint) {
     createOverlayText(440u, sf::Vector2f(3, 0.1), "LEVEL COMPLETE", getSlideInUpdateFunc<SpecialOSDText>(0, 35, 0.5), FONT_ALIGN_CENTER, 0, 1, 0.05, 0.5);
-    createOverlayText(440u, sf::Vector2f(3, 0.4), QString::number(redGems),   getSlideInUpdateFunc<SpecialOSDText>(50,  85, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
-    createOverlayText(440u, sf::Vector2f(3, 0.5), QString::number(greenGems), getSlideInUpdateFunc<SpecialOSDText>(60,  95, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
-    createOverlayText(440u, sf::Vector2f(3, 0.6), QString::number(blueGems),  getSlideInUpdateFunc<SpecialOSDText>(70, 105, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
-    createOverlayText(440u, sf::Vector2f(3, 0.4), "x 1 ",                     getSlideInUpdateFunc<SpecialOSDText>(50,  85, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
-    createOverlayText(440u, sf::Vector2f(3, 0.5), "x 5 ",                     getSlideInUpdateFunc<SpecialOSDText>(60,  95, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
-    createOverlayText(440u, sf::Vector2f(3, 0.6), "x 10",                     getSlideInUpdateFunc<SpecialOSDText>(70, 105, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.4), QString::number(redGems),   getSlideInUpdateFunc<SpecialOSDText>(50u,  85u, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.5), QString::number(greenGems), getSlideInUpdateFunc<SpecialOSDText>(60u,  95u, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.6), QString::number(blueGems),  getSlideInUpdateFunc<SpecialOSDText>(70u, 105u, 0.6), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.4), "x 1 ",                     getSlideInUpdateFunc<SpecialOSDText>(50u,  85u, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.5), "x 5 ",                     getSlideInUpdateFunc<SpecialOSDText>(60u,  95u, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
+    createOverlayText(440u, sf::Vector2f(3, 0.6), "x 10",                     getSlideInUpdateFunc<SpecialOSDText>(70u, 105u, 0.7), FONT_ALIGN_LEFT,  0, 1, 0.05, 0.5);
     createOverlayText(440u, sf::Vector2f(3, 0.75), "TOTAL      " + QString::number(redGems + greenGems * 5 + blueGems * 10),
                       getSlideInUpdateFunc<SpecialOSDText>(80, 115, 0.7), FONT_ALIGN_RIGHT, 0, 1, 0.05, 0.5);
 
@@ -343,7 +343,7 @@ int PlayerOSD::createOverlayGraphics(uint lifetime, sf::Vector2f position, std::
 }
 
 template<typename T>
-std::function<void(T&)> PlayerOSD::getSlideInUpdateFunc(int startFrame, int endFrame, double finalX) {
+std::function<void(T&)> PlayerOSD::getSlideInUpdateFunc(uint startFrame, uint endFrame, double finalX) {
     return [startFrame, endFrame, finalX](auto& item) {
         if (item.frame > startFrame && item.frame <= endFrame) {
             item.position.x = finalX + std::pow((endFrame - item.frame) / 35.0, 2.0) * 0.6;
