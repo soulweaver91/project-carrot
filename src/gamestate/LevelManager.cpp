@@ -11,7 +11,7 @@
 #include "ActorAPI.h"
 #include "EventSpawner.h"
 #include "../sound/SoundSystem.h"
-#include "../actor/LightSource.h"
+#include "../actor/lighting/LightSource.h"
 #include "../menu/InGameMenuRoot.h"
 #include "../menu/ConfirmationMenu.h"
 #ifdef CARROT_DEBUG

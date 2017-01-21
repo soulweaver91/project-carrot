@@ -10,7 +10,7 @@ HEADERS += ./src/EngineState.h \
     ./src/actor/BonusWarp.h \
     ./src/actor/FrozenBlock.h \
     ./src/actor/InteractiveActor.h \
-    ./src/actor/LightSource.h \
+    ./src/actor/lighting/LightSource.h \
     ./src/actor/MovingPlatform.h \
     ./src/actor/PowerUpMonitor.h \
     ./src/actor/Bridge.h \
@@ -99,7 +99,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/BonusWarp.cpp \
     ./src/actor/FrozenBlock.cpp \
     ./src/actor/InteractiveActor.cpp \
-    ./src/actor/LightSource.cpp \
+    ./src/actor/lighting/LightSource.cpp \
     ./src/actor/MovingPlatform.cpp \
     ./src/actor/PowerUpMonitor.cpp \
     ./src/actor/Bridge.cpp \
