@@ -81,8 +81,11 @@ void TurtleShell::tickEvent() {
 
                 if (std::abs(speedX) > std::abs(specializedPtr->speedX)) {
                     // Handle this only in the faster of the two.
-                    posX = specializedPtr->posX + (speedX > 0 ? 1 : -1) * (currentHitbox.right - currentHitbox.left);
-                    speedX *= -1;
+                    posX = specializedPtr->posX + (speedX > 0 ? -1 : 1) * (currentGraphicState.dimensions.x + 1);
+                    double totalSpeed = std::abs(speedX) + std::abs(specializedPtr->speedX);
+
+                    specializedPtr->speedX = totalSpeed / 2 * (speedX > 0 ? 1 : -1);
+                    speedX = totalSpeed / 2 * (speedX > 0 ? -1 : 1);
 
                     specializedPtr->decreaseHealth(1);
                     playSound("ENEMY_TURTLE_SHELL_IMPACT_SHELL");
