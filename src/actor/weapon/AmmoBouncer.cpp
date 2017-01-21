@@ -3,9 +3,9 @@
 #include "../../gamestate/ActorAPI.h"
 #include "../../gamestate/TileMap.h"
 
-AmmoBouncer::AmmoBouncer(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
+AmmoBouncer::AmmoBouncer(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy,
     double speed, bool firedLeft, bool firedUp, bool poweredUp)
-    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 140, poweredUp) {
+    : Ammo(initData, firedBy, firedLeft, firedUp, 140, poweredUp) {
     elasticity = 0.9;
     loadResources("Weapon/Bouncer");
     if (firedUp) {

@@ -3,8 +3,8 @@
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/EventMap.h"
 
-BonusWarp::BonusWarp(std::shared_ptr<ActorAPI> api, double x, double y, const quint16 params[8])
-: CommonActor(api, x, y, true) {
+BonusWarp::BonusWarp(const ActorInstantiationDetails& initData, const quint16 params[8])
+: CommonActor(initData, true) {
     canBeFrozen = false;
     std::copy_n(params, 8, eventParams);
     loadResources("Object/BonusWarp");
@@ -41,6 +41,6 @@ const CoordinatePair BonusWarp::getWarpTarget() {
     return events->getWarpTarget(eventParams[0]);
 }
 
-void BonusWarp::getParams(quint16 (&params)[8]) {
-    std::copy_n(eventParams, 8, params);
+quint16 BonusWarp::getCost() {
+    return eventParams[3];
 }

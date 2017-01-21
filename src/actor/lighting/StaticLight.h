@@ -6,6 +6,6 @@
 
 class StaticLight : public CommonActor, public RadialLightSource {
 public:
-    StaticLight(std::shared_ptr<ActorAPI> api, double x, double y, quint16 alpha);
+    StaticLight(const ActorInstantiationDetails& initData, quint16 alpha);
     ~StaticLight();
 };

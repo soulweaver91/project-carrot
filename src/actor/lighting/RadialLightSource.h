@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../struct/CoordinatePair.h"
-#include "../LightSource.h"
+#include "LightSource.h"
 
 #include <memory>
 #include <SFML/Graphics.hpp>

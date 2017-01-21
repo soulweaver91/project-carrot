@@ -4,8 +4,8 @@
 #include "../../gamestate/ActorAPI.h"
 #include "../../struct/Constants.h"
 
-EnemySucker::EnemySucker(std::shared_ptr<ActorAPI> api, double x, double y, LastHitDirection dir)
-    : Enemy(api, x, y), cycle(0) {
+EnemySucker::EnemySucker(const ActorInstantiationDetails& initData, LastHitDirection dir)
+    : Enemy(initData), cycle(0) {
     loadResources("Enemy/Sucker");
     maxHealth = 4;
     setAnimation(AnimState::WALK);

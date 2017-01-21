@@ -9,7 +9,7 @@ class ActorAPI;
 
 class EnemyNormalTurtle : public Enemy {
 public:
-    EnemyNormalTurtle(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    EnemyNormalTurtle(const ActorInstantiationDetails& initData);
     ~EnemyNormalTurtle();
     void tickEvent() override;
     void updateHitbox() override;

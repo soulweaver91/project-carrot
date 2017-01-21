@@ -8,7 +8,7 @@ class ActorAPI;
 
 class FrozenBlock : public CommonActor {
 public:
-    FrozenBlock(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    FrozenBlock(const ActorInstantiationDetails& initData);
     ~FrozenBlock();
     bool perish() override;
 

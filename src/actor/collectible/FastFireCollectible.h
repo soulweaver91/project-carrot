@@ -6,6 +6,6 @@ class Player;
 
 class FastFireCollectible : public Collectible {
 public:
-    FastFireCollectible(std::shared_ptr<ActorAPI> api, double x, double y, bool fromEventMap = true);
+    FastFireCollectible(const ActorInstantiationDetails& initData, bool fromEventMap = true);
     virtual void collect(std::shared_ptr<Player> player) override;
 };

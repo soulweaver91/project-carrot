@@ -8,10 +8,10 @@
 
 #define BASE_CYCLE_FRAMES 700
 
-MovingPlatform::MovingPlatform(std::shared_ptr<ActorAPI> api, double x, double y,
+MovingPlatform::MovingPlatform(const ActorInstantiationDetails& initData,
     PlatformType type, quint16 length, qint16 speed, ushort sync, bool swing)
-    : SolidObject(api, x, y), type(type), speed(speed), length(length), phase(0.0),
-    originX(x), originY(y), isSwing(swing) {
+    : SolidObject(initData), type(type), speed(speed), length(length), phase(0.0),
+    originX(posX), originY(posY), isSwing(swing) {
     canBeFrozen = false;
     loadResources("Object/MovingPlatform");
     isGravityAffected = false;

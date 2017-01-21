@@ -4,7 +4,7 @@
 
 class InteractiveActor : public CommonActor {
 public:
-    InteractiveActor(std::shared_ptr<ActorAPI> api, double x, double y, bool fromEventMap);
+    InteractiveActor(const ActorInstantiationDetails& initData, bool fromEventMap);
     virtual void processControlDownEvent(const ControlEvent& e);
     virtual void processControlUpEvent(const ControlEvent& e);
     virtual void processAllControlHeldEvents(const QMap<Control, ControlState>& e);

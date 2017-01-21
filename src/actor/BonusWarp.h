@@ -7,10 +7,10 @@ class ActorAPI;
 
 class BonusWarp : public CommonActor {
 public:
-    BonusWarp(std::shared_ptr<ActorAPI> api, double x, double y, const quint16 params[8]);
+    BonusWarp(const ActorInstantiationDetails& initData, const quint16 params[8]);
     ~BonusWarp();
     const CoordinatePair getWarpTarget();
-    void getParams(quint16 (&params)[8]);
+    quint16 getCost();
 
 private:
     quint16 eventParams[8];

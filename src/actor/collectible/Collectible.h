@@ -10,7 +10,7 @@ class Player;
 
 class Collectible : public CommonActor {
 public:
-    Collectible(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, bool fromEventMap = true);
+    Collectible(const ActorInstantiationDetails& initData, bool fromEventMap = true);
     ~Collectible();
     void tickEvent() override;
     void drawUpdate(std::shared_ptr<GameView>& view) override;

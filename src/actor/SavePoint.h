@@ -8,7 +8,7 @@ class ActorAPI;
 
 class SavePoint : public CommonActor {
 public:
-    SavePoint(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0);
+    SavePoint(const ActorInstantiationDetails& initData);
     ~SavePoint();
     void tickEvent() override;
     void activateSavePoint();

@@ -6,9 +6,9 @@
 #include "../PushBox.h"
 #include "../../gamestate/ActorAPI.h"
 
-Ammo::Ammo(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y, bool firedLeft,
+Ammo::Ammo(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy, bool firedLeft,
     bool firedUp, int lifeLength, bool poweredUp)
-    : CommonActor(api, x, y, false), poweredUp(poweredUp), strength(1), owner(firedBy), framesLeft(lifeLength),
+    : CommonActor(initData, false), poweredUp(poweredUp), strength(1), owner(firedBy), framesLeft(lifeLength),
     firedUp(firedUp) {
     canBeFrozen = false;
     isFacingLeft = firedLeft;

@@ -308,9 +308,6 @@
     <ClCompile Include="src\actor\enemy\LabRat.cpp">
       <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="src\actor\LightSource.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="src\actor\lighting\RadialLightSource.cpp">
       <Filter>Source Files\Actor\Lighting</Filter>
     </ClCompile>
@@ -355,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="src\menu\ConfirmationMenu.cpp">
       <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\lighting\LightSource.cpp">
+      <Filter>Source Files\Actor\Lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -576,9 +576,6 @@
     <ClInclude Include="src\actor\lighting\RadialLightSource.h">
       <Filter>Header Files\Actor headers\Light source headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\actor\LightSource.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\actor\lighting\StaticLight.h">
       <Filter>Header Files\Actor headers\Light source headers</Filter>
     </ClInclude>
@@ -623,6 +620,9 @@
     </ClInclude>
     <ClInclude Include="src\struct\SequentialIDList.h">
       <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\lighting\LightSource.h">
+      <Filter>Header Files\Actor headers\Light source headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

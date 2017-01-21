@@ -1,7 +1,7 @@
 #include "InteractiveActor.h"
 
-InteractiveActor::InteractiveActor(std::shared_ptr<ActorAPI> api, double x, double y, bool fromEventMap)
-    : CommonActor(api, x, y, fromEventMap), controllable(true) {
+InteractiveActor::InteractiveActor(const ActorInstantiationDetails& initData, bool fromEventMap)
+    : CommonActor(initData, fromEventMap), controllable(true) {
 }
 
 void InteractiveActor::processControlDownEvent(const ControlEvent&) {

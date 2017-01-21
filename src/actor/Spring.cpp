@@ -2,15 +2,15 @@
 #include "../gamestate/ActorAPI.h"
 #include "../gamestate/TileMap.h"
 
-Spring::Spring(std::shared_ptr<ActorAPI> api, double x, double y, SpringType type, unsigned char orient) :
-    CommonActor(api, x, y, false), orientation(orient) {
+Spring::Spring(const ActorInstantiationDetails& initData, SpringType type, unsigned char orient) :
+    CommonActor(initData, false), orientation(orient) {
     loadResources("Object/Spring");
 
-    CoordinatePair tileCorner = { (int)(x / 32) * 32.0, (int)(y / 32) * 32.0 };
+    CoordinatePair tileCorner = { (int)(posX / 32) * 32.0, (int)(posY / 32) * 32.0 };
     if (orientation == 5) {
         // JJ2 horizontal springs held no data about which way they were facing.
         // For compatibility, the level converter sets their orientation to 5, which is interpreted here.
-        orientation = api->getGameTiles().lock()->isTileEmpty(Hitbox(x + 16, y - 5, x + 20, y + 5), false) ? 1 : 3;
+        orientation = api->getGameTiles().lock()->isTileEmpty(Hitbox(posX + 16, posY - 5, posX + 20, posY + 5), false) ? 1 : 3;
     }
 
     int orientationBit = 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../struct/CoordinatePair.h"
+#include "../../struct/CoordinatePair.h"
 
 #include <memory>
 #include <SFML/Graphics.hpp>

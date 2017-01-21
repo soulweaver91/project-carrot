@@ -2,8 +2,8 @@
 #include "../Player.h"
 #include "../../gamestate/GameView.h"
 
-AmmoCollectible::AmmoCollectible(std::shared_ptr<ActorAPI> api, double x, double y, WeaponType type, bool fromEventMap)
-: Collectible(api, x, y, fromEventMap), weaponType(type) {
+AmmoCollectible::AmmoCollectible(const ActorInstantiationDetails& initData, WeaponType type, bool fromEventMap)
+: Collectible(initData, fromEventMap), weaponType(type) {
     scoreValue = 100;
 
     QString spriteName = "";

@@ -6,7 +6,7 @@
 
 class PulsatingLight : public CommonActor, public RadialLightSource {
 public:
-    PulsatingLight(std::shared_ptr<ActorAPI> api, double x, double y, quint16 alpha, quint16 speed, quint16 sync);
+    PulsatingLight(const ActorInstantiationDetails& initData, quint16 alpha, quint16 speed, quint16 sync);
     ~PulsatingLight();
     void tickEvent() override;
 

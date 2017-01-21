@@ -11,7 +11,7 @@
 #include "ActorAPI.h"
 #include "EventSpawner.h"
 #include "../sound/SoundSystem.h"
-#include "../actor/LightSource.h"
+#include "../actor/lighting/LightSource.h"
 #include "../menu/InGameMenuRoot.h"
 #include "../menu/ConfirmationMenu.h"
 #ifdef CARROT_DEBUG
@@ -143,7 +143,7 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
     gameTiles->saveInitialSpriteLayer();
 
     if (players[0] == nullptr) {
-        auto defaultplayer = std::make_shared<Player>(api, 320.0, 32.0);
+        auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(api, { 320.0, 32.0 }));
         addPlayer(defaultplayer, 0);
     }
 

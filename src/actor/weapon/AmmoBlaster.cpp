@@ -3,9 +3,9 @@
 #include "../../struct/Constants.h"
 #include "../../gamestate/ActorAPI.h"
 
-AmmoBlaster::AmmoBlaster(std::shared_ptr<ActorAPI> api, std::weak_ptr<Player> firedBy, double x, double y,
+AmmoBlaster::AmmoBlaster(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy,
     double speed, bool firedLeft, bool firedUp, bool poweredUp)
-    : Ammo(api, firedBy, x, y, firedLeft, firedUp, 24, poweredUp) {
+    : Ammo(initData, firedBy, firedLeft, firedUp, 24, poweredUp) {
     loadResources("Weapon/Blaster");
     if (firedUp) {
         speedY = -8;

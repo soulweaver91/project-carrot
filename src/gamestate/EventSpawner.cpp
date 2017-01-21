@@ -148,7 +148,10 @@ template<typename T, typename... P>
 std::shared_ptr<CommonActor> EventSpawner::createCommonActorEvent(int x, int y, P... params) {
     auto apiPtr = api.lock();
     if (apiPtr != nullptr) {
-        return std::make_shared<T>(apiPtr, 32.0 * x + 16.0, 32.0 * y + 16.0, *&params...);
+        return std::make_shared<T>(ActorInstantiationDetails(
+            apiPtr,
+            { 32.0 * x + 16.0, 32.0 * y + 16.0 }
+        ), *&params...);
     }
 
     return nullptr;

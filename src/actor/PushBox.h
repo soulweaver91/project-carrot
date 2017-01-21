@@ -10,6 +10,6 @@ class ActorAPI;
 
 class PushBox : public SolidObject {
 public:
-    PushBox(std::shared_ptr<ActorAPI> api, double x = 0.0, double y = 0.0, int type = 0);
+    PushBox(const ActorInstantiationDetails& initData, int type = 0);
     ~PushBox();
 };

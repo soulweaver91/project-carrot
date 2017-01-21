@@ -1,8 +1,8 @@
 #include "CarrotCollectible.h"
 #include "../Player.h"
 
-CarrotCollectible::CarrotCollectible(std::shared_ptr<ActorAPI> api, double x, double y, bool maxCarrot, bool fromEventMap)
-    : Collectible(api, x, y, fromEventMap), maxCarrot(maxCarrot) {
+CarrotCollectible::CarrotCollectible(const ActorInstantiationDetails& initData, bool maxCarrot, bool fromEventMap)
+    : Collectible(initData, fromEventMap), maxCarrot(maxCarrot) {
     setFacingDirection();
 
     if (maxCarrot) {
