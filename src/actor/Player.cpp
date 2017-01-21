@@ -675,7 +675,7 @@ void Player::checkEndOfSpecialMoves() {
     }
 
     // Uppercut
-    if (currentSpecialMove == SPECIAL_MOVE_UPPERCUT && ((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
+    if (currentSpecialMove == SPECIAL_MOVE_UPPERCUT && !inTransition && ((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
         endDamagingMove();
         setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
     }
