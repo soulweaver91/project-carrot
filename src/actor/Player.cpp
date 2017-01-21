@@ -22,7 +22,7 @@
 Player::Player(std::shared_ptr<ActorAPI> api, double x, double y) : InteractiveActor(api, x, y, false),
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
-    weaponCooldown(0), isUsingDamagingMove(false), isAttachedToPole(false), isActivelyPushing(false),
+    weaponCooldown(0), currentSpecialMove(SPECIAL_MOVE_NONE), isAttachedToPole(false), isActivelyPushing(false),
     cameraShiftFramesCount(0), copterFramesLeft(0), levelExiting(false), toasterAmmoSubticks(10), isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
 
@@ -101,9 +101,9 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                     internalForceY = 0;
                     externalForceY = 0;
                     isGravityAffected = false;
-                    isUsingDamagingMove = true;
+                    currentSpecialMove = SPECIAL_MOVE_BUTTSTOMP;
                     setAnimation(AnimState::BUTTSTOMP);
-                    setPlayerTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, false, [this]() {
+                    setPlayerTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, SPECIAL_MOVE_BUTTSTOMP, [this]() {
                         speedY = 9;
                         setAnimation(AnimState::BUTTSTOMP);
                         playSound("PLAYER_BUTTSTOMP", 1.0f, 0.0f, 0.8f);
@@ -143,11 +143,11 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                 if ((currentState & AnimState::CROUCH) > 0) {
                     controllable = false;
                     setAnimation(AnimState::UPPERCUT);
-                    setPlayerTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, true, [this]() {
+                    setPlayerTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, SPECIAL_MOVE_UPPERCUT, [this]() {
                         externalForceY = 1.5;
                         speedY = -2;
                         canJump = false;
-                        setPlayerTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, true);
+                        setPlayerTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, SPECIAL_MOVE_UPPERCUT);
                     });
                 } else {
                     if (speedY > 0 && !canJump) {
@@ -225,13 +225,13 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
             moveInstantly({ 0, -5 }, false, true);
             canJump = true;
         }
-        if (canJump && ((currentState & AnimState::UPPERCUT) == 0) && !e.contains(controls.downButton)) {
+        if (canJump && currentSpecialMove == SPECIAL_MOVE_NONE && !e.contains(controls.downButton)) {
             internalForceY = 1.2;
             speedY = -3 - std::max(0.0, (std::abs(speedX) - 4.0) * 0.3);
             canJump = false;
             setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
             playSound("COMMON_JUMP");
-            carryingObject = std::weak_ptr<MovingPlatform>();
+            carryingObject.reset();
         }
     } else {
         if (internalForceY > 0) {
@@ -311,402 +311,26 @@ void Player::processControlHeldEvent(const ControlEvent& e) {
 }
 
 void Player::tickEvent() {
-    // Initialize these ASAP
-    if (osd == nullptr) {
-        osd = std::make_unique<PlayerOSD>(api, std::dynamic_pointer_cast<Player>(shared_from_this()));
-        osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
-        osd->setAmmo(ammo[currentWeapon]);
-        osd->setLives(lives);
-        osd->setScore(score);
-        osd->setHealth(health);
-    }
-
-    auto tiles = api->getGameTiles().lock();
-    AnimStateT currentState = currentAnimation->getAnimationState();
-
-    if (!carryingObject.expired()) {
-        if (std::abs(speedY) > EPSILON || !controllable || !isGravityAffected) {
-            carryingObject = std::weak_ptr<MovingPlatform>();
-        } else {
-            auto platform = carryingObject.lock();
-            CoordinatePair delta = platform->getLocationDelta() - CoordinatePair(0.0, 1.0);
-
-            // TODO: disregard the carrying object itself in this collision check to
-            // eliminate the need of the correction pixel removed from the delta
-            // and to make the ride even smoother (right now the pixel gap is clearly
-            // visible when platforms go down vertically)
-            if (
-                !moveInstantly(delta, false) &&
-                !moveInstantly({ 0.0, delta.y }, false)
-            ) {
-                carryingObject = std::weak_ptr<MovingPlatform>();
-            }
-        }
-    }
+    verifyOSDInitialized();
+    followCarryingPlatform();
 
     double lastX = posX;
     CommonActor::tickEvent();
+    updateSpeedBasedAnimation(lastX);
+    updateCameraPosition();
 
-    if (controllable) {
-        AnimStateT newState;
-        if (canJump && isActivelyPushing && std::abs(posX - lastX - speedX) > 0.1 && std::abs(externalForceX) < EPSILON && (isFacingLeft ^ (speedX > 0))) {
-            newState = AnimState::PUSH;
-        } else {
+    pushSolidObjects();
+    checkSuspendedStatus();
+    checkDestructibleTiles();
+    checkEndOfSpecialMoves();
 
-            // determine current animation last bits from speeds
-            // it's okay to call setAnimation on every tick because it doesn't do
-            // anything if the animation is the same as it was earlier
+    handleAreaEvents();
+    handleActorCollisions();
 
-            // only certain ones don't need to be preserved from earlier state, others should be set as expected
-            int composite = currentAnimation->getAnimationState() & 0xFFFFBFE0;
-            if (std::abs(speedX) > 3 + EPSILON) {
-                // shift-running, speed is more than 3px/frame
-                composite += 3;
-            } else if (std::abs(speedX) > 1) {
-                // running, speed is between 1px and 3px/frame
-                composite += 2;
-            } else if (std::abs(speedX) > EPSILON) {
-                // walking, speed is less than 1px/frame (mostly a transition zone)
-                composite += 2;
-            }
-
-            if (suspendType != SuspendType::SUSPEND_NONE) {
-                composite += 12;
-            } else {
-                if (canJump) {
-                    // grounded, no vertical speed
-                } else if (speedY < -EPSILON) {
-                    // jumping, ver. speed is negative
-                    composite += 4;
-                } else {
-                    // falling, ver. speed is positive
-                    composite += 8;
-                }
-            }
-
-            newState = AnimStateT(composite);
-        }
-        setAnimation(newState);
-    }
-    
-    currentState = currentAnimation->getAnimationState();
-    double gravity = (isGravityAffected ? api->getGravity() : 0);
-
-    // Check for pushing
-    if (canJump && controllable && isActivelyPushing && std::abs(speedX) > EPSILON) {
-        std::weak_ptr<SolidObject> object;
-        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair((speedX < 0) ? -2.0 : 2.0, 0.0), false, shared_from_this(), object))) {
-            auto objectPtr = object.lock();
-
-            if (objectPtr != nullptr) {
-                objectPtr->push(speedX < 0);
-            }
-        }
-    }
-
-    if (tiles != nullptr) {
-        // Check if hitting a vine
-        SuspendType state = tiles->getPosSuspendState(posX, posY - 5);
-
-        if (state != SuspendType::SUSPEND_NONE) {
-            suspendType = state;
-            isGravityAffected = false;
-
-            if (speedY > 0 && state == SuspendType::SUSPEND_VINE) {
-                playSound("PLAYER_VINE_ATTACH");
-            }
-
-            speedY = 0;
-            externalForceY = 0;
-
-            if (state == SuspendType::SUSPEND_HOOK) {
-                speedX = 0;
-            }
-
-            // move downwards until we're on the standard height
-            while (tiles->getPosSuspendState(posX, posY - 5) != SuspendType::SUSPEND_NONE) {
-                moveInstantly({ 0, 1 }, false, true);
-            }
-            moveInstantly({ 0, -1 }, false, true);
-        } else {
-            suspendType = SuspendType::SUSPEND_NONE;
-            if ((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0 && !isAttachedToPole) {
-                isGravityAffected = true;
-            }
-        }
-
-        auto tileCollisionHitbox = Hitbox(currentHitbox).extend(2 + std::abs(speedX), 2 + std::abs(speedY));
-
-        // Buttstomp/etc. tiles checking
-        if (isUsingDamagingMove || isSugarRush) {
-            uint destroyedCount = tiles->checkSpecialDestructible(tileCollisionHitbox);
-            addScore(destroyedCount * 50);
-
-            std::weak_ptr<SolidObject> object;
-            if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
-                {
-                    auto collider = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
-                    if (collider != nullptr) {
-                        collider->decreaseHealth(1);
-                    }
-                }
-                {
-                    auto collider = std::dynamic_pointer_cast<PowerUpMonitor>(object.lock());
-                    if (collider != nullptr) {
-                        collider->destroyAndApplyToPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()), 1);
-                    }
-                }
-            }
-        }
-
-        // Speed tiles checking
-        if (std::abs(speedX) > EPSILON || std::abs(speedY) > EPSILON || isSugarRush) {
-            uint destroyedCount = tiles->checkSpecialSpeedDestructible(tileCollisionHitbox,
-                isSugarRush ? 64.0 : std::max(std::abs(speedX), std::abs(speedY)));
-            addScore(destroyedCount * 50);
-        }
-
-        tiles->checkCollapseDestructible(tileCollisionHitbox.add(0, 2));
-    }
-
-    // check if buttstomp ended
-    if ((canJump && (currentState & AnimState::BUTTSTOMP) > 0) || (isUsingDamagingMove && suspendType != SuspendType::SUSPEND_NONE)) {
-        setAnimation(currentState & ~AnimState::BUTTSTOMP);
-        isUsingDamagingMove = false;
-        controllable = true;
-    }
-
-    // check if copter ears ended
-    if ((currentState & (AnimState::COPTER)) > 0) {
-        if (canJump || copterFramesLeft == 0 || suspendType != SUSPEND_NONE) {
-            setAnimation(currentState & ~AnimState::COPTER);
-            if (!isAttachedToPole) {
-                isGravityAffected = true;
-            }
-        } else {
-            if (copterFramesLeft > 0) {
-                copterFramesLeft--;
-            }
-        }
-    }
-
-    // check if uppercut ended
-    if (((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
-        endDamagingMove();
-        setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
-    }
-    
-    auto events = api->getGameEvents().lock();
-    if (events != nullptr) {
-        PCEvent e = events->getPositionEvent(posX, posY);
-        quint16 p[8];
-        events->getPositionParams(posX, posY, p);
-        switch (e) {
-            case PC_LIGHT_SET:
-                assignedView->setLighting(p[0], false);
-                break;
-            case PC_WARP_ORIGIN:
-            {
-                if (!inTransition || cancellableTransition) {
-                    CoordinatePair c = events->getWarpTarget(p[0]);
-                    if (c.x >= 0) {
-                        warpToPosition(c);
-                    }
-                }
-            }
-            break;
-            case PC_MODIFIER_H_POLE:
-                if (controllable) {
-                    initialPoleStage(true);
-                }
-                break;
-            case PC_MODIFIER_V_POLE:
-                if (controllable) {
-                    initialPoleStage(false);
-                }
-                break;
-            case PC_MODIFIER_TUBE:
-                {
-                    endDamagingMove();
-                    setPlayerTransition(AnimState::DASH | AnimState::JUMP, false, false, false);
-                    isGravityAffected = false;
-                    speedX = 0;
-                    speedY = 0;
-                    float moveX = (qint16)p[0] * 1.0;
-                    float moveY = (qint16)p[1] * 1.0;
-                    if (p[0] != 0) {
-                        posY = std::floor(posY / 32) * 32 + 8;
-                        speedX = moveX;
-                        moveInstantly({ speedX, 0.0 }, false);
-                    } else {
-                        posX = std::floor(posX / 32) * 32 + 16;
-                        speedY = moveY;
-                        moveInstantly({ 0.0, speedY }, false);
-                    }
-                }
-                break;
-            case PC_AREA_EOL:
-                if (!levelExiting) {
-                    playNonPositionalSound("PLAYER_JAZZ_EOL");
-                    api->initLevelChange(p[1] == 1 ? NEXT_WARP :
-                                         p[0] == 1 ? NEXT_BONUS : NEXT_NORMAL);
-                }
-                break;
-            case PC_AREA_TEXT:
-                osd->setLevelText(p[0]);
-                if (p[1] != 0) {
-                    api->getGameEvents().lock()->storeTileEvent(static_cast<int>(posX) / 32, static_cast<int>(posY) / 32, PC_EMPTY);
-                }
-                break;
-            default:
-                break;
-        }
-
-        // Check floating from each corner of an extended hitbox
-        // Player should not pass from a single tile wide gap if the columns left or right have
-        // float events, so checking for a wider box is necessary.
-        if (
-            (events->getPositionEvent(posX,                      posY                      ) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(currentHitbox.left  - 5.0, currentHitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.top    - 5.0) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP) ||
-            (events->getPositionEvent(currentHitbox.left  - 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP)
-            ) {
-            if (isGravityAffected) {
-                externalForceY = gravity * 2;
-                speedY = std::min(gravity, speedY);
-            } else {
-                speedY = std::min(api->getGravity() * 10, speedY);
-            }
-        }
-    }
-    
-    // reduce player timers for certain things:
-    // Weapon cooldown
+    // Reduce weapon cooldown by one frame each frame
     if (weaponCooldown > 0) {
         weaponCooldown--;
     }
-    
-    // Move camera if up or down held
-    if ((currentState & AnimState::CROUCH) > 0) {
-        // Down is being held, move camera one unit down
-        cameraShiftFramesCount = std::min(128, cameraShiftFramesCount + 1);
-    } else if ((currentState & AnimState::LOOKUP) > 0) {
-        // Up is being held, move camera one unit up
-        cameraShiftFramesCount = std::max(-128, cameraShiftFramesCount - 1);
-    } else {
-        // Neither is being held, move camera up to 10 units back to equilibrium
-        cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, std::abs(cameraShiftFramesCount) - 10);
-    }
-
-    auto collisions = api->findCollisionActors(shared_from_this());
-    bool removeSpecialMove = false;
-
-    for (const auto& collision : collisions) {
-        auto collisionPtr = collision.lock();
-
-        // Different things happen with different actor types
-
-        {
-            auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
-            if (enemy != nullptr) {
-                if (isUsingDamagingMove || isSugarRush) {
-                    enemy->decreaseHealth(1);
-                    if (isSugarRush) {
-                        if (canJump) {
-                            speedY = 3;
-                            canJump = false;
-                            externalForceY = 0.6;
-                        }
-                        speedY *= -.5;
-                    }
-                    if ((currentState & AnimState::BUTTSTOMP) > 0) {
-                        removeSpecialMove = true;
-                        speedY *= -.5;
-                    }
-                } else {
-                    if (enemy->hurtsPlayer()) {
-                        takeDamage(4 * (posX > enemy->getPosition().x ? 1 : -1));
-                    }
-                }
-                continue;
-            }
-        }
-        
-        {
-            auto sp = std::dynamic_pointer_cast<SavePoint>(collisionPtr);
-            if (sp != nullptr) {
-                sp->activateSavePoint();
-                continue;
-            }
-        }
-
-        {
-            auto spring = std::dynamic_pointer_cast<Spring>(collisionPtr);
-            if (spring != nullptr) {
-                removeSpecialMove = true;
-                sf::Vector2f params = spring->activate();
-                short sign = ((params.x + params.y) > EPSILON ? 1 : -1);
-                if (std::abs(params.x) > EPSILON) {
-                    speedX = (4 + std::abs(params.x)) * sign;
-                    externalForceX = params.x;
-                    setPlayerTransition(AnimState::DASH | AnimState::JUMP, true, false, false);
-                } else if (std::abs(params.y) > EPSILON) {
-                    speedY = (4 + std::abs(params.y)) * sign;
-                    externalForceY = -params.y;
-                    setPlayerTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, false);
-                } else {
-                    continue;
-                }
-                canJump = false;
-                continue;
-            }
-        }
-
-        {
-            auto collectible = std::dynamic_pointer_cast<Collectible>(collisionPtr);
-            if (collectible != nullptr) {
-                collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
-                collisionPtr->deleteFromEventMap();
-                api->removeActor(collisionPtr);
-            }
-        }
-
-        if (!inTransition || cancellableTransition) {
-            auto collider = std::dynamic_pointer_cast<BonusWarp>(collisionPtr);
-            if (collider != nullptr) {
-                quint16 p[8];
-                collider->getParams(p);
-                uint owed = p[3];
-                if (owed <= getCoinsTotalValue()) {
-                    while (owed >= 5 && collectedCoins[1] > 0) {
-                        owed -= 5;
-                        collectedCoins[1]--;
-                    }
-                    collectedCoins[0] -= owed;
-
-                    setupOSD(OSD_COIN_SILVER, getCoinsTotalValue());
-                    warpToPosition(collider->getWarpTarget());
-                } else {
-                    setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - getCoinsTotalValue());
-                }
-            }
-        }
-
-        if (isUsingDamagingMove || isSugarRush) {
-            auto collider = std::dynamic_pointer_cast<TurtleShell>(collisionPtr);
-            if (collider != nullptr) {
-                collider->decreaseHealth(10);
-                continue;
-            }
-        }
-    }
-
-    if (removeSpecialMove) {
-        endDamagingMove();
-    }
-
-    lightLocation = { posX, posY - 10.0 };
 }
 
 unsigned Player::getHealth() {
@@ -748,7 +372,7 @@ void Player::debugAmmo() {
 void Player::addAmmo(enum WeaponType type, unsigned amount) {
     if (type > (WEAPONCOUNT - 1)) { return; }
     playSound("PLAYER_PICKUP_AMMO");
-    
+
     if (ammo[type] == 0) {
         // Switch to the newly obtained weapon
         ammo[type] += amount;
@@ -856,7 +480,7 @@ bool Player::perish() {
     // handle death here
     if (health == 0 && transition->getAnimationState() != AnimState::TRANSITION_DEATH) {
         cancellableTransition = false;
-        setPlayerTransition(AnimState::TRANSITION_DEATH, false, true, false, [this]() {
+        setPlayerTransition(AnimState::TRANSITION_DEATH, false, true, SPECIAL_MOVE_NONE, [this]() {
             if (lives > 0) {
                 lives--;
 
@@ -901,20 +525,461 @@ void Player::updateHitbox() {
 }
 
 void Player::endDamagingMove() {
-    isUsingDamagingMove = false;
+    currentSpecialMove = SPECIAL_MOVE_NONE;
     controllable = true;
     isGravityAffected = true;
     setAnimation(currentAnimation->getAnimationState() & ~AnimState::UPPERCUT & ~AnimState::SIDEKICK & ~AnimState::BUTTSTOMP);
 }
 
-bool Player::setPlayerTransition(AnimStateT state, bool cancellable, bool remove_control, bool set_special,
+void Player::verifyOSDInitialized() {
+    if (osd == nullptr) {
+        osd = std::make_unique<PlayerOSD>(api, std::dynamic_pointer_cast<Player>(shared_from_this()));
+        osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
+        osd->setAmmo(ammo[currentWeapon]);
+        osd->setLives(lives);
+        osd->setScore(score);
+        osd->setHealth(health);
+    }
+}
+
+void Player::followCarryingPlatform() {
+    if (!carryingObject.expired()) {
+        if (std::abs(speedY) > EPSILON || !controllable || !isGravityAffected) {
+            carryingObject = std::weak_ptr<MovingPlatform>();
+        } else {
+            auto platform = carryingObject.lock();
+            CoordinatePair delta = platform->getLocationDelta() - CoordinatePair(0.0, 1.0);
+
+            // TODO: disregard the carrying object itself in this collision check to
+            // eliminate the need of the correction pixel removed from the delta
+            // and to make the ride even smoother (right now the pixel gap is clearly
+            // visible when platforms go down vertically)
+            if (
+                !moveInstantly(delta, false) &&
+                !moveInstantly({ 0.0, delta.y }, false)
+                ) {
+                carryingObject = std::weak_ptr<MovingPlatform>();
+            }
+        }
+    }
+}
+
+void Player::updateSpeedBasedAnimation(double lastX) {
+    if (controllable) {
+        AnimStateT oldState = currentAnimation->getAnimationState();
+        AnimStateT newState;
+        if (canJump && isActivelyPushing && std::abs(posX - lastX - speedX) > 0.1 && std::abs(externalForceX) < EPSILON && (isFacingLeft ^ (speedX > 0))) {
+            newState = AnimState::PUSH;
+        } else {
+
+            // determine current animation last bits from speeds
+            // it's okay to call setAnimation on every tick because it doesn't do
+            // anything if the animation is the same as it was earlier
+
+            // only certain ones don't need to be preserved from earlier state, others should be set as expected
+            int composite = currentAnimation->getAnimationState() & 0xFFFFBFE0;
+            if (std::abs(speedX) > 3 + EPSILON) {
+                // shift-running, speed is more than 3px/frame
+                composite += 3;
+            } else if (std::abs(speedX) > 1) {
+                // running, speed is between 1px and 3px/frame
+                composite += 2;
+            } else if (std::abs(speedX) > EPSILON) {
+                // walking, speed is less than 1px/frame (mostly a transition zone)
+                composite += 2;
+            }
+
+            if (suspendType != SuspendType::SUSPEND_NONE) {
+                composite += 12;
+            } else {
+                if (canJump) {
+                    // grounded, no vertical speed
+                } else if (speedY < -EPSILON) {
+                    // jumping, ver. speed is negative
+                    composite += 4;
+                } else {
+                    // falling, ver. speed is positive
+                    composite += 8;
+                }
+            }
+
+            newState = AnimStateT(composite);
+        }
+        setAnimation(newState);
+
+        switch (oldState) {
+            case AnimState::RUN:
+                if ((newState == AnimState::IDLE) || (newState == AnimState::WALK)) {
+                    setTransition(AnimState::TRANSITION_RUN_TO_IDLE, true);
+                }
+                if (newState == AnimState::DASH) {
+                    setTransition(AnimState::TRANSITION_RUN_TO_DASH, true);
+                }
+                break;
+            case AnimState::FALL:
+                if (newState == AnimState::IDLE) {
+                    setTransition(AnimState::TRANSITION_IDLE_FALL_TO_IDLE, true);
+                }
+                break;
+            case AnimState::IDLE:
+                if (newState == AnimState::JUMP) {
+                    setTransition(AnimState::TRANSITION_IDLE_TO_IDLE_JUMP, true);
+                }
+                break;
+            case AnimState::SHOOT:
+                if (newState == AnimState::IDLE) {
+                    setTransition(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE, true);
+                }
+                break;
+        }
+
+    }
+}
+
+void Player::updateCameraPosition() {
+    AnimStateT currentState = currentAnimation->getAnimationState();
+    // Move camera if up or down held
+    if ((currentState & AnimState::CROUCH) > 0) {
+        // Down is being held, move camera one unit down
+        cameraShiftFramesCount = std::min(128, cameraShiftFramesCount + 1);
+    } else if ((currentState & AnimState::LOOKUP) > 0) {
+        // Up is being held, move camera one unit up
+        cameraShiftFramesCount = std::max(-128, cameraShiftFramesCount - 1);
+    } else {
+        // Neither is being held, move camera up to 10 units back to equilibrium
+        cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, std::abs(cameraShiftFramesCount) - 10);
+    }
+
+    lightLocation = { posX, posY - 10.0 };
+}
+
+void Player::pushSolidObjects() {
+    if (canJump && controllable && isActivelyPushing && std::abs(speedX) > EPSILON) {
+        std::weak_ptr<SolidObject> object;
+        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair((speedX < 0) ? -2.0 : 2.0, 0.0), false, shared_from_this(), object))) {
+            auto objectPtr = object.lock();
+
+            if (objectPtr != nullptr) {
+                objectPtr->push(speedX < 0);
+            }
+        }
+    }
+}
+
+void Player::checkEndOfSpecialMoves() {
+    AnimStateT currentState = currentAnimation->getAnimationState();
+
+    // Buttstomp
+    if (currentSpecialMove == SPECIAL_MOVE_BUTTSTOMP && (canJump || suspendType != SuspendType::SUSPEND_NONE)) {
+        endDamagingMove();
+    }
+
+    // Uppercut
+    if (currentSpecialMove == SPECIAL_MOVE_UPPERCUT && ((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
+        endDamagingMove();
+        setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
+    }
+
+    // Copter ears
+    if ((currentState & (AnimState::COPTER)) > 0) {
+        if (canJump || copterFramesLeft == 0 || suspendType != SUSPEND_NONE) {
+            setAnimation(currentState & ~AnimState::COPTER);
+            if (!isAttachedToPole) {
+                isGravityAffected = true;
+            }
+        } else {
+            if (copterFramesLeft > 0) {
+                copterFramesLeft--;
+            }
+        }
+    }
+}
+
+void Player::checkDestructibleTiles() {
+    auto tiles = api->getGameTiles().lock();
+    if (tiles == nullptr) {
+        return;
+    }
+
+    auto tileCollisionHitbox = Hitbox(currentHitbox).extend(2 + std::abs(speedX), 2 + std::abs(speedY));
+
+    // Buttstomp/etc. tiles checking
+    if (currentSpecialMove != SPECIAL_MOVE_NONE || isSugarRush) {
+        uint destroyedCount = tiles->checkSpecialDestructible(tileCollisionHitbox);
+        addScore(destroyedCount * 50);
+
+        std::weak_ptr<SolidObject> object;
+        if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
+            {
+                auto collider = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
+                if (collider != nullptr) {
+                    collider->decreaseHealth(1);
+                }
+            }
+            {
+                auto collider = std::dynamic_pointer_cast<PowerUpMonitor>(object.lock());
+                if (collider != nullptr) {
+                    collider->destroyAndApplyToPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()), 1);
+                }
+            }
+        }
+    }
+
+    // Speed tiles checking
+    if (std::abs(speedX) > EPSILON || std::abs(speedY) > EPSILON || isSugarRush) {
+        uint destroyedCount = tiles->checkSpecialSpeedDestructible(
+            tileCollisionHitbox,
+            isSugarRush ? 64.0 : std::max(std::abs(speedX), std::abs(speedY)));
+        addScore(destroyedCount * 50);
+    }
+
+    tiles->checkCollapseDestructible(tileCollisionHitbox.add(0, 2));
+}
+
+void Player::checkSuspendedStatus() {
+    auto tiles = api->getGameTiles().lock();
+    if (tiles == nullptr) {
+        return;
+    }
+
+    AnimStateT currentState = currentAnimation->getAnimationState();
+    SuspendType newSuspendState = tiles->getPosSuspendState(posX, posY - 5);
+
+    if (newSuspendState != SuspendType::SUSPEND_NONE) {
+        suspendType = newSuspendState;
+        isGravityAffected = false;
+
+        if (speedY > 0 && newSuspendState == SuspendType::SUSPEND_VINE) {
+            playSound("PLAYER_VINE_ATTACH");
+        }
+
+        speedY = 0;
+        externalForceY = 0;
+
+        if (newSuspendState == SuspendType::SUSPEND_HOOK) {
+            speedX = 0;
+        }
+
+        // move downwards until we're on the standard height
+        while (tiles->getPosSuspendState(posX, posY - 5) != SuspendType::SUSPEND_NONE) {
+            moveInstantly({ 0, 1 }, false, true);
+        }
+        moveInstantly({ 0, -1 }, false, true);
+    } else {
+        suspendType = SuspendType::SUSPEND_NONE;
+        if ((currentState & (AnimState::BUTTSTOMP | AnimState::COPTER)) == 0 && !isAttachedToPole) {
+            isGravityAffected = true;
+        }
+    }
+}
+
+void Player::handleAreaEvents() {
+    auto events = api->getGameEvents().lock();
+    if (events == nullptr) {
+        return;
+    }
+
+    PCEvent e = events->getPositionEvent(posX, posY);
+    quint16 p[8];
+    events->getPositionParams(posX, posY, p);
+    switch (e) {
+        case PC_LIGHT_SET:
+            assignedView->setLighting(p[0], false);
+            break;
+        case PC_WARP_ORIGIN:
+            {
+                if (!inTransition || cancellableTransition) {
+                    CoordinatePair c = events->getWarpTarget(p[0]);
+                    if (c.x >= 0) {
+                        warpToPosition(c);
+                    }
+                }
+            }
+            break;
+        case PC_MODIFIER_H_POLE:
+            if (controllable) {
+                initialPoleStage(true);
+            }
+            break;
+        case PC_MODIFIER_V_POLE:
+            if (controllable) {
+                initialPoleStage(false);
+            }
+            break;
+        case PC_MODIFIER_TUBE:
+            {
+                endDamagingMove();
+                setPlayerTransition(AnimState::DASH | AnimState::JUMP, false, false, SPECIAL_MOVE_NONE);
+                isGravityAffected = false;
+                speedX = 0;
+                speedY = 0;
+                float moveX = (qint16)p[0] * 1.0;
+                float moveY = (qint16)p[1] * 1.0;
+                if (p[0] != 0) {
+                    posY = std::floor(posY / 32) * 32 + 8;
+                    speedX = moveX;
+                    moveInstantly({ speedX, 0.0 }, false);
+                } else {
+                    posX = std::floor(posX / 32) * 32 + 16;
+                    speedY = moveY;
+                    moveInstantly({ 0.0, speedY }, false);
+                }
+            }
+            break;
+        case PC_AREA_EOL:
+            if (!levelExiting) {
+                playNonPositionalSound("PLAYER_JAZZ_EOL");
+                api->initLevelChange(p[1] == 1 ? NEXT_WARP :
+                                        p[0] == 1 ? NEXT_BONUS : NEXT_NORMAL);
+            }
+            break;
+        case PC_AREA_TEXT:
+            osd->setLevelText(p[0]);
+            if (p[1] != 0) {
+                api->getGameEvents().lock()->storeTileEvent(static_cast<int>(posX) / 32, static_cast<int>(posY) / 32, PC_EMPTY);
+            }
+            break;
+        default:
+            break;
+    }
+
+    // Check floating from each corner of an extended hitbox
+    // Player should not pass from a single tile wide gap if the columns left or right have
+    // float events, so checking for a wider box is necessary.
+    if (
+        (events->getPositionEvent(posX, posY) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(currentHitbox.left - 5.0, currentHitbox.top - 5.0) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.top - 5.0) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(currentHitbox.left - 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP)
+        ) {
+        if (isGravityAffected) {
+            double gravity = (isGravityAffected ? api->getGravity() : 0);
+
+            externalForceY = gravity * 2;
+            speedY = std::min(gravity, speedY);
+        } else {
+            speedY = std::min(api->getGravity() * 10, speedY);
+        }
+    }
+}
+
+void Player::handleActorCollisions() {
+    auto collisions = api->findCollisionActors(shared_from_this());
+    AnimStateT currentState = currentAnimation->getAnimationState();
+    bool removeSpecialMove = false;
+
+    for (const auto& collision : collisions) {
+        auto collisionPtr = collision.lock();
+
+        // Different things happen with different actor types
+
+        {
+            auto enemy = std::dynamic_pointer_cast<Enemy>(collisionPtr);
+            if (enemy != nullptr) {
+                if (currentSpecialMove != SPECIAL_MOVE_NONE || isSugarRush) {
+                    enemy->decreaseHealth(1);
+                    if (isSugarRush) {
+                        if (canJump) {
+                            speedY = 3;
+                            canJump = false;
+                            externalForceY = 0.6;
+                        }
+                        speedY *= -.5;
+                    }
+                    if ((currentState & AnimState::BUTTSTOMP) > 0) {
+                        removeSpecialMove = true;
+                        speedY *= -.5;
+                    }
+                } else {
+                    if (enemy->hurtsPlayer()) {
+                        takeDamage(4 * (posX > enemy->getPosition().x ? 1 : -1));
+                    }
+                }
+                continue;
+            }
+        }
+
+        {
+            auto sp = std::dynamic_pointer_cast<SavePoint>(collisionPtr);
+            if (sp != nullptr) {
+                sp->activateSavePoint();
+                continue;
+            }
+        }
+
+        {
+            auto spring = std::dynamic_pointer_cast<Spring>(collisionPtr);
+            if (spring != nullptr) {
+                removeSpecialMove = true;
+                sf::Vector2f params = spring->activate();
+                short sign = ((params.x + params.y) > EPSILON ? 1 : -1);
+                if (std::abs(params.x) > EPSILON) {
+                    speedX = (4 + std::abs(params.x)) * sign;
+                    externalForceX = params.x;
+                    setPlayerTransition(AnimState::DASH | AnimState::JUMP, true, false, SPECIAL_MOVE_NONE);
+                } else if (std::abs(params.y) > EPSILON) {
+                    speedY = (4 + std::abs(params.y)) * sign;
+                    externalForceY = -params.y;
+                    setPlayerTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, SPECIAL_MOVE_NONE);
+                } else {
+                    continue;
+                }
+                canJump = false;
+                continue;
+            }
+        }
+
+        {
+            auto collectible = std::dynamic_pointer_cast<Collectible>(collisionPtr);
+            if (collectible != nullptr) {
+                collectible->collect(std::dynamic_pointer_cast<Player>(shared_from_this()));
+                collisionPtr->deleteFromEventMap();
+                api->removeActor(collisionPtr);
+            }
+        }
+
+        if (!inTransition || cancellableTransition) {
+            auto collider = std::dynamic_pointer_cast<BonusWarp>(collisionPtr);
+            if (collider != nullptr) {
+                quint16 p[8];
+                collider->getParams(p);
+                uint owed = p[3];
+                if (owed <= getCoinsTotalValue()) {
+                    while (owed >= 5 && collectedCoins[1] > 0) {
+                        owed -= 5;
+                        collectedCoins[1]--;
+                    }
+                    collectedCoins[0] -= owed;
+
+                    setupOSD(OSD_COIN_SILVER, getCoinsTotalValue());
+                    warpToPosition(collider->getWarpTarget());
+                } else {
+                    setupOSD(OSD_BONUS_WARP_NOT_ENOUGH_COINS, owed - getCoinsTotalValue());
+                }
+            }
+        }
+
+        if (currentSpecialMove != SPECIAL_MOVE_NONE || isSugarRush) {
+            auto collider = std::dynamic_pointer_cast<TurtleShell>(collisionPtr);
+            if (collider != nullptr) {
+                collider->decreaseHealth(10);
+                continue;
+            }
+        }
+    }
+
+    if (removeSpecialMove) {
+        endDamagingMove();
+    }
+}
+
+bool Player::setPlayerTransition(AnimStateT state, bool cancellable, bool remove_control, SpecialMoveType set_special,
     AnimationCallbackFunc callback) {
     if (remove_control) {
         controllable = false;
     }
-    if (set_special) {
-        isUsingDamagingMove = true;
-    }
+    currentSpecialMove = set_special;
 
     return CommonActor::setTransition(state, cancellable, callback);
 }
@@ -964,7 +1029,7 @@ void Player::takeDamage(double pushForce) {
         speedY = -6.5;
         speedX = 0;
         canJump = false;
-        setPlayerTransition(AnimState::HURT, false, true, false, [this]() {
+        setPlayerTransition(AnimState::HURT, false, true, SPECIAL_MOVE_NONE, [this]() {
             controllable = true;
         });
         setInvulnerability(210u, true);
@@ -1037,7 +1102,7 @@ void Player::initialPoleStage(bool horizontal) {
 
     AnimStateT poleAnim = horizontal ? AnimState::TRANSITION_POLE_H_SLOW : AnimState::TRANSITION_POLE_V_SLOW;
 
-    setPlayerTransition(poleAnim, false, true, false, [this, horizontal, positive]() {
+    setPlayerTransition(poleAnim, false, true, SPECIAL_MOVE_NONE, [this, horizontal, positive]() {
         nextPoleStage(horizontal, positive, 2);
     });
 }
@@ -1046,7 +1111,7 @@ void Player::nextPoleStage(bool horizontal, bool positive, ushort stagesLeft) {
     if (stagesLeft > 0) {
         AnimStateT poleAnim = horizontal ? AnimState::TRANSITION_POLE_H : AnimState::TRANSITION_POLE_V;
 
-        setPlayerTransition(poleAnim, false, true, false, [this, horizontal, positive, stagesLeft]() {
+        setPlayerTransition(poleAnim, false, true, SPECIAL_MOVE_NONE, [this, horizontal, positive, stagesLeft]() {
             nextPoleStage(horizontal, positive, stagesLeft - 1);
         });
     } else {
@@ -1095,7 +1160,7 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     if (o.exitType == NEXT_WARP) {
         playNonPositionalSound("COMMON_WARP_OUT");
         isGravityAffected = false;
-        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {
+        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, SPECIAL_MOVE_NONE, [this]() {
             isInvulnerable = false;
             isGravityAffected = true;
             controllable = true;
@@ -1128,7 +1193,7 @@ void Player::setExiting(ExitType e) {
     if (e == NEXT_WARP) {
         addTimer(285u, false, [this]() {
             isFacingLeft = false;
-            setPlayerTransition(AnimState::TRANSITION_WARP, false, true, false, [this]() {
+            setPlayerTransition(AnimState::TRANSITION_WARP, false, true, SPECIAL_MOVE_NONE, [this]() {
                 isInvisible = true;
             });
             playNonPositionalSound("COMMON_WARP_IN");
@@ -1136,7 +1201,7 @@ void Player::setExiting(ExitType e) {
     } else {
         addTimer(255u, false, [this]() {
             isFacingLeft = false;
-            setPlayerTransition(AnimState::TRANSITION_END_OF_LEVEL, false, true, false, [this]() {
+            setPlayerTransition(AnimState::TRANSITION_END_OF_LEVEL, false, true, SPECIAL_MOVE_NONE, [this]() {
                 isInvisible = true;
             });
             playNonPositionalSound("PLAYER_EOL_1");
@@ -1189,7 +1254,7 @@ uint Player::getCoinsTotalValue() {
 }
 
 void Player::warpToPosition(const CoordinatePair& pos) {
-    setPlayerTransition(AnimState::TRANSITION_WARP, false, true, false, [this, pos]() {
+    setPlayerTransition(AnimState::TRANSITION_WARP, false, true, SPECIAL_MOVE_NONE, [this, pos]() {
         auto events = api->getGameEvents().lock();
         if (events == nullptr) {
             return;
@@ -1198,7 +1263,7 @@ void Player::warpToPosition(const CoordinatePair& pos) {
         moveInstantly(pos, true, true);
         playSound("COMMON_WARP_OUT");
 
-        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, false, [this]() {
+        setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, SPECIAL_MOVE_NONE, [this]() {
             isInvulnerable = false;
             isGravityAffected = true;
             controllable = true;

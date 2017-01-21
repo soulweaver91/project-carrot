@@ -151,34 +151,6 @@ bool CommonActor::setAnimation(AnimStateT state) {
         return false;
     }
 
-    AnimStateT newstate = state;
-
-    switch (oldstate) {
-        case AnimState::RUN:
-            if ((newstate == AnimState::IDLE) || (newstate == AnimState::WALK)) {
-                setTransition(AnimState::TRANSITION_RUN_TO_IDLE, true);
-            }
-            if (newstate == AnimState::DASH) {
-                setTransition(AnimState::TRANSITION_RUN_TO_DASH, true);
-            }
-            break;
-        case AnimState::FALL:
-            if (newstate == AnimState::IDLE) {
-                setTransition(AnimState::TRANSITION_IDLE_FALL_TO_IDLE, true);
-            }
-            break;
-        case AnimState::IDLE:
-            if (newstate == AnimState::JUMP) {
-                setTransition(AnimState::TRANSITION_IDLE_TO_IDLE_JUMP, true);
-            }
-            break;
-        case AnimState::SHOOT:
-            if (newstate == AnimState::IDLE) {
-                setTransition(AnimState::TRANSITION_IDLE_SHOOT_TO_IDLE, true);
-            }
-            break;
-    }
-
     updateHitbox();
     return true;
 }
