@@ -942,9 +942,7 @@ void Player::handleActorCollisions() {
         if (!inTransition || cancellableTransition) {
             auto collider = std::dynamic_pointer_cast<BonusWarp>(collisionPtr);
             if (collider != nullptr) {
-                quint16 p[8];
-                collider->getParams(p);
-                uint owed = p[3];
+                quint16 owed = collider->getCost();
                 if (owed <= getCoinsTotalValue()) {
                     while (owed >= 5 && collectedCoins[1] > 0) {
                         owed -= 5;

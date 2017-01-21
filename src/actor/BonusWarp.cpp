@@ -41,6 +41,6 @@ const CoordinatePair BonusWarp::getWarpTarget() {
     return events->getWarpTarget(eventParams[0]);
 }
 
-void BonusWarp::getParams(quint16 (&params)[8]) {
-    std::copy_n(eventParams, 8, params);
+quint16 BonusWarp::getCost() {
+    return eventParams[3];
 }
