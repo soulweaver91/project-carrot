@@ -2,7 +2,7 @@
 #include "../CarrotQt5.h"
 
 FrozenBlock::FrozenBlock(const ActorInstantiationDetails& initData)
-    : CommonActor(initData, false), ttl(3 * 70) {
+    : CommonActor(initData), ttl(3 * 70) {
     isGravityAffected = false;
     canBeFrozen = false;
     loadResources("Object/FrozenBlock");

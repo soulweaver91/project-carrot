@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QMap>
 #include "SolidObject.h"
-#include "../struct/Hitbox.h"
+#include "../../struct/Hitbox.h"
 
 class ActorAPI;
 

@@ -341,6 +341,12 @@
       "states": [
         "0"
       ]
+    },
+    "PICKUP_ONEUP": {
+      "filename": "pickup/1up.png",
+      "states": [
+        "0"
+      ]
     }
   },
   "sounds": {

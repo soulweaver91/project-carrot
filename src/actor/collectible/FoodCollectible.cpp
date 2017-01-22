@@ -1,8 +1,8 @@
 #include "FoodCollectible.h"
 #include "../Player.h"
 
-FoodCollectible::FoodCollectible(const ActorInstantiationDetails& initData, PCEvent type, bool fromEventMap)
-    : Collectible(initData, fromEventMap) {
+FoodCollectible::FoodCollectible(const ActorInstantiationDetails& initData, PCEvent type)
+    : Collectible(initData) {
     scoreValue = 50;
     switch (type) {
         case PC_FOOD_APPLE:       AnimationUser::setAnimation("PICKUP_FOOD_APPLE"); break;

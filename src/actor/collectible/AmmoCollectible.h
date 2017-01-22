@@ -7,7 +7,7 @@ class Player;
 
 class AmmoCollectible : public Collectible {
 public:
-    AmmoCollectible(const ActorInstantiationDetails& initData, WeaponType type, bool fromEventMap = true);
+    AmmoCollectible(const ActorInstantiationDetails& initData, WeaponType type);
     virtual void collect(std::shared_ptr<Player> player) override;
     void drawUpdate(std::shared_ptr<GameView>& view) override;
 

@@ -25,16 +25,17 @@ class Ammo;
 struct ActorInstantiationDetails {
     std::shared_ptr<ActorAPI> api;
     CoordinatePair coords;
+    bool fromEventMap;
 
-    ActorInstantiationDetails(std::shared_ptr<ActorAPI> api, CoordinatePair coords = { 0.0, 0.0 })
-        : api(api), coords(coords) {
+    ActorInstantiationDetails(std::shared_ptr<ActorAPI> api, CoordinatePair coords = { 0.0, 0.0 }, bool fromEventMap = false)
+        : api(api), coords(coords), fromEventMap(fromEventMap) {
 
     }
 };
 
 class CommonActor : public std::enable_shared_from_this<CommonActor>, public AnimationUser {
 public:
-    CommonActor(const ActorInstantiationDetails& initData, bool fromEventMap = false);
+    CommonActor(const ActorInstantiationDetails& initData);
     ~CommonActor();
     virtual void drawUpdate(std::shared_ptr<GameView>& view);
     virtual void tickEvent();

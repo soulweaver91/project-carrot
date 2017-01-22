@@ -4,8 +4,9 @@
 class ActorAPI;
 class Player;
 
-class FastFireCollectible : public Collectible {
+class OneUpCollectible : public Collectible {
 public:
-    FastFireCollectible(const ActorInstantiationDetails& initData);
+    OneUpCollectible(const ActorInstantiationDetails& initData);
+    ~OneUpCollectible();
     virtual void collect(std::shared_ptr<Player> player) override;
 };

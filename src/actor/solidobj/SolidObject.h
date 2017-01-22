@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "CommonActor.h"
+#include "../CommonActor.h"
 
 class ActorAPI;
 

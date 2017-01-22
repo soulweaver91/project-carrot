@@ -1,9 +1,9 @@
 #include "Bridge.h"
 
 #include <cmath>
-#include "Player.h"
-#include "../gamestate/ActorAPI.h"
-#include "../gamestate/EventMap.h"
+#include "../Player.h"
+#include "../../gamestate/ActorAPI.h"
+#include "../../gamestate/EventMap.h"
 
 DynamicBridgePiece::DynamicBridgePiece(const ActorInstantiationDetails& initData, DynamicBridgeType type, uint idx)
     : SolidObject(initData, false) {

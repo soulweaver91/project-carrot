@@ -48,20 +48,13 @@ void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable
     uint point = qrand() % combinedChance;
     for (const auto& pair : dropTable) {
         if (point < pair.second) {
-            int i = 0;
             switch (pair.first) {
                 case PC_CARROT:
-                    api->addActor(std::make_shared<CarrotCollectible>(ActorInstantiationDetails(api, { posX, posY }), false, false));
-                    break;
                 case PC_FAST_FIRE:
-                    api->addActor(std::make_shared<FastFireCollectible>(ActorInstantiationDetails(api, { posX, posY }), false));
-                    break;
-                case PC_GEM_BLUE:
-                    i++;
-                case PC_GEM_GREEN:
-                    i++;
                 case PC_GEM_RED:
-                    api->addActor(std::make_shared<GemCollectible>(ActorInstantiationDetails(api, { posX, posY }), (GemType)((int)GEM_RED + i), false));
+                case PC_GEM_GREEN:
+                case PC_GEM_BLUE:
+                    api->createActor(pair.first, posX, posY, {});
                     break;
                 default:
                     break;

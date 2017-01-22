@@ -3,12 +3,12 @@
 #include "../enemy/Enemy.h"
 #include "../enemy/TurtleShell.h"
 #include "../collectible/Collectible.h"
-#include "../PushBox.h"
+#include "../solidobj/PushBox.h"
 #include "../../gamestate/ActorAPI.h"
 
 Ammo::Ammo(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy, bool firedLeft,
     bool firedUp, int lifeLength, bool poweredUp)
-    : CommonActor(initData, false), poweredUp(poweredUp), strength(1), owner(firedBy), framesLeft(lifeLength),
+    : CommonActor(initData), poweredUp(poweredUp), strength(1), owner(firedBy), framesLeft(lifeLength),
     firedUp(firedUp) {
     canBeFrozen = false;
     isFacingLeft = firedLeft;

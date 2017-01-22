@@ -12,7 +12,7 @@
 
 
 TurtleShell::TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX,
-    double initSpeedY, bool fromEventMap) : CommonActor(initData, fromEventMap) {
+    double initSpeedY) : CommonActor(initData) {
     loadResources("Enemy/TurtleShell");
     setAnimation(AnimState::IDLE);
 

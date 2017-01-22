@@ -5,21 +5,22 @@
 #include "../gamestate/EventMap.h"
 #include "../gamestate/GameView.h"
 #include "../gamestate/TileMap.h"
-#include "SolidObject.h"
-#include "TriggerCrate.h"
+#include "solidobj/SolidObject.h"
+#include "solidobj/TriggerCrate.h"
 #include "enemy/Enemy.h"
 #include "enemy/TurtleShell.h"
 #include "collectible/Collectible.h"
 #include "SavePoint.h"
 #include "Spring.h"
 #include "BonusWarp.h"
-#include "PowerUpMonitor.h"
+#include "solidobj/PowerUpMonitor.h"
+#include "solidobj/GenericContainer.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
 #include "weapon/AmmoFreezer.h"
 
-Player::Player(const ActorInstantiationDetails& initData) : InteractiveActor(initData, false),
+Player::Player(const ActorInstantiationDetails& initData) : InteractiveActor(initData),
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), currentSpecialMove(SPECIAL_MOVE_NONE), isAttachedToPole(false), isActivelyPushing(false),
@@ -425,6 +426,12 @@ void Player::addHealth(unsigned amount) {
     osd->setHealth(health);
 }
 
+void Player::addLives(unsigned amount) {
+    lives += amount;
+    osd->setLives(lives);
+    playSound("PLAYER_PICKUP_ONEUP");
+}
+
 void Player::setPowerUp(WeaponType type) {
     if (type > (WEAPONCOUNT - 1)) { return; }
     uint typeIdx = (uint)type;
@@ -513,6 +520,16 @@ bool Player::perish() {
     return false;
 }
 
+QSet<WeaponType> Player::getAvailableWeaponTypes() {
+    QSet<WeaponType> types;
+    for (int i = 0; i < WEAPONCOUNT; ++i) {
+        if (ammo[i] > 0) {
+            types << (WeaponType)i;
+        }
+    }
+    return types;
+}
+
 void Player::updateHitbox() {
     //currentHitbox = CommonActor::getHitbox(24u, 24u);
     // TODO: Figure out how to use hot/coldspots properly.
@@ -536,7 +553,7 @@ void Player::verifyOSDInitialized() {
         osd = std::make_unique<PlayerOSD>(api, std::dynamic_pointer_cast<Player>(shared_from_this()));
         osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
         osd->setAmmo(ammo[currentWeapon]);
-        osd->setLives(lives);
+        osd->setLives(lives, true);
         osd->setScore(score);
         osd->setHealth(health);
     }
@@ -712,6 +729,12 @@ void Player::checkDestructibleTiles() {
         if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
             {
                 auto collider = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
+                if (collider != nullptr) {
+                    collider->decreaseHealth(1);
+                }
+            }
+            {
+                auto collider = std::dynamic_pointer_cast<GenericContainer>(object.lock());
                 if (collider != nullptr) {
                     collider->decreaseHealth(1);
                 }

@@ -1,6 +1,6 @@
 #include "PowerUpMonitor.h"
 
-#include "weapon/Ammo.h"
+#include "../weapon/Ammo.h"
 
 PowerUpMonitor::PowerUpMonitor(const ActorInstantiationDetails& initData, WeaponType type)
     : SolidObject(initData, true), type(type) {

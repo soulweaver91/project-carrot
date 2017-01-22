@@ -10,7 +10,7 @@
 #include "../struct/WeaponTypes.h"
 #include "../struct/Constants.h"
 #include "../struct/NextLevelData.h"
-#include "MovingPlatform.h"
+#include "solidobj/MovingPlatform.h"
 #include "collectible/GemCollectible.h"
 #include "collectible/CoinCollectible.h"
 
@@ -48,6 +48,7 @@ public:
     unsigned getLives();
     bool getPowerUp(WeaponType type) const;
     bool perish() override;
+    QSet<WeaponType> getAvailableWeaponTypes();
     void updateHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
         SpecialMoveType setSpecial = SPECIAL_MOVE_NONE, AnimationCallbackFunc callback = []() {});
@@ -62,6 +63,7 @@ public:
     void addCoins(CoinType type, unsigned amount);
     void addFastFire(unsigned amount);
     void addHealth(unsigned amount);
+    void addLives(unsigned amount);
     void setPowerUp(WeaponType type);
     void consumeFood(const bool& isDrinkable);
     void setCarryingPlatform(std::weak_ptr<MovingPlatform> platform);

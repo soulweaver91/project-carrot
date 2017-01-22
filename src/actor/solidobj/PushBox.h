@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "SolidObject.h"
-#include "../struct/PCEvent.h"
+#include "../../struct/PCEvent.h"
 
 class ActorAPI;
 

@@ -69,7 +69,7 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
             }
 
             if (!tile->isEventActive && tile->storedEvent != PC_EMPTY) {
-                auto ev = spawner->spawnEvent(tile->storedEvent, x, y, tile->eventParams);
+                auto ev = spawner->spawnEvent(true, tile->storedEvent, x, y, tile->eventParams);
                 if (ev != nullptr) {
                     root->addActor(ev);
                 }

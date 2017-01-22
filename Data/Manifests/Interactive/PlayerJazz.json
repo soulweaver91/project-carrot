@@ -287,6 +287,9 @@
     "PLAYER_PICKUP_COIN": {
       "filename": "pickup/coin.wav"
     },
+    "PLAYER_PICKUP_ONEUP": {
+      "filename": "pickup/1up.wav"
+    },
     "WEAPON_BLASTER_JAZZ": {
       "filename": "weapon/bullet_blaster_jazz_4.wav"
     },

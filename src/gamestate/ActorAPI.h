@@ -5,6 +5,7 @@
 #include "LevelManager.h"
 #include "../CarrotQt5.h"
 #include "../struct/DebugConfig.h"
+#include "../struct/PCEvent.h"
 
 class ActorAPI : public std::enable_shared_from_this<ActorAPI> {
 public:
@@ -13,6 +14,8 @@ public:
 
     bool addActor(std::shared_ptr<CommonActor> actor);
     void removeActor(std::shared_ptr<CommonActor> actor);
+    std::shared_ptr<CommonActor> createActor(PCEvent type, double x, double y, const quint16 params[8], bool returnOnly = false);
+
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(const Hitbox& hitbox, std::shared_ptr<CommonActor> me = nullptr);
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(std::shared_ptr<CommonActor> me = nullptr);
     void setSavePoint();
