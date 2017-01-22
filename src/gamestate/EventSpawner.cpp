@@ -7,6 +7,7 @@
 #include "../actor/collectible/FastFireCollectible.h"
 #include "../actor/collectible/FoodCollectible.h"
 #include "../actor/collectible/CarrotCollectible.h"
+#include "../actor/collectible/OneUpCollectible.h"
 #include "../actor/enemy/Enemy.h"
 #include "../actor/enemy/NormalTurtle.h"
 #include "../actor/enemy/LabRat.h"
@@ -135,6 +136,8 @@ bool EventSpawner::initializeSpawnableList() {
     registerSpawnable(PC_BARREL_GEM, "Object/BarrelContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
         return createCommonActorEvent<GemBarrel>(fromEventMap, x, y, params[0], params[1], params[2], params[3]);
     });
+
+    registerTrivialSpawnable<OneUpCollectible>(PC_ONEUP, "Object/Collectible");
 
     return true;
 }

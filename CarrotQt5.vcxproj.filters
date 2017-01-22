@@ -383,6 +383,9 @@
     <ClCompile Include="src\actor\solidobj\GemBarrel.cpp">
       <Filter>Source Files\Actor\Solid object</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\collectible\OneUpCollectible.cpp">
+      <Filter>Source Files\Actor\Collectible</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -674,6 +677,9 @@
     </ClInclude>
     <ClInclude Include="src\actor\solidobj\GemCrate.h">
       <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\collectible\OneUpCollectible.h">
+      <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

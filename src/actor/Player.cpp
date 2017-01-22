@@ -426,6 +426,12 @@ void Player::addHealth(unsigned amount) {
     osd->setHealth(health);
 }
 
+void Player::addLives(unsigned amount) {
+    lives += amount;
+    osd->setLives(lives);
+    playSound("PLAYER_PICKUP_ONEUP");
+}
+
 void Player::setPowerUp(WeaponType type) {
     if (type > (WEAPONCOUNT - 1)) { return; }
     uint typeIdx = (uint)type;
@@ -547,7 +553,7 @@ void Player::verifyOSDInitialized() {
         osd = std::make_unique<PlayerOSD>(api, std::dynamic_pointer_cast<Player>(shared_from_this()));
         osd->setWeaponType(currentWeapon, isWeaponPoweredUp[currentWeapon]);
         osd->setAmmo(ammo[currentWeapon]);
-        osd->setLives(lives);
+        osd->setLives(lives, true);
         osd->setScore(score);
         osd->setHealth(health);
     }

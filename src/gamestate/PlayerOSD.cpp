@@ -266,9 +266,11 @@ void PlayerOSD::setScore(unsigned long newScore) {
     scoreString->setText(QString::number(score).rightJustified(8, '0', false));
 }
 
-void PlayerOSD::setLives(unsigned lives) {
+void PlayerOSD::setLives(unsigned lives, bool init) {
     livesString->setText(QString("x") + QString::number(lives));
-    initLevelStartOverlay();
+    if (init) {
+        initLevelStartOverlay();
+    }
 }
 
 void PlayerOSD::setSugarRushActive() {

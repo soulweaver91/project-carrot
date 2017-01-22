@@ -63,7 +63,7 @@ public:
     void setAmmo(unsigned ammo);
     void setHealth(unsigned newHealth);
     void setScore(unsigned long newScore);
-    void setLives(unsigned lives);
+    void setLives(unsigned lives, bool init = false);
     void setSugarRushActive();
     void setLevelText(int idx);
     void initLevelStartOverlay();

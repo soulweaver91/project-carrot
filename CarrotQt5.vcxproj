@@ -189,6 +189,7 @@
     <ClCompile Include="src\actor\lighting\RadialLightSource.cpp" />
     <ClCompile Include="src\actor\lighting\LightSource.cpp" />
     <ClCompile Include="src\actor\solidobj\MovingPlatform.cpp" />
+    <ClCompile Include="src\actor\collectible\OneUpCollectible.cpp" />
     <ClCompile Include="src\actor\solidobj\PowerUpMonitor.cpp" />
     <ClCompile Include="src\actor\lighting\StaticLight.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="src\actor\lighting\LightSource.h" />
     <ClInclude Include="src\actor\lighting\RadialLightSource.h" />
     <ClInclude Include="src\actor\solidobj\MovingPlatform.h" />
+    <ClInclude Include="src\actor\collectible\OneUpCollectible.h" />
     <ClInclude Include="src\actor\solidobj\PowerUpMonitor.h" />
     <ClInclude Include="src\actor\lighting\StaticLight.h" />
     <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
