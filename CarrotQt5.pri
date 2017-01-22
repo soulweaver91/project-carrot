@@ -90,7 +90,9 @@ HEADERS += ./src/EngineState.h \
     ./src/actor/solidobj/AmmoCrate.h \
     ./src/actor/solidobj/AmmoContainer.h \
     ./src/actor/solidobj/BarrelContainer.h \
-    ./src/actor/solidobj/AmmoBarrel.h
+    ./src/actor/solidobj/AmmoBarrel.h \
+    ./src/actor/solidobj/GemCrate.h \
+    ./src/actor/solidobj/GemBarrel.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -164,7 +166,9 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/solidobj/CrateContainer.cpp \
     ./src/actor/solidobj/AmmoCrate.cpp \
     ./src/actor/solidobj/BarrelContainer.cpp \
-    ./src/actor/solidobj/AmmoBarrel.cpp
+    ./src/actor/solidobj/AmmoBarrel.cpp \
+    ./src/actor/solidobj/GemCrate.cpp \
+    ./src/actor/solidobj/GemBarrel.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

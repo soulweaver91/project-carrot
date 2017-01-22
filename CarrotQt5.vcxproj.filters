@@ -377,6 +377,12 @@
     <ClCompile Include="src\actor\solidobj\AmmoBarrel.cpp">
       <Filter>Source Files\Actor\Solid object</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\solidobj\GemCrate.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\GemBarrel.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -661,6 +667,12 @@
       <Filter>Header Files\Actor headers\Solid object headers</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\solidobj\AmmoBarrel.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\GemBarrel.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\GemCrate.h">
       <Filter>Header Files\Actor headers\Solid object headers</Filter>
     </ClInclude>
   </ItemGroup>

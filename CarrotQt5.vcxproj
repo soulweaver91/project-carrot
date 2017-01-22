@@ -181,6 +181,8 @@
     <ClCompile Include="src\actor\enemy\SuckerFloat.cpp" />
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
     <ClCompile Include="src\actor\FrozenBlock.cpp" />
+    <ClCompile Include="src\actor\solidobj\GemBarrel.cpp" />
+    <ClCompile Include="src\actor\solidobj\GemCrate.cpp" />
     <ClCompile Include="src\actor\solidobj\GenericContainer.cpp" />
     <ClCompile Include="src\actor\InteractiveActor.cpp" />
     <ClCompile Include="src\actor\lighting\PulsatingLight.cpp" />
@@ -275,6 +277,8 @@
     <ClInclude Include="src\actor\enemy\SuckerFloat.h" />
     <ClInclude Include="src\actor\enemy\TurtleShell.h" />
     <ClInclude Include="src\actor\FrozenBlock.h" />
+    <ClInclude Include="src\actor\solidobj\GemBarrel.h" />
+    <ClInclude Include="src\actor\solidobj\GemCrate.h" />
     <ClInclude Include="src\actor\solidobj\GenericContainer.h" />
     <ClInclude Include="src\actor\InteractiveActor.h" />
     <ClInclude Include="src\actor\lighting\PulsatingLight.h" />

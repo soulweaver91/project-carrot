@@ -26,6 +26,8 @@
 #include "../actor/solidobj/BarrelContainer.h"
 #include "../actor/solidobj/AmmoBarrel.h"
 #include "../actor/solidobj/AmmoCrate.h"
+#include "../actor/solidobj/GemBarrel.h"
+#include "../actor/solidobj/GemCrate.h"
 #include "../actor/Player.h"
 #include "../actor/SavePoint.h"
 #include "../actor/Spring.h"
@@ -124,6 +126,14 @@ bool EventSpawner::initializeSpawnableList() {
 
     registerSpawnable(PC_BARREL_GENERAL, "Object/BarrelContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
         return createCommonActorEvent<BarrelContainer>(fromEventMap, x, y, (PCEvent)params[0], params[1]);
+    });
+
+    registerSpawnable(PC_CRATE_GEM, "Object/CrateContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
+        return createCommonActorEvent<GemCrate>(fromEventMap, x, y, params[0], params[1], params[2], params[3]);
+    });
+
+    registerSpawnable(PC_BARREL_GEM, "Object/BarrelContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
+        return createCommonActorEvent<GemBarrel>(fromEventMap, x, y, params[0], params[1], params[2], params[3]);
     });
 
     return true;
