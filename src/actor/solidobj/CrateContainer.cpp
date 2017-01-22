@@ -6,6 +6,11 @@ CrateContainer::CrateContainer(const ActorInstantiationDetails& initData) : Gene
     AnimationUser::setAnimation("OBJECT_CRATE_GENERIC");
 }
 
+CrateContainer::CrateContainer(const ActorInstantiationDetails& initData, PCEvent type, uint count)
+    : CrateContainer(initData) {
+    generateContents(type, count);
+}
+
 CrateContainer::~CrateContainer() {
 }
 

@@ -28,7 +28,8 @@ void GenericContainer::empty() {
 
 void GenericContainer::generateContents(PCEvent type, uint count) {
     for (uint i = 0; i < count; ++i) {
-        auto actor = api->createActor(type, posX, posY, {}, true);
+        quint16 fakeParams[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto actor = api->createActor(type, posX, posY, fakeParams, true);
         if (actor != nullptr) {
             insertActor(actor);
         }

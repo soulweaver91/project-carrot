@@ -105,5 +105,8 @@ enum PCEvent {
     PC_LIGHT_STEADY         = 0x0121,
     PC_LIGHT_PULSE          = 0x0122,
     PC_AREA_TEXT            = 0x014A,
+    PC_CRATE_GENERAL        = 0x0061,
+    PC_BARREL_GENERAL       = 0x0062,
     PC_CRATE_AMMO           = 0x0063,
+    PC_BARREL_AMMO          = 0x0064,
 };
