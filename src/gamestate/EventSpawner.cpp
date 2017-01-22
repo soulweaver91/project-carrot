@@ -22,6 +22,9 @@
 #include "../actor/solidobj/Bridge.h"
 #include "../actor/solidobj/MovingPlatform.h"
 #include "../actor/solidobj/PowerUpMonitor.h"
+#include "../actor/solidobj/CrateContainer.h"
+#include "../actor/solidobj/BarrelContainer.h"
+#include "../actor/solidobj/AmmoBarrel.h"
 #include "../actor/solidobj/AmmoCrate.h"
 #include "../actor/Player.h"
 #include "../actor/SavePoint.h"
@@ -111,8 +114,16 @@ bool EventSpawner::initializeSpawnableList() {
         return createCommonActorEvent<AmmoCrate>(fromEventMap, x, y, params[0] < WEAPONCOUNT ? (WeaponType)params[0] : (WeaponType)0);
     });
 
+    registerSpawnable(PC_BARREL_AMMO, "Object/BarrelContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
+        return createCommonActorEvent<AmmoBarrel>(fromEventMap, x, y, params[0] < WEAPONCOUNT ? (WeaponType)params[0] : (WeaponType)0);
+    });
+
     registerSpawnable(PC_CRATE_GENERAL, "Object/CrateContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
         return createCommonActorEvent<CrateContainer>(fromEventMap, x, y, (PCEvent)params[0], params[1]);
+    });
+
+    registerSpawnable(PC_BARREL_GENERAL, "Object/BarrelContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
+        return createCommonActorEvent<BarrelContainer>(fromEventMap, x, y, (PCEvent)params[0], params[1]);
     });
 
     return true;

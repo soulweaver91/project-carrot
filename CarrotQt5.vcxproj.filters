@@ -371,6 +371,12 @@
     <ClCompile Include="src\actor\solidobj\AmmoCrate.cpp">
       <Filter>Source Files\Actor\Solid object</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\solidobj\BarrelContainer.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\AmmoBarrel.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -651,6 +657,12 @@
     <ClInclude Include="src\actor\solidobj\AmmoContainer.h">
       <Filter>Header Files\Actor headers\Solid object headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\solidobj\BarrelContainer.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\AmmoBarrel.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">
@@ -781,6 +793,9 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="Data\Manifests\Object\CrateContainer.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\BarrelContainer.json">
       <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>

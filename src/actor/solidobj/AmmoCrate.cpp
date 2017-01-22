@@ -37,7 +37,3 @@ void AmmoCrate::handleCollision(std::shared_ptr<CommonActor> other) {
         }
     }
 }
-
-PCEvent AmmoCrate::eventFromType(WeaponType type) {
-    return (PCEvent)((int)PC_AMMO_BOUNCER + (int)type - 1);
-}

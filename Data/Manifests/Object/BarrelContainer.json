@@ -1,0 +1,18 @@
+{
+  "graphics": {
+    "OBJECT_BARREL_GENERIC": {
+      "filename": "object/container_barrel.png",
+      "states": [
+        "0"
+      ],
+      "fps": 0
+    }
+  },
+  "sounds": {
+    "OBJECT_BARREL_DESTROY": {
+      "filename": [
+        "object/container_barrel_break.wav"
+      ]
+    }
+  }
+}

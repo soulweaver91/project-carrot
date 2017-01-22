@@ -9,7 +9,4 @@ public:
     AmmoCrate(const ActorInstantiationDetails& initData, WeaponType type);
     ~AmmoCrate();
     void handleCollision(std::shared_ptr<CommonActor> other) override;
-
-protected:
-    PCEvent eventFromType(WeaponType type);
 };

@@ -2,6 +2,7 @@
 #include <QSet>
 #include <QVector>
 #include "../../struct/WeaponTypes.h"
+#include "../../struct/PCEvent.h"
 
 class AmmoContainer {
 protected:
@@ -18,5 +19,9 @@ protected:
         }
 
         return types;
+    }
+
+    PCEvent eventFromType(WeaponType type) {
+        return (PCEvent)((int)PC_AMMO_BOUNCER + (int)type - 1);
     }
 };

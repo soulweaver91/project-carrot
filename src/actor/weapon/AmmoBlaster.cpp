@@ -1,5 +1,6 @@
 #include "AmmoBlaster.h"
 #include "../solidobj/TriggerCrate.h"
+#include "../solidobj/BarrelContainer.h"
 #include "../../struct/Constants.h"
 #include "../../gamestate/ActorAPI.h"
 
@@ -26,7 +27,9 @@ void AmmoBlaster::tickEvent() {
 
     std::weak_ptr<SolidObject> actor;
     if (!api->isPositionEmpty(currentHitbox, false, shared_from_this(), actor)) {
-        if (actor.lock() != nullptr && std::dynamic_pointer_cast<TriggerCrate>(actor.lock()) != nullptr) {
+        if (actor.lock() != nullptr
+            && std::dynamic_pointer_cast<TriggerCrate>(actor.lock()) != nullptr
+            && std::dynamic_pointer_cast<BarrelContainer>(actor.lock()) != nullptr) {
             ricochet();
         } else {
             health = 0;
