@@ -15,8 +15,8 @@ const sf::Vector3i GemCollectible::gemColors[4] = {
     { 256, 0, 512 }
 };
 
-GemCollectible::GemCollectible(const ActorInstantiationDetails& initData, GemType type, bool fromEventMap)
-    : Collectible(initData, fromEventMap), gemType(type) {
+GemCollectible::GemCollectible(const ActorInstantiationDetails& initData, GemType type)
+    : Collectible(initData), gemType(type) {
     scoreValue = gemValues[(uint)type % 4];
     setFacingDirection();
 

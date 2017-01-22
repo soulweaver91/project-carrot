@@ -14,12 +14,13 @@
 #include "Spring.h"
 #include "BonusWarp.h"
 #include "PowerUpMonitor.h"
+#include "GenericContainer.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
 #include "weapon/AmmoFreezer.h"
 
-Player::Player(const ActorInstantiationDetails& initData) : InteractiveActor(initData, false),
+Player::Player(const ActorInstantiationDetails& initData) : InteractiveActor(initData),
     RadialLightSource(50.0, 100.0),
     character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), currentSpecialMove(SPECIAL_MOVE_NONE), isAttachedToPole(false), isActivelyPushing(false),

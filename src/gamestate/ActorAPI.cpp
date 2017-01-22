@@ -1,4 +1,5 @@
 #include "ActorAPI.h"
+#include "EventSpawner.h"
 
 ActorAPI::ActorAPI(CarrotQt5* mainClass, LevelManager* levelManager) 
     : mainClass(mainClass), levelManager(levelManager) {
@@ -13,6 +14,15 @@ bool ActorAPI::addActor(std::shared_ptr<CommonActor> actor) {
 
 void ActorAPI::removeActor(std::shared_ptr<CommonActor> actor) {
     return levelManager->removeActor(actor);
+}
+
+std::shared_ptr<CommonActor> ActorAPI::createActor(PCEvent type, double x, double y, const quint16 params[8], bool returnOnly) {
+    auto ev = mainClass->getEventSpawner()->spawnEvent(false, type, x / 32, y / 32, params);
+    if (!returnOnly) {
+        addActor(ev);
+    }
+
+    return ev;
 }
 
 QVector<std::weak_ptr<CommonActor>> ActorAPI::findCollisionActors(const Hitbox& hitbox, std::shared_ptr<CommonActor> me) {

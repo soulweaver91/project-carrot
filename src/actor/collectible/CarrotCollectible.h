@@ -6,7 +6,7 @@ class Player;
 
 class CarrotCollectible : public Collectible {
 public:
-    CarrotCollectible(const ActorInstantiationDetails& initData, bool maxCarrot, bool fromEventMap = true);
+    CarrotCollectible(const ActorInstantiationDetails& initData, bool maxCarrot);
     virtual void collect(std::shared_ptr<Player> player) override;
 
 private:

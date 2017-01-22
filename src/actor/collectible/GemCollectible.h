@@ -13,7 +13,7 @@ enum GemType {
 
 class GemCollectible : public Collectible {
 public:
-    GemCollectible(const ActorInstantiationDetails& initData, GemType type, bool fromEventMap = true);
+    GemCollectible(const ActorInstantiationDetails& initData, GemType type);
     virtual void collect(std::shared_ptr<Player> player) override;
 
 private:

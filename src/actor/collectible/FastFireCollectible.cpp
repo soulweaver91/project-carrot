@@ -1,8 +1,8 @@
 #include "FastFireCollectible.h"
 #include "../Player.h"
 
-FastFireCollectible::FastFireCollectible(const ActorInstantiationDetails& initData, bool fromEventMap)
-    : Collectible(initData, fromEventMap) {
+FastFireCollectible::FastFireCollectible(const ActorInstantiationDetails& initData)
+    : Collectible(initData) {
     scoreValue = 200;
     setFacingDirection();
 

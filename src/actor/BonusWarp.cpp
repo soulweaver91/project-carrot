@@ -4,7 +4,7 @@
 #include "../gamestate/EventMap.h"
 
 BonusWarp::BonusWarp(const ActorInstantiationDetails& initData, const quint16 params[8])
-: CommonActor(initData, true) {
+: CommonActor(initData) {
     canBeFrozen = false;
     std::copy_n(params, 8, eventParams);
     loadResources("Object/BonusWarp");

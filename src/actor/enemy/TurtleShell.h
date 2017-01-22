@@ -6,8 +6,7 @@ class ActorAPI;
 
 class TurtleShell : public CommonActor {
 public:
-    TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX = 0.0,
-        double initSpeedY = 0.0, bool fromEventMap = false);
+    TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX = 0.0, double initSpeedY = 0.0);
     ~TurtleShell();
     void tickEvent() override;
     void updateHitbox() override;

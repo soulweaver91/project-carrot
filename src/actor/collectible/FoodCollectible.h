@@ -7,7 +7,7 @@ class Player;
 
 class FoodCollectible : public Collectible {
 public:
-    FoodCollectible(const ActorInstantiationDetails& initData, PCEvent type, bool fromEventMap = true);
+    FoodCollectible(const ActorInstantiationDetails& initData, PCEvent type);
     virtual void collect(std::shared_ptr<Player> player) override;
 
 private:

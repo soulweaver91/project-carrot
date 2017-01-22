@@ -7,12 +7,16 @@
 #include "../../struct/Constants.h"
 #include "../weapon/Ammo.h"
 
-Collectible::Collectible(const ActorInstantiationDetails& initData, bool fromEventMap)
-    : CommonActor(initData, fromEventMap), untouched(true), scoreValue(100) {
+Collectible::Collectible(const ActorInstantiationDetails& initData)
+    : CommonActor(initData), untouched(true), scoreValue(100) {
     canBeFrozen = false;
     phase = ((posX / 100.0) + (posY / 100.0));
     elasticity = 0.6;
     loadResources("Object/Collectible");
+
+    if (!isCreatedFromEventMap) {
+        untouched = false;
+    }
 }
 
 Collectible::~Collectible() {

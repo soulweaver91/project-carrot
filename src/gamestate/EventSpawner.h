@@ -6,11 +6,12 @@
 #include "ActorAPI.h"
 
 typedef std::shared_ptr<ActorAPI> apiHandle;
+typedef std::function<std::shared_ptr<CommonActor>(bool, int, int, const quint16[8])> SpawnerFunction;
 
 struct EventRepresentation {
     PCEvent eventID;
     QString identifier;
-    std::function<std::shared_ptr<CommonActor> (int, int, const quint16[8])> spawner;
+    SpawnerFunction spawner;
 };
 
 class EventSpawner {
@@ -20,8 +21,8 @@ public:
 
     bool initializeSpawnableList();
     void setApi(apiHandle newApi);
-    void registerSpawnable(PCEvent type, const QString& resourceName, std::function<std::shared_ptr<CommonActor>(int, int, const quint16[8])> spawner);
-    std::shared_ptr<CommonActor> spawnEvent(PCEvent type, int x, int y, const quint16 params[8]) const;
+    void registerSpawnable(PCEvent type, const QString& resourceName, SpawnerFunction spawner);
+    std::shared_ptr<CommonActor> spawnEvent(bool fromEventMap, PCEvent type, int x, int y, const quint16 params[8]) const;
     QString getEventResourceName(PCEvent type) const;
 
     template<typename T, typename... P>
@@ -32,5 +33,5 @@ private:
     QMap<PCEvent, EventRepresentation> spawnableEvents;
 
     template<typename T, typename... P>
-    std::shared_ptr<CommonActor> createCommonActorEvent(int x, int y, P... params);
+    std::shared_ptr<CommonActor> createCommonActorEvent(bool fromEventMap, int x, int y, P... params);
 };

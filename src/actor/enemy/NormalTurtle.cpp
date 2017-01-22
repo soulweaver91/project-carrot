@@ -48,7 +48,7 @@ void EnemyNormalTurtle::updateHitbox() {
 bool EnemyNormalTurtle::perish() {
     bool goingToPerish = (health == 0);
     if (goingToPerish) {
-        api->addActor(std::make_shared<TurtleShell>(ActorInstantiationDetails(api, { posX, posY }), speedX, -5.0, false));
+        api->addActor(std::make_shared<TurtleShell>(ActorInstantiationDetails(api, { posX, posY }, false), speedX, -5.0));
         Enemy::perish();
     }
 

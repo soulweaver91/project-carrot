@@ -3,7 +3,7 @@
 #include "../gamestate/TileMap.h"
 
 Spring::Spring(const ActorInstantiationDetails& initData, SpringType type, unsigned char orient) :
-    CommonActor(initData, false), orientation(orient) {
+    CommonActor(initData), orientation(orient) {
     loadResources("Object/Spring");
 
     CoordinatePair tileCorner = { (int)(posX / 32) * 32.0, (int)(posY / 32) * 32.0 };

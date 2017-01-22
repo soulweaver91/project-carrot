@@ -1,8 +1,8 @@
 #include "CarrotCollectible.h"
 #include "../Player.h"
 
-CarrotCollectible::CarrotCollectible(const ActorInstantiationDetails& initData, bool maxCarrot, bool fromEventMap)
-    : Collectible(initData, fromEventMap), maxCarrot(maxCarrot) {
+CarrotCollectible::CarrotCollectible(const ActorInstantiationDetails& initData, bool maxCarrot)
+    : Collectible(initData), maxCarrot(maxCarrot) {
     setFacingDirection();
 
     if (maxCarrot) {

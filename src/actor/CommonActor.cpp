@@ -11,12 +11,12 @@
 #include "weapon/AmmoFreezer.h"
 #include "weapon/AmmoToaster.h"
 
-CommonActor::CommonActor(const ActorInstantiationDetails& initData, bool fromEventMap)
+CommonActor::CommonActor(const ActorInstantiationDetails& initData)
     : AnimationUser(initData.api), api(initData.api), maxHealth(1), health(1), posX(initData.coords.x), posY(initData.coords.y),
     speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
     canJump(false), canBeFrozen(true), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
     isInvulnerable(false), isBlinking(false), isCollidable(true), isInvisible(false), frozenFramesLeft(0), elasticity(0.0),
-    friction(api->getGravity() / 3), suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(fromEventMap) {
+    friction(api->getGravity() / 3), suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(initData.fromEventMap) {
     originTileX = static_cast<int>(posX) / 32;
     originTileY = static_cast<int>(posY) / 32;
     updateHitbox();
