@@ -48,6 +48,7 @@ public:
     unsigned getLives();
     bool getPowerUp(WeaponType type) const;
     bool perish() override;
+    QSet<WeaponType> getAvailableWeaponTypes();
     void updateHitbox() override;
     bool setPlayerTransition(AnimStateT state, bool cancellable, bool removeControl = false, 
         SpecialMoveType setSpecial = SPECIAL_MOVE_NONE, AnimationCallbackFunc callback = []() {});

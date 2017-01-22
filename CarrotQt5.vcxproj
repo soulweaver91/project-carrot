@@ -255,6 +255,7 @@
     <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\actor\solidobj\AmmoContainer.h" />
     <ClInclude Include="src\actor\solidobj\AmmoCrate.h" />
     <ClInclude Include="src\actor\solidobj\CrateContainer.h" />
     <ClInclude Include="src\actor\enemy\LabRat.h" />

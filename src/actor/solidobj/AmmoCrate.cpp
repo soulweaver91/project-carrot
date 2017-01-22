@@ -1,9 +1,11 @@
 #include "AmmoCrate.h"
+#include "../weapon/Ammo.h"
+#include "../Player.h"
 
 AmmoCrate::AmmoCrate(const ActorInstantiationDetails& initData, WeaponType type)
     : CrateContainer(initData) {
     if (type != WEAPON_BLASTER) {
-        generateContents((PCEvent)((int)PC_AMMO_BOUNCER + (int)type - 1), 5);
+        generateContents(eventFromType(type), 5);
     }
 
     switch (type) {
@@ -20,4 +22,22 @@ AmmoCrate::AmmoCrate(const ActorInstantiationDetails& initData, WeaponType type)
 
 AmmoCrate::~AmmoCrate() {
 
+}
+
+void AmmoCrate::handleCollision(std::shared_ptr<CommonActor> other) {
+    CrateContainer::handleCollision(other);
+
+    if (contents.length() == 0) {
+        std::shared_ptr<Ammo> ammo = std::dynamic_pointer_cast<Ammo>(other);
+        if (ammo != nullptr && ammo->getType() != WEAPON_FREEZER) {
+            auto types = generateRandomAmmo(ammo->getOwner().lock()->getAvailableWeaponTypes());
+            for (auto type : types) {
+                generateContents(eventFromType(type), 1);
+            }
+        }
+    }
+}
+
+PCEvent AmmoCrate::eventFromType(WeaponType type) {
+    return (PCEvent)((int)PC_AMMO_BOUNCER + (int)type - 1);
 }

@@ -87,7 +87,8 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/WeaponTypes.h \
     ./src/actor/solidobj/GenericContainer.h \
     ./src/actor/solidobj/CrateContainer.h \
-    ./src/actor/solidobj/AmmoCrate.h
+    ./src/actor/solidobj/AmmoCrate.h \
+    ./src/actor/solidobj/AmmoContainer.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \

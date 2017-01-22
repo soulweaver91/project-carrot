@@ -648,6 +648,9 @@
     <ClInclude Include="src\actor\solidobj\AmmoCrate.h">
       <Filter>Header Files\Actor headers\Solid object headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\actor\solidobj\AmmoContainer.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">

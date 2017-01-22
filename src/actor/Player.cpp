@@ -514,6 +514,16 @@ bool Player::perish() {
     return false;
 }
 
+QSet<WeaponType> Player::getAvailableWeaponTypes() {
+    QSet<WeaponType> types;
+    for (int i = 0; i < WEAPONCOUNT; ++i) {
+        if (ammo[i] > 0) {
+            types << (WeaponType)i;
+        }
+    }
+    return types;
+}
+
 void Player::updateHitbox() {
     //currentHitbox = CommonActor::getHitbox(24u, 24u);
     // TODO: Figure out how to use hot/coldspots properly.
