@@ -1,0 +1,54 @@
+{
+  "graphics": {
+    "OBJECT_CRATE_GENERIC": {
+      "filename": "object/container_box_crush.png",
+      "states": [
+        "0"
+      ],
+      "fps": 0
+    },
+    "OBJECT_CRATE_AMMO_BOUNCER": {
+      "filename": "object/crate_ammo_bouncer.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_CRATE_AMMO_FREEZER": {
+      "filename": "object/crate_ammo_freezer.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_CRATE_AMMO_SEEKER": {
+      "filename": "object/crate_ammo_seeker.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_CRATE_AMMO_RF": {
+      "filename": "object/crate_ammo_rf.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_CRATE_AMMO_TOASTER": {
+      "filename": "object/crate_ammo_toaster.png",
+      "states": [
+        "0"
+      ]
+    },
+    "OBJECT_CRATE_AMMO_TNT": {
+      "filename": "object/crate_ammo_tnt.png",
+      "states": [
+        "0"
+      ]
+    }
+  },
+  "sounds": {
+    "OBJECT_CRATE_DESTROY": {
+      "filename": [
+        "object/container_crate_break.wav"
+      ]
+    }
+  }
+}

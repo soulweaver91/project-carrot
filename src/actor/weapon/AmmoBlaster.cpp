@@ -1,5 +1,5 @@
 #include "AmmoBlaster.h"
-#include "../TriggerCrate.h"
+#include "../solidobj/TriggerCrate.h"
 #include "../../struct/Constants.h"
 #include "../../gamestate/ActorAPI.h"
 

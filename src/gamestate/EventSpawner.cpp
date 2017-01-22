@@ -1,7 +1,6 @@
 #include "EventSpawner.h"
 
 #include "../gamestate/LevelManager.h"
-#include "../actor/SolidObject.h"
 #include "../actor/collectible/Collectible.h"
 #include "../actor/collectible/AmmoCollectible.h"
 #include "../actor/collectible/CoinCollectible.h"
@@ -17,15 +16,17 @@
 #include "../actor/enemy/SuckerFloat.h"
 #include "../actor/lighting/StaticLight.h"
 #include "../actor/lighting/PulsatingLight.h"
+#include "../actor/solidobj/SolidObject.h"
+#include "../actor/solidobj/PushBox.h"
+#include "../actor/solidobj/TriggerCrate.h"
+#include "../actor/solidobj/Bridge.h"
+#include "../actor/solidobj/MovingPlatform.h"
+#include "../actor/solidobj/PowerUpMonitor.h"
+#include "../actor/solidobj/AmmoCrate.h"
 #include "../actor/Player.h"
-#include "../actor/PushBox.h"
-#include "../actor/TriggerCrate.h"
-#include "../actor/Bridge.h"
 #include "../actor/SavePoint.h"
 #include "../actor/Spring.h"
-#include "../actor/MovingPlatform.h"
 #include "../actor/BonusWarp.h"
-#include "../actor/PowerUpMonitor.h"
 #include "../struct/WeaponTypes.h"
 
 EventSpawner::EventSpawner() {
@@ -104,6 +105,10 @@ bool EventSpawner::initializeSpawnableList() {
 
     registerSpawnable(PC_LIGHT_PULSE, "Object/NoResources", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
         return createCommonActorEvent<PulsatingLight>(fromEventMap, x, y, params[0], params[1], params[2]);
+    });
+
+    registerSpawnable(PC_CRATE_AMMO, "Object/CrateContainer", [this](bool fromEventMap, int x, int y, const quint16 params[]) {
+        return createCommonActorEvent<AmmoCrate>(fromEventMap, x, y, params[0] < WEAPONCOUNT ? (WeaponType)params[0] : (WeaponType)0);
     });
 
     return true;

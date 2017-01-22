@@ -1,10 +1,10 @@
 #include "MovingPlatform.h"
 
 #include <cmath>
-#include "../gamestate/GameView.h"
-#include "../gamestate/ActorAPI.h"
-#include "../struct/Constants.h"
-#include "Player.h"
+#include "../../gamestate/GameView.h"
+#include "../../gamestate/ActorAPI.h"
+#include "../../struct/Constants.h"
+#include "../Player.h"
 
 #define BASE_CYCLE_FRAMES 700
 

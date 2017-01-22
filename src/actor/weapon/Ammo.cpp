@@ -3,7 +3,7 @@
 #include "../enemy/Enemy.h"
 #include "../enemy/TurtleShell.h"
 #include "../collectible/Collectible.h"
-#include "../PushBox.h"
+#include "../solidobj/PushBox.h"
 #include "../../gamestate/ActorAPI.h"
 
 Ammo::Ammo(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy, bool firedLeft,

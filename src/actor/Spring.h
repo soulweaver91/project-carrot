@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "SolidObject.h"
+#include "solidobj/SolidObject.h"
 #include "../struct/Hitbox.h"
 
 class ActorAPI;

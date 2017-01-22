@@ -172,17 +172,20 @@
     <ClCompile Include="src\actor\collectible\FastFireCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\FoodCollectible.cpp" />
     <ClCompile Include="src\actor\collectible\GemCollectible.cpp" />
+    <ClCompile Include="src\actor\solidobj\AmmoCrate.cpp" />
+    <ClCompile Include="src\actor\solidobj\CrateContainer.cpp" />
     <ClCompile Include="src\actor\enemy\LabRat.cpp" />
     <ClCompile Include="src\actor\enemy\Sucker.cpp" />
     <ClCompile Include="src\actor\enemy\SuckerFloat.cpp" />
     <ClCompile Include="src\actor\enemy\TurtleShell.cpp" />
     <ClCompile Include="src\actor\FrozenBlock.cpp" />
+    <ClCompile Include="src\actor\solidobj\GenericContainer.cpp" />
     <ClCompile Include="src\actor\InteractiveActor.cpp" />
     <ClCompile Include="src\actor\lighting\PulsatingLight.cpp" />
     <ClCompile Include="src\actor\lighting\RadialLightSource.cpp" />
     <ClCompile Include="src\actor\lighting\LightSource.cpp" />
-    <ClCompile Include="src\actor\MovingPlatform.cpp" />
-    <ClCompile Include="src\actor\PowerUpMonitor.cpp" />
+    <ClCompile Include="src\actor\solidobj\MovingPlatform.cpp" />
+    <ClCompile Include="src\actor\solidobj\PowerUpMonitor.cpp" />
     <ClCompile Include="src\actor\lighting\StaticLight.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoFreezer.cpp" />
     <ClCompile Include="src\gamestate\ActorAPI.cpp" />
@@ -203,18 +206,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="src\actor\Bridge.cpp" />
+    <ClCompile Include="src\actor\solidobj\Bridge.cpp" />
     <ClCompile Include="src\actor\collectible\Collectible.cpp" />
     <ClCompile Include="src\actor\CommonActor.cpp" />
     <ClCompile Include="src\actor\enemy\Enemy.cpp" />
     <ClCompile Include="src\actor\enemy\Lizard.cpp" />
     <ClCompile Include="src\actor\enemy\NormalTurtle.cpp" />
     <ClCompile Include="src\actor\Player.cpp" />
-    <ClCompile Include="src\actor\PushBox.cpp" />
+    <ClCompile Include="src\actor\solidobj\PushBox.cpp" />
     <ClCompile Include="src\actor\SavePoint.cpp" />
-    <ClCompile Include="src\actor\SolidObject.cpp" />
+    <ClCompile Include="src\actor\solidobj\SolidObject.cpp" />
     <ClCompile Include="src\actor\Spring.cpp" />
-    <ClCompile Include="src\actor\TriggerCrate.cpp" />
+    <ClCompile Include="src\actor\solidobj\TriggerCrate.cpp" />
     <ClCompile Include="src\actor\weapon\Ammo.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoBlaster.cpp" />
     <ClCompile Include="src\actor\weapon\AmmoBouncer.cpp" />
@@ -252,6 +255,8 @@
     <ClCompile Include="src\sound\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\actor\solidobj\AmmoCrate.h" />
+    <ClInclude Include="src\actor\solidobj\CrateContainer.h" />
     <ClInclude Include="src\actor\enemy\LabRat.h" />
     <ClInclude Include="src\actor\enemy\Sucker.h" />
     <ClInclude Include="GeneratedFiles\ui_CarrotQt5.h" />
@@ -265,18 +270,19 @@
     <ClInclude Include="src\actor\enemy\SuckerFloat.h" />
     <ClInclude Include="src\actor\enemy\TurtleShell.h" />
     <ClInclude Include="src\actor\FrozenBlock.h" />
+    <ClInclude Include="src\actor\solidobj\GenericContainer.h" />
     <ClInclude Include="src\actor\InteractiveActor.h" />
     <ClInclude Include="src\actor\lighting\PulsatingLight.h" />
     <ClInclude Include="src\actor\lighting\LightSource.h" />
     <ClInclude Include="src\actor\lighting\RadialLightSource.h" />
-    <ClInclude Include="src\actor\MovingPlatform.h" />
-    <ClInclude Include="src\actor\PowerUpMonitor.h" />
+    <ClInclude Include="src\actor\solidobj\MovingPlatform.h" />
+    <ClInclude Include="src\actor\solidobj\PowerUpMonitor.h" />
     <ClInclude Include="src\actor\lighting\StaticLight.h" />
     <ClInclude Include="src\actor\weapon\AmmoFreezer.h" />
     <ClInclude Include="src\gamestate\ActorAPI.h" />
     <ClInclude Include="src\gamestate\ControlManager.h" />
     <ClInclude Include="GeneratedFiles\ui_AboutCarrotDialog.h" />
-    <ClInclude Include="src\actor\Bridge.h" />
+    <ClInclude Include="src\actor\solidobj\Bridge.h" />
     <ClInclude Include="src\actor\Spring.h" />
     <ClInclude Include="src\gamestate\GameView.h" />
     <CustomBuild Include="src\gamestate\LevelManager.h">
@@ -405,10 +411,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DNOMINMAX -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_CORE_LIB  "-I$(BASS_DIR)\c" "-I$(BASS_FX_DIR)\c" "-I$(SFML_DIR)\include" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtCore"</Command>
     </CustomBuild>
-    <ClInclude Include="src\actor\PushBox.h" />
+    <ClInclude Include="src\actor\solidobj\PushBox.h" />
     <ClInclude Include="src\actor\SavePoint.h" />
-    <ClInclude Include="src\actor\SolidObject.h" />
-    <ClInclude Include="src\actor\TriggerCrate.h" />
+    <ClInclude Include="src\actor\solidobj\SolidObject.h" />
+    <ClInclude Include="src\actor\solidobj\TriggerCrate.h" />
     <ClInclude Include="src\actor\weapon\Ammo.h" />
     <ClInclude Include="src\actor\weapon\AmmoBlaster.h" />
     <ClInclude Include="src\actor\weapon\AmmoBouncer.h" />
@@ -483,6 +489,7 @@
     <None Include="Data\Manifests\Enemy\TurtleShell.json" />
     <None Include="Data\Manifests\Interactive\Player.json" />
     <None Include="Data\Manifests\Interactive\PlayerJazz.json" />
+    <None Include="Data\Manifests\Object\CrateContainer.json" />
     <None Include="Data\Manifests\Object\BonusWarp.json" />
     <None Include="Data\Manifests\Object\BridgePiece.json" />
     <None Include="Data\Manifests\Object\Collectible.json" />

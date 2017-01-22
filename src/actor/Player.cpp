@@ -5,16 +5,16 @@
 #include "../gamestate/EventMap.h"
 #include "../gamestate/GameView.h"
 #include "../gamestate/TileMap.h"
-#include "SolidObject.h"
-#include "TriggerCrate.h"
+#include "solidobj/SolidObject.h"
+#include "solidobj/TriggerCrate.h"
 #include "enemy/Enemy.h"
 #include "enemy/TurtleShell.h"
 #include "collectible/Collectible.h"
 #include "SavePoint.h"
 #include "Spring.h"
 #include "BonusWarp.h"
-#include "PowerUpMonitor.h"
-#include "GenericContainer.h"
+#include "solidobj/PowerUpMonitor.h"
+#include "solidobj/GenericContainer.h"
 #include "weapon/AmmoBlaster.h"
 #include "weapon/AmmoBouncer.h"
 #include "weapon/AmmoToaster.h"
@@ -713,6 +713,12 @@ void Player::checkDestructibleTiles() {
         if (!(api->isPositionEmpty(tileCollisionHitbox, false, shared_from_this(), object))) {
             {
                 auto collider = std::dynamic_pointer_cast<TriggerCrate>(object.lock());
+                if (collider != nullptr) {
+                    collider->decreaseHealth(1);
+                }
+            }
+            {
+                auto collider = std::dynamic_pointer_cast<GenericContainer>(object.lock());
                 if (collider != nullptr) {
                     collider->decreaseHealth(1);
                 }

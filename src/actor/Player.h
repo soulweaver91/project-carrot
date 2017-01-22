@@ -10,7 +10,7 @@
 #include "../struct/WeaponTypes.h"
 #include "../struct/Constants.h"
 #include "../struct/NextLevelData.h"
-#include "MovingPlatform.h"
+#include "solidobj/MovingPlatform.h"
 #include "collectible/GemCollectible.h"
 #include "collectible/CoinCollectible.h"
 

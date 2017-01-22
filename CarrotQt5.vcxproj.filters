@@ -126,6 +126,12 @@
     <Filter Include="Source Files\Actor\Lighting">
       <UniqueIdentifier>{da658c61-728e-4bcb-9927-328f5a578d21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Actor headers\Solid object headers">
+      <UniqueIdentifier>{586a4cf8-ab16-416b-a8fd-f079b2e4d5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actor\Solid object">
+      <UniqueIdentifier>{e8120f40-04b0-42fd-97e2-e9218380ae33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\Debug\moc_Player.cpp">
@@ -167,22 +173,10 @@
     <ClCompile Include="src\actor\weapon\AmmoToaster.cpp">
       <Filter>Source Files\Actor\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="src\actor\Bridge.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="src\actor\Player.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="src\actor\PushBox.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="src\actor\SavePoint.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\actor\SolidObject.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\actor\TriggerCrate.cpp">
       <Filter>Source Files\Actor</Filter>
     </ClCompile>
     <ClCompile Include="src\gamestate\EventMap.cpp">
@@ -238,9 +232,6 @@
     </ClCompile>
     <ClCompile Include="src\graphics\Tileset.cpp">
       <Filter>Source Files\Graphics system</Filter>
-    </ClCompile>
-    <ClCompile Include="src\actor\MovingPlatform.cpp">
-      <Filter>Source Files\Actor</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_CarrotQt5.cpp">
       <Filter>Generated Files</Filter>
@@ -302,9 +293,6 @@
     <ClCompile Include="src\actor\enemy\Sucker.cpp">
       <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="src\actor\PowerUpMonitor.cpp">
-      <Filter>Source Files\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="src\actor\enemy\LabRat.cpp">
       <Filter>Source Files\Actor\Enemy</Filter>
     </ClCompile>
@@ -356,6 +344,33 @@
     <ClCompile Include="src\actor\lighting\LightSource.cpp">
       <Filter>Source Files\Actor\Lighting</Filter>
     </ClCompile>
+    <ClCompile Include="src\actor\solidobj\Bridge.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\CrateContainer.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\GenericContainer.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\MovingPlatform.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\PowerUpMonitor.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\PushBox.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\SolidObject.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\TriggerCrate.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\solidobj\AmmoCrate.cpp">
+      <Filter>Source Files\Actor\Solid object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -405,19 +420,7 @@
     <ClInclude Include="src\actor\weapon\AmmoToaster.h">
       <Filter>Header Files\Actor headers\Weapon headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\actor\Bridge.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\actor\PushBox.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\actor\SavePoint.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\actor\SolidObject.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\actor\TriggerCrate.h">
       <Filter>Header Files\Actor headers</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\AnimatedTile.h">
@@ -507,9 +510,6 @@
     <ClInclude Include="src\struct\Layers.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
-    <ClInclude Include="src\actor\MovingPlatform.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\struct\Constants.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
@@ -567,9 +567,6 @@
     <ClInclude Include="src\actor\enemy\Sucker.h">
       <Filter>Header Files\Actor headers\Enemy headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\actor\PowerUpMonitor.h">
-      <Filter>Header Files\Actor headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\actor\enemy\LabRat.h">
       <Filter>Header Files\Actor headers\Enemy headers</Filter>
     </ClInclude>
@@ -623,6 +620,33 @@
     </ClInclude>
     <ClInclude Include="src\actor\lighting\LightSource.h">
       <Filter>Header Files\Actor headers\Light source headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\Bridge.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\CrateContainer.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\GenericContainer.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\MovingPlatform.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\PowerUpMonitor.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\PushBox.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\SolidObject.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\TriggerCrate.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\solidobj\AmmoCrate.h">
+      <Filter>Header Files\Actor headers\Solid object headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -752,6 +776,9 @@
     </None>
     <None Include=".gitattributes">
       <Filter>Configuration</Filter>
+    </None>
+    <None Include="Data\Manifests\Object\CrateContainer.json">
+      <Filter>Actor Resource Manifests\Object</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

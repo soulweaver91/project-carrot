@@ -1,6 +1,6 @@
 #include "TriggerCrate.h"
-#include "../gamestate/ActorAPI.h"
-#include "../gamestate/TileMap.h"
+#include "../../gamestate/ActorAPI.h"
+#include "../../gamestate/TileMap.h"
 
 TriggerCrate::TriggerCrate(const ActorInstantiationDetails& initData, int triggerID)
     : SolidObject(initData, true), triggerID(triggerID) {

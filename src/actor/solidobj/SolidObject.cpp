@@ -1,5 +1,5 @@
 #include "SolidObject.h"
-#include "../gamestate/ActorAPI.h"
+#include "../../gamestate/ActorAPI.h"
 
 SolidObject::SolidObject(const ActorInstantiationDetails& initData, bool movable)
     : CommonActor(initData), movable(movable), isOneWay(false) {
