@@ -750,14 +750,13 @@ void TileMap::setTrigger(unsigned char triggerID, bool newState) {
     for (uint tx = 0; tx < levelWidth; ++tx) {
         for (uint ty = 0; ty < levelHeight; ++ty) {
             auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
-            if (tile->destructType == DESTRUCT_TRIGGER) {
-                if (tile->extraByte == triggerID) {
+            if (tile->destructType == DESTRUCT_TRIGGER && tile->extraByte == triggerID) {
                 if (animatedTiles.at(tile->destructAnimation)->getAnimationLength() > 1) {
                     tile->destructFrameIndex = (newState ? 1u : 0u);
                     tile->tileId = animatedTiles.at(tile->destructAnimation)->getFrameCanonicalIndex(tile->destructFrameIndex);
                     tile->sprite->setTextureRect(levelTileset->getTileTextureRect(tile->tileId));
                 }
-            }}
+            }
         }
     }
 }
@@ -773,12 +772,16 @@ unsigned TileMap::getLevelHeight() {
     return levelHeight;
 }
 
-void TileMap::setTileEventFlag(int x, int y, PCEvent e) {
+void TileMap::setTileEventFlag(const EventMap* events, int x, int y, PCEvent e) {
     auto tile = levelLayout[sprLayerIdx].tileLayout[y][x];
     quint16 p[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    auto tiles = root->getGameEvents().lock();
-    if (tiles != nullptr) {
-        tiles->getPositionParams(x, y, p);
+    if (events != nullptr) {
+        events->getPositionParams(x, y, p);
+    } else {
+        auto mainEvents = root->getGameEvents().lock();
+        if (mainEvents != nullptr) {
+            mainEvents->getPositionParams(x, y, p);
+        }
     }
 
     switch (e) {

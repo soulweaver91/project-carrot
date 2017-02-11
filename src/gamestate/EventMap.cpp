@@ -18,13 +18,13 @@ EventMap::~EventMap() {
 
 }
 
-bool EventMap::isPosHurting(double x, double y) {
+bool EventMap::isPosHurting(double x, double y) const {
     int ax = static_cast<int>(x) / 32;
     int ay = static_cast<int>(y) / 32;
     return getPositionEvent(ax, ay) == PC_MODIFIER_HURT;
 }
 
-unsigned short EventMap::isPosPole(double x, double y) {
+unsigned short EventMap::isPosPole(double x, double y) const {
     int ax = static_cast<int>(x) / 32;
     int ay = static_cast<int>(y) / 32;
     PCEvent event = getPositionEvent(ax, ay);
@@ -97,7 +97,7 @@ void EventMap::deactivateAll() {
     }
 }
 
-int EventMap::getPositionWarp(double x, double y) {
+int EventMap::getPositionWarp(double x, double y) const {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
     if (getPositionEvent(tx, ty) == PC_WARP_ORIGIN) {
@@ -108,26 +108,26 @@ int EventMap::getPositionWarp(double x, double y) {
     }
 }
 
-PCEvent EventMap::getPositionEvent(double x, double y) {
+PCEvent EventMap::getPositionEvent(double x, double y) const {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
     return getPositionEvent(tx, ty);
 }
 
-PCEvent EventMap::getPositionEvent(int x, int y) {
+PCEvent EventMap::getPositionEvent(int x, int y) const {
     if (positionHasEvent(x, y)) {
         return eventLayout.at(y).at(x)->storedEvent;
     }
     return PC_EMPTY;
 }
 
-void EventMap::getPositionParams(double x, double y, quint16 (&params)[8]) {
+void EventMap::getPositionParams(double x, double y, quint16 (&params)[8]) const {
     int tx = static_cast<int>(x) / 32;
     int ty = static_cast<int>(y) / 32;
     return getPositionParams(tx, ty, params);
 }
 
-void EventMap::getPositionParams(int x, int y, quint16 (&params)[8]) {
+void EventMap::getPositionParams(int x, int y, quint16 (&params)[8]) const {
     if (positionHasEvent(x, y)) {
         for (int i = 0; i < 8; ++i) {
             params[i] = eventLayout.at(y).at(x)->eventParams[i];
@@ -226,7 +226,7 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameD
                             storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
                             auto tiles = root->getGameTiles().lock();
                             if (tiles != nullptr) {
-                                tiles->setTileEventFlag(x, y, static_cast<PCEvent>(eventID));
+                                tiles->setTileEventFlag(this, x, y, static_cast<PCEvent>(eventID));
                             }
                         }
                         break;
@@ -257,11 +257,11 @@ void EventMap::addWarpTarget(unsigned id, unsigned x, unsigned y) {
     warpTargets.insert(id, p);
 }
 
-bool EventMap::positionHasEvent(int x, int y) {
+bool EventMap::positionHasEvent(int x, int y) const {
     return (x >= 0 && y >= 0 && y < eventLayout.size() && x < eventLayout[0].size() && eventLayout.at(y).at(x) != nullptr);
 }
 
-CoordinatePair EventMap::getWarpTarget(unsigned id) {
+CoordinatePair EventMap::getWarpTarget(unsigned id) const {
     QList<CoordinatePair> targets = warpTargets.values(id);
     if (targets.size() > 0) {
         return targets.at(qrand() % targets.size());
@@ -270,6 +270,6 @@ CoordinatePair EventMap::getWarpTarget(unsigned id) {
     }
 }
 
-QSet<QString> EventMap::getResourceNameList() {
+QSet<QString> EventMap::getResourceNameList() const {
     return resourceNames;
 }
