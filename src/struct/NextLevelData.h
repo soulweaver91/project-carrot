@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 #include "WeaponTypes.h"
+#include "GameDifficulty.h"
 
 #include <QtGlobal>
 
@@ -22,4 +23,5 @@ struct LevelCarryOver {
     uint foodCounter;
     WeaponType currentWeapon;
     ExitType exitType;
+    GameDifficulty difficulty;
 };

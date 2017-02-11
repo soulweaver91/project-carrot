@@ -186,7 +186,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
         try {
             windowCanvas->clear();
 
-            auto levelManager = std::make_shared<LevelManager>(this, filename, episode);
+            auto levelManager = std::make_shared<LevelManager>(this, filename, episode, carryOver);
 
 #ifdef CARROT_DEBUG
             auto player = levelManager->getPlayer(0).lock();

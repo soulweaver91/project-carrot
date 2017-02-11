@@ -338,6 +338,7 @@
     <ClInclude Include="src\struct\Controls.h" />
     <ClInclude Include="src\struct\CoordinatePair.h" />
     <ClInclude Include="src\struct\DebugConfig.h" />
+    <ClInclude Include="src\struct\GameDifficulty.h" />
     <ClInclude Include="src\struct\Hitbox.h" />
     <ClInclude Include="src\struct\Layers.h" />
     <ClInclude Include="src\struct\NextLevelData.h" />

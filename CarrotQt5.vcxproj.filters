@@ -681,6 +681,9 @@
     <ClInclude Include="src\actor\collectible\OneUpCollectible.h">
       <Filter>Header Files\Actor headers\Collectible headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\struct\GameDifficulty.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CarrotQt5.ico">

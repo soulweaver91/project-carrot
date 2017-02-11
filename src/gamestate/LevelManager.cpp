@@ -14,6 +14,8 @@
 #include "../actor/lighting/LightSource.h"
 #include "../menu/InGameMenuRoot.h"
 #include "../menu/ConfirmationMenu.h"
+#include "../struct/GameDifficulty.h"
+#include "../struct/NextLevelData.h"
 #ifdef CARROT_DEBUG
 #include <cmath>
 #endif
@@ -26,9 +28,9 @@
 #include <QRegularExpression>
 #include <exception>
 
-LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode) :
+LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode, const LevelCarryOver& carryOver) :
     root(root), levelName(level), levelFileName(level), episodeName(episode), nextLevel(""),
-    exiting(false), exitKeyUpEventsSent(false), defaultLightingLevel(100), gravity(0.3) {
+    exiting(false), exitKeyUpEventsSent(false), defaultLightingLevel(100), gravity(0.3), difficulty(DIFFICULTY_NORMAL) {
 
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
@@ -111,10 +113,11 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
 
     updateLoadingScreenTextFunc("Loading events...");
     root->getEventSpawner()->setApi(api);
-    gameEvents = std::make_shared<EventMap>(this, root->getEventSpawner(), gameTiles->getLevelWidth(), gameTiles->getLevelHeight());
-    if (levelFiles.contains("event.layer")) {
-        gameEvents->readEvents(levelDir.absoluteFilePath("event.layer"), levelConfig.value("Version/LayerFormat", 1).toUInt());
+    if (carryOver.difficulty != DIFFICULTY_DEFAULT) {
+        difficulty = carryOver.difficulty;
     }
+
+    gameEvents = std::make_shared<EventMap>(this, root->getEventSpawner(), levelDir.absoluteFilePath("event.layer"), levelConfig, gameTiles->getLevelWidth(), gameTiles->getLevelHeight(), difficulty);
 
     updateLoadingScreenTextFunc("Preloading resources...");
     root->loadActorTypeResources("Interactive/Player");
@@ -693,6 +696,7 @@ void LevelManager::initLevelChange(ExitType e) {
     addTimer(435u, false, [this, e]() {
         LevelCarryOver nextLevelData = players[0]->prepareLevelCarryOver();
         nextLevelData.exitType = e;
+        nextLevelData.difficulty = difficulty;
 
         root->startGame(nextLevel, episodeName, nextLevelData);
     });

@@ -2,13 +2,16 @@
 #include <algorithm>
 #include <cmath>
 #include <QList>
+#include <QSettings>
 #include "../gamestate/LevelManager.h"
 #include "../actor/Player.h"
 #include "EventSpawner.h"
 
-EventMap::EventMap(LevelManager* root, const EventSpawner* const spawner, unsigned int width, unsigned int height)
+EventMap::EventMap(LevelManager* root, const EventSpawner* const spawner, const QString& eventsPath,
+                   const QSettings& configuration, unsigned int width, unsigned int height, GameDifficulty difficulty)
     : root(root), spawner(spawner) {
     eventLayout = QVector<QVector<std::shared_ptr<EventTile>>>(height, QVector<std::shared_ptr<EventTile>>(width, nullptr));
+    readEvents(eventsPath, configuration.value("Version/LayerFormat", 1).toUInt(), difficulty);
 }
 
 EventMap::~EventMap() {
@@ -142,7 +145,7 @@ void EventMap::setTileParam(int x, int y, unsigned char idx, quint16 value) {
     eventLayout[y][x]->eventParams[idx] = value;
 }
 
-void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
+void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameDifficulty difficulty) {
     QFile eventMapHandle(filename);
     if (!eventMapHandle.open(QIODevice::ReadOnly)) {
         // TODO: opening failed for some reason
@@ -157,6 +160,19 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
         return;
     }
 
+    quint8 difficultyByte;
+    switch (difficulty) {
+        case DIFFICULTY_EASY:
+            difficultyByte = 1;
+            break;
+        case DIFFICULTY_HARD:
+            difficultyByte = 3;
+            break;
+        case DIFFICULTY_NORMAL:
+        default:
+            difficultyByte = 2; break;
+    }
+
     QDataStream eventMapStream(eventMapData);
     QSet<PCEvent> encounteredEvents;
     unsigned y = 0;
@@ -169,11 +185,9 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
             if (eventID == 0xFFFF) {
                 break;
             }
-            quint8 eventFlags = 0;
+            // Initialised to have flags for easy, normal and hard difficulties
+            quint8 eventFlags = 0x0E;
             QVector<quint16> eventParams(8);
-
-            encounteredEvents << (PCEvent)eventID;
-
             if (layoutVersion > 3) {
                 eventMapStream >> eventFlags;
                 for (int i = 0; i < 8; ++i) {
@@ -183,44 +197,50 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion) {
                 }
             }
 
-            switch (eventID) {
-                case PC_EMPTY:
-                    break;
-                case PC_JAZZ_LEVEL_START:
-                    if (root->getPlayer(0).lock() == nullptr) {
-                        auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { 32.0 * x + 16.0, 32.0 * y + 16.0 }));
-                        root->addPlayer(defaultplayer, 0);
-                    }
-                    break;
-                case PC_MODIFIER_ONE_WAY:
-                case PC_MODIFIER_VINE:
-                case PC_MODIFIER_HOOK:
-                case PC_MODIFIER_HURT:
-                case PC_SCENERY_DESTRUCT:
-                case PC_SCENERY_BUTTSTOMP:
-                case PC_TRIGGER_AREA:
-                case PC_SCENERY_DESTRUCT_SPD:
-                case PC_SCENERY_COLLAPSE:
-                case PC_MODIFIER_H_POLE:
-                case PC_MODIFIER_V_POLE:
-                    {
-                        storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
-                        auto tiles = root->getGameTiles().lock();
-                        if (tiles != nullptr) {
-                            tiles->setTileEventFlag(x, y, static_cast<PCEvent>(eventID));
+            // If the difficulty bytes for the event don't match the selected difficulty, don't add anything to the event map.
+            // Additionally, never show events that are multiplayer-only for now.
+            if (eventFlags == 0 || ((eventFlags & (0x01 << difficultyByte)) != 0 && ((eventFlags & 0x10) == 0))) {
+                encounteredEvents << (PCEvent)eventID;
+
+                switch (eventID) {
+                    case PC_EMPTY:
+                        break;
+                    case PC_JAZZ_LEVEL_START:
+                        if (root->getPlayer(0).lock() == nullptr) {
+                            auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { 32.0 * x + 16.0, 32.0 * y + 16.0 }));
+                            root->addPlayer(defaultplayer, 0);
                         }
-                    }
-                    break;
-                case PC_WARP_TARGET:
-                    addWarpTarget(eventParams.at(0), x, y);
-                    break;
-                case PC_LIGHT_RESET:
-                    eventParams[0] = root->getDefaultLightingLevel();
-                    storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
-                    break;
-                default:
-                    storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
-                    break;
+                        break;
+                    case PC_MODIFIER_ONE_WAY:
+                    case PC_MODIFIER_VINE:
+                    case PC_MODIFIER_HOOK:
+                    case PC_MODIFIER_HURT:
+                    case PC_SCENERY_DESTRUCT:
+                    case PC_SCENERY_BUTTSTOMP:
+                    case PC_TRIGGER_AREA:
+                    case PC_SCENERY_DESTRUCT_SPD:
+                    case PC_SCENERY_COLLAPSE:
+                    case PC_MODIFIER_H_POLE:
+                    case PC_MODIFIER_V_POLE:
+                        {
+                            storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
+                            auto tiles = root->getGameTiles().lock();
+                            if (tiles != nullptr) {
+                                tiles->setTileEventFlag(x, y, static_cast<PCEvent>(eventID));
+                            }
+                        }
+                        break;
+                    case PC_WARP_TARGET:
+                        addWarpTarget(eventParams.at(0), x, y);
+                        break;
+                    case PC_LIGHT_RESET:
+                        eventParams[0] = root->getDefaultLightingLevel();
+                        storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
+                        break;
+                    default:
+                        storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
+                        break;
+                }
             }
             x++;
         }

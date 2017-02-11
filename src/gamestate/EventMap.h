@@ -11,6 +11,7 @@
 #include "../gamestate/TileMap.h"
 #include "../struct/PCEvent.h"
 #include "../struct/CoordinatePair.h"
+#include "../struct/GameDifficulty.h"
 
 class CarrotQt5;
 class EventSpawner;
@@ -23,7 +24,8 @@ struct EventTile {
 
 class EventMap {
 public:
-    EventMap(LevelManager* root, const EventSpawner* const spawner, unsigned int width, unsigned int height);
+    EventMap(LevelManager* root, const EventSpawner* const spawner, const QString& eventsPath,
+             const QSettings& configuration, unsigned int width, unsigned int height, GameDifficulty difficulty = DIFFICULTY_NORMAL);
     ~EventMap();
     void storeTileEvent(int x, int y, PCEvent e = PC_EMPTY, int flags = 0, const QVector<quint16>& params = QVector<quint16>());
     void activateEvents(const CoordinatePair& center, int tileDistance = 32);
@@ -37,11 +39,11 @@ public:
     void getPositionParams(int x, int y, quint16 (&params)[8]);
     void deactivateAll();
     void setTileParam(int x, int y, unsigned char idx, quint16 value);
-    void readEvents(const QString& filename, unsigned layoutVersion);
     CoordinatePair getWarpTarget(unsigned id);
     QSet<QString> getResourceNameList();
 
 private:
+    void readEvents(const QString& filename, unsigned layoutVersion, GameDifficulty difficulty = DIFFICULTY_NORMAL);
     void addWarpTarget(unsigned id, unsigned x, unsigned y);
     bool positionHasEvent(int x, int y);
     LevelManager* root;
