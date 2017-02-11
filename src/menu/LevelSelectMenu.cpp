@@ -18,7 +18,7 @@ LevelSelectMenu::LevelSelectMenu(CarrotQt5* mainClass) : VerticalItemListMenu(ma
                 QString levelName = levels.at(i);
                 menuOptions.append(buildMenuItem(
                     [this, levelName]() {
-                    root->startGame(levelName);
+                    root->startGame(NextLevelData(levelName));
                 },
                     levelData.value("Level/FormalName").toString() + " ~ " + levelName)
                 );

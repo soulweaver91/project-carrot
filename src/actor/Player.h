@@ -55,8 +55,8 @@ public:
     void takeDamage(double pushForce);
     void setToOwnViewCenter();
     bool deactivate(int x, int y, int dist) override;
-    LevelCarryOver prepareLevelCarryOver();
-    void receiveLevelCarryOver(LevelCarryOver o);
+    PlayerCarryOver prepareLevelCarryOver();
+    void receiveLevelCarryOver(ExitType exitType, const PlayerCarryOver& o);
     void addScore(unsigned points);
     void addAmmo(WeaponType type, unsigned amount);
     void addGems(GemType type, unsigned amount);

@@ -28,18 +28,18 @@
 #include <QRegularExpression>
 #include <exception>
 
-LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString& episode, const LevelCarryOver& carryOver) :
-    root(root), levelName(level), levelFileName(level), episodeName(episode), nextLevel(""),
+LevelManager::LevelManager(CarrotQt5* root, const NextLevelData& nextData) :
+    root(root), levelName(nextData.levelName), levelFileName(nextData.levelName), episodeName(nextData.episodeName), nextLevel(""),
     exiting(false), exitKeyUpEventsSent(false), defaultLightingLevel(100), gravity(0.3), difficulty(DIFFICULTY_NORMAL) {
 
     // Fill the player pointer table with zeroes
     std::fill_n(players, 32, nullptr);
 
     QDir levelDir = QDir::current();
-    if (episode != "") {
-        levelDir = QDir(levelDir.relativeFilePath("Episodes/" + episode + "/" + level));
+    if (episodeName != "") {
+        levelDir = QDir(levelDir.relativeFilePath("Episodes/" + episodeName + "/" + levelFileName));
     } else {
-        levelDir = QDir(levelDir.relativeFilePath("Levels/" + level));
+        levelDir = QDir(levelDir.relativeFilePath("Levels/" + levelFileName));
     }
 
     if (!levelDir.exists()) {
@@ -113,8 +113,8 @@ LevelManager::LevelManager(CarrotQt5* root, const QString& level, const QString&
 
     updateLoadingScreenTextFunc("Loading events...");
     root->getEventSpawner()->setApi(api);
-    if (carryOver.difficulty != DIFFICULTY_DEFAULT) {
-        difficulty = carryOver.difficulty;
+    if (nextData.difficulty != DIFFICULTY_DEFAULT) {
+        difficulty = nextData.difficulty;
     }
 
     gameEvents = std::make_shared<EventMap>(this, root->getEventSpawner(), levelDir.absoluteFilePath("event.layer"), levelConfig, gameTiles->getLevelWidth(), gameTiles->getLevelHeight(), difficulty);
@@ -694,11 +694,10 @@ void LevelManager::initLevelChange(ExitType e) {
     }
 
     addTimer(435u, false, [this, e]() {
-        LevelCarryOver nextLevelData = players[0]->prepareLevelCarryOver();
-        nextLevelData.exitType = e;
-        nextLevelData.difficulty = difficulty;
+        NextLevelData nextLevelData(nextLevel, episodeName, difficulty, e);
+        nextLevelData.playerCarryOvers[0] = players[0]->prepareLevelCarryOver();
 
-        root->startGame(nextLevel, episodeName, nextLevelData);
+        root->startGame(nextLevelData);
     });
 }
 
@@ -706,9 +705,9 @@ std::shared_ptr<ActorAPI> LevelManager::getActorAPI() {
     return api;
 }
 
-void LevelManager::processCarryOver(const LevelCarryOver carryOver) {
+void LevelManager::processCarryOver(const NextLevelData& carryOver) {
     if (carryOver.exitType != NEXT_NONE) {
-        players[0]->receiveLevelCarryOver(carryOver);
+        players[0]->receiveLevelCarryOver(carryOver.exitType, carryOver.playerCarryOvers[0]);
     }
 }
 
@@ -724,7 +723,7 @@ void LevelManager::handleGameOver() {
     root->pushState<ConfirmationMenu>(false, [this](bool confirmed) {
         if (confirmed) {
             root->popState();
-            root->startGame(levelFileName, episodeName);
+            root->startGame(NextLevelData(levelFileName, episodeName));
         } else {
             root->startMainMenu();
         }

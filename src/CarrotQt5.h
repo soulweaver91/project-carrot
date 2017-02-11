@@ -67,8 +67,7 @@ public:
     DebugConfig* getDebugConfig();
 #endif
 
-    void startGame(const QString& filename);
-    void startGame(const QString& level, const QString& episode, const LevelCarryOver carryOver = {});
+    void startGame(const NextLevelData carryOver = { "" });
     void tryQuit();
     
 protected:

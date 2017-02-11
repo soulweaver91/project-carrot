@@ -20,7 +20,7 @@ EpisodeSelectMenu::EpisodeSelectMenu(CarrotQt5* mainClass) : VerticalItemListMen
                 QString levelName = level_data.value("Episode/FirstLevel").toString();
                 menuOptions.append(buildMenuItem(
                     [this, levelName, epName]() {
-                    root->startGame(levelName, epName);
+                    root->startGame(NextLevelData(levelName, epName));
                 },
                     level_data.value("Episode/FormalName").toString())
                 );
