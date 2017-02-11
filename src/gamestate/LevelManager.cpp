@@ -451,6 +451,15 @@ void LevelManager::renderTick(bool topmost, bool) {
         BitmapString::drawString(canvas, smallFont, "Level: " + levelFileName, 6, 135);
         BitmapString::drawString(canvas, smallFont, "Next: " + nextLevel, 6, 150);
 
+        QString difficultyString;
+        switch (difficulty) {
+            case DIFFICULTY_EASY:   difficultyString = "Easy";   break;
+            case DIFFICULTY_NORMAL: difficultyString = "Normal"; break;
+            case DIFFICULTY_HARD:   difficultyString = "Hard";   break;
+            default:                difficultyString = "Invalid";
+        }
+        BitmapString::drawString(canvas, smallFont, "Difficulty: " + difficultyString, 6, 165);
+
         BitmapString::drawString(canvas, smallFont, "Mod-" +
             QString::number(debugConfig->currentTempModifier) + " " +
             debugConfig->tempModifierName[debugConfig->currentTempModifier] + ": " +

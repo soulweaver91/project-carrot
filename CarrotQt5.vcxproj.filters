@@ -386,6 +386,9 @@
     <ClCompile Include="src\actor\collectible\OneUpCollectible.cpp">
       <Filter>Source Files\Actor\Collectible</Filter>
     </ClCompile>
+    <ClCompile Include="src\menu\DifficultySelectMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -683,6 +686,9 @@
     </ClInclude>
     <ClInclude Include="src\struct\GameDifficulty.h">
       <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\DifficultySelectMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
