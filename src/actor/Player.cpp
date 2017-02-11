@@ -1155,8 +1155,8 @@ void Player::nextPoleStage(bool horizontal, bool positive, ushort stagesLeft) {
     }
 }
 
-LevelCarryOver Player::prepareLevelCarryOver() {
-    LevelCarryOver o;
+PlayerCarryOver Player::prepareLevelCarryOver() {
+    PlayerCarryOver o;
     o.lives = lives;
     o.fastfires = fastfires;
     for (int i = 0; i < WEAPONCOUNT; ++i) {
@@ -1169,7 +1169,7 @@ LevelCarryOver Player::prepareLevelCarryOver() {
     return o;
 }
 
-void Player::receiveLevelCarryOver(LevelCarryOver o) {
+void Player::receiveLevelCarryOver(ExitType exitType, const PlayerCarryOver& o) {
     lives = o.lives;
     fastfires = o.fastfires;
     for (int i = 0; i < WEAPONCOUNT; ++i) {
@@ -1180,7 +1180,7 @@ void Player::receiveLevelCarryOver(LevelCarryOver o) {
     foodCounter = o.foodCounter;
     currentWeapon = o.currentWeapon;
 
-    if (o.exitType == NEXT_WARP) {
+    if (exitType == NEXT_WARP) {
         playNonPositionalSound("COMMON_WARP_OUT");
         isGravityAffected = false;
         setPlayerTransition(AnimState::TRANSITION_WARP_END, false, true, SPECIAL_MOVE_NONE, [this]() {

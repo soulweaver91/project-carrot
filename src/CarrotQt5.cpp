@@ -163,7 +163,7 @@ void CarrotQt5::parseCommandLine() {
     }
 
     if (level != "") {
-        startGame(level);
+        startGame(NextLevelData(level));
     } else {
         startMainMenu();
     }
@@ -171,12 +171,8 @@ void CarrotQt5::parseCommandLine() {
     afterTickCallback();
 }
 
-void CarrotQt5::startGame(const QString& filename) {
-    return startGame(filename, "");
-}
-
-void CarrotQt5::startGame(const QString& filename, const QString& episode, const LevelCarryOver carryOver) {
-    afterTickCallback = [this, filename, episode, carryOver]() {
+void CarrotQt5::startGame(const NextLevelData carryOver) {
+    afterTickCallback = [this, carryOver]() {
         resourceManager->getSoundSystem()->clearSounds();
         resourceManager->getSoundSystem()->unregisterAllSoundListeners();
         resourceManager->getGraphicsCache()->flush();
@@ -186,7 +182,7 @@ void CarrotQt5::startGame(const QString& filename, const QString& episode, const
         try {
             windowCanvas->clear();
 
-            auto levelManager = std::make_shared<LevelManager>(this, filename, episode);
+            auto levelManager = std::make_shared<LevelManager>(this, carryOver);
 
 #ifdef CARROT_DEBUG
             auto player = levelManager->getPlayer(0).lock();

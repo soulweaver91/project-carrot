@@ -10,15 +10,9 @@ HEADERS += ./src/EngineState.h \
     ./src/actor/BonusWarp.h \
     ./src/actor/FrozenBlock.h \
     ./src/actor/InteractiveActor.h \
-    ./src/actor/solidobj/MovingPlatform.h \
-    ./src/actor/solidobj/PowerUpMonitor.h \
-    ./src/actor/solidobj/Bridge.h \
     ./src/actor/Spring.h \
     ./src/actor/CommonActor.h \
-    ./src/actor/solidobj/PushBox.h \
     ./src/actor/SavePoint.h \
-    ./src/actor/solidobj/SolidObject.h \
-    ./src/actor/solidobj/TriggerCrate.h \
     ./src/actor/Player.h \
     ./src/actor/weapon/AmmoFreezer.h \
     ./src/actor/weapon/Ammo.h \
@@ -38,11 +32,26 @@ HEADERS += ./src/EngineState.h \
     ./src/actor/collectible/FastFireCollectible.h \
     ./src/actor/collectible/FoodCollectible.h \
     ./src/actor/collectible/GemCollectible.h \
+    ./src/actor/collectible/OneUpCollectible.h \
     ./src/actor/collectible/Collectible.h \
     ./src/actor/lighting/PulsatingLight.h \
     ./src/actor/lighting/LightSource.h \
     ./src/actor/lighting/RadialLightSource.h \
     ./src/actor/lighting/StaticLight.h \
+    ./src/actor/solidobj/AmmoBarrel.h \
+    ./src/actor/solidobj/AmmoContainer.h \
+    ./src/actor/solidobj/AmmoCrate.h \
+    ./src/actor/solidobj/BarrelContainer.h \
+    ./src/actor/solidobj/CrateContainer.h \
+    ./src/actor/solidobj/GemBarrel.h \
+    ./src/actor/solidobj/GemCrate.h \
+    ./src/actor/solidobj/GenericContainer.h \
+    ./src/actor/solidobj/MovingPlatform.h \
+    ./src/actor/solidobj/PowerUpMonitor.h \
+    ./src/actor/solidobj/Bridge.h \
+    ./src/actor/solidobj/PushBox.h \
+    ./src/actor/solidobj/SolidObject.h \
+    ./src/actor/solidobj/TriggerCrate.h \
     ./src/graphics/BitmapString.h \
     ./src/graphics/ShaderSource.h \
     ./src/graphics/Tileset.h \
@@ -85,15 +94,8 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/Resources.h \
     ./src/struct/SequentialIDList.h \
     ./src/struct/WeaponTypes.h \
-    ./src/actor/solidobj/GenericContainer.h \
-    ./src/actor/solidobj/CrateContainer.h \
-    ./src/actor/solidobj/AmmoCrate.h \
-    ./src/actor/solidobj/AmmoContainer.h \
-    ./src/actor/solidobj/BarrelContainer.h \
-    ./src/actor/solidobj/AmmoBarrel.h \
-    ./src/actor/solidobj/GemCrate.h \
-    ./src/actor/solidobj/GemBarrel.h \
-    ./src/actor/collectible/OneUpCollectible.h
+    ./src/struct/GameDifficulty.h \
+    ./src/menu/DifficultySelectMenu.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -108,16 +110,10 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/BonusWarp.cpp \
     ./src/actor/FrozenBlock.cpp \
     ./src/actor/InteractiveActor.cpp \
-    ./src/actor/solidobj/MovingPlatform.cpp \
-    ./src/actor/solidobj/PowerUpMonitor.cpp \
-    ./src/actor/solidobj/Bridge.cpp \
     ./src/actor/CommonActor.cpp \
     ./src/actor/Player.cpp \
-    ./src/actor/solidobj/PushBox.cpp \
     ./src/actor/SavePoint.cpp \
-    ./src/actor/solidobj/SolidObject.cpp \
     ./src/actor/Spring.cpp \
-    ./src/actor/solidobj/TriggerCrate.cpp \
     ./src/actor/enemy/LabRat.cpp \
     ./src/actor/enemy/Sucker.cpp \
     ./src/actor/enemy/SuckerFloat.cpp \
@@ -136,11 +132,25 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/collectible/FastFireCollectible.cpp \
     ./src/actor/collectible/FoodCollectible.cpp \
     ./src/actor/collectible/GemCollectible.cpp \
+    ./src/actor/collectible/OneUpCollectible.cpp \
     ./src/actor/collectible/Collectible.cpp \
     ./src/actor/lighting/PulsatingLight.cpp \
     ./src/actor/lighting/RadialLightSource.cpp \
     ./src/actor/lighting/LightSource.cpp \
     ./src/actor/lighting/StaticLight.cpp \
+    ./src/actor/solidobj/AmmoBarrel.cpp \
+    ./src/actor/solidobj/AmmoCrate.cpp \
+    ./src/actor/solidobj/BarrelContainer.cpp \
+    ./src/actor/solidobj/CrateContainer.cpp \
+    ./src/actor/solidobj/GemBarrel.cpp \
+    ./src/actor/solidobj/GemCrate.cpp \
+    ./src/actor/solidobj/GenericContainer.cpp \
+    ./src/actor/solidobj/MovingPlatform.cpp \
+    ./src/actor/solidobj/PowerUpMonitor.cpp \
+    ./src/actor/solidobj/Bridge.cpp \
+    ./src/actor/solidobj/PushBox.cpp \
+    ./src/actor/solidobj/SolidObject.cpp \
+    ./src/actor/solidobj/TriggerCrate.cpp \
     ./src/menu/ConfirmationMenu.cpp \
     ./src/menu/EpisodeSelectMenu.cpp \
     ./src/menu/InGameMenuMenu.cpp \
@@ -163,14 +173,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
     ./src/gamestate/TimerUser.cpp \
-    ./src/actor/solidobj/GenericContainer.cpp \
-    ./src/actor/solidobj/CrateContainer.cpp \
-    ./src/actor/solidobj/AmmoCrate.cpp \
-    ./src/actor/solidobj/BarrelContainer.cpp \
-    ./src/actor/solidobj/AmmoBarrel.cpp \
-    ./src/actor/solidobj/GemCrate.cpp \
-    ./src/actor/solidobj/GemBarrel.cpp \
-    ./src/actor/collectible/OneUpCollectible.cpp
+    ./src/menu/DifficultySelectMenu.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

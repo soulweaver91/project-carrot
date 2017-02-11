@@ -38,7 +38,7 @@ class LevelManager : public QObject, public EngineState, public TimerUser, publi
     Q_OBJECT
 
 public:
-    LevelManager(CarrotQt5* root, const QString& level, const QString& episode);
+    LevelManager(CarrotQt5* root, const NextLevelData& nextData);
     ~LevelManager();
 
     void logicTick(const ControlEventList& events) override;
@@ -65,7 +65,7 @@ public:
     double getGravity();
     void initLevelChange(ExitType e = NEXT_NORMAL);
     std::shared_ptr<ActorAPI> getActorAPI();
-    void processCarryOver(const LevelCarryOver carryOver);
+    void processCarryOver(const NextLevelData& carryOver);
     QString getLevelText(int idx);
     void handleGameOver();
 
@@ -101,4 +101,5 @@ private:
     uint defaultLightingLevel;
     double gravity;
     QMap<int, QString> levelTexts;
+    GameDifficulty difficulty;
 };

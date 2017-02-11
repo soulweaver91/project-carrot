@@ -1,6 +1,7 @@
 #include "EpisodeSelectMenu.h"
 
 #include "LevelSelectMenu.h"
+#include "DifficultySelectMenu.h"
 #include "../CarrotQt5.h"
 
 #include <QDir>
@@ -20,8 +21,9 @@ EpisodeSelectMenu::EpisodeSelectMenu(CarrotQt5* mainClass) : VerticalItemListMen
                 QString levelName = level_data.value("Episode/FirstLevel").toString();
                 menuOptions.append(buildMenuItem(
                     [this, levelName, epName]() {
-                    root->startGame(levelName, epName);
-                },
+                        auto nextData = std::make_shared<NextLevelData>(levelName, epName);
+                        root->pushState<DifficultySelectMenu>(false, nextData);
+                    },
                     level_data.value("Episode/FormalName").toString())
                 );
             }

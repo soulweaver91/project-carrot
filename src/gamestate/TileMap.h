@@ -19,6 +19,7 @@ class ActorAPI;
 class GameView;
 class AnimatedTile;
 class LevelManager;
+class EventMap;
 
 class DestructibleDebris {
 public:
@@ -52,7 +53,7 @@ public:
     void drawHigherLevels(std::shared_ptr<GameView>& view);
     unsigned getLevelWidth();
     unsigned getLevelHeight();
-    void setTileEventFlag(int x, int y, PCEvent e = PC_EMPTY);
+    void setTileEventFlag(const EventMap* events, int x, int y, PCEvent e = PC_EMPTY);
     SuspendType getPosSuspendState(double x, double y);
     QVector<QVector<std::shared_ptr<LayerTile>>> prepareSavePointLayer();
     void loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile>>>& layer);
