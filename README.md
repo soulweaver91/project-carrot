@@ -1,13 +1,15 @@
 ![Project Carrot logo](https://raw.githubusercontent.com/soulweaver91/project-carrot/master/Data/PCLogo-300px.png)
 
 # Project Carrot
+
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/2f9f6k3x3mytjifj?svg=true)](https://ci.appveyor.com/project/soulweaver91/project-carrot)
 [![Travis CI build Status](https://travis-ci.org/soulweaver91/project-carrot.svg)](https://travis-ci.org/soulweaver91/project-carrot)
 
 Project Carrot is a slowly progressing spiritual clone of the engine for Jazz Jackrabbit 2.
 You can discuss it [here](http://www.jazz2online.com/jcf/showthread.php?t=19535).
 
-##Building
+## Building
+
 ### Common dependencies
 
 * [Qt](http://qt-project.org/downloads) 5.7 with Qt Gamepad Technology Preview addon installed
@@ -18,6 +20,7 @@ If you are planning to use a compiler different than one listed below, make sure
 sufficiently C++14 compliant as the codebase utilizes many of the more modern C++ features.
 
 ### Windows
+
 The suggested development environment, as well as the primary environment the code is written on,
 is [Microsoft Visual Studio 2015](http://www.visualstudio.com/). MSVC Windows build status is
 automatically evaluated at [AppVeyor](https://ci.appveyor.com/project/soulweaver91/project-carrot).
@@ -30,6 +33,7 @@ Project Carrot projects, you don't have to add these for them separately. Altern
 setting these as environment variables should work as well.
 
 ### Linux
+
 [GCC 5.3](https://gcc.gnu.org/) or above and [Clang 3.7](http://clang.llvm.org/) or above are
 provisionally supported and builds on the listed versions are automatically evaluated at
 [Travis CI](https://travis-ci.org/soulweaver91/project-carrot).
@@ -79,11 +83,13 @@ If in doubt, take a look at the [Travis configuration file](https://github.com/s
 and see if it can help you.
 
 ### macOS
+
 Project Carrot can be compiled and run on macOS. You can either use Qt tools directly from the
 command line or use the included Xcode project, though at the moment neither of these approaches is
 fully bullet-proof.
 
 #### Option one: Qt command line
+
 First, make sure you have Xcode and Homebrew installed. Then, follow this script:
 
 ```shell
@@ -137,6 +143,7 @@ also work with this method. Barring rare exceptions that involve OS-specific cod
 of course.
 
 #### Option two: Xcode
+
 The repository also contains an Xcode project that can be used to build Project Carrot.
 However, keeping these project files up to date would need a lot of unnecessary shuffling
 whenever any work was done in the main environment (VS in Windows), so for most of the time,
@@ -170,7 +177,8 @@ would also be able to update an existing project. Alas, it doesn't appear to be 
 So, if you are going to deploy a new version to the world (= be me), use Xcode;
 otherwise best to stick to command line unless you really know what you're doing.
 
-##Running the game
+## Running the game
+
 To be able to run Project Carrot, you are required to extract the Jazz Jackrabbit 2 assets from
 the `Anims.j2a` file in its installation folder. A tool specifically targeting Project Carrot,
 [PCAE](https://github.com/soulweaver91/project-carrot-pcae), will automate this task for you,
@@ -200,5 +208,6 @@ you only need to copy `libbass.so` and `libbass_fx.so` to the same folder as the
 executable.
 
 ## License
+
 This software is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 See the included `LICENSE` file for the licenses of the third-party libraries used.
