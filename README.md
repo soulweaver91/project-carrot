@@ -49,7 +49,7 @@ installation:
 
 ```shell
 # Add a Qt 5.7 repository to APT
-sudo add-apt-repository ppa:beineri/opt-qt57-xenial
+sudo add-apt-repository ppa:beineri/opt-qt571-xenial
 # Refresh package lists and install required packages
 sudo apt-get update
 sudo apt-get install git clang qt57base qt57gamepad libsfml-dev
@@ -67,10 +67,14 @@ export BASS_FX_DIR=~/bassfx
 # Clone this repository and compile the code
 git clone https://github.com/soulweaver91/project-carrot.git
 cd project-carrot
-qmake -spec=linux-clang
+qmake -spec linux-clang
 make release
 # Move to the release folder and copy the BASS and BASS FX library files
 cd Release
+# If on a 64-bit system:
+cp $BASS_DIR/x64/libbass.so .
+cp $BASS_FX_DIR/x64/libbass_fx.so .
+# If on a 32-bit system:
 cp $BASS_DIR/libbass.so .
 cp $BASS_FX_DIR/libbass_fx.so .
 ```
