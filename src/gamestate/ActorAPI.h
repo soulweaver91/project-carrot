@@ -32,6 +32,9 @@ public:
     uint getStringWidth(const QString& text, BitmapFontSize size = NORMAL);
     QString getLevelText(int idx);
     void handleGameOver();
+    quint32 getLevelTileWidth();
+    quint32 getLevelTileHeight();
+    void setTrigger(unsigned char triggerID, bool newState);
 
     template<typename... P>
     void playSound(HSAMPLE sample, P... params);

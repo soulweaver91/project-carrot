@@ -1063,10 +1063,6 @@ void Player::takeDamage(double pushForce) {
 
 void Player::setToOwnViewCenter() {
     int shift_offset = 0;
-    auto tiles = api->getGameTiles().lock();
-    if (tiles == nullptr) {
-        return;
-    }
 
     if (std::abs(cameraShiftFramesCount) > 48) {
         shift_offset = (std::abs(cameraShiftFramesCount) - 48) * (cameraShiftFramesCount > 0 ? 1 : -1);
@@ -1076,13 +1072,13 @@ void Player::setToOwnViewCenter() {
         std::max(
             assignedView->getViewWidth() / 2.0,
             std::min(
-                32.0 * tiles->getLevelWidth() - assignedView->getViewWidth()  / 2.0,
+                32.0 * api->getLevelTileWidth() - assignedView->getViewWidth()  / 2.0,
                 (double)qRound(posX) + (assignedView->getViewWidth() % 2 == 0 ? 0 : 0.5)
             )
         ), std::max(
             assignedView->getViewHeight() / 2.0,
             std::min(
-                32.0 * tiles->getLevelHeight() - assignedView->getViewHeight() / 2.0,
+                32.0 * api->getLevelTileHeight() - assignedView->getViewHeight() / 2.0,
                 (double)qRound(posY + shift_offset - 15) + (assignedView->getViewHeight() % 2 == 0 ? 0 : 0.5)
             )
         )

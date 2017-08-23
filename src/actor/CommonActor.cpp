@@ -80,11 +80,8 @@ void CommonActor::tickEvent() {
     updateHitbox();
 
     // Make sure we stay within the level boundaries
-    auto tiles = api->getGameTiles().lock();
-    if (tiles != nullptr) {
-        posX = std::min(std::max(posX, 0.0), tiles->getLevelWidth() * 32.0 - 1.0);
-        posY = std::min(std::max(posY, 0.0), tiles->getLevelHeight() * 32.0 - 1.0);
-    }
+    posX = std::min(std::max(posX, 0.0), api->getLevelTileWidth() * 32.0 - 1.0);
+    posY = std::min(std::max(posY, 0.0), api->getLevelTileHeight() * 32.0 - 1.0);
 } 
 
 void CommonActor::setToViewCenter(std::shared_ptr<GameView> view) {

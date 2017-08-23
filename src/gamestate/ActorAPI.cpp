@@ -1,5 +1,6 @@
 #include "ActorAPI.h"
 #include "EventSpawner.h"
+#include "TileMap.h"
 
 ActorAPI::ActorAPI(CarrotQt5* mainClass, LevelManager* levelManager) 
     : mainClass(mainClass), levelManager(levelManager) {
@@ -87,6 +88,31 @@ QString ActorAPI::getLevelText(int idx) {
 
 void ActorAPI::handleGameOver() {
     levelManager->handleGameOver();
+}
+
+quint32 ActorAPI::getLevelTileWidth() {
+    auto tiles = levelManager->getGameTiles().lock();
+    if (tiles != nullptr) {
+        return tiles->getLevelWidth();
+    }
+
+    return 0;
+}
+
+quint32 ActorAPI::getLevelTileHeight() {
+    auto tiles = levelManager->getGameTiles().lock();
+    if (tiles != nullptr) {
+        return tiles->getLevelHeight();
+    }
+
+    return 0;
+}
+
+void ActorAPI::setTrigger(unsigned char triggerID, bool newState) {
+    auto tiles = levelManager->getGameTiles().lock();
+    if (tiles != nullptr) {
+        return tiles->setTrigger(triggerID, newState);
+    }
 }
 
 #ifdef CARROT_DEBUG
