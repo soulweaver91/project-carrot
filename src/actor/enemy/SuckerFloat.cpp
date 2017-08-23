@@ -6,7 +6,7 @@
 #include "Sucker.h"
 
 EnemySuckerFloat::EnemySuckerFloat(const ActorInstantiationDetails& initData)
-    : Enemy(initData), phase(0.0), originX(posX), originY(posY) {
+    : Enemy(initData), phase(0.0), originPos(pos) {
     isGravityAffected = false;
 
     loadResources("Enemy/SuckerFloat");
@@ -20,7 +20,7 @@ EnemySuckerFloat::~EnemySuckerFloat() {
 void EnemySuckerFloat::tickEvent() {
     if (frozenFramesLeft == 0) {
         phase = std::fmod(phase + 0.05, 2 * PI);
-        moveInstantly({ originX + 10 * std::cos(phase), originY + 10 * std::sin(phase) }, true, true);
+        moveInstantly(originPos + CoordinatePair(CIRCLING_RADIUS * std::cos(phase), CIRCLING_RADIUS * std::sin(phase)), true, true);
 
         isFacingLeft = phase < PI / 2 || phase > 3 * PI / 2;
     }
@@ -30,9 +30,11 @@ void EnemySuckerFloat::tickEvent() {
 
 bool EnemySuckerFloat::perish() {
     if (health == 0) {
-        api->addActor(std::make_shared<EnemySucker>(ActorInstantiationDetails(api, { posX, posY }), lastHitDir));
+        api->addActor(std::make_shared<EnemySucker>(ActorInstantiationDetails(api, originPos), lastHitDir));
         return CommonActor::perish();
     }
 
     return false;
 }
+
+const double EnemySuckerFloat::CIRCLING_RADIUS = 10;

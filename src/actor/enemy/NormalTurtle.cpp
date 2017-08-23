@@ -9,7 +9,7 @@ EnemyNormalTurtle::EnemyNormalTurtle(const ActorInstantiationDetails& initData)
     : Enemy(initData), isTurning(false), isWithdrawn(false) {
     loadResources("Enemy/Turtle");
     setAnimation(AnimState::WALK);
-    speedX = 1;
+    speed.x = 1;
 }
 
 EnemyNormalTurtle::~EnemyNormalTurtle() {
@@ -23,18 +23,18 @@ void EnemyNormalTurtle::tickEvent() {
         return;
     }
     
-    if (std::abs(speedX) > EPSILON && !canMoveToPosition(speedX, 0)) {
+    if (std::abs(speed.x) > EPSILON && !canMoveToPosition({ speed.x, 0.0f })) {
         setTransition(AnimState::TRANSITION_WITHDRAW, false, [this]() {
             handleTurn(true);
         });
         isTurning = true;
         hurtPlayer = false;
-        speedX = 0;
+        speed.x = 0;
         playSound("ENEMY_TURTLE_WITHDRAW");
     }
 
     if (!isTurning && !isWithdrawn && !isAttacking) {
-        auto players = api->getCollidingPlayer(currentHitbox + CoordinatePair(speedX * 64, 0.0));
+        auto players = api->getCollidingPlayer(currentHitbox + sf::Vector2f(speed.x * 64, 0.0f));
         if (players.length() > 0) {
             attack();
         }
@@ -48,7 +48,7 @@ void EnemyNormalTurtle::updateHitbox() {
 bool EnemyNormalTurtle::perish() {
     bool goingToPerish = (health == 0);
     if (goingToPerish) {
-        api->addActor(std::make_shared<TurtleShell>(ActorInstantiationDetails(api, { posX, posY }, false), speedX, -5.0));
+        api->addActor(std::make_shared<TurtleShell>(ActorInstantiationDetails(api, pos, false), sf::Vector2f(speed.x, -5.0f)));
         Enemy::perish();
     }
 
@@ -68,17 +68,17 @@ void EnemyNormalTurtle::handleTurn(bool isFirstPhase) {
             hurtPlayer = true;
             isWithdrawn = false;
             isTurning = false;
-            speedX = (isFacingLeft ? -1 : 1) * 1;
+            speed.x = (isFacingLeft ? -1 : 1) * 1;
         }
     }
 }
 
 void EnemyNormalTurtle::attack() {
     setTransition(AnimState::TRANSITION_ATTACK, false, [this]() {
-        speedX = (isFacingLeft ? -1 : 1) * 1;
+        speed.x = (isFacingLeft ? -1 : 1) * 1;
         isAttacking = false;
     });
-    speedX = 0;
+    speed.x = 0;
     isAttacking = true;
     playSound("ENEMY_TURTLE_ATTACK");
     addTimer(4u, false, [this](){

@@ -11,7 +11,7 @@
 MovingPlatform::MovingPlatform(const ActorInstantiationDetails& initData,
     PlatformType type, quint16 length, qint16 speed, ushort sync, bool swing)
     : SolidObject(initData), type(type), speed(speed), length(length), phase(0.0),
-    originX(posX), originY(posY), isSwing(swing) {
+    originPos(pos), isSwing(swing) {
     canBeFrozen = false;
     loadResources("Object/MovingPlatform");
     isGravityAffected = false;
@@ -102,8 +102,8 @@ CoordinatePair MovingPlatform::getPhasePosition(bool next, uint distance) {
     double multiX = std::cos(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
     double multiY = std::sin(effectivePhase / BASE_CYCLE_FRAMES * 2 * PI);
 
-    return {
-        originX + multiX * distance * 12,
-        originY + multiY * distance * 12
-    };
+    return originPos + CoordinatePair(
+        multiX * distance * 12,
+        multiY * distance * 12
+    );
 }

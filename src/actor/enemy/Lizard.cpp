@@ -3,8 +3,8 @@
 EnemyLizard::EnemyLizard(const ActorInstantiationDetails& initData) : Enemy(initData) {
     loadResources("Enemy/Lizard");
     setAnimation(AnimState::WALK);
-    posY -= 6.0;
-    speedX = 1.0;
+    pos.y -= 6.0;
+    speed.x = 1.0;
 }
 
 EnemyLizard::~EnemyLizard() {
@@ -14,9 +14,9 @@ EnemyLizard::~EnemyLizard() {
 void EnemyLizard::tickEvent() {
     Enemy::tickEvent();
     
-    if (!canMoveToPosition(speedX, 0.0)) {
+    if (!canMoveToPosition({ speed.x, 0.0f })) {
         isFacingLeft = !(isFacingLeft);
-        speedX = (isFacingLeft ? -1.0 : 1.0) * 1.0;
+        speed.x = (isFacingLeft ? -1.0 : 1.0) * 1.0;
     }
 
     if (qrand() % 10000 < 4) {

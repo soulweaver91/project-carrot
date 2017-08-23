@@ -29,15 +29,15 @@ bool Enemy::perish() {
     return false;
 }
 
-bool Enemy::canMoveToPosition(double x, double y) {
+bool Enemy::canMoveToPosition(const CoordinatePair& newPos) {
     short sign = (isFacingLeft ? -1 : 1);
 
     auto events = api->getGameEvents().lock();
 
-    return ((api->isPositionEmpty(currentHitbox + CoordinatePair(x, y - 10), false, shared_from_this())
-          || api->isPositionEmpty(currentHitbox + CoordinatePair(x, y + 2), false, shared_from_this()))
-         && (events != nullptr && (!(events->getPositionEvent(posX + x, posY + y) == PC_AREA_STOP_ENEMY)))
-         && (!api->isPositionEmpty(currentHitbox + CoordinatePair(x + sign * (currentHitbox.right - currentHitbox.left) / 2, y + 32), false, shared_from_this())));
+    return ((api->isPositionEmpty(currentHitbox + newPos + CoordinatePair(0, -10), false, shared_from_this())
+          || api->isPositionEmpty(currentHitbox + newPos + CoordinatePair(0, 2), false, shared_from_this()))
+         && (events != nullptr && (!(events->getPositionEvent(pos + newPos) == PC_AREA_STOP_ENEMY)))
+         && (!api->isPositionEmpty(currentHitbox + newPos + CoordinatePair(sign * (currentHitbox.right - currentHitbox.left) / 2, TILE_HEIGHT * 1.0), false, shared_from_this())));
 }
 
 void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable) {
@@ -54,7 +54,7 @@ void Enemy::tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable
                 case PC_GEM_RED:
                 case PC_GEM_GREEN:
                 case PC_GEM_BLUE:
-                    api->createActor(pair.first, posX, posY, {});
+                    api->createActor(pair.first, pos, {});
                     break;
                 default:
                     break;
@@ -77,12 +77,11 @@ void Enemy::handleCollision(std::shared_ptr<CommonActor> other) {
     std::shared_ptr<Ammo> ammo = std::dynamic_pointer_cast<Ammo>(other);
     if (ammo != nullptr) {
         decreaseHealth(ammo->getStrength());
-        double ammoSpeedX = ammo->getSpeedX();
-        double ammoSpeedY = ammo->getSpeedY();
-        if (std::abs(ammoSpeedX) > EPSILON) {
-            lastHitDir = (ammoSpeedX > 0 ? RIGHT : LEFT);
+        auto ammoSpeed = ammo->getSpeed();
+        if (std::abs(ammoSpeed.x) > EPSILON) {
+            lastHitDir = (ammoSpeed.x > 0 ? RIGHT : LEFT);
         } else {
-            lastHitDir = (ammoSpeedY > 0 ? DOWN : UP);
+            lastHitDir = (ammoSpeed.y > 0 ? DOWN : UP);
         }
     }
 }

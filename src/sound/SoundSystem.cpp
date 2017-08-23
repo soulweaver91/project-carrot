@@ -149,7 +149,7 @@ void SoundSystem::updateSoundPositions() {
         for (auto soundInstance : listener->sounds) {
             if (BASS_ChannelIsActive(soundInstance->sound)) {
                 CoordinatePair pos = coords - soundInstance->position;
-                BASS_3DVECTOR spatialPos = { (float)-pos.x / 32, (float)-pos.y / 32, 0 };
+                BASS_3DVECTOR spatialPos = { (float) - pos.x / TILE_WIDTH, (float) - pos.y / TILE_HEIGHT, 0 };
                 BASS_ChannelSet3DPosition(soundInstance->sound, &spatialPos, NULL, NULL);
             }
         }

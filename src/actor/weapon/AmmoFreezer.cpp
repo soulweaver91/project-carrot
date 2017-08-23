@@ -3,16 +3,16 @@
 #include "../../gamestate/TileMap.h"
 
 AmmoFreezer::AmmoFreezer(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy,
-    double speed, bool firedLeft, bool firedUp, bool poweredUp)
+    double initSpeed, bool firedLeft, bool firedUp, bool poweredUp)
     : Ammo(initData, firedBy, firedLeft, firedUp, 70, poweredUp) {
     isGravityAffected = false;
     strength = 0;
     loadResources("Weapon/Freezer");
     if (firedUp) {
-        speedY = -4;
+        speed.y = -4;
         AnimationUser::setAnimation("WEAPON_FREEZER_VER");
     } else {
-        speedX = 8 * (firedLeft ? -1 : 1) + speed;
+        speed.x = 8 * (firedLeft ? -1 : 1) + initSpeed;
         AnimationUser::setAnimation("WEAPON_FREEZER_HOR");
     }
 }
@@ -25,13 +25,12 @@ AmmoFreezer::~AmmoFreezer() {
 void AmmoFreezer::tickEvent() {
     Ammo::tickEvent();
 
-    auto tiles = api->getGameTiles().lock();
-    if (tiles == nullptr || tiles->isTileEmpty((posX + speedX) / 32, (posY + speedY) / 32)) {
-        moveInstantly({ speedX, speedY }, false, true);
+    if (api->isTileCollisionFree((pos + speed).tilePosition())) {
+        moveInstantly(speed, false, true);
     } else {
-        moveInstantly({ speedX, speedY }, false, true);
+        moveInstantly(speed, false, true);
         checkCollisions();
-        moveInstantly({ -speedX, -speedY }, false, true);
+        moveInstantly(-speed, false, true);
         health = 0;
     }
 }

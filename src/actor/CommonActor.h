@@ -44,11 +44,10 @@ public:
     CoordinatePair getPosition();
     virtual void updateHitbox();
     virtual void updateHitbox(const uint& w, const uint& h);
-    double getSpeedX();
-    double getSpeedY();
+    sf::Vector2f getSpeed();
     bool getIsCollidable();
     virtual bool perish();
-    virtual bool deactivate(int x, int y, int tileDistance);
+    virtual bool deactivate(const TileCoordinatePair& tilePos, int tileDistance);
     virtual void handleCollision(std::shared_ptr<CommonActor> other);
     bool moveInstantly(CoordinatePair location, bool absolute, bool force = false);
     void deleteFromEventMap();
@@ -76,13 +75,13 @@ protected:
     std::shared_ptr<ActorAPI> api;
     unsigned maxHealth;
     unsigned health;
-    double posX;
-    double posY;
-    double speedX;
-    double speedY;
-    double externalForceX;
-    double externalForceY;
-    double internalForceY;
+
+    CoordinatePair pos;
+    sf::Vector2f speed;
+    sf::Vector2f externalForce;
+    sf::Vector2f internalForce;
+    sf::Vector2i originTile;
+
     bool canJump;
     bool canBeFrozen;
     bool isFacingLeft;
@@ -97,8 +96,6 @@ protected:
     double friction;
     SuspendType suspendType;
     bool isCreatedFromEventMap;
-    int originTileX;
-    int originTileY;
     std::shared_ptr<ResourceSet> resources;
     ActorGraphicState currentGraphicState;
     Hitbox currentHitbox;

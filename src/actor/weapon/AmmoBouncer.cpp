@@ -4,15 +4,15 @@
 #include "../../gamestate/TileMap.h"
 
 AmmoBouncer::AmmoBouncer(const ActorInstantiationDetails& initData, std::weak_ptr<Player> firedBy,
-    double speed, bool firedLeft, bool firedUp, bool poweredUp)
+    double initSpeed, bool firedLeft, bool firedUp, bool poweredUp)
     : Ammo(initData, firedBy, firedLeft, firedUp, 140, poweredUp) {
     elasticity = 0.9;
     loadResources("Weapon/Bouncer");
     if (firedUp) {
-        speedY = -2;
+        speed.y = -2;
         isGravityAffected = false;
     } else {
-        speedX = (firedLeft ? -3 : 3) + speed;
+        speed.x = (firedLeft ? -3 : 3) + initSpeed;
     }
     setAnimation(AnimState::IDLE);
 }
@@ -25,11 +25,11 @@ void AmmoBouncer::tickEvent() {
     CommonActor::tickEvent();
     Ammo::tickEvent();
     auto tiles = api->getGameTiles().lock();
-    if (tiles == nullptr || tiles->isTileEmpty((posX + speedX) / 32, (posY + speedY) / 32)) {
-        moveInstantly({ speedX, speedY }, false, true);
+    if (tiles == nullptr || tiles->isTileEmpty((pos + speed).tilePosition())) {
+        moveInstantly(speed, false, true);
     } else {
-        CoordinatePair temp = {posX, posY};
-        CoordinatePair next = {posX + speedX, posY + speedY};
+        CoordinatePair temp = pos;
+        CoordinatePair next = pos + speed;
         moveInstantly(next, true, true);
         checkCollisions();
         moveInstantly(temp, true, true);
@@ -41,7 +41,7 @@ WeaponType AmmoBouncer::getType() const {
 }
 
 void AmmoBouncer::onHitFloorHook() {
-    if (speedY < 0) {
-        speedY = std::min(std::max(-4.0, speedY), -1.0);
+    if (speed.y < 0) {
+        speed.y = std::min(std::max(-4.0f, speed.y), -1.0f);
     }
 }

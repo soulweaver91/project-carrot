@@ -9,7 +9,7 @@ EnemyLabRat::EnemyLabRat(const ActorInstantiationDetails& initData)
     : Enemy(initData), canAttack(true), idling(false), canIdle(false) {
     loadResources("Enemy/LabRat");
     setAnimation(AnimState::WALK);
-    speedX = 1;
+    speed.x = 1;
 
     addTimer(420u + qrand() % 140u, false, [this]() {
         canIdle = true;
@@ -28,12 +28,12 @@ void EnemyLabRat::tickEvent() {
     }
 
     if (!isAttacking) {
-        if (!canMoveToPosition(speedX, 0)) {
+        if (!canMoveToPosition({ speed.x, 0.0f })) {
             isFacingLeft = !(isFacingLeft);
-            speedX = (isFacingLeft ? -1 : 1) * 1;
+            speed.x = (isFacingLeft ? -1 : 1) * 1;
         }
 
-        if (canAttack && std::abs(speedY) < EPSILON) {
+        if (canAttack && std::abs(speed.y) < EPSILON) {
             auto players = api->getCollidingPlayer(Hitbox(currentHitbox).extend(
                 isFacingLeft ? 128.0 : 0.0, 20.0,
                 isFacingLeft ? 0.0 : 128.0, 20.0
@@ -48,7 +48,7 @@ void EnemyLabRat::tickEvent() {
         }
 
         if (canIdle && qrand() % 50 == 0) {
-            speedX = 0;
+            speed.x = 0;
             idling = true;
             AnimationUser::setAnimation("ENEMY_LAB_RAT_IDLE");
             canIdle = false;
@@ -60,7 +60,7 @@ void EnemyLabRat::tickEvent() {
             addTimer(240u, false, [this]() {
                 idling = false;
                 setAnimation(AnimState::WALK);
-                speedX = (isFacingLeft ? -1 : 1) * 1;
+                speed.x = (isFacingLeft ? -1 : 1) * 1;
 
                 addTimer(420u + qrand() % 140u, false, [this]() {
                     canIdle = true;
@@ -68,13 +68,13 @@ void EnemyLabRat::tickEvent() {
             });
         }
     } else {
-        internalForceY += 0.08;
+        internalForce.y += 0.08;
     }
 }
 
 void EnemyLabRat::attack() {
     setTransition(AnimState::TRANSITION_ATTACK, false, [this]() {
-        speedX = (isFacingLeft ? -1 : 1) * 1;
+        speed.x = (isFacingLeft ? -1 : 1) * 1;
         isAttacking = false;
         canAttack = false;
 
@@ -82,10 +82,10 @@ void EnemyLabRat::attack() {
             canAttack = true;
         });
     });
-    speedX = (isFacingLeft ? -1 : 1) * 2;
+    speed.x = (isFacingLeft ? -1 : 1) * 2;
     moveInstantly({ 0, -1 }, false);
-    speedY = -1;
-    internalForceY = 0.5;
+    speed.y = -1;
+    internalForce.y = 0.5;
     isAttacking = true;
     canJump = false;
     playSound("ENEMY_LAB_RAT_ATTACK");

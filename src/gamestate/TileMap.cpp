@@ -79,7 +79,7 @@ void TileMap::initializeBackgroundTexture(TileMapLayer& background) {
                 sprite = background.tileLayout[j][i]->sprite;
             }
                 
-            sprite->setPosition(i * 32,j * 32);
+            sprite->setPosition(i * 32, j * 32);
             texturedBackgroundTexture->draw(*sprite);
         }
     }
@@ -122,12 +122,12 @@ void TileMap::drawTexturedBackground(TileMapLayer& layer, const double& x, const
     return;
 }
 
-std::shared_ptr<LayerTile> TileMap::cloneDefaultLayerTile(int x, int y) {
-    auto tile = levelLayout[sprLayerIdx].tileLayout[y][x];
+std::shared_ptr<LayerTile> TileMap::cloneDefaultLayerTile(const TileCoordinatePair& tilePos) {
+    auto tile = levelLayout[sprLayerIdx].tileLayout[tilePos.y][tilePos.x];
     if (tile->tilesetDefault) {
         tile = std::make_shared<LayerTile>(*tile);
         tile->tilesetDefault = false;
-        levelLayout[sprLayerIdx].tileLayout[y][x] = tile;
+        levelLayout[sprLayerIdx].tileLayout[tilePos.y][tilePos.x] = tile;
     }
     return tile;
 }
@@ -161,33 +161,33 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
 #endif
 
     // Layer dimensions
-    int lh = layer.tileLayout.size();
-    int lw = layer.tileLayout.at(0).size();
+    int layerHeight = layer.tileLayout.size();
+    int layerWidth = layer.tileLayout.at(0).size();
     
     // Update offsets for moving layers
     if (layer.autoSpeedX > EPSILON) {
         layer.offsetX += layer.autoSpeedX * 2;
-        while (layer.repeatX && (std::abs(layer.offsetX) > (lw * 32))) {
-            layer.offsetX -= (lw * 32);
+        while (layer.repeatX && (std::abs(layer.offsetX) > (layerWidth * TILE_WIDTH))) {
+            layer.offsetX -= (layerWidth * TILE_WIDTH);
         }
     }
     if (layer.autoSpeedY > EPSILON) {
         layer.offsetY += layer.autoSpeedY * 2;
-        while (layer.repeatY && (std::abs(layer.offsetY) > (lh * 32))) {
-            layer.offsetY -= (lh * 32);
+        while (layer.repeatY && (std::abs(layer.offsetY) > (layerHeight * TILE_HEIGHT))) {
+            layer.offsetY -= (layerHeight * TILE_HEIGHT);
         }
     }
 
     // Get current layer offsets and speeds
-    double lox = layer.offsetX;
-    double loy = layer.offsetY - (layer.useInherentOffset ? (view->getViewHeight() - 200) / 2 : 0);
-    double sx = layer.speedX;
-    double sy = layer.speedY;
+    double layerOffsetX = layer.offsetX;
+    double layerOffsetY = layer.offsetY - (layer.useInherentOffset ? (view->getViewHeight() - 200) / 2 : 0);
+    double layerSpeedX = layer.speedX;
+    double layerSpeedY = layer.speedY;
     
     // Find out coordinates for a tile from outside the boundaries from topleft corner of the screen 
     auto viewCenter = view->getViewCenter();
-    double x1 = viewCenter.x - 70.0 - (view->getViewWidth() / 2);
-    double y1 = viewCenter.y - 70.0 - (view->getViewHeight() / 2);
+    double xStart = viewCenter.x - 70.0 - (view->getViewWidth() / 2);
+    double yStart = viewCenter.y - 70.0 - (view->getViewHeight() / 2);
 
     // Get view dimensions
     uint viewHeight = view->getViewHeight();
@@ -195,89 +195,91 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
     
     // Figure out the floating point offset from the calculated coordinates and the actual tile
     // corner coordinates
-    double rem_x = fmod(translateCoordinate(x1, sx, lox, false, viewHeight, viewWidth), 32);
-    double rem_y = fmod(translateCoordinate(y1, sy, loy, true, viewHeight, viewWidth), 32);
+    double remainderX = fmod(translateCoordinate(xStart, layerSpeedX, layerOffsetX, false, viewHeight, viewWidth), TILE_WIDTH);
+    double remainderY = fmod(translateCoordinate(yStart, layerSpeedY, layerOffsetY, true, viewHeight, viewWidth), TILE_HEIGHT);
     
     // Calculate the index (on the layer map) of the first tile that needs to be drawn to the
     // position determined earlier
-    int tile_x = 0;
-    int tile_y = 0;
+    int tileX = 0;
+    int tileY = 0;
 
     // Determine the actual drawing location on screen
-    double xinter = translateCoordinate(x1, sx, lox, false, viewHeight, viewWidth) / 32.0;
-    double yinter = translateCoordinate(y1, sy, loy, true, viewHeight, viewWidth) / 32.0;
+    double firstTileXIntermediate = translateCoordinate(xStart, layerSpeedX, layerOffsetX, false, viewHeight, viewWidth) / TILE_WIDTH;
+    double firstTileYIntermediate = translateCoordinate(yStart, layerSpeedY, layerOffsetY, true, viewHeight, viewWidth) / TILE_HEIGHT;
 
-    int tile_absx = 0;
-    int tile_absy = 0;
+    int absoluteFirstTileX = 0;
+    int absoluteFirstTileY = 0;
 
     // Get the actual tile coords on the layer layout
-    if (xinter > 0) {
-        tile_x = static_cast<int>(std::floor(xinter)) % lw;
-        tile_absx = static_cast<int>(std::floor(xinter));
+    if (firstTileXIntermediate > 0) {
+        tileX = static_cast<int>(std::floor(firstTileXIntermediate)) % layerWidth;
+        absoluteFirstTileX = static_cast<int>(std::floor(firstTileXIntermediate));
     } else {
-        tile_x = static_cast<int>(std::ceil(xinter)) % lw;
-        tile_absx = static_cast<int>(std::ceil(xinter));
-        while (tile_x < 0) {
-            tile_x += lw;
+        tileX = static_cast<int>(std::ceil(firstTileXIntermediate)) % layerWidth;
+        absoluteFirstTileX = static_cast<int>(std::ceil(firstTileXIntermediate));
+        while (tileX < 0) {
+            tileX += layerWidth;
         }
     }
     
-    if (yinter > 0) {
-        tile_y = static_cast<int>(std::floor(yinter)) % lh;
-        tile_absy = static_cast<int>(std::floor(yinter));
+    if (firstTileYIntermediate > 0) {
+        tileY = static_cast<int>(std::floor(firstTileYIntermediate)) % layerHeight;
+        absoluteFirstTileY = static_cast<int>(std::floor(firstTileYIntermediate));
     } else {
-        tile_y = static_cast<int>(std::ceil(yinter)) % lh;
-        tile_absy = static_cast<int>(std::ceil(yinter));
-        while (tile_y < 0) {
-            tile_y += lh;
+        tileY = static_cast<int>(std::ceil(firstTileYIntermediate)) % layerHeight;
+        absoluteFirstTileY = static_cast<int>(std::ceil(firstTileYIntermediate));
+        while (tileY < 0) {
+            tileY += layerHeight;
         }
     }
 
     // Save the tile Y at the left border so that we can roll back to it at the start of
     // every row iteration
-    unsigned tile_ys = tile_y;
+    unsigned tileYStart = tileY;
 
-    // update x1 and y1 with the remainder so that we start at the tile boundary
+    // update xStart and yStart with the remainder so that we start at the tile boundary
     // minus 1 because indices are updated in the beginning of the loops
-    x1 -= rem_x - 32.0;
-    y1 -= rem_y - 32.0;
+    xStart -= remainderX - TILE_WIDTH;
+    yStart -= remainderY - TILE_HEIGHT;
     
     // Calculate the last coordinates we want to draw to
-    double x3 = x1 + 100 + view->getViewWidth();
-    double y3 = y1 + 100 + view->getViewHeight();
+    double xEnd = xStart + 100 + view->getViewWidth();
+    double yEnd = yStart + 100 + view->getViewHeight();
 
-    if (layer.isTextured && (lh == 8) && (lw == 8)) {
+    if (layer.isTextured && (layerHeight == 8) && (layerWidth == 8)) {
 #ifdef CARROT_DEBUG
         float perspectiveSpeed = debugConfig->tempModifier[3] / 10.0;
 #else
         float perspectiveSpeed = 0.4;
 #endif
         drawTexturedBackground(layer,
-                fmod((x1 + rem_x) * perspectiveSpeed + lox, 256.0),
-                fmod((y1 + rem_y) * perspectiveSpeed + loy, 256.0), view);
+                fmod((xStart + remainderX) * perspectiveSpeed + layerOffsetX, 256.0),
+                fmod((yStart + remainderY) * perspectiveSpeed + layerOffsetY, 256.0), view);
     } else {
-        int tile_xo = -1;
-        for (double x2 = x1; x2 < x3; x2 += 32) {
-            tile_x = (tile_x + 1) % lw;
-            tile_xo++;
+        int tileCounterX = -1;
+        for (double x = xStart; x < xEnd; x += TILE_WIDTH) {
+            tileX = (tileX + 1) % layerWidth;
+            tileCounterX++;
             if (!layer.repeatX) {
                 // If the current tile isn't in the first iteration of the layer horizontally, don't draw this column
-                if (tile_absx + tile_xo + 1 < 0 || tile_absx + tile_xo + 1 >= lw) {
+                if (absoluteFirstTileX + tileCounterX + 1 < 0 || absoluteFirstTileX + tileCounterX + 1 >= layerWidth) {
                     continue;
                 }
             }
-            tile_y = tile_ys;
-            int tile_yo = -1;
-            for (double y2 = y1; y2 < y3; y2 += 32) {
-                tile_y = (tile_y + 1) % lh;
-                tile_yo++;
+            tileY = tileYStart;
+            int tileCounterY = -1;
+            for (double y = yStart; y < yEnd; y += TILE_HEIGHT) {
+                tileY = (tileY + 1) % layerHeight;
+                tileCounterY++;
 
-                int idx = layer.tileLayout.at(tile_y).at(tile_x)->tileId;
-                bool ani = layer.tileLayout.at(tile_y).at(tile_x)->isAnimated;
+                auto tile = layer.tileLayout.at(tileY).at(tileX);
+
+                int idx = tile->tileId;
+                bool ani = tile->isAnimated;
 
                 if (!layer.repeatY) {
                     // If the current tile isn't in the first iteration of the layer vertically, don't draw it
-                    if (tile_absy + tile_yo + 1 < 0 || tile_absy + tile_yo + 1 >= lh) {
+                    if (absoluteFirstTileY + tileCounterY + 1 < 0 || absoluteFirstTileY + tileCounterY + 1 >= layerHeight) {
                         continue;
                     }
                 }
@@ -287,8 +289,8 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
 #ifdef CARROT_DEBUG
                 if (debugConfig->dbgShowMasked) {
                     // debug code for masks
-                    sf::RectangleShape b(sf::Vector2f(32, 32));
-                    b.setPosition(x2, y2);
+                    sf::RectangleShape b(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
+                    b.setPosition(x, y);
                     if (ani) {
                         idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
                     }
@@ -301,7 +303,7 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
                             target->draw(b);
                         }
                     }
-                    if (ani || layer.tileLayout.at(tile_y).at(tile_x)->destructType != TileDestructType::DESTRUCT_NONE) {
+                    if (ani || tile->destructType != TileDestructType::DESTRUCT_NONE) {
                         b.setFillColor(sf::Color::Transparent);
                         b.setOutlineThickness(-3);
                         b.setOutlineColor(sf::Color(255, 0, 128, 255));
@@ -317,21 +319,21 @@ void TileMap::drawLayer(TileMapLayer& layer, std::shared_ptr<GameView>& view) {
                         auto anim = animatedTiles.at(idx);
                         sprite = anim->getCurrentTile()->sprite;
                         sprite->setScale(
-                            layer.tileLayout[tile_y][tile_x]->isFlippedX ? -1.0 : 1.0,
-                            layer.tileLayout[tile_y][tile_x]->isFlippedY ? -1.0 : 1.0
+                            tile->isFlippedX ? -1.0 : 1.0,
+                            tile->isFlippedY ? -1.0 : 1.0
                         );
                         sprite->setOrigin(
-                            layer.tileLayout[tile_y][tile_x]->isFlippedX ? 32.0 : 0.0,
-                            layer.tileLayout[tile_y][tile_x]->isFlippedY ? 32.0 : 0.0
+                            tile->isFlippedX ? TILE_WIDTH : 0.0,
+                            tile->isFlippedY ? TILE_HEIGHT : 0.0
                         );
                     }
                 } else {
-                    sprite = layer.tileLayout[tile_y][tile_x]->sprite;
+                    sprite = tile->sprite;
                 }
 
                 // rounding to nearest integer is necessary because otherwise there will be tearing
                 if (sprite != nullptr) {
-                    sprite->setPosition((float)qRound(x2), (float)qRound(y2));
+                    sprite->setPosition((float)qRound(x), (float)qRound(y));
                     target->draw(*sprite);
                 }
             }
@@ -417,7 +419,7 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
                     if (tile->isFlippedX) {
                         tile->sprite = std::make_shared<sf::Sprite>(*tile->sprite);
                         tile->sprite->setScale(-1.0, 1.0);
-                        tile->sprite->setOrigin(32.0, 0.0);
+                        tile->sprite->setOrigin(TILE_WIDTH, 0.0);
                     }
 
                     if (legacyTranslucent) {
@@ -475,14 +477,14 @@ void TileMap::readLayerConfiguration(enum LayerType type, const QString& filenam
     }
 }
 
-bool TileMap::isTileEmpty(unsigned x, unsigned y) {
+bool TileMap::isTileEmpty(const TileCoordinatePair& tilePos) const {
     // Consider out-of-level coordinates as solid walls
-    if (x >= levelWidth || y >= levelHeight) {
+    if (tilePos.x >= static_cast<int>(levelWidth) || tilePos.y >= static_cast<int>(levelHeight)) {
         return false;
     }
 
-    int idx = levelLayout.at(sprLayerIdx).tileLayout.at(y).at(x)->tileId;
-    if (levelLayout.at(sprLayerIdx).tileLayout.at(y).at(x)->isAnimated) {
+    int idx = levelLayout.at(sprLayerIdx).tileLayout.at(tilePos.y).at(tilePos.x)->tileId;
+    if (levelLayout.at(sprLayerIdx).tileLayout.at(tilePos.y).at(tilePos.x)->isAnimated) {
         idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
     }
 
@@ -494,9 +496,9 @@ bool TileMap::isTileEmpty(unsigned x, unsigned y) {
     }
 }
 
-bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
+bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) const {
     // Consider out-of-level coordinates as solid walls
-    if ((hitbox.right >= levelWidth * 32) || (hitbox.bottom >= levelHeight * 32)
+    if ((hitbox.right >= levelWidth * TILE_WIDTH) || (hitbox.bottom >= levelHeight * TILE_HEIGHT)
      || (hitbox.left <= 0) || (hitbox.top <= 0)) {
         return false;
     }
@@ -504,14 +506,14 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     // check all covered tiles for collisions; if all are empty, no need to do pixel level collision checking
     bool all_empty = true;
     int hx1 = floor(hitbox.left);
-    int hx2 = std::min(ceil(hitbox.right), levelWidth * 32.0 - 1.0);
+    int hx2 = std::min(ceil(hitbox.right), levelWidth * TILE_WIDTH - 1.0);
     int hy1 = floor(hitbox.top);
-    int hy2 = std::min(ceil(hitbox.bottom), levelHeight * 32.0 - 1.0);
+    int hy2 = std::min(ceil(hitbox.bottom), levelHeight * TILE_HEIGHT - 1.0);
 
     const auto& sprLayerLayout = levelLayout.at(sprLayerIdx).tileLayout;
 
-    for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
-        for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
+    for (int x = hx1 / TILE_WIDTH; x <= hx2 / TILE_WIDTH; ++x) {
+        for (int y = hy1 / TILE_HEIGHT; y <= hy2 / TILE_HEIGHT; ++y) {
             auto tile = sprLayerLayout.at(y).at(x);
             int idx = tile->tileId;
             if (tile->isAnimated) {
@@ -535,8 +537,8 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
     }
 
     // check each tile pixel perfectly for collisions
-    for (int x = hx1 / 32; x <= hx2 / 32; ++x) {
-        for (int y = hy1 / 32; y <= hy2 / 32; ++y) {
+    for (int x = hx1 / TILE_WIDTH; x <= hx2 / TILE_WIDTH; ++x) {
+        for (int y = hy1 / TILE_HEIGHT; y <= hy2 / TILE_HEIGHT; ++y) {
             auto tile = sprLayerLayout.at(y).at(x);
             bool fx = tile->isFlippedX;
             // bool fy = sprLayerLayout.at(y).at(x)->isFlippedY;
@@ -545,15 +547,15 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                 idx = animatedTiles.at(idx)->getCurrentTile()->tileId;
             }
 
-            if ((tile->isOneWay && !downwards && (hy2 < ((y + 1) * 32)))
+            if ((tile->isOneWay && !downwards && (hy2 < ((y + 1) * TILE_HEIGHT)))
                 || tile->suspendType != SuspendType::SUSPEND_NONE) {
                 continue;
             }
             auto& mask = levelTileset->getTileMask(idx);
             int px_idx;
-            for (int i = 0; i < 1024; ++i) {
-                int nowx = (32 * x + i % 32);
-                int nowy = (32 * y + i / 32);
+            for (int i = 0; i < TILE_WIDTH * TILE_HEIGHT; ++i) {
+                int nowx = (TILE_WIDTH  * x + i % TILE_WIDTH);
+                int nowy = (TILE_HEIGHT * y + i / TILE_WIDTH);
                 if (hx2 < nowx || hx1 >= nowx) {
                     continue;
                 }
@@ -561,7 +563,7 @@ bool TileMap::isTileEmpty(const Hitbox& hitbox, bool downwards) {
                     continue;
                 }
                 px_idx = i;
-                if (fx) { px_idx =      (i / 32)  * 32 + (31 - (i % 32)); }
+                if (fx) { px_idx =      (i / TILE_WIDTH)  * TILE_WIDTH + ((TILE_WIDTH - 1) - (i % TILE_WIDTH)); }
                 //if (fy) { px_idx = (31 -(i / 32)) * 32 +        i % 32  ; }
                 // TODO: fix so that both flags work simultaneously
                 if (mask[px_idx]) {
@@ -632,7 +634,7 @@ void TileMap::readAnimatedTiles(const QString& filename) {
     }
 }
 
-const std::shared_ptr<sf::Texture> TileMap::getTilesetTexture() {
+const std::shared_ptr<sf::Texture> TileMap::getTilesetTexture() const {
     return levelTileset->getTexture();
 }
 
@@ -655,9 +657,9 @@ void TileMap::loadSavePointLayer(const QVector<QVector<std::shared_ptr<LayerTile
     levelLayout[sprLayerIdx].tileLayout = layer;
 }
 
-bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
-    int tx = static_cast<int>(x) / 32;
-    int ty = static_cast<int>(y) / 32;
+bool TileMap::checkWeaponDestructible(const CoordinatePair& pos, WeaponType weapon) {
+    int tx = pos.tileX();
+    int ty = pos.tileY();
 
     if (ty >= static_cast<int>(levelHeight) || tx >= static_cast<int>(levelWidth) || tx < 0 || ty < 0) {
         return false;
@@ -665,14 +667,14 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
     auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
     if (tile->destructType == DESTRUCT_WEAPON) {
         if (weapon == WEAPON_FREEZER && (animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
-            auto e = std::make_shared<FrozenBlock>(ActorInstantiationDetails(root->getActorAPI(), { 32 * tx + 16.0, 32.0 * ty + 16.0 }));
+            auto e = std::make_shared<FrozenBlock>(ActorInstantiationDetails(root->getActorAPI(), { TILE_WIDTH * (tx + 0.5), TILE_HEIGHT * (ty + 0.5) }));
             root->addActor(e);
 
             return true;
         }
 
         if (tile->extraByte == 0u || tile->extraByte == static_cast<uint>(weapon + 1)) {
-            return advanceDestructibleTileAnimation(tile, tx, ty, "COMMON_SCENERY_DESTRUCT");
+            return advanceDestructibleTileAnimation(tile, pos.tilePosition(), "COMMON_SCENERY_DESTRUCT");
         }
     }
 
@@ -680,16 +682,16 @@ bool TileMap::checkWeaponDestructible(double x, double y, WeaponType weapon) {
 }
 
 uint TileMap::checkSpecialDestructible(const Hitbox& hitbox) {
-    int x1 = std::max(0.0, hitbox.left / 32);
-    int x2 = std::min((uint)(hitbox.right / 32), levelWidth - 1);
-    int y1 = std::max(0.0, hitbox.top / 32);
-    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight - 1);
+    int x1 = std::max(0.0, hitbox.left / TILE_WIDTH);
+    int x2 = std::min((uint)(hitbox.right / TILE_WIDTH), levelWidth - 1);
+    int y1 = std::max(0.0, hitbox.top / TILE_HEIGHT);
+    int y2 = std::min((uint)(hitbox.bottom / TILE_HEIGHT), levelHeight - 1);
     int hit = 0;
     for (int tx = x1; tx <= x2; ++tx) {
         for (int ty = y1; ty <= y2; ++ty) {
             auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
             if (tile->destructType == DESTRUCT_SPECIAL) {
-                if (advanceDestructibleTileAnimation(tile, tx, ty, "COMMON_SCENERY_DESTRUCT")) {
+                if (advanceDestructibleTileAnimation(tile, TileCoordinatePair(tx, ty), "COMMON_SCENERY_DESTRUCT")) {
                     hit++;
                 }
             }
@@ -699,16 +701,16 @@ uint TileMap::checkSpecialDestructible(const Hitbox& hitbox) {
 }
 
 uint TileMap::checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& speed) {
-    int x1 = std::max(0.0, hitbox.left / 32);
-    int x2 = std::min((uint)(hitbox.right / 32), levelWidth - 1);
-    int y1 = std::max(0.0, hitbox.top / 32);
-    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight - 1);
+    int x1 = std::max(0.0, hitbox.left / TILE_WIDTH);
+    int x2 = std::min((uint)(hitbox.right / TILE_WIDTH), levelWidth - 1);
+    int y1 = std::max(0.0, hitbox.top / TILE_HEIGHT);
+    int y2 = std::min((uint)(hitbox.bottom / TILE_HEIGHT), levelHeight - 1);
     uint hit = 0;
     for (int tx = x1; tx <= x2; ++tx) {
         for (int ty = y1; ty <= y2; ++ty) {
             auto tile = levelLayout[sprLayerIdx].tileLayout[ty][tx];
             if (tile->destructType == DESTRUCT_SPEED && tile->extraByte + 3 <= speed) {
-                if (advanceDestructibleTileAnimation(tile, tx, ty, "COMMON_SCENERY_DESTRUCT")) {
+                if (advanceDestructibleTileAnimation(tile, TileCoordinatePair(tx, ty), "COMMON_SCENERY_DESTRUCT")) {
                     hit++;
                 }
             }
@@ -718,10 +720,10 @@ uint TileMap::checkSpecialSpeedDestructible(const Hitbox& hitbox, const double& 
 }
 
 uint TileMap::checkCollapseDestructible(const Hitbox& hitbox) {
-    int x1 = std::max(0.0, hitbox.left / 32);
-    int x2 = std::min((uint)(hitbox.right / 32), levelWidth - 1);
-    int y1 = std::max(0.0, hitbox.top / 32);
-    int y2 = std::min((uint)(hitbox.bottom / 32), levelHeight - 1);
+    int x1 = std::max(0.0, hitbox.left / TILE_WIDTH);
+    int x2 = std::min((uint)(hitbox.right / TILE_WIDTH), levelWidth - 1);
+    int y1 = std::max(0.0, hitbox.top / TILE_HEIGHT);
+    int y2 = std::min((uint)(hitbox.bottom / TILE_HEIGHT), levelHeight - 1);
     uint hit = 0;
     for (int tx = x1; tx <= x2; ++tx) {
         for (int ty = y1; ty <= y2; ++ty) {
@@ -761,66 +763,66 @@ void TileMap::setTrigger(unsigned char triggerID, bool newState) {
     }
 }
 
-bool TileMap::getTrigger(unsigned char triggerID) {
+bool TileMap::getTrigger(unsigned char triggerID) const {
     return triggerState[triggerID];
 }
 
-unsigned TileMap::getLevelWidth() {
+unsigned TileMap::getLevelWidth() const {
     return levelWidth;
 }
-unsigned TileMap::getLevelHeight() {
+unsigned TileMap::getLevelHeight() const {
     return levelHeight;
 }
 
-void TileMap::setTileEventFlag(const EventMap* events, int x, int y, PCEvent e) {
-    auto tile = levelLayout[sprLayerIdx].tileLayout[y][x];
+void TileMap::setTileEventFlag(const EventMap* events, const TileCoordinatePair& tilePos, PCEvent e) {
+    auto tile = levelLayout[sprLayerIdx].tileLayout[tilePos.y][tilePos.x];
     quint16 p[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     if (events != nullptr) {
-        events->getPositionParams(x, y, p);
+        events->getTileParams(tilePos, p);
     } else {
         auto mainEvents = root->getGameEvents().lock();
         if (mainEvents != nullptr) {
-            mainEvents->getPositionParams(x, y, p);
+            mainEvents->getTileParams(tilePos, p);
         }
     }
 
     switch (e) {
         case PC_MODIFIER_ONE_WAY:
-            tile = cloneDefaultLayerTile(x, y);
+            tile = cloneDefaultLayerTile(tilePos);
             tile->isOneWay = true;
             break;
         case PC_MODIFIER_VINE:
-            tile = cloneDefaultLayerTile(x, y);
+            tile = cloneDefaultLayerTile(tilePos);
             tile->suspendType = SuspendType::SUSPEND_VINE;
             break;
         case PC_MODIFIER_HOOK:
-            tile = cloneDefaultLayerTile(x, y);
+            tile = cloneDefaultLayerTile(tilePos);
             tile->suspendType = SuspendType::SUSPEND_HOOK;
             break;
         case PC_SCENERY_DESTRUCT:
-            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_WEAPON, p[0]);
+            setTileDestructibleEventFlag(tile, tilePos, DESTRUCT_WEAPON, p[0]);
             break;
         case PC_SCENERY_BUTTSTOMP:
-            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_SPECIAL, p[0]);
+            setTileDestructibleEventFlag(tile, tilePos, DESTRUCT_SPECIAL, p[0]);
             break;
         case PC_TRIGGER_AREA:
-            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_TRIGGER, p[0]);
+            setTileDestructibleEventFlag(tile, tilePos, DESTRUCT_TRIGGER, p[0]);
             break;
         case PC_SCENERY_DESTRUCT_SPD:
-            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_SPEED, p[0]);
+            setTileDestructibleEventFlag(tile, tilePos, DESTRUCT_SPEED, p[0]);
             break;
         case PC_SCENERY_COLLAPSE:
-            setTileDestructibleEventFlag(tile, x, y, DESTRUCT_COLLAPSE, p[0] * 25);
+            setTileDestructibleEventFlag(tile, tilePos, DESTRUCT_COLLAPSE, p[0] * 25);
             break;
         default:
             break;
     }
 }
 
-void TileMap::setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, const uint& x, const uint& y,
+void TileMap::setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, const TileCoordinatePair& tilePos,
     const TileDestructType& type, const quint16& extraByte) {
     if (tile->isAnimated) {
-        tile = cloneDefaultLayerTile(x, y);
+        tile = cloneDefaultLayerTile(tilePos);
         tile->destructType = type;
         tile->isAnimated = false;
         tile->destructAnimation = tile->tileId;
@@ -831,7 +833,7 @@ void TileMap::setTileDestructibleEventFlag(std::shared_ptr<LayerTile>& tile, con
     }
 }
 
-bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const int& x, const int& y, const QString& soundName) {
+bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile, const TileCoordinatePair& tilePos, const QString& soundName) {
     if ((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex) {
         // tile not destroyed yet, advance counter by one
         tile->destructFrameIndex++;
@@ -840,22 +842,22 @@ bool TileMap::advanceDestructibleTileAnimation(std::shared_ptr<LayerTile>& tile,
         if (!((animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 2) > tile->destructFrameIndex)) {
             // the tile was destroyed, create debris
             if (sceneryResources->sounds.contains(soundName)) {
-                root->getActorAPI()->playSound(sceneryResources->sounds.value(soundName).sound, CoordinatePair({ x * 32 + 16, y * 32 + 16 }));
+                root->getActorAPI()->playSound(sceneryResources->sounds.value(soundName).sound, CoordinatePair({ TILE_WIDTH * (tilePos.x + 0.5), TILE_HEIGHT * (tilePos.y + 0.5) }));
             }
             root->createDebris(animatedTiles.at(tile->destructAnimation)
                 ->getFrameCanonicalIndex(animatedTiles.at(tile->destructAnimation)->getAnimationLength() - 1),
-                x, y);
+                tilePos);
         }
         return true;
     }
     return false;
 }
 
-SuspendType TileMap::getPosSuspendState(double x, double y) {
-    int ax = static_cast<int>(x) / 32;
-    int ay = static_cast<int>(y) / 32;
-    int rx = static_cast<int>(x) - 32 * ax;
-    int ry = static_cast<int>(y) - 32 * ay;
+SuspendType TileMap::getPositionSuspendType(const CoordinatePair& pos) const {
+    int ax = pos.tileX();
+    int ay = pos.tileY();
+    int rx = static_cast<int>(pos.x) - ax * TILE_WIDTH;
+    int ry = static_cast<int>(pos.y) - ay * TILE_HEIGHT;
 
     auto tile = levelLayout[sprLayerIdx].tileLayout[ay][ax];
 
@@ -865,7 +867,7 @@ SuspendType TileMap::getPosSuspendState(double x, double y) {
         return SuspendType::SUSPEND_NONE;
     }
 
-    QBitArray mask(1024, false);
+    QBitArray mask(TILE_WIDTH * TILE_HEIGHT, false);
     if (tile->isAnimated) {
         if (tile->tileId < static_cast<uint>(animatedTiles.size())) {
             mask = levelTileset->getTileMask(animatedTiles.at(tile->tileId)->getCurrentTile()->tileId);
@@ -874,12 +876,12 @@ SuspendType TileMap::getPosSuspendState(double x, double y) {
         mask = levelTileset->getTileMask(tile->tileId);
     }
     for (int ty = ry - 4; ty < ry + 4; ty++) {
-        if (ty < 0 || ty >= 32) {
+        if (ty < 0 || ty >= TILE_HEIGHT) {
             continue;
         }
-        int i = rx + 32 * ty;
+        int i = rx + TILE_WIDTH * ty;
         int idx = i;
-        if (fx) { idx =      (i / 32)  * 32 + (31 - (i % 32)); }
+        if (fx) { idx =      (i / TILE_WIDTH)  * TILE_HEIGHT + ((TILE_WIDTH - 1) - (i % TILE_WIDTH)); }
         //if (fy) { idx = (31 -(i / 32)) * 32 +        i % 32  ; }
         if (mask[idx]) { return tile->suspendType; }
     }
@@ -893,12 +895,12 @@ void TileMap::advanceAnimatedTileTimers() {
 }
 
 void TileMap::advanceCollapsingTileTimers() {
-    foreach(auto& tilePosition, activeCollapsingTiles) {
-        auto& tile = levelLayout[sprLayerIdx].tileLayout[tilePosition.second][tilePosition.first];
+    foreach(auto& tilePos, activeCollapsingTiles) {
+        auto& tile = levelLayout[sprLayerIdx].tileLayout[tilePos.y][tilePos.x];
         if (tile->extraByte == 0) {
-            if (!advanceDestructibleTileAnimation(tile, tilePosition.first, tilePosition.second, "COMMON_SCENERY_COLLAPSE")) {
+            if (!advanceDestructibleTileAnimation(tile, tilePos, "COMMON_SCENERY_COLLAPSE")) {
                 tile->destructType = DESTRUCT_NONE;
-                activeCollapsingTiles.remove(tilePosition);
+                activeCollapsingTiles.remove(tilePos);
             } else {
                 tile->extraByte = 4;
             }
@@ -912,12 +914,16 @@ void TileMap::advanceCollapsingTileTimers() {
 const int DestructibleDebris::speedMultiplier[4] = { -2, 2, -1, 1 };
 
 DestructibleDebris::DestructibleDebris(std::shared_ptr<sf::Texture> texture,
-    int x, int y, unsigned tx, unsigned ty, unsigned short quarter)
-    : posX(x * 32 + (quarter % 2) * 16), posY(y * 32 + (quarter / 2) * 16), speedX(0), speedY(0) {
+    TileCoordinatePair pos, unsigned tx, unsigned ty, unsigned short quarter)
+    : pos(TILE_WIDTH * (pos.x + (quarter % 2) * 0.5), TILE_HEIGHT * (pos.y + (quarter / 2) * 0.5)), speed(0, 0) {
 
     sprite = std::make_unique<sf::Sprite>(*texture);
-    sprite->setTextureRect(sf::IntRect(tx * 32 + (quarter % 2) * 16, ty * 32 + (quarter / 2) * 16, 16, 16));
-    speedX = speedMultiplier[quarter];
+    sprite->setTextureRect(sf::IntRect(
+        tx * TILE_WIDTH + (quarter % 2) * (TILE_WIDTH / 2),
+        ty * TILE_HEIGHT + (quarter / 2) * (TILE_HEIGHT / 2), 
+        TILE_WIDTH / 2, 
+        TILE_HEIGHT / 2));
+    speed.x = speedMultiplier[quarter];
 }
 
 DestructibleDebris::~DestructibleDebris() {
@@ -925,12 +931,11 @@ DestructibleDebris::~DestructibleDebris() {
 }
 
 void DestructibleDebris::tickUpdate() {
-    posX += speedX;
-    posY += speedY;
-    speedY += 0.2;
-    speedY = std::min(5.0, speedY);
+    pos.add(speed);
+    speed.y += 0.2;
+    speed.y = std::min(5.0f, speed.y);
 
-    sprite->setPosition(posX, posY);
+    sprite->setPosition(pos.toSfVector2f());
 
 }
 
@@ -944,5 +949,5 @@ void DestructibleDebris::drawUpdate(std::shared_ptr<GameView>& view) {
 }
 
 double DestructibleDebris::getY() {
-    return posY;
+    return pos.y;
 }

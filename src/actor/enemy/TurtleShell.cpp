@@ -11,13 +11,11 @@
 #include "../../struct/Constants.h"
 
 
-TurtleShell::TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX,
-    double initSpeedY) : CommonActor(initData) {
+TurtleShell::TurtleShell(const ActorInstantiationDetails& initData, sf::Vector2f initSpeed) : CommonActor(initData) {
     loadResources("Enemy/TurtleShell");
     setAnimation(AnimState::IDLE);
 
-    speedX = initSpeedX;
-    speedY = initSpeedY;
+    speed = initSpeed;
     friction = api->getGravity() / 100;
     elasticity = 0.5;
     // TODO: test the actual number
@@ -30,12 +28,12 @@ TurtleShell::~TurtleShell() {
 }
 
 void TurtleShell::tickEvent() {
-    speedX = std::max(std::abs(speedX) - friction, 0.0) * (speedX > EPSILON ? 1 : -1);
+    speed.x = std::max(std::abs(speed.x) - friction, 0.0) * (speed.x > EPSILON ? 1 : -1);
 
-    double posYBefore = posY;
+    double posYBefore = pos.y;
     CommonActor::tickEvent();
-    if (posYBefore - posY > 0.5 && std::abs(speedY) < 1) {
-        speedX = std::max(std::abs(speedX) - 10 * friction, 0.0) * (speedX > EPSILON ? 1 : -1);
+    if (posYBefore - pos.y > 0.5 && std::abs(speed.y) < 1) {
+        speed.x = std::max(std::abs(speed.x) - 10 * friction, 0.0) * (speed.x > EPSILON ? 1 : -1);
     }
 
     auto collisions = api->findCollisionActors(shared_from_this());
@@ -56,9 +54,9 @@ void TurtleShell::tickEvent() {
 
         {
             auto specializedPtr = std::dynamic_pointer_cast<Enemy>(colliderPtr);
-            if (specializedPtr != nullptr && std::abs(speedX) > 0.5) {
+            if (specializedPtr != nullptr && std::abs(speed.x) > 0.5) {
                 specializedPtr->decreaseHealth(1);
-                speedX = std::max(std::abs(speedX), 2.0) * (speedX > 0 ? -1 : 1);
+                speed.x = std::max(std::abs(speed.x), 2.0f) * (speed.x > 0 ? -1 : 1);
                 continue;
             }
         }
@@ -74,18 +72,18 @@ void TurtleShell::tickEvent() {
         {
             auto specializedPtr = std::dynamic_pointer_cast<TurtleShell>(colliderPtr);
             if (specializedPtr != nullptr) {
-                if (speedY - specializedPtr->speedY > 1 && speedY > 0) {
+                if (speed.y - specializedPtr->speed.y > 1 && speed.y > 0) {
                     specializedPtr->decreaseHealth(10);
                     continue;
                 }
 
-                if (std::abs(speedX) > std::abs(specializedPtr->speedX)) {
+                if (std::abs(speed.x) > std::abs(specializedPtr->speed.x)) {
                     // Handle this only in the faster of the two.
-                    posX = specializedPtr->posX + (speedX > 0 ? -1 : 1) * (currentGraphicState.dimensions.x + 1);
-                    double totalSpeed = std::abs(speedX) + std::abs(specializedPtr->speedX);
+                    pos.x = specializedPtr->pos.x + (speed.x > 0 ? -1 : 1) * (currentGraphicState.dimensions.x + 1);
+                    double totalSpeed = std::abs(speed.x) + std::abs(specializedPtr->speed.x);
 
-                    specializedPtr->speedX = totalSpeed / 2 * (speedX > 0 ? 1 : -1);
-                    speedX = totalSpeed / 2 * (speedX > 0 ? -1 : 1);
+                    specializedPtr->speed.x = totalSpeed / 2 * (speed.x > 0 ? 1 : -1);
+                    speed.x = totalSpeed / 2 * (speed.x > 0 ? -1 : 1);
 
                     specializedPtr->decreaseHealth(1);
                     playSound("ENEMY_TURTLE_SHELL_IMPACT_SHELL");
@@ -99,7 +97,8 @@ void TurtleShell::tickEvent() {
     if (tiles != nullptr) {
         tiles->checkSpecialDestructible(currentHitbox);
         tiles->checkCollapseDestructible(currentHitbox);
-        tiles->checkWeaponDestructible(posX, posY, WEAPON_BLASTER);
+        // TODO a shell ain't a blaster
+        tiles->checkWeaponDestructible(pos, WEAPON_BLASTER);
     }
 }
 
@@ -118,13 +117,13 @@ void TurtleShell::handleCollision(std::shared_ptr<CommonActor> other) {
             return;
         }
 
-        double otherSpeed = other->getSpeedX();
-        speedX = std::max(4.0, std::abs(otherSpeed)) * (otherSpeed < 0 ? -1 : 1) / 2;
+        double otherSpeed = other->getSpeed().x;
+        speed.x = std::max(4.0, std::abs(otherSpeed)) * (otherSpeed < 0 ? -1 : 1) / 2;
     }
 }
 
 void TurtleShell::onHitFloorHook() {
-    if (std::abs(speedY) > 1) {
+    if (std::abs(speed.y) > 1) {
         playSound("ENEMY_TURTLE_SHELL_IMPACT_GROUND");
     }
 }

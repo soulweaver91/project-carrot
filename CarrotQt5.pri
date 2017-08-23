@@ -61,6 +61,7 @@ HEADERS += ./src/EngineState.h \
     ./src/graphics/CarrotCanvas.h \
     ./src/graphics/QSFMLCanvas.h \
     ./src/menu/ConfirmationMenu.h \
+    ./src/menu/DifficultySelectMenu.h \
     ./src/menu/EpisodeSelectMenu.h \
     ./src/menu/InGameMenuMenu.h \
     ./src/menu/InGameMenuRoot.h \
@@ -87,6 +88,7 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/Controls.h \
     ./src/struct/CoordinatePair.h \
     ./src/struct/DebugConfig.h \
+    ./src/struct/GameDifficulty.h \
     ./src/struct/Hitbox.h \
     ./src/struct/Layers.h \
     ./src/struct/NextLevelData.h \
@@ -94,8 +96,7 @@ HEADERS += ./src/EngineState.h \
     ./src/struct/Resources.h \
     ./src/struct/SequentialIDList.h \
     ./src/struct/WeaponTypes.h \
-    ./src/struct/GameDifficulty.h \
-    ./src/menu/DifficultySelectMenu.h
+    ./src/struct/TileCoordinatePair.h
 SOURCES += ./src/CarrotQt5.cpp \
     ./src/JJ2Format.cpp \
     ./src/EngineState.cpp \
@@ -152,6 +153,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/actor/solidobj/SolidObject.cpp \
     ./src/actor/solidobj/TriggerCrate.cpp \
     ./src/menu/ConfirmationMenu.cpp \
+    ./src/menu/DifficultySelectMenu.cpp \
     ./src/menu/EpisodeSelectMenu.cpp \
     ./src/menu/InGameMenuMenu.cpp \
     ./src/menu/InGameMenuRoot.cpp \
@@ -172,8 +174,7 @@ SOURCES += ./src/CarrotQt5.cpp \
     ./src/gamestate/EventMap.cpp \
     ./src/gamestate/PlayerOSD.cpp \
     ./src/gamestate/TileMap.cpp \
-    ./src/gamestate/TimerUser.cpp \
-    ./src/menu/DifficultySelectMenu.cpp
+    ./src/gamestate/TimerUser.cpp
 FORMS += ./src/ui/AboutCarrotDialog.ui \
     ./src/ui/CarrotQt5.ui
 RESOURCES += CarrotQt5.qrc

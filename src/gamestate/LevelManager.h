@@ -11,6 +11,7 @@
 #include "../struct/NextLevelData.h"
 #include "../struct/Resources.h"
 #include "../struct/DebugConfig.h"
+#include "../struct/TileCoordinatePair.h"
 #include "TimerUser.h"
 
 class CarrotQt5;
@@ -54,7 +55,7 @@ public:
     void setSavePoint();
     void loadSavePoint();
     void clearActors();
-    void createDebris(unsigned tileId, int x, int y);
+    void createDebris(unsigned tileId, const TileCoordinatePair& tilePos);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collisionActor);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me);
     QVector<std::weak_ptr<Player>> getCollidingPlayer(const Hitbox& hitbox);

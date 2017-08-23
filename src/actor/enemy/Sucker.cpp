@@ -15,12 +15,12 @@ EnemySucker::EnemySucker(const ActorInstantiationDetails& initData, LastHitDirec
         health = 1;
         isGravityAffected = false;
         setTransition(1073741824, false, [this]() {
-            speedX = 0;
+            speed.x = 0;
             setAnimation(AnimState::WALK);
             isGravityAffected = true;
         });
         if (dir == LEFT || dir == RIGHT) {
-            speedX = 3 * (dir == LEFT ? -1 : 1);
+            speed.x = 3 * (dir == LEFT ? -1 : 1);
         }
         playSound("ENEMY_SUCKER_DEFLATE");
     } else {
@@ -32,9 +32,9 @@ EnemySucker::~EnemySucker() {
 }
 
 void EnemySucker::tickEvent() {
-    if (!inTransition && std::abs(speedY) < EPSILON && std::abs(speedX) > EPSILON && !canMoveToPosition(speedX, 0)) {
+    if (!inTransition && std::abs(speed.y) < EPSILON && std::abs(speed.x) > EPSILON && !canMoveToPosition({ speed.x, 0.0f })) {
         isFacingLeft = !isFacingLeft;
-        speedX *= -1;
+        speed.x *= -1;
     }
 
     if (!inTransition && frozenFramesLeft == 0) {
@@ -49,9 +49,9 @@ void EnemySucker::tickEvent() {
             playSound("ENEMY_SUCKER_WALK_3");
         }
         if ((cycle >= (6 * 7) && cycle < (8 * 7)) || cycle >= (10 * 7)) {
-            speedX = 0.5 * (isFacingLeft ? -1 : 1);
+            speed.x = 0.5 * (isFacingLeft ? -1 : 1);
         } else {
-            speedX = 0;
+            speed.x = 0;
         }
     }
 

@@ -10,7 +10,7 @@
 Collectible::Collectible(const ActorInstantiationDetails& initData)
     : CommonActor(initData), untouched(true), scoreValue(100) {
     canBeFrozen = false;
-    phase = ((posX / 100.0) + (posY / 100.0));
+    phase = ((pos.x / 100.0) + (pos.y / 100.0));
     elasticity = 0.6;
     loadResources("Object/Collectible");
 
@@ -37,9 +37,9 @@ void Collectible::drawUpdate(std::shared_ptr<GameView>& view) {
 
     // The position of the actor is altered for the draw event.
     // We want to keep the actual position of the actor constant, though.
-    posY += waveOffset;
+    pos.y += waveOffset;
     CommonActor::drawUpdate(view);
-    posY -= waveOffset;
+    pos.y -= waveOffset;
 }
 
 void Collectible::collect(std::shared_ptr<Player> player) {
@@ -64,15 +64,15 @@ void Collectible::handleCollision(std::shared_ptr<CommonActor> other) {
 
     if (impactable) {
         if (untouched) {
-            externalForceX += other->getSpeedX() / 5.0 * (0.9 + (qrand() % 2000) / 10000.0);
-            externalForceY += -other->getSpeedY() / 10.0 * (0.9 + (qrand() % 2000) / 10000.0);
+            externalForce.x += other->getSpeed().x / 5.0 * (0.9 + (qrand() % 2000) / 10000.0);
+            externalForce.y += -other->getSpeed().y / 10.0 * (0.9 + (qrand() % 2000) / 10000.0);
         }
         untouched = false;
     }
 }
 
 void Collectible::setFacingDirection() {
-    if ((qRound(posX + posY) / 32) % 2 == 0) {
+    if ((qRound(pos.x) / TILE_WIDTH + qRound(pos.y) / TILE_HEIGHT) % 2 == 0) {
         isFacingLeft = true;
     }
 }

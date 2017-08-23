@@ -30,8 +30,7 @@ private:
     qint16 speed;
     quint16 length;
     double phase;
-    double originX;
-    double originY;
+    CoordinatePair originPos;
     bool isSwing;
     std::shared_ptr<AnimationInstance> chainAnimation;
 };

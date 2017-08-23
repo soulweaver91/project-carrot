@@ -6,6 +6,7 @@
 #include "../CarrotQt5.h"
 #include "../struct/DebugConfig.h"
 #include "../struct/PCEvent.h"
+#include "../struct/TileCoordinatePair.h"
 
 class ActorAPI : public std::enable_shared_from_this<ActorAPI> {
 public:
@@ -14,7 +15,7 @@ public:
 
     bool addActor(std::shared_ptr<CommonActor> actor);
     void removeActor(std::shared_ptr<CommonActor> actor);
-    std::shared_ptr<CommonActor> createActor(PCEvent type, double x, double y, const quint16 params[8], bool returnOnly = false);
+    std::shared_ptr<CommonActor> createActor(PCEvent type, const CoordinatePair& pos, const quint16 params[8], bool returnOnly = false);
 
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(const Hitbox& hitbox, std::shared_ptr<CommonActor> me = nullptr);
     QVector<std::weak_ptr<CommonActor>> findCollisionActors(std::shared_ptr<CommonActor> me = nullptr);
@@ -22,6 +23,7 @@ public:
     void loadSavePoint();
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me, std::weak_ptr<SolidObject>& collisionActor);
     bool isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me);
+    bool isTileCollisionFree(const TileCoordinatePair& tile);
     QVector<std::weak_ptr<Player>> getCollidingPlayer(const Hitbox& hitbox);
     std::weak_ptr<Player> getPlayer(unsigned number);
     uint getDefaultLightingLevel();

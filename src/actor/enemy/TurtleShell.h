@@ -6,7 +6,7 @@ class ActorAPI;
 
 class TurtleShell : public CommonActor {
 public:
-    TurtleShell(const ActorInstantiationDetails& initData, double initSpeedX = 0.0, double initSpeedY = 0.0);
+    TurtleShell(const ActorInstantiationDetails& initData, sf::Vector2f initSpeed = { 0.0, 0.0 });
     ~TurtleShell();
     void tickEvent() override;
     void updateHitbox() override;
