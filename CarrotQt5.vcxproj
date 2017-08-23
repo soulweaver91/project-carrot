@@ -548,6 +548,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE" />
+    <Text Include="LICENSE-THIRD-PARTY" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

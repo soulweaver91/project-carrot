@@ -830,5 +830,8 @@
     <Text Include="LICENSE">
       <Filter>Documents</Filter>
     </Text>
+    <Text Include="LICENSE-THIRD-PARTY">
+      <Filter>Documents</Filter>
+    </Text>
   </ItemGroup>
 </Project>
