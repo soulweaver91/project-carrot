@@ -66,7 +66,7 @@ void Ammo::checkCollisions() {
     auto events = api->getGameEvents().lock();
     auto tiles = api->getGameTiles().lock();
     if (events != nullptr) {
-        PCEvent e = events->getPositionEvent(posX, posY);
+        PCEvent e = events->getPositionEvent(pos);
         switch(e) {
             case PC_MODIFIER_RICOCHET:
                 ricochet();
@@ -77,7 +77,7 @@ void Ammo::checkCollisions() {
     }
 
     auto type = getType();
-    if (tiles != nullptr && tiles->checkWeaponDestructible(posX, posY, type)) {
+    if (tiles != nullptr && tiles->checkWeaponDestructible(pos, type)) {
         if (type != WEAPON_FREEZER) {
             auto player = owner.lock();
             if (player != nullptr) {
@@ -90,6 +90,6 @@ void Ammo::checkCollisions() {
 }
 
 void Ammo::ricochet() {
-    speedY = speedY * -0.9 + (qrand() % 100 - 50.0) / 80;
-    speedX = speedX * -0.9 + (qrand() % 100 - 50.0) / 80;
+    speed.x = speed.x * -0.9 + (qrand() % 100 - 50.0) / 80;
+    speed.y = speed.y * -0.9 + (qrand() % 100 - 50.0) / 80;
 }

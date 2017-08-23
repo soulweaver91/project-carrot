@@ -29,7 +29,7 @@ public:
 protected:
     bool hurtPlayer;
     bool isAttacking;
-    bool canMoveToPosition(double x, double y);
+    bool canMoveToPosition(const CoordinatePair& newPos);
     void tryGenerateRandomDrop(const QVector<QPair<PCEvent, uint>>& dropTable = Enemy::defaultDropTable);
 
     const static QVector<QPair<PCEvent, uint>> defaultDropTable;

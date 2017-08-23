@@ -18,23 +18,13 @@ EventMap::~EventMap() {
 
 }
 
-bool EventMap::isPosHurting(double x, double y) const {
-    int ax = static_cast<int>(x) / 32;
-    int ay = static_cast<int>(y) / 32;
-    return getPositionEvent(ax, ay) == PC_MODIFIER_HURT;
+bool EventMap::isPositionHurting(const CoordinatePair& pos) const {
+    return getPositionEvent(pos) == PC_MODIFIER_HURT;
 }
 
-unsigned short EventMap::isPosPole(double x, double y) const {
-    int ax = static_cast<int>(x) / 32;
-    int ay = static_cast<int>(y) / 32;
-    PCEvent event = getPositionEvent(ax, ay);
-    return (event == PC_MODIFIER_H_POLE ? 2 :
-           (event == PC_MODIFIER_V_POLE ? 1 : 0));
-}
-
-void EventMap::storeTileEvent(int x, int y, PCEvent e, int, const QVector<quint16>& params) {
-    if (e == PC_EMPTY && (x < 0 || y < 0 || y >= eventLayout.size() ||
-        x >= eventLayout[0].size() || eventLayout.at(y).at(x) == nullptr)) {
+void EventMap::storeTileEvent(const TileCoordinatePair& tilePos, PCEvent e, int, const QVector<quint16>& params) {
+    if (e == PC_EMPTY && (tilePos.x < 0 || tilePos.y < 0 || tilePos.y >= eventLayout.size() ||
+        tilePos.x >= eventLayout[0].size() || eventLayout.at(tilePos.y).at(tilePos.x) == nullptr)) {
         return;
     }
 
@@ -51,7 +41,7 @@ void EventMap::storeTileEvent(int x, int y, PCEvent e, int, const QVector<quint1
         tile->eventParams[i] = 0;
     }
 
-    eventLayout[y][x] = tile;
+    eventLayout[tilePos.y][tilePos.x] = tile;
 }
 
 void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
@@ -59,10 +49,10 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
     if (tiles == nullptr) {
         return;
     }
-    int x1 = std::max(0, static_cast<int>(center.x) / 32 - tileDistance);
-    int x2 = std::min(static_cast<int>(tiles->getLevelWidth()) - 1, static_cast<int>(center.x) / 32 + tileDistance);
-    int y1 = std::max(0, static_cast<int>(center.y) / 32 - tileDistance);
-    int y2 = std::min(static_cast<int>(tiles->getLevelHeight()) - 1, static_cast<int>(center.y) / 32 + tileDistance);
+    int x1 = std::max(0, center.tileX() - tileDistance);
+    int x2 = std::min(static_cast<int>(tiles->getLevelWidth()) - 1, center.tileX() + tileDistance);
+    int y1 = std::max(0, center.tileY() - tileDistance);
+    int y2 = std::min(static_cast<int>(tiles->getLevelHeight()) - 1, center.tileY() + tileDistance);
 
     for (int x = x1; x <= x2; ++x) {
         for (int y = y1; y <= y2; ++y) {
@@ -72,7 +62,7 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
             }
 
             if (!tile->isEventActive && tile->storedEvent != PC_EMPTY) {
-                auto ev = spawner->spawnEvent(true, tile->storedEvent, x, y, tile->eventParams);
+                auto ev = spawner->spawnEvent(true, tile->storedEvent, { TILE_WIDTH * (x + 0.5), TILE_HEIGHT * (y + 0.5) }, tile->eventParams);
                 if (ev != nullptr) {
                     root->addActor(ev);
                 }
@@ -83,54 +73,35 @@ void EventMap::activateEvents(const CoordinatePair& center, int tileDistance) {
     }
 }
 
-void EventMap::deactivate(int x, int y) {
-    if (positionHasEvent(x, y)) {
-        eventLayout[y][x]->isEventActive = false;
+void EventMap::deactivate(const TileCoordinatePair& tilePos) {
+    if (tileHasEvent(tilePos)) {
+        eventLayout[tilePos.y][tilePos.x]->isEventActive = false;
     }
 }
 
 void EventMap::deactivateAll() {
     for (int i = 0; i < eventLayout.size(); ++i) {
         for (int j = 0; j < eventLayout[i].size(); ++j) {
-            deactivate(j, i);
+            deactivate(TileCoordinatePair(j, i));
         }
     }
 }
 
-int EventMap::getPositionWarp(double x, double y) const {
-    int tx = static_cast<int>(x) / 32;
-    int ty = static_cast<int>(y) / 32;
-    if (getPositionEvent(tx, ty) == PC_WARP_ORIGIN) {
-        // .get() should not fail here, as getPositionEvent() only returns PC_EVENT if coordinates had nullptr
-        return eventLayout.at(ty).at(tx).get()->eventParams[0];
-    } else {
-        return -1;
-    }
-}
-
-PCEvent EventMap::getPositionEvent(double x, double y) const {
-    int tx = static_cast<int>(x) / 32;
-    int ty = static_cast<int>(y) / 32;
-    return getPositionEvent(tx, ty);
-}
-
-PCEvent EventMap::getPositionEvent(int x, int y) const {
-    if (positionHasEvent(x, y)) {
-        return eventLayout.at(y).at(x)->storedEvent;
+PCEvent EventMap::getPositionEvent(const CoordinatePair& pos) const {
+    if (tileHasEvent(pos.tilePosition())) {
+        return eventLayout.at(pos.tileY()).at(pos.tileX())->storedEvent;
     }
     return PC_EMPTY;
 }
 
-void EventMap::getPositionParams(double x, double y, quint16 (&params)[8]) const {
-    int tx = static_cast<int>(x) / 32;
-    int ty = static_cast<int>(y) / 32;
-    return getPositionParams(tx, ty, params);
+void EventMap::getPositionParams(const CoordinatePair& pos, quint16 (&params)[8]) const {
+    return getTileParams(pos.tilePosition(), params);
 }
 
-void EventMap::getPositionParams(int x, int y, quint16 (&params)[8]) const {
-    if (positionHasEvent(x, y)) {
+void EventMap::getTileParams(const TileCoordinatePair& tilePos, quint16 (&params)[8]) const {
+    if (tileHasEvent(tilePos)) {
         for (int i = 0; i < 8; ++i) {
-            params[i] = eventLayout.at(y).at(x)->eventParams[i];
+            params[i] = eventLayout.at(tilePos.y).at(tilePos.x)->eventParams[i];
         }
         return;
     }
@@ -138,11 +109,11 @@ void EventMap::getPositionParams(int x, int y, quint16 (&params)[8]) const {
     std::fill_n(params, 8, 0);
 }
 
-void EventMap::setTileParam(int x, int y, unsigned char idx, quint16 value) {
-    if (idx >= 8 || !positionHasEvent(x, y)) {
+void EventMap::setTileParam(const TileCoordinatePair& tilePos, unsigned char idx, quint16 value) {
+    if (idx >= 8 || !tileHasEvent(tilePos)) {
         return;
     }
-    eventLayout[y][x]->eventParams[idx] = value;
+    eventLayout[tilePos.y][tilePos.x]->eventParams[idx] = value;
 }
 
 void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameDifficulty difficulty) {
@@ -202,12 +173,14 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameD
             if (eventFlags == 0 || ((eventFlags & (0x01 << difficultyByte)) != 0 && ((eventFlags & 0x10) == 0))) {
                 encounteredEvents << (PCEvent)eventID;
 
+                auto tilePos = TileCoordinatePair(x, y);
+
                 switch (eventID) {
                     case PC_EMPTY:
                         break;
                     case PC_JAZZ_LEVEL_START:
                         if (root->getPlayer(0).lock() == nullptr) {
-                            auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { 32.0 * x + 16.0, 32.0 * y + 16.0 }));
+                            auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { TILE_WIDTH * (tilePos.x + 0.5), TILE_HEIGHT * (tilePos.y + 0.5) }));
                             root->addPlayer(defaultplayer, 0);
                         }
                         break;
@@ -223,22 +196,22 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameD
                     case PC_MODIFIER_H_POLE:
                     case PC_MODIFIER_V_POLE:
                         {
-                            storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
+                            storeTileEvent(tilePos, static_cast<PCEvent>(eventID), eventFlags, eventParams);
                             auto tiles = root->getGameTiles().lock();
                             if (tiles != nullptr) {
-                                tiles->setTileEventFlag(this, x, y, static_cast<PCEvent>(eventID));
+                                tiles->setTileEventFlag(this, tilePos, static_cast<PCEvent>(eventID));
                             }
                         }
                         break;
                     case PC_WARP_TARGET:
-                        addWarpTarget(eventParams.at(0), x, y);
+                        addWarpTarget(eventParams.at(0), tilePos);
                         break;
                     case PC_LIGHT_RESET:
                         eventParams[0] = root->getDefaultLightingLevel();
-                        storeTileEvent(x, y, PC_LIGHT_SET, eventFlags, eventParams);
+                        storeTileEvent(tilePos, PC_LIGHT_SET, eventFlags, eventParams);
                         break;
                     default:
-                        storeTileEvent(x, y, static_cast<PCEvent>(eventID), eventFlags, eventParams);
+                        storeTileEvent(tilePos, static_cast<PCEvent>(eventID), eventFlags, eventParams);
                         break;
                 }
             }
@@ -252,19 +225,19 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameD
     }
 }
 
-void EventMap::addWarpTarget(unsigned id, unsigned x, unsigned y) {
-    CoordinatePair p = {x * 32.0 + 16.0, y * 32.0 + 30.0};
-    warpTargets.insert(id, p);
+void EventMap::addWarpTarget(unsigned id, const TileCoordinatePair& tilePos) {
+    warpTargets.insert(id, tilePos);
 }
 
-bool EventMap::positionHasEvent(int x, int y) const {
-    return (x >= 0 && y >= 0 && y < eventLayout.size() && x < eventLayout[0].size() && eventLayout.at(y).at(x) != nullptr);
+bool EventMap::tileHasEvent(const TileCoordinatePair& tilePos) const {
+    return (tilePos.x >= 0 && tilePos.y >= 0 && tilePos.y < eventLayout.size() && tilePos.x < eventLayout[0].size() && eventLayout.at(tilePos.y).at(tilePos.x) != nullptr);
 }
 
 CoordinatePair EventMap::getWarpTarget(unsigned id) const {
-    QList<CoordinatePair> targets = warpTargets.values(id);
+    QList<TileCoordinatePair> targets = warpTargets.values(id);
     if (targets.size() > 0) {
-        return targets.at(qrand() % targets.size());
+        auto pos = targets.at(qrand() % targets.size());
+        return { pos.x * TILE_WIDTH - (TILE_WIDTH / 2.0), (pos.y + 1) * TILE_HEIGHT - 24.0 };
     } else {
         return { -1.0, -1.0 };
     }

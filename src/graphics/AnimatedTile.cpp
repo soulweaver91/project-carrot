@@ -15,7 +15,7 @@ AnimatedTile::AnimatedTile(std::shared_ptr<sf::Texture> tiles_tex, const QVector
         pseudotile->texture = tiles_tex;
 
         auto sprite = std::make_shared<sf::Sprite>(*tiles_tex);
-        sprite->setTextureRect(sf::IntRect((tidx % 10) * 32, (tidx / 10) * 32, 32, 32));
+        sprite->setTextureRect(sf::IntRect((tidx % 10) * TILE_WIDTH, (tidx / 10) * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT));
 
         if (tileFlags.size() > idx && ((tileFlags.at(idx) & 0x80) > 0)) {
             sprite->setColor(sf::Color(255, 255, 255, 127));

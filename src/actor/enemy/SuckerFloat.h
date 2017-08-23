@@ -15,6 +15,7 @@ public:
 
 private:
     double phase;
-    double originX;
-    double originY;
+    CoordinatePair originPos;
+
+    const static double CIRCLING_RADIUS;
 };

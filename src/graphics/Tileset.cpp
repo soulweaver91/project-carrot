@@ -1,5 +1,6 @@
 #include "Tileset.h"
 #include "../struct/Layers.h"
+#include "../struct/Constants.h"
 #include <exception>
 
 Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : isValid(false) {
@@ -20,8 +21,8 @@ Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : is
         maskfile = texture->copyToImage();
     }
 
-    uint width = texture->getSize().x / 32;
-    uint height = texture->getSize().y / 32;
+    uint width = texture->getSize().x / TILE_WIDTH;
+    uint height = texture->getSize().y / TILE_HEIGHT;
     tilesPerRow = width;
     tileCount = width * height;
 
@@ -30,15 +31,15 @@ Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : is
     sf::Color white(255, 255, 255, 255);
     for (unsigned i = 0; i < height; i++) {
         for (unsigned j = 0; j < width; j++) {
-            QBitArray tileMask(1024);
+            QBitArray tileMask(TILE_WIDTH * TILE_HEIGHT);
             bool maskEmpty = true;
             bool maskFilled = true;
-            for (unsigned x = 0; x < 32; ++x) {
-                for (unsigned y = 0; y < 32; ++y) {
-                    sf::Color px = maskfile.getPixel(j * 32 + x, i * 32 + y);
+            for (unsigned x = 0; x < TILE_WIDTH; ++x) {
+                for (unsigned y = 0; y < TILE_HEIGHT; ++y) {
+                    sf::Color px = maskfile.getPixel(j * TILE_WIDTH + x, i * TILE_HEIGHT + y);
                     // Consider any fully white or fully transparent pixel in the masks as non-solid and all others as solid
                     bool masked = ((px != white) && (px.a > 0));
-                    tileMask.setBit(x + 32 * y, masked);
+                    tileMask.setBit(x + TILE_WIDTH * y, masked);
                     maskEmpty &= !masked;
                     maskFilled &= masked;
                 }
@@ -51,9 +52,9 @@ Tileset::Tileset(const QString& tilesFilename, const QString& maskFilename) : is
             sprite->setTexture(*(texture));
             sprite->setPosition(0, 0);
             sprite->setTextureRect(
-                sf::IntRect(32 * ((i * width + j) % tilesPerRow),
-                    32 * ((i * width + j) / tilesPerRow),
-                    32, 32));
+                sf::IntRect(TILE_WIDTH * ((i * width + j) % tilesPerRow),
+                            TILE_HEIGHT * ((i * width + j) / tilesPerRow),
+                            TILE_WIDTH, TILE_HEIGHT));
 
             auto defaultLayerTile = std::make_shared<LayerTile>();
             defaultLayerTile->tilesetDefault = true;
@@ -99,12 +100,12 @@ std::shared_ptr<LayerTile> Tileset::getDefaultTile(const uint& tileID) {
 
 sf::IntRect Tileset::getTileTextureRect(const uint& tileID) {
     if (tileID < tileCount) {
-        return sf::IntRect(32 * (tileID % tilesPerRow),
-                           32 * (tileID / tilesPerRow),
-                           32, 32);
+        return sf::IntRect(TILE_WIDTH * (tileID % tilesPerRow),
+                           TILE_HEIGHT * (tileID / tilesPerRow),
+                           TILE_WIDTH, TILE_HEIGHT);
     }
 
-    return sf::IntRect(0, 0, 32, 32);
+    return sf::IntRect(0, 0, TILE_WIDTH, TILE_HEIGHT);
 }
 
 bool Tileset::isTileMaskEmpty(const uint& tileID) {
@@ -135,4 +136,4 @@ QString Tileset::getName() {
     return name;
 }
 
-const QBitArray Tileset::DEFAULT_MASK_BITARRAY = QBitArray(1024);
+const QBitArray Tileset::DEFAULT_MASK_BITARRAY = QBitArray(TILE_WIDTH * TILE_HEIGHT);

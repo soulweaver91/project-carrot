@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Constants.h"
 
 struct CoordinatePair {
     double x;
@@ -127,5 +128,17 @@ struct CoordinatePair {
 
     sf::Vector2f toSfVector2f() {
         return sf::Vector2f((float)x, (float)y);
+    }
+
+    int tileX() const {
+        return static_cast<int>(x) / TILE_WIDTH;
+    }
+
+    int tileY() const {
+        return static_cast<int>(y) / TILE_HEIGHT;
+    }
+
+    sf::Vector2i tilePosition() const {
+        return sf::Vector2i(tileX(), tileY());
     }
 };

@@ -12,13 +12,11 @@
 #include "weapon/AmmoToaster.h"
 
 CommonActor::CommonActor(const ActorInstantiationDetails& initData)
-    : AnimationUser(initData.api), api(initData.api), maxHealth(1), health(1), posX(initData.coords.x), posY(initData.coords.y),
-    speedX(0), speedY(0), externalForceX(0), externalForceY(0), internalForceY(0),
+    : AnimationUser(initData.api), api(initData.api), maxHealth(1), health(1), pos(initData.coords),
+    speed(0, 0), externalForce(0, 0), internalForce(0, 0), originTile(pos.tilePosition()),
     canJump(false), canBeFrozen(true), isFacingLeft(false), isGravityAffected(true), isClippingAffected(true),
     isInvulnerable(false), isBlinking(false), isCollidable(true), isInvisible(false), frozenFramesLeft(0), elasticity(0.0),
     friction(api->getGravity() / 3), suspendType(SuspendType::SUSPEND_NONE), isCreatedFromEventMap(initData.fromEventMap) {
-    originTileX = static_cast<int>(posX) / 32;
-    originTileY = static_cast<int>(posY) / 32;
     updateHitbox();
 }
 
@@ -38,19 +36,19 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
 
     // Don't draw anything if we aren't in the vicinity of the view
     CoordinatePair viewPos = view->getViewCenter();
-    if ((std::abs(viewPos.x - posX) > (view->getViewWidth() / 2) + 50)
-     || (std::abs(viewPos.y - posY) > (view->getViewHeight() / 2) + 50)) {
+    if ((std::abs(viewPos.x - pos.x) > (view->getViewWidth() / 2) + 50)
+     || (std::abs(viewPos.y - pos.y) > (view->getViewHeight() / 2) + 50)) {
         return;
     }
 
 #ifdef CARROT_DEBUG
     if (api->getDebugConfig()->dbgShowMasked) {
-        double len = sqrt(speedX * speedX + speedY * speedY);
+        double len = sqrt(speed.x * speed.x + speed.y * speed.y);
         if (len > 0) {
             sf::RectangleShape line(sf::Vector2f(len * 4 + 5, 5));
-            line.setPosition(posX, posY);
+            line.setPosition(pos.x, pos.y);
             line.setOrigin(2, 2);
-            double ang = atan2(speedY, speedX);
+            double ang = atan2(speed.y, speed.x);
             line.setRotation(180 + ang * 180 / 3.1415926535);
             line.setFillColor(sf::Color(255, 255, 0));
             canvas->draw(line);
@@ -62,7 +60,7 @@ void CommonActor::drawUpdate(std::shared_ptr<GameView>& view) {
         // Pick the appropriate animation depending on if we are in the midst of a transition
         auto& source = (inTransition ? transition : currentAnimation);
     
-        source->setSpritePosition({ (float)posX, (float)posY }, { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
+        source->setSpritePosition(pos.toSfVector2f(), { (isFacingLeft ? -1.0f : 1.0f), 1.0f });
 
         if (frozenFramesLeft > 0) {
             auto actualColor = source->getColor();
@@ -80,8 +78,8 @@ void CommonActor::tickEvent() {
     updateHitbox();
 
     // Make sure we stay within the level boundaries
-    posX = std::min(std::max(posX, 0.0), api->getLevelTileWidth() * 32.0 - 1.0);
-    posY = std::min(std::max(posY, 0.0), api->getLevelTileHeight() * 32.0 - 1.0);
+    pos.x = std::min(std::max(pos.x, 0.0), api->getLevelTileWidth()  * TILE_WIDTH  - 1.0);
+    pos.y = std::min(std::max(pos.y, 0.0), api->getLevelTileHeight() * TILE_HEIGHT - 1.0);
 } 
 
 void CommonActor::setToViewCenter(std::shared_ptr<GameView> view) {
@@ -91,13 +89,13 @@ void CommonActor::setToViewCenter(std::shared_ptr<GameView> view) {
     }
 
     view->centerView(
-        std::max(400.0, std::min(32.0 * tiles->getLevelWidth()  - 400.0, (double)qRound(posX))),
-        std::max(300.0, std::min(32.0 * tiles->getLevelHeight() - 300.0, (double)qRound(posY)))
+        std::max(400.0, std::min(TILE_WIDTH  * tiles->getLevelWidth()  - 400.0, (double)qRound(pos.x))),
+        std::max(300.0, std::min(TILE_HEIGHT * tiles->getLevelHeight() - 300.0, (double)qRound(pos.y)))
     );
 }
 
 CoordinatePair CommonActor::getPosition() {
-    return { posX, posY };
+    return pos;
 }
 
 void CommonActor::updateHitbox() {
@@ -108,29 +106,25 @@ void CommonActor::updateHitbox(const uint& w, const uint& h) {
     auto animation = currentAnimation->getAnimation();
     if (animation->hasColdspot) {
         currentHitbox = {
-            posX - animation->hotspot.x + animation->coldspot.x - (w / 2),
-            posY - animation->hotspot.y + animation->coldspot.y - h,
-            posX - animation->hotspot.x + animation->coldspot.x + (w / 2),
-            posY - animation->hotspot.y + animation->coldspot.y
+            pos.x - animation->hotspot.x + animation->coldspot.x - (w / 2),
+            pos.y - animation->hotspot.y + animation->coldspot.y - h,
+            pos.x - animation->hotspot.x + animation->coldspot.x + (w / 2),
+            pos.y - animation->hotspot.y + animation->coldspot.y
         };
     } else {
         // Collision base set to the bottom of the sprite.
         // This is probably still not the correct way to do it, but at least it works for now.
         currentHitbox = {
-            posX - (w / 2),
-            posY - animation->hotspot.y + animation->frameDimensions.y - h,
-            posX + (w / 2),
-            posY - animation->hotspot.y + animation->frameDimensions.y
+            pos.x - (w / 2),
+            pos.y - animation->hotspot.y + animation->frameDimensions.y - h,
+            pos.x + (w / 2),
+            pos.y - animation->hotspot.y + animation->frameDimensions.y
         };
     }
 }
 
-double CommonActor::getSpeedX() {
-    return speedX;
-}
-
-double CommonActor::getSpeedY() {
-    return speedY;
+sf::Vector2f CommonActor::getSpeed() {
+    return speed;
 }
 
 bool CommonActor::getIsCollidable() {
@@ -169,8 +163,8 @@ bool CommonActor::perish() {
     auto events = api->getGameEvents().lock();
     if (health == 0) {
         if (events != nullptr && isCreatedFromEventMap) {
-            events->deactivate(originTileX, originTileY);
-            events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
+            events->deactivate(originTile);
+            events->storeTileEvent(originTile, PC_EMPTY);
         }
 
         api->removeActor(shared_from_this());
@@ -209,15 +203,14 @@ bool CommonActor::loadResources(const QString& classId) {
 void CommonActor::tryStandardMovement() {
     double gravity = (isGravityAffected ? api->getGravity() : 0);
 
-    speedX = std::min(std::max(speedX, -16.0), 16.0);
-    speedY = std::min(std::max(speedY - internalForceY - externalForceY, -16.0), 16.0);
+    speed.x = std::min(std::max(speed.x, -16.0f), 16.0f);
+    speed.y = std::min(std::max(speed.y - internalForce.y - externalForce.y, -16.0f), 16.0f);
 
     bool frozen = frozenFramesLeft > 0;
-    double effectiveSpeedX = speedX + externalForceX;
-    double effectiveSpeedY = speedY;
+    sf::Vector2f effectiveSpeed = speed + externalForce;
     if (frozen) {
-        effectiveSpeedX = std::min(std::max(externalForceX, -16.0), 16.0);
-        effectiveSpeedY = std::min(std::max(speedY + internalForceY, -16.0), 16.0);
+        effectiveSpeed.x = std::min(std::max(externalForce.x, -16.0f), 16.0f);
+        effectiveSpeed.y = std::min(std::max(speed.y + internalForce.y, -16.0f), 16.0f);
     }
 
     auto thisPtr = shared_from_this();
@@ -236,19 +229,19 @@ void CommonActor::tryStandardMovement() {
         // Not doing this will cause hiccups with uphill slopes in particular.
         // Beach tileset also has some spots where two properly set up adjacent
         // tiles have a 2px jump, so adapt to that.
-        double maxYDiff = std::max(3.0, std::abs(effectiveSpeedX) + 2.5);
-        for (double yDiff = maxYDiff + effectiveSpeedY; yDiff >= -maxYDiff + effectiveSpeedY; yDiff -= COLLISION_CHECK_STEP) {
-            if (moveInstantly({ effectiveSpeedX, yDiff }, false, false)) {
+        double maxYDiff = std::max(3.0f, std::abs(effectiveSpeed.x) + 2.5f);
+        for (float yDiff = maxYDiff + effectiveSpeed.y; yDiff >= -maxYDiff + effectiveSpeed.y; yDiff -= COLLISION_CHECK_STEP) {
+            if (moveInstantly({ effectiveSpeed.x, yDiff }, false, false)) {
                 success = true;
                 break;
             }
         }
 
         // Also try to move horizontally as far as possible.
-        double maxDiff = std::abs(effectiveSpeedX);
+        double maxDiff = std::abs(effectiveSpeed.x);
         double xDiff = maxDiff;
         if (!success) {
-            short sign = effectiveSpeedX > 0 ? 1 : -1;
+            short sign = effectiveSpeed.x > 0 ? 1 : -1;
             for (; xDiff >= -maxDiff; xDiff -= COLLISION_CHECK_STEP) {
                 if (moveInstantly({ xDiff * sign, 0.0 }, false, false)) {
                     break;
@@ -259,7 +252,7 @@ void CommonActor::tryStandardMovement() {
         // If no angle worked in the previous step, the actor is facing a wall.
         if (!success) {
             if (xDiff > COLLISION_CHECK_STEP || (xDiff > 0 && elasticity > 0)) {
-                speedX = -(elasticity * speedX);
+                speed.x = -(elasticity * speed.x);
             }
             onHitWallHook();
         }
@@ -269,16 +262,16 @@ void CommonActor::tryStandardMovement() {
     } else {
         // Airborne movement is handled here.
         // First, attempt to move directly based on the current speed values.
-        if (moveInstantly({ effectiveSpeedX, effectiveSpeedY }, false, false)) {
-            if (std::abs(effectiveSpeedY) < EPSILON) {
+        if (moveInstantly(effectiveSpeed, false, false)) {
+            if (std::abs(effectiveSpeed.y) < EPSILON) {
                 canJump = true;
             }
         } else if (!success) {
             // There is an obstacle so we need to make compromises.
             
             // First, attempt to move horizontally as much as possible.
-            double maxDiff = std::abs(effectiveSpeedX);
-            short sign = effectiveSpeedX > 0 ? 1 : -1;
+            float maxDiff = std::abs(effectiveSpeed.x);
+            short sign = effectiveSpeed.x > 0 ? 1 : -1;
             bool successX = false;
             double xDiff = maxDiff;
             for (; xDiff > EPSILON; xDiff -= COLLISION_CHECK_STEP) {
@@ -289,8 +282,8 @@ void CommonActor::tryStandardMovement() {
             }
 
             // Then, try the same vertically.
-            maxDiff = std::abs(effectiveSpeedY);
-            sign = effectiveSpeedY > 0 ? 1 : -1;
+            maxDiff = std::abs(effectiveSpeed.y);
+            sign = effectiveSpeed.y > 0 ? 1 : -1;
             bool successY = false;
             double yDiff = maxDiff;
             for (; yDiff > EPSILON; yDiff -= COLLISION_CHECK_STEP) {
@@ -303,25 +296,25 @@ void CommonActor::tryStandardMovement() {
             // Place us to the ground only if no horizontal movement was
             // involved (this prevents speeds resetting if the actor
             // collides with a wall from the side while in the air)
-            if (yDiff < std::abs(effectiveSpeedY)) {
-                if (effectiveSpeedY > 0) {
-                    speedY = -(elasticity * effectiveSpeedY);
-                    if (speedY > -COLLISION_CHECK_STEP) {
-                        speedY = 0.0;
+            if (yDiff < std::abs(effectiveSpeed.y)) {
+                if (effectiveSpeed.y > 0) {
+                    speed.y = -(elasticity * effectiveSpeed.y);
+                    if (speed.y > -COLLISION_CHECK_STEP) {
+                        speed.y = 0.0;
                         canJump = true;
                     }
                     onHitFloorHook();
                 } else {
-                    speedY = 0;
+                    speed.y = 0;
                     onHitCeilingHook();
                 }
             }
 
             // If the actor didn't move all the way horizontally,
             // it hit a wall (or was already touching it)
-            if (xDiff < std::abs(effectiveSpeedX)) {
+            if (xDiff < std::abs(effectiveSpeed.x)) {
                 if (xDiff > COLLISION_CHECK_STEP || (xDiff > 0 && elasticity > 0)) {
-                    speedX = -(elasticity * speedX);
+                    speed.x = -(elasticity * speed.x);
                 }
                 onHitWallHook();
             }
@@ -329,21 +322,21 @@ void CommonActor::tryStandardMovement() {
     }
 
     // Set the actor as airborne if there seems to be enough space below it
-    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, COLLISION_CHECK_STEP), effectiveSpeedY >= 0, thisPtr)) {
-        speedY += gravity;
+    if (api->isPositionEmpty(currentHitbox + CoordinatePair(0.0, COLLISION_CHECK_STEP), effectiveSpeed.y >= 0, thisPtr)) {
+        speed.y += gravity;
         canJump = false;
     }
 
     // Reduce all forces if they are present
-    if (std::abs(externalForceX) > EPSILON) {
-        if (externalForceX > 0) {
-            externalForceX = std::max(externalForceX - friction, 0.0);
+    if (std::abs(externalForce.x) > EPSILON) {
+        if (externalForce.x > 0) {
+            externalForce.x = std::max(externalForce.x - friction, 0.0);
         } else {
-            externalForceX = std::min(externalForceX + friction, 0.0);
+            externalForce.x = std::min(externalForce.x + friction, 0.0);
         }
     }
-    externalForceY = std::max(externalForceY - gravity / 3, 0.0);
-    internalForceY = std::max(internalForceY - gravity / 3, 0.0);
+    externalForce.y = std::max(externalForce.y - gravity / 3, 0.0);
+    internalForce.y = std::max(internalForce.y - gravity / 3, 0.0);
 }
 
 template<typename... P>
@@ -377,12 +370,12 @@ template bool CommonActor::playNonPositionalSound(const QString&, float);
 template bool CommonActor::playNonPositionalSound(const QString&, float, float);
 template bool CommonActor::playNonPositionalSound(const QString&, float, float, float);
 
-bool CommonActor::deactivate(int x, int y, int tileDistance) {
+bool CommonActor::deactivate(const TileCoordinatePair& tilePos, int tileDistance) {
     auto events = api->getGameEvents().lock();
 
-    if ((std::abs(x - originTileX) > tileDistance) || (std::abs(y - originTileY) > tileDistance)) {
+    if ((std::abs(tilePos.x - originTile.x) > tileDistance) || (std::abs(tilePos.y - originTile.y) > tileDistance)) {
         if (events != nullptr) {
-            events->deactivate(originTileX, originTileY);
+            events->deactivate(originTile);
         }
 
         api->removeActor(shared_from_this());
@@ -404,14 +397,13 @@ bool CommonActor::moveInstantly(CoordinatePair location, bool absolute, bool for
         return true;
     }
 
-    CoordinatePair newPos = (absolute ? location : location + CoordinatePair(posX, posY));
-    auto translatedHitbox = currentHitbox + newPos - CoordinatePair(posX, posY);
+    CoordinatePair newPos = (absolute ? location : location + pos);
+    auto translatedHitbox = currentHitbox + newPos - pos;
 
-    bool free = force || api->isPositionEmpty(translatedHitbox, speedY >= 0, shared_from_this());
+    bool free = force || api->isPositionEmpty(translatedHitbox, speed.y >= 0, shared_from_this());
     if (free) {
         currentHitbox = translatedHitbox;
-        posX = newPos.x;
-        posY = newPos.y;
+        pos = newPos;
     }
 
     return free;
@@ -420,7 +412,7 @@ bool CommonActor::moveInstantly(CoordinatePair location, bool absolute, bool for
 void CommonActor::deleteFromEventMap() {
     auto events = api->getGameEvents().lock();
     if (events != nullptr) {
-        events->storeTileEvent(originTileX, originTileY, PC_EMPTY);
+        events->storeTileEvent(originTile, PC_EMPTY);
     }
 }
 
@@ -429,7 +421,7 @@ void CommonActor::updateGraphicState() {
 
     currentGraphicState = source->getGraphicState();
     currentGraphicState.scale.x = isFacingLeft ? -1.0 : 1.0;
-    currentGraphicState.origin = { (float)posX, (float)posY };
+    currentGraphicState.origin = pos.toSfVector2f();
 }
 
 const ActorGraphicState CommonActor::getGraphicState() {

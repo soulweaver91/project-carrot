@@ -6,11 +6,11 @@ Spring::Spring(const ActorInstantiationDetails& initData, SpringType type, unsig
     CommonActor(initData), orientation(orient) {
     loadResources("Object/Spring");
 
-    CoordinatePair tileCorner = { (int)(posX / 32) * 32.0, (int)(posY / 32) * 32.0 };
+    CoordinatePair tileCorner = { pos.tileX() * TILE_WIDTH, pos.tileY() * TILE_HEIGHT };
     if (orientation == 5) {
         // JJ2 horizontal springs held no data about which way they were facing.
         // For compatibility, the level converter sets their orientation to 5, which is interpreted here.
-        orientation = api->getGameTiles().lock()->isTileEmpty(Hitbox(posX + 16, posY - 5, posX + 20, posY + 5), false) ? 1 : 3;
+        orientation = api->getGameTiles().lock()->isTileEmpty(Hitbox(pos.x + 16, pos.y - 5, pos.x + 20, pos.y + 5), false) ? 1 : 3;
     }
 
     int orientationBit = 0;
@@ -66,15 +66,15 @@ Spring::~Spring() {
 void Spring::updateHitbox() {
     switch (orientation) {
         case 1:
-            currentHitbox = { posX - 8, posY - 15, posX, posY + 15 };
+            currentHitbox = { pos.x - 8, pos.y - 15, pos.x, pos.y + 15 };
             break;
         case 3:
-            currentHitbox = { posX, posY - 15, posX + 8, posY + 15 };
+            currentHitbox = { pos.x, pos.y - 15, pos.x + 8, pos.y + 15 };
             break;
         case 0:
         case 2:
         default:
-            currentHitbox = { posX - 15, posY, posX + 15, posY + 8};
+            currentHitbox = { pos.x - 15, pos.y, pos.x + 15, pos.y + 8};
     }
 }
 

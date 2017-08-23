@@ -146,7 +146,7 @@ LevelManager::LevelManager(CarrotQt5* root, const NextLevelData& nextData) :
     gameTiles->saveInitialSpriteLayer();
 
     if (players[0] == nullptr) {
-        auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(api, { 320.0, 32.0 }));
+        auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(api, { 320.0, 1.0 * TILE_HEIGHT }));
         addPlayer(defaultplayer, 0);
     }
 
@@ -333,10 +333,9 @@ void LevelManager::logicTick(const ControlEventList& events) {
 
     // Deactivate far away instances, create near instances
     // TODO: Adapt for multiple players
-    int view_x = static_cast<unsigned>(views[0]->getViewCenter().x) / 32;
-    int view_y = static_cast<unsigned>(views[0]->getViewCenter().y) / 32;
+    auto pos = views[0]->getViewCenter().tilePosition();
     for (int i = 0; i < actors.size(); i++) {
-        if (actors.at(i)->deactivate(view_x, view_y, 32)) {
+        if (actors.at(i)->deactivate(pos, 32)) {
             --i;
         }
     }
@@ -439,12 +438,12 @@ void LevelManager::renderTick(bool topmost, bool) {
             BitmapString::drawString(canvas, smallFont,
                 QString::number(player->getPosition().y, 'f', 2), 126, 75);
             BitmapString::drawString(canvas, smallFont, "(" +
-                QString::number(std::floor(player->getPosition().x / 32)) + ", " +
-                QString::number(std::floor(player->getPosition().y / 32)) + ")", 226, 75);
+                QString::number(std::floor(player->getPosition().tileX())) + ", " +
+                QString::number(std::floor(player->getPosition().tileY())) + ")", 226, 75);
             BitmapString::drawString(canvas, smallFont, "Hsp " +
-                QString::number(player->getSpeedX(), 'f', 2), 26, 90);
+                QString::number(player->getSpeed().x, 'f', 2), 26, 90);
             BitmapString::drawString(canvas, smallFont, "Vsp " +
-                QString::number(player->getSpeedY(), 'f', 2), 126, 90);
+                QString::number(player->getSpeed().y, 'f', 2), 126, 90);
         }
 
         BitmapString::drawString(canvas, smallFont, "Episode: " + episodeName, 6, 120);
@@ -585,9 +584,9 @@ void LevelManager::clearActors() {
     }
 }
 
-void LevelManager::createDebris(unsigned tileId, int x, int y) {
+void LevelManager::createDebris(unsigned tileId, const TileCoordinatePair& tilePos) {
     for (int i = 0; i < 4; ++i) {
-        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), x, y, tileId % 10, tileId / 10, i);
+        auto d = std::make_shared<DestructibleDebris>(gameTiles->getTilesetTexture(), tilePos, tileId % 10, tileId / 10, i);
         debris << d;
     }
 }
@@ -758,8 +757,8 @@ void LevelManager::debugSetPosition() {
         return;
     }
 
-    int x = QInputDialog::getInt(root, "Move player", "X position", player->getPosition().x, 0, (gameTiles->getLevelWidth() - 1) * 32);
-    int y = QInputDialog::getInt(root, "Move player", "Y position", player->getPosition().y, 0, (gameTiles->getLevelHeight() - 1) * 32);
+    int x = QInputDialog::getInt(root, "Move player", "X position", player->getPosition().x, 0, (gameTiles->getLevelWidth() - 1) * TILE_WIDTH);
+    int y = QInputDialog::getInt(root, "Move player", "Y position", player->getPosition().y, 0, (gameTiles->getLevelHeight() - 1) * TILE_HEIGHT);
     player->moveInstantly({ x * 1.0, y * 1.0 }, true, true);
 }
 

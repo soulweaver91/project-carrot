@@ -36,7 +36,7 @@ DynamicBridgePiece::~DynamicBridgePiece() {
 }
 
 
-bool DynamicBridgePiece::deactivate(int, int, int) {
+bool DynamicBridgePiece::deactivate(const TileCoordinatePair&, int) {
     // Removal of bridge pieces is handled by the bridge event.
     return false;
 }
@@ -51,7 +51,7 @@ void DynamicBridgePiece::tryStandardMovement() {
 
 DynamicBridge::DynamicBridge(const ActorInstantiationDetails& initData, unsigned int width,
     DynamicBridgeType type, unsigned int toughness)
-    : CommonActor(initData), originalY(posY - 8.0), bridgeType(type), bridgeWidth(width),
+    : CommonActor(initData), originalY(pos.y - 8.0), bridgeType(type), bridgeWidth(width),
     heightFactor((16.0 - toughness) * bridgeWidth) {
     loadResources("Object/Bridge");
 
@@ -62,7 +62,7 @@ DynamicBridge::DynamicBridge(const ActorInstantiationDetails& initData, unsigned
     auto& widthList = BRIDGE_PIECE_WIDTHS.value(bridgeType, { 16 });
     uint widthCovered = widthList[0] / 2;
     for (uint i = 0; (widthCovered <= width * 16) || (i * 16 < width); ++i) {
-        auto piece_n = std::make_shared<DynamicBridgePiece>(ActorInstantiationDetails(api, { posX + widthCovered - 16, posY - 20 }), type, i);
+        auto piece_n = std::make_shared<DynamicBridgePiece>(ActorInstantiationDetails(api, pos + CoordinatePair(static_cast<int>(widthCovered) - 16, -20)), type, i);
         api->addActor(piece_n);
         bridgePieces << piece_n;
         widthCovered += (widthList[i % widthList.size()] + widthList[(i + 1) % widthList.size()]) / 2;
@@ -76,12 +76,12 @@ DynamicBridge::~DynamicBridge() {
 
 }
 
-bool DynamicBridge::deactivate(int x, int y, int dist) {
+bool DynamicBridge::deactivate(const TileCoordinatePair& tilePos, int dist) {
     auto events = api->getGameEvents().lock();
 
-    if ((std::abs(x - originTileX) > dist) || (std::abs(y - originTileY) > dist)) {
+    if ((std::abs(tilePos.x - originTile.x) > dist) || (std::abs(tilePos.y - originTile.y) > dist)) {
         if (events != nullptr) {
-            events->deactivate(originTileX, originTileY);
+            events->deactivate(originTile);
         }
 
         for (int i = 0; i < bridgePieces.size(); ++i) {
@@ -94,7 +94,7 @@ bool DynamicBridge::deactivate(int x, int y, int dist) {
 }
 
 void DynamicBridge::updateHitbox() {
-    currentHitbox = Hitbox(posX, posY - 10.0, posX + bridgeWidth * 16.0, posY + 16.0);
+    currentHitbox = Hitbox(pos.x, pos.y - 10.0, pos.x + bridgeWidth * 16.0, pos.y + 16.0);
 }
 
 void DynamicBridge::tickEvent() {
@@ -120,7 +120,7 @@ void DynamicBridge::tickEvent() {
 
             // This marks which bridge piece is under the player and should be positioned
             // lower than any other piece of the bridge.
-            double lowest = (coords.x - posX) / (bridgeWidth * 16.0) * num;
+            double lowest = (coords.x - pos.x) / (bridgeWidth * 16.0) * num;
 
             // This marks the maximum drop in height. 
             // At the middle of the bridge, this is purely the height factor,
@@ -130,9 +130,9 @@ void DynamicBridge::tickEvent() {
             // Additionally, the drop is reduced based on the player position so that the
             // bridge seems to bend somewhat realistically instead of snapping from one position
             // to another.
-            double drop = std::max(0.0, std::min(coords.y - posY + 32.0, (1.0 - std::pow(std::abs(2.0 * lowest / num - 1.0), 0.7)) * heightFactor));
+            double drop = std::max(0.0, std::min(coords.y - pos.y + TILE_WIDTH, (1.0 - std::pow(std::abs(2.0 * lowest / num - 1.0), 0.7)) * heightFactor));
             
-            posY = std::min(originalY + drop, std::max(originalY, coords.y));
+            pos.y = std::min(originalY + drop, std::max(originalY, coords.y));
 
             // Update the position of each bridge piece.
             for (int j = 0; j < num; ++j) {
@@ -162,7 +162,7 @@ void DynamicBridge::tickEvent() {
             coords.y = originalY;
             bridgePieces.at(j)->moveInstantly(coords, true, true);
         }
-        posY = originalY;
+        pos.y = originalY;
     }
 }
 

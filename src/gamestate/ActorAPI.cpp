@@ -17,8 +17,8 @@ void ActorAPI::removeActor(std::shared_ptr<CommonActor> actor) {
     return levelManager->removeActor(actor);
 }
 
-std::shared_ptr<CommonActor> ActorAPI::createActor(PCEvent type, double x, double y, const quint16 params[8], bool returnOnly) {
-    auto ev = mainClass->getEventSpawner()->spawnEvent(false, type, x / 32, y / 32, params);
+std::shared_ptr<CommonActor> ActorAPI::createActor(PCEvent type, const CoordinatePair& pos, const quint16 params[8], bool returnOnly) {
+    auto ev = mainClass->getEventSpawner()->spawnEvent(false, type, pos, params);
     if (!returnOnly) {
         addActor(ev);
     }
@@ -48,6 +48,15 @@ bool ActorAPI::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared
 
 bool ActorAPI::isPositionEmpty(const Hitbox& hitbox, bool downwards, std::shared_ptr<CommonActor> me) {
     return levelManager->isPositionEmpty(hitbox, downwards, me);
+}
+
+bool ActorAPI::isTileCollisionFree(const TileCoordinatePair& tile) {
+    auto tiles = levelManager->getGameTiles().lock();
+    if (tiles != nullptr) {
+        return tiles->isTileEmpty(tile);
+    }
+
+    return false;
 }
 
 QVector<std::weak_ptr<Player>> ActorAPI::getCollidingPlayer(const Hitbox& hitbox) {

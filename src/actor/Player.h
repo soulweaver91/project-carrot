@@ -54,7 +54,7 @@ public:
         SpecialMoveType setSpecial = SPECIAL_MOVE_NONE, AnimationCallbackFunc callback = []() {});
     void takeDamage(double pushForce);
     void setToOwnViewCenter();
-    bool deactivate(int x, int y, int dist) override;
+    bool deactivate(const TileCoordinatePair& tilePos, int dist) override;
     PlayerCarryOver prepareLevelCarryOver();
     void receiveLevelCarryOver(ExitType exitType, const PlayerCarryOver& o);
     void addScore(unsigned points);

@@ -72,7 +72,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
     }
 
     if (control == controls.upButton) {
-        if (controllable && canJump && (std::abs(speedX) < EPSILON)) {
+        if (controllable && canJump && (std::abs(speed.x) < EPSILON)) {
             setAnimation(AnimState::LOOKUP);
         }
         return;
@@ -88,7 +88,7 @@ void Player::processControlDownEvent(const ControlEvent& e) {
     if (control == controls.downButton) {
         if (controllable) {
             if (canJump) {
-                if (std::abs(speedX) < EPSILON) {
+                if (std::abs(speed.x) < EPSILON) {
                     setAnimation(AnimState::CROUCH);
                 }
             } else {
@@ -97,15 +97,14 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                     suspendType = SuspendType::SUSPEND_NONE;
                 } else {
                     controllable = false;
-                    speedX = 0;
-                    speedY = 0;
-                    internalForceY = 0;
-                    externalForceY = 0;
+                    speed = { 0, 0 };
+                    internalForce.y = 0;
+                    externalForce.y = 0;
                     isGravityAffected = false;
                     currentSpecialMove = SPECIAL_MOVE_BUTTSTOMP;
                     setAnimation(AnimState::BUTTSTOMP);
                     setPlayerTransition(AnimState::TRANSITION_BUTTSTOMP_START, true, false, SPECIAL_MOVE_BUTTSTOMP, [this]() {
-                        speedY = 9;
+                        speed.y = 9;
                         setAnimation(AnimState::BUTTSTOMP);
                         playSound("PLAYER_BUTTSTOMP", 1.0f, 0.0f, 0.8f);
                     });
@@ -145,15 +144,15 @@ void Player::processControlDownEvent(const ControlEvent& e) {
                     controllable = false;
                     setAnimation(AnimState::UPPERCUT);
                     setPlayerTransition(AnimState::TRANSITION_UPPERCUT_A, true, true, SPECIAL_MOVE_UPPERCUT, [this]() {
-                        externalForceY = 1.5;
-                        speedY = -2;
+                        externalForce.y = 1.5;
+                        speed.y = -2;
                         canJump = false;
                         setPlayerTransition(AnimState::TRANSITION_UPPERCUT_B, true, true, SPECIAL_MOVE_UPPERCUT);
                     });
                 } else {
-                    if (speedY > 0 && !canJump) {
+                    if (speed.y > 0 && !canJump) {
                         isGravityAffected = false;
-                        speedY = 1.5;
+                        speed.y = 1.5;
                         if ((currentState & AnimState::COPTER) == 0) {
                             setAnimation(AnimState::COPTER);
                         }
@@ -207,13 +206,13 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
         isActivelyPushing = true;
 
         if (suspendType == SuspendType::SUSPEND_NONE && (e.contains(controls.dashButton))) {
-            speedX = std::max(std::min(speedX + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_DASHING_SPEED), -MAX_DASHING_SPEED);
+            speed.x = std::max(std::min(speed.x + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_DASHING_SPEED), -MAX_DASHING_SPEED);
         } else if (suspendType != SuspendType::SUSPEND_HOOK) {
-            speedX = std::max(std::min(speedX + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_RUNNING_SPEED), -MAX_RUNNING_SPEED);
+            speed.x = std::max(std::min(speed.x + ACCELERATION * (isFacingLeft ? -1 : 1), MAX_RUNNING_SPEED), -MAX_RUNNING_SPEED);
         }
 
     } else {
-        speedX = std::max((std::abs(speedX) - DECELERATION), 0.0) * (speedX < -EPSILON ? -1 : 1);
+        speed.x = std::max((std::abs(speed.x) - DECELERATION), 0.0) * (speed.x < -EPSILON ? -1 : 1);
         isActivelyPushing = false;
     }
 
@@ -227,16 +226,16 @@ void Player::processAllControlHeldEvents(const QMap<Control, ControlState>& e) {
             canJump = true;
         }
         if (canJump && currentSpecialMove == SPECIAL_MOVE_NONE && !e.contains(controls.downButton)) {
-            internalForceY = 1.2;
-            speedY = -3 - std::max(0.0, (std::abs(speedX) - 4.0) * 0.3);
+            internalForce.y = 1.2;
+            speed.y = -3 - std::max(0.0, (std::abs(speed.x) - 4.0) * 0.3);
             canJump = false;
             setAnimation(currentState & (~AnimState::LOOKUP & ~AnimState::CROUCH));
             playSound("COMMON_JUMP");
             carryingObject.reset();
         }
     } else {
-        if (internalForceY > 0) {
-            internalForceY = 0;
+        if (internalForce.y > 0) {
+            internalForce.y = 0;
         }
     }
 
@@ -315,7 +314,7 @@ void Player::tickEvent() {
     verifyOSDInitialized();
     followCarryingPlatform();
 
-    double lastX = posX;
+    double lastX = pos.x;
     CommonActor::tickEvent();
     updateSpeedBasedAnimation(lastX);
     updateCameraPosition();
@@ -503,11 +502,9 @@ bool Player::perish() {
                 transition->clearCallback();
                 inTransition = false;
                 canJump = false;
-                externalForceX = 0;
-                externalForceY = 0;
-                internalForceY = 0;
-                speedX = 0;
-                speedY = 0;
+                externalForce = { 0, 0 };
+                internalForce = { 0, 0 };
+                speed = { 0, 0 };
                 controllable = true;
 
                 // remove fast fires
@@ -538,7 +535,7 @@ void Player::updateHitbox() {
     // but for falling sprites for some reason somewhere above the hotspot instead.
     // It is absolutely important that the position of the hitbox stays constant
     // to the hotspot, though; otherwise getting stuck at walls happens all the time.
-    currentHitbox = Hitbox(CoordinatePair(posX, posY + 8), 24, 24);
+    currentHitbox = Hitbox(pos + CoordinatePair(0, 8), 24, 24);
 }
 
 void Player::endDamagingMove() {
@@ -561,7 +558,7 @@ void Player::verifyOSDInitialized() {
 
 void Player::followCarryingPlatform() {
     if (!carryingObject.expired()) {
-        if (std::abs(speedY) > EPSILON || !controllable || !isGravityAffected) {
+        if (std::abs(speed.y) > EPSILON || !controllable || !isGravityAffected) {
             carryingObject = std::weak_ptr<MovingPlatform>();
         } else {
             auto platform = carryingObject.lock();
@@ -585,7 +582,7 @@ void Player::updateSpeedBasedAnimation(double lastX) {
     if (controllable) {
         AnimStateT oldState = currentAnimation->getAnimationState();
         AnimStateT newState;
-        if (canJump && isActivelyPushing && std::abs(posX - lastX - speedX) > 0.1 && std::abs(externalForceX) < EPSILON && (isFacingLeft ^ (speedX > 0))) {
+        if (canJump && isActivelyPushing && std::abs(pos.x - lastX - speed.x) > 0.1 && std::abs(externalForce.x) < EPSILON && (isFacingLeft ^ (speed.x > 0))) {
             newState = AnimState::PUSH;
         } else {
 
@@ -595,13 +592,13 @@ void Player::updateSpeedBasedAnimation(double lastX) {
 
             // only certain ones don't need to be preserved from earlier state, others should be set as expected
             int composite = currentAnimation->getAnimationState() & 0xFFFFBFE0;
-            if (std::abs(speedX) > 3 + EPSILON) {
+            if (std::abs(speed.x) > 3 + EPSILON) {
                 // shift-running, speed is more than 3px/frame
                 composite += 3;
-            } else if (std::abs(speedX) > 1) {
+            } else if (std::abs(speed.x) > 1) {
                 // running, speed is between 1px and 3px/frame
                 composite += 2;
-            } else if (std::abs(speedX) > EPSILON) {
+            } else if (std::abs(speed.x) > EPSILON) {
                 // walking, speed is less than 1px/frame (mostly a transition zone)
                 composite += 2;
             }
@@ -611,7 +608,7 @@ void Player::updateSpeedBasedAnimation(double lastX) {
             } else {
                 if (canJump) {
                     // grounded, no vertical speed
-                } else if (speedY < -EPSILON) {
+                } else if (speed.y < -EPSILON) {
                     // jumping, ver. speed is negative
                     composite += 4;
                 } else {
@@ -667,17 +664,17 @@ void Player::updateCameraPosition() {
         cameraShiftFramesCount = (cameraShiftFramesCount > 0 ? 1 : -1) * std::max(0, std::abs(cameraShiftFramesCount) - 10);
     }
 
-    lightLocation = { posX, posY - 10.0 };
+    lightLocation = pos - CoordinatePair(0.0, 10.0);
 }
 
 void Player::pushSolidObjects() {
-    if (canJump && controllable && isActivelyPushing && std::abs(speedX) > EPSILON) {
+    if (canJump && controllable && isActivelyPushing && std::abs(speed.x) > EPSILON) {
         std::weak_ptr<SolidObject> object;
-        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair((speedX < 0) ? -2.0 : 2.0, 0.0), false, shared_from_this(), object))) {
+        if (!(api->isPositionEmpty(currentHitbox + CoordinatePair((speed.x < 0) ? -2.0 : 2.0, 0.0), false, shared_from_this(), object))) {
             auto objectPtr = object.lock();
 
             if (objectPtr != nullptr) {
-                objectPtr->push(speedX < 0);
+                objectPtr->push(speed.x < 0);
             }
         }
     }
@@ -692,7 +689,7 @@ void Player::checkEndOfSpecialMoves() {
     }
 
     // Uppercut
-    if (currentSpecialMove == SPECIAL_MOVE_UPPERCUT && !inTransition && ((currentState & (AnimState::UPPERCUT)) > 0) && speedY > -2 && !canJump) {
+    if (currentSpecialMove == SPECIAL_MOVE_UPPERCUT && !inTransition && ((currentState & (AnimState::UPPERCUT)) > 0) && speed.y > -2 && !canJump) {
         endDamagingMove();
         setTransition(AnimState::TRANSITION_END_UPPERCUT, false);
     }
@@ -718,7 +715,7 @@ void Player::checkDestructibleTiles() {
         return;
     }
 
-    auto tileCollisionHitbox = Hitbox(currentHitbox).extend(-0.5).extend(-speedX, -speedY, speedX, speedY);
+    auto tileCollisionHitbox = Hitbox(currentHitbox).extend(-0.5).extend(-speed.x, -speed.y, speed.x, speed.y);
 
     // Buttstomp/etc. tiles checking
     if (currentSpecialMove != SPECIAL_MOVE_NONE || isSugarRush) {
@@ -748,13 +745,13 @@ void Player::checkDestructibleTiles() {
         }
     }
 
-    tileCollisionHitbox = Hitbox(currentHitbox).extend(std::abs(speedX), std::abs(speedY)).extend(3.0);
+    tileCollisionHitbox = Hitbox(currentHitbox).extend(std::abs(speed.x), std::abs(speed.y)).extend(3.0);
 
     // Speed tiles checking
-    if (std::abs(speedX) > EPSILON || std::abs(speedY) > EPSILON || isSugarRush) {
+    if (std::abs(speed.x) > EPSILON || std::abs(speed.y) > EPSILON || isSugarRush) {
         uint destroyedCount = tiles->checkSpecialSpeedDestructible(
             tileCollisionHitbox,
-            isSugarRush ? 64.0 : std::max(std::abs(speedX), std::abs(speedY)));
+            isSugarRush ? 64.0 : std::max(std::abs(speed.x), std::abs(speed.y)));
         addScore(destroyedCount * 50);
     }
 
@@ -768,25 +765,25 @@ void Player::checkSuspendedStatus() {
     }
 
     AnimStateT currentState = currentAnimation->getAnimationState();
-    SuspendType newSuspendState = tiles->getPosSuspendState(posX, posY - 5);
+    SuspendType newSuspendState = tiles->getPositionSuspendType(pos - CoordinatePair(0, 5));
 
     if (newSuspendState != SuspendType::SUSPEND_NONE) {
         suspendType = newSuspendState;
         isGravityAffected = false;
 
-        if (speedY > 0 && newSuspendState == SuspendType::SUSPEND_VINE) {
+        if (speed.y > 0 && newSuspendState == SuspendType::SUSPEND_VINE) {
             playSound("PLAYER_VINE_ATTACH");
         }
 
-        speedY = 0;
-        externalForceY = 0;
+        speed.y = 0;
+        externalForce.y = 0;
 
         if (newSuspendState == SuspendType::SUSPEND_HOOK) {
-            speedX = 0;
+            speed.x = 0;
         }
 
         // move downwards until we're on the standard height
-        while (tiles->getPosSuspendState(posX, posY - 5) != SuspendType::SUSPEND_NONE) {
+        while (tiles->getPositionSuspendType(pos - CoordinatePair(0, 5)) != SuspendType::SUSPEND_NONE) {
             moveInstantly({ 0, 1 }, false, true);
         }
         moveInstantly({ 0, -1 }, false, true);
@@ -804,9 +801,9 @@ void Player::handleAreaEvents() {
         return;
     }
 
-    PCEvent e = events->getPositionEvent(posX, posY);
+    PCEvent e = events->getPositionEvent(pos);
     quint16 p[8];
-    events->getPositionParams(posX, posY, p);
+    events->getPositionParams(pos, p);
     switch (e) {
         case PC_LIGHT_SET:
             assignedView->setLighting(p[0], false);
@@ -836,18 +833,17 @@ void Player::handleAreaEvents() {
                 endDamagingMove();
                 setPlayerTransition(AnimState::DASH | AnimState::JUMP, false, false, SPECIAL_MOVE_NONE);
                 isGravityAffected = false;
-                speedX = 0;
-                speedY = 0;
+                speed = { 0, 0 };
                 float moveX = (qint16)p[0] * 1.0;
                 float moveY = (qint16)p[1] * 1.0;
                 if (p[0] != 0) {
-                    posY = std::floor(posY / 32) * 32 + 8;
-                    speedX = moveX;
-                    moveInstantly({ speedX, 0.0 }, false);
+                    pos.y = TILE_HEIGHT * pos.tileX() + 8;
+                    speed.x = moveX;
+                    moveInstantly({ speed.x, 0.0f }, false);
                 } else {
-                    posX = std::floor(posX / 32) * 32 + 16;
-                    speedY = moveY;
-                    moveInstantly({ 0.0, speedY }, false);
+                    pos.x = TILE_WIDTH * (pos.tileY() + 0.5);
+                    speed.y = moveY;
+                    moveInstantly({ 0.0f, speed.y }, false);
                 }
             }
             break;
@@ -861,7 +857,7 @@ void Player::handleAreaEvents() {
         case PC_AREA_TEXT:
             osd->setLevelText(p[0]);
             if (p[1] != 0) {
-                api->getGameEvents().lock()->storeTileEvent(static_cast<int>(posX) / 32, static_cast<int>(posY) / 32, PC_EMPTY);
+                api->getGameEvents().lock()->storeTileEvent(pos.tilePosition(), PC_EMPTY);
             }
             break;
         default:
@@ -872,19 +868,19 @@ void Player::handleAreaEvents() {
     // Player should not pass from a single tile wide gap if the columns left or right have
     // float events, so checking for a wider box is necessary.
     if (
-        (events->getPositionEvent(posX, posY) == PC_AREA_FLOAT_UP) ||
-        (events->getPositionEvent(currentHitbox.left - 5.0, currentHitbox.top - 5.0) == PC_AREA_FLOAT_UP) ||
-        (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.top - 5.0) == PC_AREA_FLOAT_UP) ||
-        (events->getPositionEvent(currentHitbox.right + 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP) ||
-        (events->getPositionEvent(currentHitbox.left - 5.0, currentHitbox.bottom + 5.0) == PC_AREA_FLOAT_UP)
+        (events->getPositionEvent(pos) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(CoordinatePair(currentHitbox.left - 5.0, currentHitbox.top - 5.0)) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(CoordinatePair(currentHitbox.right + 5.0, currentHitbox.top - 5.0)) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(CoordinatePair(currentHitbox.right + 5.0, currentHitbox.bottom + 5.0)) == PC_AREA_FLOAT_UP) ||
+        (events->getPositionEvent(CoordinatePair(currentHitbox.left - 5.0, currentHitbox.bottom + 5.0)) == PC_AREA_FLOAT_UP)
         ) {
         if (isGravityAffected) {
             double gravity = (isGravityAffected ? api->getGravity() : 0);
 
-            externalForceY = gravity * 2;
-            speedY = std::min(gravity, speedY);
+            externalForce.y = gravity * 2;
+            speed.y = std::min((float)gravity, speed.y);
         } else {
-            speedY = std::min(api->getGravity() * 10, speedY);
+            speed.y = std::min((float)api->getGravity() * 10, speed.y);
         }
     }
 }
@@ -906,19 +902,19 @@ void Player::handleActorCollisions() {
                     enemy->decreaseHealth(1);
                     if (isSugarRush) {
                         if (canJump) {
-                            speedY = 3;
+                            speed.y = 3;
                             canJump = false;
-                            externalForceY = 0.6;
+                            externalForce.y = 0.6;
                         }
-                        speedY *= -.5;
+                        speed.y *= -.5;
                     }
                     if ((currentState & AnimState::BUTTSTOMP) > 0) {
                         removeSpecialMove = true;
-                        speedY *= -.5;
+                        speed.y *= -.5;
                     }
                 } else {
                     if (enemy->hurtsPlayer()) {
-                        takeDamage(4 * (posX > enemy->getPosition().x ? 1 : -1));
+                        takeDamage(4 * (pos.x > enemy->getPosition().x ? 1 : -1));
                     }
                 }
                 continue;
@@ -940,12 +936,12 @@ void Player::handleActorCollisions() {
                 sf::Vector2f params = spring->activate();
                 short sign = ((params.x + params.y) > EPSILON ? 1 : -1);
                 if (std::abs(params.x) > EPSILON) {
-                    speedX = (4 + std::abs(params.x)) * sign;
-                    externalForceX = params.x;
+                    speed.x = (4 + std::abs(params.x)) * sign;
+                    externalForce.x = params.x;
                     setPlayerTransition(AnimState::DASH | AnimState::JUMP, true, false, SPECIAL_MOVE_NONE);
                 } else if (std::abs(params.y) > EPSILON) {
-                    speedY = (4 + std::abs(params.y)) * sign;
-                    externalForceY = -params.y;
+                    speed.y = (4 + std::abs(params.y)) * sign;
+                    externalForce.y = -params.y;
                     setPlayerTransition(sign == -1 ? AnimState::TRANSITION_SPRING : AnimState::BUTTSTOMP, true, false, SPECIAL_MOVE_NONE);
                 } else {
                     continue;
@@ -1013,8 +1009,8 @@ void Player::onHitFloorHook() {
         return;
     }
 
-    if (events->isPosHurting(posX, posY + 24)) {
-        takeDamage(speedX / 4);
+    if (events->isPositionHurting(pos + CoordinatePair(0, 24))) {
+        takeDamage(speed.x / 4);
     } else {
         if (!canJump) {
             playSound("COMMON_LAND");
@@ -1028,8 +1024,8 @@ void Player::onHitCeilingHook() {
         return;
     }
 
-    if (events->isPosHurting(posX, posY - 4)) {
-        takeDamage(speedX / 4);
+    if (events->isPositionHurting(pos - CoordinatePair(0, 4))) {
+        takeDamage(speed.x / 4);
     }
 }
 
@@ -1039,18 +1035,17 @@ void Player::onHitWallHook() {
         return;
     }
 
-    if (events->isPosHurting(posX + (speedX > 0 ? 1 : -1) * 16, posY)) {
-        takeDamage(speedX / 4);
+    if (events->isPositionHurting(pos + CoordinatePair((speed.x > 0 ? 1 : -1) * 16, 0))) {
+        takeDamage(speed.x / 4);
     }
 }
 
 void Player::takeDamage(double pushForce) {
     if (!isInvulnerable && !levelExiting) {
         health = static_cast<unsigned>(std::max(static_cast<int>(health - 1), 0));
-        externalForceX = pushForce;
-        internalForceY = 0;
-        speedY = -6.5;
-        speedX = 0;
+        externalForce.x = pushForce;
+        internalForce.y = 0;
+        speed = { 0, -6.5 };
         canJump = false;
         setPlayerTransition(AnimState::HURT, false, true, SPECIAL_MOVE_NONE, [this]() {
             controllable = true;
@@ -1072,20 +1067,20 @@ void Player::setToOwnViewCenter() {
         std::max(
             assignedView->getViewWidth() / 2.0,
             std::min(
-                32.0 * api->getLevelTileWidth() - assignedView->getViewWidth()  / 2.0,
-                (double)qRound(posX) + (assignedView->getViewWidth() % 2 == 0 ? 0 : 0.5)
+                TILE_WIDTH * api->getLevelTileWidth() - assignedView->getViewWidth()  / 2.0,
+                (double)qRound(pos.x) + (assignedView->getViewWidth() % 2 == 0 ? 0 : 0.5)
             )
         ), std::max(
             assignedView->getViewHeight() / 2.0,
             std::min(
-                32.0 * api->getLevelTileHeight() - assignedView->getViewHeight() / 2.0,
-                (double)qRound(posY + shift_offset - 15) + (assignedView->getViewHeight() % 2 == 0 ? 0 : 0.5)
+                TILE_HEIGHT * api->getLevelTileHeight() - assignedView->getViewHeight() / 2.0,
+                (double)qRound(pos.y + shift_offset - 15) + (assignedView->getViewHeight() % 2 == 0 ? 0 : 0.5)
             )
         )
     );
 }
 
-bool Player::deactivate(int, int, int) {
+bool Player::deactivate(const TileCoordinatePair&, int) {
     // A player can never be deactivated
     return false;
 }
@@ -1102,18 +1097,16 @@ bool Player::getPowerUp(WeaponType type) const {
 void Player::initialPoleStage(bool horizontal) {
     bool positive;
     if (horizontal) {
-        positive = (speedX > 0);
+        positive = (speed.x > 0);
     } else {
-        positive = (speedY > 0);
+        positive = (speed.y > 0);
     }
 
-    posX = static_cast<int>(posX / 32) * 32 + 16;
-    posY = static_cast<int>(posY / 32) * 32 + 16;
-    speedX = 0;
-    speedY = 0;
-    externalForceX = 0;
-    externalForceY = 0;
-    internalForceY = 0;
+    pos.x = TILE_WIDTH * (pos.tileX() + 0.5);
+    pos.y = TILE_HEIGHT * (pos.tileY() + 0.5);
+    speed = { 0, 0 };
+    externalForce = { 0, 0 };
+    internalForce = { 0, 0 };
     canJump = false;
     isGravityAffected = false;
     controllable = false;
@@ -1136,14 +1129,14 @@ void Player::nextPoleStage(bool horizontal, bool positive, ushort stagesLeft) {
     } else {
         int mp = positive ? 1 : -1;
         if (horizontal) {
-            speedX = 10 * mp;
-            moveInstantly({ speedX, 0.0 }, false, true);
-            externalForceX = 10 * mp;
+            speed.x = 10 * mp;
+            moveInstantly({ speed.x, 0.0f }, false, true);
+            externalForce.x = 10 * mp;
             isFacingLeft = !positive;
         } else {
             moveInstantly({ 0.0, mp * 16.0 }, false, true);
-            speedY = 5 * mp;
-            externalForceY = -2 * mp;
+            speed.y = 5 * mp;
+            externalForce.y = -2 * mp;
         }
         controllable = true;
         isGravityAffected = true;
@@ -1193,14 +1186,14 @@ void Player::addScore(unsigned points) {
 }
 
 void Player::setCarryingPlatform(std::weak_ptr<MovingPlatform> platform) {
-    if (speedY < -EPSILON) {
+    if (speed.y < -EPSILON) {
         return;
     }
 
     carryingObject = platform;
     canJump = true;
-    internalForceY = 0;
-    speedY = 0;
+    internalForce.y = 0;
+    speed.y = 0;
 }
 
 void Player::setView(std::shared_ptr<GameView> view) {
@@ -1291,11 +1284,9 @@ void Player::warpToPosition(const CoordinatePair& pos) {
 
     isInvulnerable = true;
     isGravityAffected = false;
-    speedX = 0;
-    speedY = 0;
-    externalForceX = 0;
-    externalForceY = 0;
-    internalForceY = 0;
+    speed = { 0, 0 };
+    externalForce = { 0, 0 };
+    internalForce = { 0, 0 };
     playSound("COMMON_WARP_IN");
 }
 
@@ -1304,10 +1295,10 @@ std::shared_ptr<T> Player::fireWeapon(bool poweredUp) {
     auto weakPtr = std::dynamic_pointer_cast<Player>(shared_from_this());
     bool lookup = ((currentAnimation->getAnimationState() & AnimState::LOOKUP) > 0);
     auto animation = currentAnimation->getAnimation();
-    int fire_x = (animation->hotspot.x - animation->gunspot.x) * (isFacingLeft ? 1 : -1);
-    int fire_y =  animation->hotspot.y - animation->gunspot.y;
+    int fireX = (animation->gunspot.x - animation->hotspot.x) * (isFacingLeft ? -1 : 1);
+    int fireY =  animation->gunspot.y - animation->hotspot.y;
 
-    auto newAmmo = std::make_shared<T>(ActorInstantiationDetails(api, { posX + fire_x, posY - fire_y }), weakPtr, speedX, isFacingLeft, lookup, poweredUp);
+    auto newAmmo = std::make_shared<T>(ActorInstantiationDetails(api, pos + CoordinatePair(fireX, fireY)), weakPtr, speed.x, isFacingLeft, lookup, poweredUp);
     api->addActor(newAmmo);
     return newAmmo;
 }
