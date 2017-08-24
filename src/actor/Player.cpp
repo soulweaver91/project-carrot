@@ -837,11 +837,11 @@ void Player::handleAreaEvents() {
                 float moveX = (qint16)p[0] * 1.0;
                 float moveY = (qint16)p[1] * 1.0;
                 if (p[0] != 0) {
-                    pos.y = TILE_HEIGHT * pos.tileX() + 8;
+                    pos.y = TILE_HEIGHT * pos.tileY() + 8;
                     speed.x = moveX;
                     moveInstantly({ speed.x, 0.0f }, false);
                 } else {
-                    pos.x = TILE_WIDTH * (pos.tileY() + 0.5);
+                    pos.x = TILE_WIDTH * (pos.tileX() + 0.5);
                     speed.y = moveY;
                     moveInstantly({ 0.0f, speed.y }, false);
                 }
