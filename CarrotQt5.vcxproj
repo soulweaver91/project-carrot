@@ -241,6 +241,7 @@
     <ClCompile Include="src\graphics\BitmapFont.cpp" />
     <ClCompile Include="src\graphics\BitmapString.cpp" />
     <ClCompile Include="src\graphics\CarrotCanvas.cpp" />
+    <ClCompile Include="src\menu\CharacterSelectMenu.cpp" />
     <ClCompile Include="src\graphics\ShaderSource.cpp" />
     <ClCompile Include="src\graphics\GraphicsCache.cpp" />
     <ClCompile Include="src\graphics\QSFMLCanvas.cpp" />
@@ -322,6 +323,7 @@
     <ClInclude Include="src\gamestate\TileMap.h" />
     <ClInclude Include="src\gamestate\TimerUser.h" />
     <ClInclude Include="src\graphics\BitmapString.h" />
+    <ClInclude Include="src\menu\CharacterSelectMenu.h" />
     <ClInclude Include="src\graphics\ShaderSource.h" />
     <ClInclude Include="src\graphics\Tileset.h" />
     <ClInclude Include="src\EngineState.h" />
@@ -345,6 +347,7 @@
     <ClInclude Include="src\struct\Layers.h" />
     <ClInclude Include="src\struct\NextLevelData.h" />
     <ClInclude Include="src\struct\PCEvent.h" />
+    <ClInclude Include="src\struct\PlayerCharacter.h" />
     <ClInclude Include="src\struct\Resources.h" />
     <ClInclude Include="src\struct\SequentialIDList.h" />
     <ClInclude Include="src\struct\TileCoordinatePair.h" />

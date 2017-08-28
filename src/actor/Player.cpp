@@ -20,9 +20,9 @@
 #include "weapon/AmmoToaster.h"
 #include "weapon/AmmoFreezer.h"
 
-Player::Player(const ActorInstantiationDetails& initData) : InteractiveActor(initData),
+Player::Player(const ActorInstantiationDetails& initData, PlayerCharacter character) : InteractiveActor(initData),
     RadialLightSource(50.0, 100.0),
-    character(CHAR_JAZZ), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
+    character(character), lives(3), fastfires(0), score(0), foodCounter(0), currentWeapon(WEAPON_BLASTER),
     weaponCooldown(0), currentSpecialMove(SPECIAL_MOVE_NONE), isAttachedToPole(false), isActivelyPushing(false),
     cameraShiftFramesCount(0), copterFramesLeft(0), levelExiting(false), toasterAmmoSubticks(10), isSugarRush(false) {
     loadResources("Interactive/PlayerJazz");
@@ -1087,6 +1087,10 @@ bool Player::deactivate(const TileCoordinatePair&, int) {
 
 unsigned Player::getLives() {
     return lives;
+}
+
+PlayerCharacter Player::getCharacter() {
+    return character;
 }
 
 bool Player::getPowerUp(WeaponType type) const {

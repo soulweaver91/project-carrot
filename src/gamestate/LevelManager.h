@@ -6,6 +6,7 @@
 #include <QString>
 #include <QObject>
 #include "../EngineState.h"
+#include "../struct/Constants.h"
 #include "../struct/CoordinatePair.h"
 #include "../struct/Hitbox.h"
 #include "../struct/NextLevelData.h"
@@ -88,7 +89,7 @@ private:
 
     QVector<std::shared_ptr<CommonActor>> actors;
     QVector<std::shared_ptr<DestructibleDebris>> debris;
-    std::shared_ptr<Player> players[32];
+    std::shared_ptr<Player> players[MAX_ALLOWED_PLAYERS];
     QVector<std::shared_ptr<GameView>> views;
     std::shared_ptr<TileMap> gameTiles;
     std::shared_ptr<EventMap> gameEvents;

@@ -1,6 +1,6 @@
 #include "LevelSelectMenu.h"
 
-#include "DifficultySelectMenu.h"
+#include "CharacterSelectMenu.h"
 #include "../CarrotQt5.h"
 
 #include <QDir>
@@ -20,7 +20,7 @@ LevelSelectMenu::LevelSelectMenu(CarrotQt5* mainClass) : VerticalItemListMenu(ma
                 menuOptions.append(buildMenuItem(
                     [this, levelName]() {
                         auto nextData = std::make_shared<NextLevelData>(levelName);
-                        root->pushState<DifficultySelectMenu>(false, nextData);
+                        root->pushState<CharacterSelectMenu>(false, nextData);
                     },
                     levelData.value("Level/FormalName").toString() + " ~ " + levelName)
                 );

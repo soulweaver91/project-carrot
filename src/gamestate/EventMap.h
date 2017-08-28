@@ -12,6 +12,7 @@
 #include "../struct/PCEvent.h"
 #include "../struct/CoordinatePair.h"
 #include "../struct/GameDifficulty.h"
+#include "../struct/PlayerCharacter.h"
 
 class CarrotQt5;
 class EventSpawner;
@@ -20,6 +21,15 @@ struct EventTile {
     PCEvent storedEvent;
     bool isEventActive;
     quint16 eventParams[8];
+};
+
+struct SpawnPointList {
+    QVector<CoordinatePair> spawnPoints;
+    int lastUsedPoint;
+
+    SpawnPointList() : lastUsedPoint(0) {
+
+    }
 };
 
 class EventMap {
@@ -39,6 +49,9 @@ public:
     void getTileParams(const TileCoordinatePair& tilePos, quint16 (&params)[8]) const;
     void setTileParam(const TileCoordinatePair& tilePos, unsigned char idx, quint16 value);
 
+    void addPlayerSpawnPoint(PlayerCharacter character, const CoordinatePair& position);
+    CoordinatePair getPlayerSpawnPoint(PlayerCharacter character);
+
     CoordinatePair getWarpTarget(unsigned id) const;
     QSet<QString> getResourceNameList() const;
 
@@ -49,6 +62,7 @@ private:
     LevelManager* root;
     QVector<QVector<std::shared_ptr<EventTile>>> eventLayout;
     QMultiMap<unsigned, TileCoordinatePair> warpTargets;
+    QMap<PlayerCharacter, SpawnPointList> spawnPoints;
     const EventSpawner* const spawner;
     QSet<QString> resourceNames;
 };
