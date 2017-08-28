@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "WeaponTypes.h"
 #include "GameDifficulty.h"
+#include "PlayerCharacter.h"
 
 #include <QtGlobal>
 
@@ -29,7 +30,8 @@ struct NextLevelData {
     QString episodeName;
     GameDifficulty difficulty;
     ExitType exitType;
-    PlayerCarryOver playerCarryOvers[32];
+    PlayerCarryOver playerCarryOvers[MAX_ALLOWED_PLAYERS];
+    PlayerCharacter characters[MAX_ALLOWED_PLAYERS];
 
     NextLevelData(QString levelName, QString episodeName = "", GameDifficulty difficulty = DIFFICULTY_NORMAL, ExitType exitType = NEXT_NONE)
     : levelName(levelName), episodeName(episodeName), difficulty(difficulty), exitType(exitType) {

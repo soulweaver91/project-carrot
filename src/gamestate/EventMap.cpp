@@ -116,6 +116,32 @@ void EventMap::setTileParam(const TileCoordinatePair& tilePos, unsigned char idx
     eventLayout[tilePos.y][tilePos.x]->eventParams[idx] = value;
 }
 
+void EventMap::addPlayerSpawnPoint(PlayerCharacter character, const CoordinatePair& position) {
+    if (!spawnPoints.contains(character)) {
+        spawnPoints.insert(character, {});
+    }
+    spawnPoints[character].spawnPoints << position;
+}
+
+CoordinatePair EventMap::getPlayerSpawnPoint(PlayerCharacter character) {
+    if (spawnPoints.contains(character)) {
+        auto& point = spawnPoints[character];
+
+        if (point.spawnPoints.size() > 0) {
+            if (point.spawnPoints.size() < point.lastUsedPoint) {
+                auto coordinate = point.spawnPoints[point.lastUsedPoint];
+                point.lastUsedPoint++;
+                return coordinate;
+            } else {
+                point.lastUsedPoint = 0;
+                return point.spawnPoints[0];
+            }
+        }
+    }
+
+    return { 8.0 * TILE_WIDTH, 1.0 * TILE_HEIGHT };
+}
+
 void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameDifficulty difficulty) {
     QFile eventMapHandle(filename);
     if (!eventMapHandle.open(QIODevice::ReadOnly)) {
@@ -179,10 +205,10 @@ void EventMap::readEvents(const QString& filename, unsigned layoutVersion, GameD
                     case PC_EMPTY:
                         break;
                     case PC_JAZZ_LEVEL_START:
-                        if (root->getPlayer(0).lock() == nullptr) {
-                            auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(root->getActorAPI(), { TILE_WIDTH * (tilePos.x + 0.5), TILE_HEIGHT * (tilePos.y + 0.5) }));
-                            root->addPlayer(defaultplayer, 0);
-                        }
+                        addPlayerSpawnPoint(CHAR_JAZZ, { TILE_WIDTH * (x + 0.5), TILE_HEIGHT * (y + 0.5) });
+                        break;
+                    case PC_SPAZ_LEVEL_START:
+                        addPlayerSpawnPoint(CHAR_SPAZ, { TILE_WIDTH * (x + 0.5), TILE_HEIGHT * (y + 0.5) });
                         break;
                     case PC_MODIFIER_ONE_WAY:
                     case PC_MODIFIER_VINE:

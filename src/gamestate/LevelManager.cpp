@@ -33,7 +33,7 @@ LevelManager::LevelManager(CarrotQt5* root, const NextLevelData& nextData) :
     exiting(false), exitKeyUpEventsSent(false), defaultLightingLevel(100), gravity(0.3), difficulty(DIFFICULTY_NORMAL) {
 
     // Fill the player pointer table with zeroes
-    std::fill_n(players, 32, nullptr);
+    std::fill_n(players, MAX_ALLOWED_PLAYERS, nullptr);
 
     QDir levelDir = QDir::current();
     if (episodeName != "") {
@@ -117,7 +117,15 @@ LevelManager::LevelManager(CarrotQt5* root, const NextLevelData& nextData) :
         difficulty = nextData.difficulty;
     }
 
-    gameEvents = std::make_shared<EventMap>(this, root->getEventSpawner(), levelDir.absoluteFilePath("event.layer"), levelConfig, gameTiles->getLevelWidth(), gameTiles->getLevelHeight(), difficulty);
+    gameEvents = std::make_shared<EventMap>(
+        this, 
+        root->getEventSpawner(), 
+        levelDir.absoluteFilePath("event.layer"), 
+        levelConfig, 
+        gameTiles->getLevelWidth(), 
+        gameTiles->getLevelHeight(), 
+        difficulty
+    );
 
     updateLoadingScreenTextFunc("Preloading resources...");
     root->loadActorTypeResources("Interactive/Player");
@@ -145,16 +153,15 @@ LevelManager::LevelManager(CarrotQt5* root, const NextLevelData& nextData) :
     updateLoadingScreenTextFunc("Initializing...");
     gameTiles->saveInitialSpriteLayer();
 
-    if (players[0] == nullptr) {
-        auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(api, { 320.0, 1.0 * TILE_HEIGHT }));
-        addPlayer(defaultplayer, 0);
-    }
+    auto character = nextData.characters[0];
+    auto defaultplayer = std::make_shared<Player>(ActorInstantiationDetails(api, gameEvents->getPlayerSpawnPoint(character)), character);
+    addPlayer(defaultplayer, 0);
 
     auto soundSystem = root->getSoundSystem();
 
     views.clear();
     sf::Vector2f viewSize(root->getCanvas()->getSize().x, root->getCanvas()->getSize().y);
-    for (uint i = 0; i < 32; ++i) {
+    for (uint i = 0; i < MAX_ALLOWED_PLAYERS; ++i) {
         if (players[i] != nullptr) {
             views.append(std::make_shared<GameView>(this, i, viewSize));
             players[i]->setView(views.last());
@@ -179,7 +186,7 @@ LevelManager::~LevelManager() {
 
 void LevelManager::cleanUpLevel() {
     actors.clear();
-    std::fill_n(players, 32, nullptr);
+    std::fill_n(players, MAX_ALLOWED_PLAYERS, nullptr);
 
     views.clear();
 }
@@ -314,9 +321,9 @@ bool LevelManager::addActor(std::shared_ptr<CommonActor> actor) {
 }
 
 bool LevelManager::addPlayer(std::shared_ptr<Player> actor, short playerID) {
-    // If player ID is defined and is between 0 and 31 (inclusive),
+    // If player ID is defined and is between 0 and max - 1 (inclusive),
     // try to add the player to the player array
-    if ((playerID > -1) && (playerID < 32)) {
+    if ((playerID > -1) && (playerID < MAX_ALLOWED_PLAYERS)) {
         if (players[playerID] != nullptr) {
             // A player with that number already existed
             return false;
@@ -577,7 +584,7 @@ void LevelManager::loadSavePoint() {
 
 void LevelManager::clearActors() {
     actors.clear();
-    for (uint i = 0; i < 32; ++i) {
+    for (uint i = 0; i < MAX_ALLOWED_PLAYERS; ++i) {
         if (players[i] != nullptr) {
             actors << players[i];
         }
@@ -646,7 +653,7 @@ QVector<std::weak_ptr<Player>> LevelManager::getCollidingPlayer(const Hitbox& hi
 }
 
 std::weak_ptr<Player> LevelManager::getPlayer(unsigned number) {
-    if (number > 32) {
+    if (number >= MAX_ALLOWED_PLAYERS) {
         return std::weak_ptr<Player>();
     } else {
         return players[number];
@@ -703,7 +710,12 @@ void LevelManager::initLevelChange(ExitType e) {
 
     addTimer(435u, false, [this, e]() {
         NextLevelData nextLevelData(nextLevel, episodeName, difficulty, e);
-        nextLevelData.playerCarryOvers[0] = players[0]->prepareLevelCarryOver();
+        for (int i = 0; i < MAX_ALLOWED_PLAYERS; ++i) {
+            if (players[i] != nullptr) {
+                nextLevelData.playerCarryOvers[i] = players[i]->prepareLevelCarryOver();
+                nextLevelData.characters[i] = players[i]->getCharacter();
+            }
+        }
 
         root->startGame(nextLevelData);
     });

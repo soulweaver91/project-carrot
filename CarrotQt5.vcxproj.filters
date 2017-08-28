@@ -389,6 +389,9 @@
     <ClCompile Include="src\menu\DifficultySelectMenu.cpp">
       <Filter>Source Files\Menu system</Filter>
     </ClCompile>
+    <ClCompile Include="src\menu\CharacterSelectMenu.cpp">
+      <Filter>Source Files\Menu system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\actor\Player.h">
@@ -691,6 +694,12 @@
       <Filter>Header Files\Menu system headers</Filter>
     </ClInclude>
     <ClInclude Include="src\struct\TileCoordinatePair.h">
+      <Filter>Header Files\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu\CharacterSelectMenu.h">
+      <Filter>Header Files\Menu system headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct\PlayerCharacter.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
   </ItemGroup>

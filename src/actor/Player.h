@@ -10,19 +10,12 @@
 #include "../struct/WeaponTypes.h"
 #include "../struct/Constants.h"
 #include "../struct/NextLevelData.h"
+#include "../struct/PlayerCharacter.h"
 #include "solidobj/MovingPlatform.h"
 #include "collectible/GemCollectible.h"
 #include "collectible/CoinCollectible.h"
 
 class ActorAPI;
-
-enum PlayerCharacter {
-    CHAR_JAZZ       = 0x00,
-    CHAR_SPAZ       = 0x01,
-    CHAR_LORI       = 0x02,
-    CHAR_FROG       = 0x80,
-    CHAR_BIRD       = 0x81
-};
 
 enum SpecialMoveType {
     SPECIAL_MOVE_NONE,
@@ -36,7 +29,7 @@ class Player : public QObject, public InteractiveActor, public RadialLightSource
     Q_OBJECT
 
 public:
-    Player(const ActorInstantiationDetails& initData);
+    Player(const ActorInstantiationDetails& initData, PlayerCharacter character);
     ~Player();
     void processControlDownEvent(const ControlEvent& e) override;
     void processControlUpEvent(const ControlEvent& e) override;
@@ -46,6 +39,7 @@ public:
     void drawUIOverlay();
     unsigned getHealth();
     unsigned getLives();
+    PlayerCharacter getCharacter();
     bool getPowerUp(WeaponType type) const;
     bool perish() override;
     QSet<WeaponType> getAvailableWeaponTypes();
